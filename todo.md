@@ -10,6 +10,11 @@
     - [ ] Research and choose a suitable SQL database for Flutter (e.g., sqflite, drift).
     - [ ] Implement basic UI for testing database integration.
     - [ ] Integrate frontend SQL database.
+    - [ ] Implement Multilingual Support:
+        - [ ] Research Flutter internationalization (i18n) and localization (l10n) best practices.
+        - [ ] Set up localization files for German (de), English (en), and Swedish (sv).
+        - [ ] Integrate text strings into the UI using localization.
+        - [ ] Implement language switching functionality in settings.
     - [ ] Implement core features:
         - [ ] Dashboard Module:
             - [ ] Design and implement overview UI.

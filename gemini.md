@@ -34,6 +34,7 @@ The application will include the following core features:
 - User authentication and registration will support Apple ID, Google, and Email/Password options.
 - Backend service usage will be monetized at €1 per month or €10 per year.
 - Payment options will include PayPal and Bitcoin.
+- The application will support multilingual functionality, initially including German, English, and Swedish.
 
 ## Memories
 
