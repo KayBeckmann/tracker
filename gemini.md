@@ -26,7 +26,7 @@ The application will include the following core features:
 - **Habits:** Tracking daily counts/time spent and comparison with past performance.
 - **Household Book:** Financial tracking and management.
 - **Settings:** User preferences and application configuration, including:
-    - Theme selection (System, Light, Dark).
+    - Theme selection (System, Light, Dark) and color scheme customization.
     - Language selection (German, English, Swedish).
     - Backend login functionality.
     - Backend subscription management.

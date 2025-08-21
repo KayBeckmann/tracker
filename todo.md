@@ -43,6 +43,8 @@
             - [ ] Implement Theme Selection:
                 - [ ] UI for selecting System, Light, or Dark theme.
                 - [ ] Logic to apply selected theme.
+                - [ ] UI for color palette selection/customization.
+                - [ ] Logic to apply custom color scheme.
             - [ ] Implement Language Selection:
                 - [ ] UI for selecting German, English, or Swedish.
                 - [ ] Logic to apply selected language.
