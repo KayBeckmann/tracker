@@ -21,7 +21,11 @@ Database considerations:
 
 The application will include the following core features:
 - **Dashboard:** Overview of key information.
-- **Tasks/Appointments:** With pop-up notifications and reminder functionality.
+- **Tasks/Appointments:** With pop-up notifications and reminder functionality. Includes:
+    - Calendar overview with visual highlighting for days with appointments.
+    - List view of all appointments, sortable by due date, priority, or category.
+    - Functionality to create and edit appointments with fields: title, due date, creation date, priority (-1: low, 0: medium, 1: high), description, and category.
+    - Category management via a dedicated tab, with automatic creation of new categories upon appointment creation if they don't exist.
 - **Notes:** Support for tags, filtering, search, and Markdown formatting.
 - **Habits:** Tracking daily counts/time spent and comparison with past performance.
 - **Household Book:** Financial tracking and management.

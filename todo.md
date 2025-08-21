@@ -23,6 +23,18 @@
             - [ ] Design and implement task/appointment creation and management UI.
             - [ ] Implement local storage for tasks/appointments.
             - [ ] Develop pop-up notification and reminder functionality.
+            - [ ] Implement Calendar Overview:
+                - [ ] Display calendar view.
+                - [ ] Visually highlight days with appointments.
+            - [ ] Implement Appointment List:
+                - [ ] Display list of all appointments.
+                - [ ] Implement sorting by due date, priority, and category.
+            - [ ] Implement Appointment Details (Create/Edit):
+                - [ ] UI for title, due date, creation date (auto-filled), priority, description, category.
+                - [ ] Logic for saving and updating appointments.
+            - [ ] Implement Category Management:
+                - [ ] Dedicated UI for managing categories.
+                - [ ] Logic for automatic category creation if not existing during appointment creation.
         - [ ] Notes Module:
             - [ ] Design and implement notes creation and management UI.
             - [ ] Implement local storage for notes.
