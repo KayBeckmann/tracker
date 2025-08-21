@@ -25,7 +25,11 @@ The application will include the following core features:
 - **Notes:** Support for tags, filtering, search, and Markdown formatting.
 - **Habits:** Tracking daily counts/time spent and comparison with past performance.
 - **Household Book:** Financial tracking and management.
-- **Settings:** User preferences and application configuration.
+- **Settings:** User preferences and application configuration, including:
+    - Theme selection (System, Light, Dark).
+    - Language selection (German, English, Swedish).
+    - Backend login functionality.
+    - Backend subscription management.
 
 ## Important Notes
 

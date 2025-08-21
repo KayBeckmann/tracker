@@ -40,6 +40,19 @@
         - [ ] Settings Module:
             - [ ] Design and implement user settings UI.
             - [ ] Implement local storage for user preferences.
+            - [ ] Implement Theme Selection:
+                - [ ] UI for selecting System, Light, or Dark theme.
+                - [ ] Logic to apply selected theme.
+            - [ ] Implement Language Selection:
+                - [ ] UI for selecting German, English, or Swedish.
+                - [ ] Logic to apply selected language.
+            - [ ] Implement Backend Login Integration:
+                - [ ] UI for backend login (email/password, Google, Apple ID).
+                - [ ] Integrate with backend authentication API.
+            - [ ] Implement Backend Subscription Management:
+                - [ ] UI for displaying subscription status.
+                - [ ] UI for initiating subscription (monthly/yearly).
+                - [ ] Integrate with payment gateway (PayPal, Bitcoin).
 - [ ] Backend Development:
     - [ ] Research and choose a backend framework (e.g., Node.js/Express, Python/FastAPI, Go/Gin).
     - [ ] Research and choose a SQL database for the backend (e.g., PostgreSQL, MySQL).
