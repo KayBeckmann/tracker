@@ -19,9 +19,21 @@ Database considerations:
 - A SQL database for the backend.
 - A SQL database for the frontend (likely for local data persistence, e.g., SQLite).
 
+The application will include the following core features:
+- **Dashboard:** Overview of key information.
+- **Tasks/Appointments:** With pop-up notifications and reminder functionality.
+- **Notes:** Support for tags, filtering, search, and Markdown formatting.
+- **Habits:** Tracking daily counts/time spent and comparison with past performance.
+- **Household Book:** Financial tracking and management.
+- **Settings:** User preferences and application configuration.
+
 ## Important Notes
 
-[TODO: Add any important notes or context for Gemini here.]
+- All application functions should be fully operational on the respective end device, implying robust offline capabilities and local data storage.
+- The backend will primarily serve for synchronization of data across different user devices.
+- User authentication and registration will support Apple ID, Google, and Email/Password options.
+- Backend service usage will be monetized at €1 per month or €10 per year.
+- Payment options will include PayPal and Bitcoin.
 
 ## Memories
 
