@@ -40,6 +40,31 @@
             - [ ] Implement local storage for notes.
             - [ ] Add tagging, filtering, and search capabilities.
             - [ ] Integrate Markdown rendering and editing.
+            - [ ] Implement Note Structure:
+                - [ ] Logic to automatically set first line as title.
+                - [ ] Store creation and last modification dates.
+                - [ ] Allow multiple tags per note.
+            - [ ] Implement Initial Notes:
+                - [ ] Create predefined notes for app functionalities and Markdown introduction.
+                - [ ] Assign appropriate tags for each module's note.
+            - [ ] Implement Notes Overview:
+                - [ ] Display list of all notes.
+                - [ ] Implement filtering by input field (search).
+                - [ ] Implement filtering by multiple tag selection.
+            - [ ] Implement Note Templates:
+                - [ ] Functionality to mark notes as templates.
+                - [ ] UI/logic for creating new notes from templates.
+            - [ ] Implement Calendar Filtering for Notes:
+                - [ ] UI for selecting date range or specific day.
+                - [ ] Logic to display notes created or modified within the selected period.
+            - [ ] Implement Bidirectional Linking (Appointments <-> Notes):
+                - [ ] UI for linking notes to appointments.
+                - [ ] UI for linking appointments to notes.
+                - [ ] Logic to manage linked entities.
+            - [ ] Implement Image Insertion:
+                - [ ] UI for selecting and inserting images from device.
+                - [ ] Logic for storing images locally.
+                - [ ] Logic for synchronizing images with backend (conditional on paid subscription).
         - [ ] Habits Module:
             - [ ] Design and implement habit tracking UI.
             - [ ] Implement local storage for habits data.

@@ -26,7 +26,14 @@ The application will include the following core features:
     - List view of all appointments, sortable by due date, priority, or category.
     - Functionality to create and edit appointments with fields: title, due date, creation date, priority (-1: low, 0: medium, 1: high), description, and category.
     - Category management via a dedicated tab, with automatic creation of new categories upon appointment creation if they don't exist.
-- **Notes:** Support for tags, filtering, search, and Markdown formatting.
+- **Notes:** Support for tags, filtering, search, and Markdown formatting. Includes:
+    - Note structure: description (Markdown), first line as title, creation/last modification dates, multiple tags.
+    - Initial notes for each module describing functionalities and Markdown introduction.
+    - Overview list of all notes, filterable by input field (search) or multiple tag selection.
+    - Ability to mark notes as templates (e.g., for Bullet Journal).
+    - Calendar filtering: display notes created or modified within a specified date range or on a specific day.
+    - Bidirectional linking between appointments and notes.
+    - Image insertion from device, synchronized with backend for paid subscriptions.
 - **Habits:** Tracking daily counts/time spent and comparison with past performance.
 - **Household Book:** Financial tracking and management.
 - **Settings:** User preferences and application configuration, including:
