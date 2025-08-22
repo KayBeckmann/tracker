@@ -43,17 +43,26 @@ enum AppointmentSortOrder {
 
 class _AppointmentsScreenState extends State<AppointmentsScreen> {
   late NotificationService _notificationService;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _notificationService = NotificationService(database);
     _notificationService.initialize(context);
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+      });
+    });
   }
 
   @override
   void dispose() {
     _notificationService.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -61,6 +70,10 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
 
   Stream<List<Appointment>> _getAppointmentsStream() {
     final query = database.select(database.appointments);
+
+    if (_searchQuery.isNotEmpty) {
+      query.where((t) => t.title.like('%' + _searchQuery + '%') | t.description.like('%' + _searchQuery + '%'));
+    }
 
     switch (_sortOrder) {
       case AppointmentSortOrder.dueDateAscending:
@@ -84,7 +97,15 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Appointments'),
+        title: TextField(
+          controller: _searchController,
+          decoration: const InputDecoration(
+            hintText: 'Search appointments...',
+            border: InputBorder.none,
+            hintStyle: TextStyle(color: Colors.white70),
+          ),
+          style: const TextStyle(color: Colors.white),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),
