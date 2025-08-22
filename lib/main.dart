@@ -3,6 +3,7 @@ import 'package:tracker/src/core/database/database.dart';
 import 'package:tracker/src/features/appointments/presentation/appointment_edit_screen.dart';
 import 'package:tracker/src/features/categories/presentation/category_management_screen.dart';
 import 'package:tracker/src/core/notifications/notification_service.dart';
+import 'package:tracker/src/features/appointments/presentation/calendar_screen.dart';
 
 late AppDatabase database;
 
@@ -85,6 +86,16 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
       appBar: AppBar(
         title: const Text('Appointments'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.calendar_today),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const CalendarScreen(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.category),
             onPressed: () {
