@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tracker/src/core/database/database.dart';
 import 'package:tracker/src/features/appointments/presentation/appointment_edit_screen.dart';
 import 'package:tracker/src/features/categories/presentation/category_management_screen.dart';
+import 'package:tracker/src/core/notifications/notification_service.dart';
 
 late AppDatabase database;
 
@@ -40,6 +41,21 @@ enum AppointmentSortOrder {
 }
 
 class _AppointmentsScreenState extends State<AppointmentsScreen> {
+  late NotificationService _notificationService;
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationService = NotificationService(database);
+    _notificationService.initialize(context);
+  }
+
+  @override
+  void dispose() {
+    _notificationService.dispose();
+    super.dispose();
+  }
+
   AppointmentSortOrder _sortOrder = AppointmentSortOrder.dueDateAscending;
 
   Stream<List<Appointment>> _getAppointmentsStream() {
