@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/src/core/database/database.dart';
+import 'package:tracker/src/features/appointments/presentation/appointment_edit_screen.dart';
 
 late AppDatabase database;
 
@@ -55,6 +56,15 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
               return ListTile(
                 title: Text(appointment.title),
                 subtitle: Text(appointment.dueDate.toString()),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => AppointmentEditScreen(
+                        appointment: appointment,
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );
@@ -62,12 +72,11 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          database.into(database.appointments).insert(
-                AppointmentsCompanion.insert(
-                  title: 'Test Appointment',
-                  dueDate: DateTime.now(),
-                ),
-              );
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const AppointmentEditScreen(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),
