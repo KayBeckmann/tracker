@@ -17,7 +17,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
   late DateTime _dueDate;
-  int _priority = 0;
+  late int? _selectedCategory;
 
   @override
   void initState() {
@@ -26,6 +26,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
     _descriptionController = TextEditingController(text: widget.appointment?.description);
     _dueDate = widget.appointment?.dueDate ?? DateTime.now();
     _priority = widget.appointment?.priority ?? 0;
+    _selectedCategory = widget.appointment?.categoryId;
   }
 
   @override
@@ -100,6 +101,29 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
                   });
                 },
               ),
+              const SizedBox(height: 16),
+              StreamBuilder<List<Category>>(
+                stream: main.database.select(main.database.categories).watch(),
+                builder: (context, snapshot) {
+                  final categories = snapshot.data ?? [];
+                  return DropdownButtonFormField<int?>(
+                    value: _selectedCategory,
+                    decoration: const InputDecoration(labelText: 'Category'),
+                    items: [
+                      const DropdownMenuItem(value: null, child: Text('None')),
+                      ...categories.map((category) => DropdownMenuItem(
+                            value: category.id,
+                            child: Text(category.name),
+                          )),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategory = value;
+                      });
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -114,6 +138,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
         description: Value(_descriptionController.text),
         dueDate: Value(_dueDate),
         priority: Value(_priority),
+        categoryId: Value(_selectedCategory),
       );
 
       if (widget.appointment == null) {

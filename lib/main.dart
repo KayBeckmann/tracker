@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/src/core/database/database.dart';
 import 'package:tracker/src/features/appointments/presentation/appointment_edit_screen.dart';
+import 'package:tracker/src/features/categories/presentation/category_management_screen.dart';
 
 late AppDatabase database;
 
@@ -68,6 +69,16 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
       appBar: AppBar(
         title: const Text('Appointments'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.category),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const CategoryManagementScreen(),
+                ),
+              );
+            },
+          ),
           DropdownButton<AppointmentSortOrder>(
             value: _sortOrder,
             onChanged: (AppointmentSortOrder? newValue) {
@@ -101,7 +112,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
       body: StreamBuilder<List<Appointment>>(
         stream: _getAppointmentsStream(),
         builder: (context, snapshot) {
-          final appointments = snapshot.data ?? [];
+          final appointments = snapshot.data ?? [],
 
           if (appointments.isEmpty) {
             return const Center(
