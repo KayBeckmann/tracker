@@ -23,7 +23,7 @@ class Appointments extends Table {
 }
 
 @DriftDatabase(tables: [Categories, Appointments])
-class AppDatabase extends _$$AppDatabase {
+class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override

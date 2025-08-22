@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/src/core/database/database.dart';
+import 'package:drift/drift.dart' hide Column; // Import Value
+import 'package:tracker/main.dart' as main; // Import main.database
 
 class AppointmentEditScreen extends StatefulWidget {
   final Appointment? appointment;
@@ -115,9 +117,9 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
       );
 
       if (widget.appointment == null) {
-        database.into(database.appointments).insert(newAppointment);
+        main.database.into(main.database.appointments).insert(newAppointment);
       } else {
-        database.update(database.appointments).replace(newAppointment);
+        main.database.update(main.database.appointments).replace(newAppointment);
       }
 
       Navigator.of(context).pop();

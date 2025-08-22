@@ -31,15 +31,75 @@ class AppointmentsScreen extends StatefulWidget {
   State<AppointmentsScreen> createState() => _AppointmentsScreenState();
 }
 
+enum AppointmentSortOrder {
+  dueDateAscending,
+  dueDateDescending,
+  priorityAscending,
+  priorityDescending,
+}
+
 class _AppointmentsScreenState extends State<AppointmentsScreen> {
+  AppointmentSortOrder _sortOrder = AppointmentSortOrder.dueDateAscending;
+
+  Stream<List<Appointment>> _getAppointmentsStream() {
+    final query = database.select(database.appointments);
+
+    switch (_sortOrder) {
+      case AppointmentSortOrder.dueDateAscending:
+        query.orderBy([(t) => OrderingTerm(expression: t.dueDate, mode: OrderingMode.asc)]);
+        break;
+      case AppointmentSortOrder.dueDateDescending:
+        query.orderBy([(t) => OrderingTerm(expression: t.dueDate, mode: OrderingMode.desc)]);
+        break;
+      case AppointmentSortOrder.priorityAscending:
+        query.orderBy([(t) => OrderingTerm(expression: t.priority, mode: OrderingMode.asc)]);
+        break;
+      case AppointmentSortOrder.priorityDescending:
+        query.orderBy([(t) => OrderingTerm(expression: t.priority, mode: OrderingMode.desc)]);
+        break;
+    }
+
+    return query.watch();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Appointments'),
+        actions: [
+          DropdownButton<AppointmentSortOrder>(
+            value: _sortOrder,
+            onChanged: (AppointmentSortOrder? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _sortOrder = newValue;
+                });
+              }
+            },
+            items: const <DropdownMenuItem<AppointmentSortOrder>>[
+              DropdownMenuItem(
+                value: AppointmentSortOrder.dueDateAscending,
+                child: Text('Due Date (Asc)'),
+              ),
+              DropdownMenuItem(
+                value: AppointmentSortOrder.dueDateDescending,
+                child: Text('Due Date (Desc)'),
+              ),
+              DropdownMenuItem(
+                value: AppointmentSortOrder.priorityAscending,
+                child: Text('Priority (Asc)'),
+              ),
+              DropdownMenuItem(
+                value: AppointmentSortOrder.priorityDescending,
+                child: Text('Priority (Desc)'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: StreamBuilder<List<Appointment>>(
-        stream: database.select(database.appointments).watch(),
+        stream: _getAppointmentsStream(),
         builder: (context, snapshot) {
           final appointments = snapshot.data ?? [];
 
