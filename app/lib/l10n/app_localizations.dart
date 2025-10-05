@@ -496,6 +496,48 @@ abstract class AppLocalizations {
   /// **'Start sign-in flow'**
   String get settingsAccountSignInButton;
 
+  /// No description provided for @settingsAccountPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get settingsAccountPasswordLabel;
+
+  /// No description provided for @settingsAccountPasswordConfirmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get settingsAccountPasswordConfirmLabel;
+
+  /// No description provided for @settingsAccountRegisterButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get settingsAccountRegisterButton;
+
+  /// No description provided for @settingsAccountLoginButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get settingsAccountLoginButton;
+
+  /// No description provided for @settingsAccountValidationEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter email and password.'**
+  String get settingsAccountValidationEmpty;
+
+  /// No description provided for @settingsAccountValidationMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match.'**
+  String get settingsAccountValidationMismatch;
+
+  /// No description provided for @settingsAccountUnknownError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected error'**
+  String get settingsAccountUnknownError;
+
   /// No description provided for @settingsAccountSecurityTitle.
   ///
   /// In en, this message translates to:

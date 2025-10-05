@@ -46,4 +46,20 @@ docker compose down
 - `backend/scripts/serverpod.sh create-migration <name>` – neue Migration anlegen
 - `dart test` innerhalb von `tracker_backend_server` – Serverseitige Tests
 
+### Auth-Endpoints
+
+Die ersten Endpunkte für Registrierung/Anmeldung befinden sich in
+`lib/src/auth_endpoint.dart`. Sie speichern Benutzer in der Tabelle `auth_user`.
+
+Nach Schemaänderungen unbedingt eine Migration erstellen (Docker muss laufen):
+
+```bash
+cd backend/tracker_backend/tracker_backend_server
+docker compose up -d
+../../scripts/serverpod.sh create-migration add-auth-table
+../../scripts/serverpod.sh generate
+```
+
+Anschließend `dart bin/main.dart --apply-migrations` ausführen.
+
 Weitere Serverpod-Dokumentation: https://docs.serverpod.dev/

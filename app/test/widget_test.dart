@@ -10,9 +10,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:tracker/app/app.dart';
+import 'package:tracker/core/network/serverpod_client.dart';
 import 'package:tracker/core/storage/settings_repository.dart';
 import 'package:tracker/features/settings/application/settings_controller.dart';
 import 'package:tracker/features/settings/domain/app_settings.dart';
+import 'package:tracker_backend_client/tracker_backend_client.dart';
 
 void main() {
   testWidgets('Tracker app renders the dashboard tab by default', (
@@ -22,7 +24,12 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [settingsRepositoryProvider.overrideWithValue(repository)],
+        overrides: [
+          settingsRepositoryProvider.overrideWithValue(repository),
+          serverpodClientProvider.overrideWithValue(
+            Client('http://localhost:8080/'),
+          ),
+        ],
         child: const TrackerApp(),
       ),
     );

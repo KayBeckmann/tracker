@@ -229,6 +229,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsAccountSignInButton => 'Anmeldeprozess starten';
 
   @override
+  String get settingsAccountPasswordLabel => 'Passwort';
+
+  @override
+  String get settingsAccountPasswordConfirmLabel => 'Passwort bestätigen';
+
+  @override
+  String get settingsAccountRegisterButton => 'Konto erstellen';
+
+  @override
+  String get settingsAccountLoginButton => 'Anmelden';
+
+  @override
+  String get settingsAccountValidationEmpty =>
+      'Bitte E-Mail und Passwort eingeben.';
+
+  @override
+  String get settingsAccountValidationMismatch =>
+      'Die Passwörter stimmen nicht überein.';
+
+  @override
+  String get settingsAccountUnknownError => 'Unbekannter Fehler';
+
+  @override
   String get settingsAccountSecurityTitle => 'Sicherheit & Anbieter';
 
   @override

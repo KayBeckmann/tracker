@@ -225,6 +225,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAccountSignInButton => 'Start sign-in flow';
 
   @override
+  String get settingsAccountPasswordLabel => 'Password';
+
+  @override
+  String get settingsAccountPasswordConfirmLabel => 'Confirm password';
+
+  @override
+  String get settingsAccountRegisterButton => 'Create account';
+
+  @override
+  String get settingsAccountLoginButton => 'Sign in';
+
+  @override
+  String get settingsAccountValidationEmpty => 'Enter email and password.';
+
+  @override
+  String get settingsAccountValidationMismatch => 'Passwords do not match.';
+
+  @override
+  String get settingsAccountUnknownError => 'Unexpected error';
+
+  @override
   String get settingsAccountSecurityTitle => 'Security & providers';
 
   @override

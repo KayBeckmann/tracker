@@ -11,7 +11,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'package:serverpod/protocol.dart' as _i2;
-import 'greeting.dart' as _i3;
+import 'auth_response.dart' as _i3;
+import 'auth_user.dart' as _i4;
+import 'greeting.dart' as _i5;
+export 'auth_response.dart';
+export 'auth_user.dart';
 export 'greeting.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
@@ -22,7 +26,76 @@ class Protocol extends _i1.SerializationManagerServer {
   static final Protocol _instance = Protocol._();
 
   static final List<_i2.TableDefinition> targetTableDefinitions = [
-    ..._i2.Protocol.targetTableDefinitions
+    _i2.TableDefinition(
+      name: 'auth_user',
+      dartName: 'AuthUser',
+      schema: 'public',
+      module: 'tracker_backend',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'auth_user_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'email',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'passwordHash',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'salt',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'auth_user_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            )
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'authUserEmailIdx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'email',
+            )
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    ..._i2.Protocol.targetTableDefinitions,
   ];
 
   @override
@@ -31,11 +104,23 @@ class Protocol extends _i1.SerializationManagerServer {
     Type? t,
   ]) {
     t ??= T;
-    if (t == _i3.Greeting) {
-      return _i3.Greeting.fromJson(data) as T;
+    if (t == _i3.AuthResponse) {
+      return _i3.AuthResponse.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i3.Greeting?>()) {
-      return (data != null ? _i3.Greeting.fromJson(data) : null) as T;
+    if (t == _i4.AuthUser) {
+      return _i4.AuthUser.fromJson(data) as T;
+    }
+    if (t == _i5.Greeting) {
+      return _i5.Greeting.fromJson(data) as T;
+    }
+    if (t == _i1.getType<_i3.AuthResponse?>()) {
+      return (data != null ? _i3.AuthResponse.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i4.AuthUser?>()) {
+      return (data != null ? _i4.AuthUser.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i5.Greeting?>()) {
+      return (data != null ? _i5.Greeting.fromJson(data) : null) as T;
     }
     try {
       return _i2.Protocol().deserialize<T>(data, t);
@@ -47,7 +132,13 @@ class Protocol extends _i1.SerializationManagerServer {
   String? getClassNameForObject(Object? data) {
     String? className = super.getClassNameForObject(data);
     if (className != null) return className;
-    if (data is _i3.Greeting) {
+    if (data is _i3.AuthResponse) {
+      return 'AuthResponse';
+    }
+    if (data is _i4.AuthUser) {
+      return 'AuthUser';
+    }
+    if (data is _i5.Greeting) {
       return 'Greeting';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -63,8 +154,14 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
+    if (dataClassName == 'AuthResponse') {
+      return deserialize<_i3.AuthResponse>(data['data']);
+    }
+    if (dataClassName == 'AuthUser') {
+      return deserialize<_i4.AuthUser>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i3.Greeting>(data['data']);
+      return deserialize<_i5.Greeting>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -80,6 +177,10 @@ class Protocol extends _i1.SerializationManagerServer {
       if (table != null) {
         return table;
       }
+    }
+    switch (t) {
+      case _i4.AuthUser:
+        return _i4.AuthUser.t;
     }
     return null;
   }

@@ -1,2 +1,5 @@
+auth:
+  - register:
+  - login:
 greeting:
   - hello:

@@ -225,6 +225,27 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settingsAccountSignInButton => 'Starta inloggning';
 
   @override
+  String get settingsAccountPasswordLabel => 'Lösenord';
+
+  @override
+  String get settingsAccountPasswordConfirmLabel => 'Bekräfta lösenord';
+
+  @override
+  String get settingsAccountRegisterButton => 'Skapa konto';
+
+  @override
+  String get settingsAccountLoginButton => 'Logga in';
+
+  @override
+  String get settingsAccountValidationEmpty => 'Ange e-post och lösenord.';
+
+  @override
+  String get settingsAccountValidationMismatch => 'Lösenorden matchar inte.';
+
+  @override
+  String get settingsAccountUnknownError => 'Oväntat fel';
+
+  @override
   String get settingsAccountSecurityTitle => 'Säkerhet och leverantörer';
 
   @override

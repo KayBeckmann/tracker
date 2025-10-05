@@ -1,0 +1,5 @@
+class: AuthResponse
+fields:
+  success: bool
+  message: String
+  userId: int?

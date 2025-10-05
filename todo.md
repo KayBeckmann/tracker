@@ -86,8 +86,8 @@
                 - [x] UI for selecting German, English, or Swedish.
                 - [x] Logic to apply selected language.
             - [ ] Implement Backend Login Integration:
-                - [ ] UI for backend login (email/password, Google, Apple ID).
-                - [ ] Integrate with backend authentication API.
+                - [x] UI für backend login (email/password, Google, Apple ID).
+                - [x] Integrate with backend authentication API.
             - [ ] Implement Backend Subscription Management:
                 - [ ] Dokumentiere das kostenpflichtige Sync-Angebot (1 € pro Monat / 10 € pro Jahr).
                 - [ ] UI for displaying subscription status.
@@ -100,7 +100,7 @@
     - [ ] Set up backend database schema and migrations for all modules.
     - [ ] Implement basic API endpoints for frontend communication.
     - [ ] Implement User Authentication:
-        - [ ] Develop API for email/password registration and login.
+        - [x] Develop API for email/password registration and login.
         - [ ] Integrate Apple ID authentication.
         - [ ] Integrate Google authentication.
     - [ ] Implement Data Synchronization API:

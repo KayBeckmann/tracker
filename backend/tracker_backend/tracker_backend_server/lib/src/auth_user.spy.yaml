@@ -1,0 +1,11 @@
+class: AuthUser
+table: auth_user
+fields:
+  email: String
+  passwordHash: String
+  salt: String
+  createdAt: DateTime
+indexes:
+  authUserEmailIdx:
+    fields: email
+    unique: true
