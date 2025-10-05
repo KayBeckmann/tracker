@@ -3,6 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 
 import 'package:tracker/features/settings/application/settings_controller.dart';
+import 'package:tracker/features/settings/presentation/pages/details/account_security_page.dart';
+import 'package:tracker/features/settings/presentation/pages/details/account_sign_in_page.dart';
+import 'package:tracker/features/settings/presentation/pages/details/payment_methods_page.dart';
+import 'package:tracker/features/settings/presentation/pages/details/privacy_delete_page.dart';
+import 'package:tracker/features/settings/presentation/pages/details/privacy_export_page.dart';
+import 'package:tracker/features/settings/presentation/pages/details/subscription_plan_page.dart';
 import 'package:tracker/features/settings/presentation/widgets/settings_section.dart';
 
 const _systemLanguageCode = 'system';
@@ -51,13 +57,24 @@ class SettingsPage extends ConsumerWidget {
               title: Text(l10n.settingsAccountSignIn),
               subtitle: Text(l10n.settingsAccountSignInDescription),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-              onTap: () => _showComingSoon(context, l10n),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AccountSignInPage()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.security_outlined),
               title: Text(l10n.settingsAccountSecurity),
               subtitle: Text(l10n.settingsAccountSecurityDescription),
-              onTap: () => _showComingSoon(context, l10n),
+              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const AccountSecurityPage(),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -203,7 +220,13 @@ class SettingsPage extends ConsumerWidget {
               title: Text(l10n.settingsSubscriptionPlan),
               subtitle: Text(l10n.settingsSubscriptionPlanDescription),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-              onTap: () => _showComingSoon(context, l10n),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SubscriptionPlanPage(),
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.payments_outlined),
@@ -211,7 +234,12 @@ class SettingsPage extends ConsumerWidget {
               subtitle: Text(
                 l10n.settingsSubscriptionPaymentMethodsDescription,
               ),
-              onTap: () => _showComingSoon(context, l10n),
+              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const PaymentMethodsPage()),
+                );
+              },
             ),
           ],
         ),
@@ -223,24 +251,28 @@ class SettingsPage extends ConsumerWidget {
               leading: const Icon(Icons.download_outlined),
               title: Text(l10n.settingsPrivacyExport),
               subtitle: Text(l10n.settingsPrivacyExportDescription),
-              onTap: () => _showComingSoon(context, l10n),
+              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const PrivacyExportPage()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.delete_forever_outlined),
               title: Text(l10n.settingsPrivacyDelete),
               subtitle: Text(l10n.settingsPrivacyDeleteDescription),
-              onTap: () => _showComingSoon(context, l10n),
+              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const PrivacyDeletePage()),
+                );
+              },
             ),
           ],
         ),
       ],
     );
-  }
-
-  void _showComingSoon(BuildContext context, AppLocalizations l10n) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.settingsComingSoon)));
   }
 }
 

@@ -205,4 +205,97 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsComingSoon => 'Diese Funktion ist bald verfügbar.';
+
+  @override
+  String get settingsAccountSignInTitle => 'Konto verbinden';
+
+  @override
+  String get settingsAccountSignInLongDescription =>
+      'Melde dich an, um sichere Backups und Synchronisation auf all deinen Geräten zu aktivieren.';
+
+  @override
+  String get settingsAccountSignInOptionEmail => 'E-Mail & Passwort';
+
+  @override
+  String get settingsAccountSignInOptionGoogle => 'Google-Konto';
+
+  @override
+  String get settingsAccountSignInOptionApple => 'Apple-ID';
+
+  @override
+  String get settingsAccountSignInOptionComingSoon => 'Bald verfügbar';
+
+  @override
+  String get settingsAccountSignInButton => 'Anmeldeprozess starten';
+
+  @override
+  String get settingsAccountSecurityTitle => 'Sicherheit & Anbieter';
+
+  @override
+  String get settingsAccountSecurityManageProviders =>
+      'Verknüpfte Anbieter verwalten';
+
+  @override
+  String get settingsSubscriptionPlanTitle => 'Tracker Sync Abonnement';
+
+  @override
+  String get settingsSubscriptionPlanPricing => '1 € pro Monat • 10 € pro Jahr';
+
+  @override
+  String get settingsSubscriptionPlanBenefits => 'Deine Vorteile';
+
+  @override
+  String get settingsSubscriptionBenefitSync =>
+      'Unbegrenzte Synchronisation auf allen Geräten';
+
+  @override
+  String get settingsSubscriptionBenefitBackup =>
+      'Automatische, verschlüsselte Backups';
+
+  @override
+  String get settingsSubscriptionBenefitSupport =>
+      'Priorisierter Support für Abonnenten';
+
+  @override
+  String get settingsSubscriptionPlanButton => 'Abonnement verwalten';
+
+  @override
+  String get settingsPaymentMethodsTitle => 'Zahlungsmethoden';
+
+  @override
+  String get settingsPaymentMethodsDescription =>
+      'Wähle, welche Zahlungsoptionen für Verlängerungen genutzt werden.';
+
+  @override
+  String get settingsPaymentMethodsManage => 'Zahlungsmethoden verwalten';
+
+  @override
+  String get settingsPaymentMethodsPaypal => 'PayPal';
+
+  @override
+  String get settingsPaymentMethodsBitcoin => 'Bitcoin';
+
+  @override
+  String get settingsPrivacyExportTitle => 'Daten exportieren';
+
+  @override
+  String get settingsPrivacyExportDescriptionLong =>
+      'Lade alle synchronisierten Einträge als gesichertes Archiv herunter. Wir benachrichtigen dich, sobald der Export bereitsteht.';
+
+  @override
+  String get settingsPrivacyExportButton => 'Export anfordern';
+
+  @override
+  String get settingsPrivacyDeleteTitle => 'Synchronisierte Daten löschen';
+
+  @override
+  String get settingsPrivacyDeleteWarning =>
+      'Beim Löschen deines Kontos werden alle synchronisierten Informationen entfernt.';
+
+  @override
+  String get settingsPrivacyDeleteDescriptionLong =>
+      'Diese Aktion lässt lokale Daten auf deinem Gerät bestehen, entfernt aber Notizen, Aufgaben und Backups vom Server.';
+
+  @override
+  String get settingsPrivacyDeleteButton => 'Löschung anfordern';
 }

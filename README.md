@@ -1,16 +1,28 @@
 # tracker
 
-A new Flutter project.
+Dieses Repository ist in drei Hauptteile gegliedert:
 
-## Getting Started
+- `app/` – Flutter-Anwendung inkl. aller mobilen/desktop Builds und Tests.
+- `backend/` – Platzhalter für das kommende Backend (Dev-Stacks, APIs etc.).
+- `homepage/` – Platzhalter für die Projekt-Homepage bzw. Marketing-Site.
 
-This project is a starting point for a Flutter application.
+## Entwickeln
 
-A few resources to get you started if this is your first Flutter project:
+### Flutter-App
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+cd app
+flutter pub get
+flutter analyze
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Backend / Homepage
+
+Zurzeit sind dies nur Ordnerstruktur-Platzhalter. Sobald wir das Backend aufsetzen, kommt hier eine Docker-basierte Dev-Umgebung mit flüchtiger Datenbank dazu, und die Homepage erhält das passende Build-Setup.
+
+## Weitere Unterlagen
+
+- `gemini.md` – Projektnotizen / Kontext.
+- `todo.md` – Offene Aufgaben und Roadmap.
+- `LICENSE` – Lizenzinformationen.

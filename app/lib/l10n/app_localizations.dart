@@ -453,6 +453,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This option will arrive soon.'**
   String get settingsComingSoon;
+
+  /// No description provided for @settingsAccountSignInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect your account'**
+  String get settingsAccountSignInTitle;
+
+  /// No description provided for @settingsAccountSignInLongDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to unlock secure backups and synchronization across devices.'**
+  String get settingsAccountSignInLongDescription;
+
+  /// No description provided for @settingsAccountSignInOptionEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email & password'**
+  String get settingsAccountSignInOptionEmail;
+
+  /// No description provided for @settingsAccountSignInOptionGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google account'**
+  String get settingsAccountSignInOptionGoogle;
+
+  /// No description provided for @settingsAccountSignInOptionApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple ID'**
+  String get settingsAccountSignInOptionApple;
+
+  /// No description provided for @settingsAccountSignInOptionComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Available soon'**
+  String get settingsAccountSignInOptionComingSoon;
+
+  /// No description provided for @settingsAccountSignInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start sign-in flow'**
+  String get settingsAccountSignInButton;
+
+  /// No description provided for @settingsAccountSecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Security & providers'**
+  String get settingsAccountSecurityTitle;
+
+  /// No description provided for @settingsAccountSecurityManageProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage linked providers'**
+  String get settingsAccountSecurityManageProviders;
+
+  /// No description provided for @settingsSubscriptionPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracker Sync subscription'**
+  String get settingsSubscriptionPlanTitle;
+
+  /// No description provided for @settingsSubscriptionPlanPricing.
+  ///
+  /// In en, this message translates to:
+  /// **'€1 / month • €10 / year'**
+  String get settingsSubscriptionPlanPricing;
+
+  /// No description provided for @settingsSubscriptionPlanBenefits.
+  ///
+  /// In en, this message translates to:
+  /// **'Your benefits'**
+  String get settingsSubscriptionPlanBenefits;
+
+  /// No description provided for @settingsSubscriptionBenefitSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited data synchronization across all devices'**
+  String get settingsSubscriptionBenefitSync;
+
+  /// No description provided for @settingsSubscriptionBenefitBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic encrypted backups'**
+  String get settingsSubscriptionBenefitBackup;
+
+  /// No description provided for @settingsSubscriptionBenefitSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority support for subscribers'**
+  String get settingsSubscriptionBenefitSupport;
+
+  /// No description provided for @settingsSubscriptionPlanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage subscription'**
+  String get settingsSubscriptionPlanButton;
+
+  /// No description provided for @settingsPaymentMethodsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment methods'**
+  String get settingsPaymentMethodsTitle;
+
+  /// No description provided for @settingsPaymentMethodsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select which payment options you want to use for renewals.'**
+  String get settingsPaymentMethodsDescription;
+
+  /// No description provided for @settingsPaymentMethodsManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage payment methods'**
+  String get settingsPaymentMethodsManage;
+
+  /// No description provided for @settingsPaymentMethodsPaypal.
+  ///
+  /// In en, this message translates to:
+  /// **'PayPal'**
+  String get settingsPaymentMethodsPaypal;
+
+  /// No description provided for @settingsPaymentMethodsBitcoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Bitcoin'**
+  String get settingsPaymentMethodsBitcoin;
+
+  /// No description provided for @settingsPrivacyExportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export your data'**
+  String get settingsPrivacyExportTitle;
+
+  /// No description provided for @settingsPrivacyExportDescriptionLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Download all synced entries as a secure archive. We\'ll notify you when the export is ready.'**
+  String get settingsPrivacyExportDescriptionLong;
+
+  /// No description provided for @settingsPrivacyExportButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Request export'**
+  String get settingsPrivacyExportButton;
+
+  /// No description provided for @settingsPrivacyDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete synced data'**
+  String get settingsPrivacyDeleteTitle;
+
+  /// No description provided for @settingsPrivacyDeleteWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting your account removes all synchronized information.'**
+  String get settingsPrivacyDeleteWarning;
+
+  /// No description provided for @settingsPrivacyDeleteDescriptionLong.
+  ///
+  /// In en, this message translates to:
+  /// **'This action keeps local data on your device but erases notes, tasks, and backups from the server.'**
+  String get settingsPrivacyDeleteDescriptionLong;
+
+  /// No description provided for @settingsPrivacyDeleteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Request deletion'**
+  String get settingsPrivacyDeleteButton;
 }
 
 class _AppLocalizationsDelegate

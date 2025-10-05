@@ -201,4 +201,97 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get settingsComingSoon => 'Den här funktionen kommer snart.';
+
+  @override
+  String get settingsAccountSignInTitle => 'Koppla ditt konto';
+
+  @override
+  String get settingsAccountSignInLongDescription =>
+      'Logga in för att aktivera säkra säkerhetskopior och synkronisering på alla enheter.';
+
+  @override
+  String get settingsAccountSignInOptionEmail => 'E-post och lösenord';
+
+  @override
+  String get settingsAccountSignInOptionGoogle => 'Google-konto';
+
+  @override
+  String get settingsAccountSignInOptionApple => 'Apple-ID';
+
+  @override
+  String get settingsAccountSignInOptionComingSoon => 'Kommer snart';
+
+  @override
+  String get settingsAccountSignInButton => 'Starta inloggning';
+
+  @override
+  String get settingsAccountSecurityTitle => 'Säkerhet och leverantörer';
+
+  @override
+  String get settingsAccountSecurityManageProviders =>
+      'Hantera länkade leverantörer';
+
+  @override
+  String get settingsSubscriptionPlanTitle => 'Tracker Sync-prenumeration';
+
+  @override
+  String get settingsSubscriptionPlanPricing => '1 € per månad • 10 € per år';
+
+  @override
+  String get settingsSubscriptionPlanBenefits => 'Dina fördelar';
+
+  @override
+  String get settingsSubscriptionBenefitSync =>
+      'Obegränsad synkronisering på alla enheter';
+
+  @override
+  String get settingsSubscriptionBenefitBackup =>
+      'Automatiska krypterade säkerhetskopior';
+
+  @override
+  String get settingsSubscriptionBenefitSupport =>
+      'Prioriterad support för prenumeranter';
+
+  @override
+  String get settingsSubscriptionPlanButton => 'Hantera prenumeration';
+
+  @override
+  String get settingsPaymentMethodsTitle => 'Betalningsmetoder';
+
+  @override
+  String get settingsPaymentMethodsDescription =>
+      'Välj vilka betalningsalternativ som ska användas för förlängningar.';
+
+  @override
+  String get settingsPaymentMethodsManage => 'Hantera betalningsmetoder';
+
+  @override
+  String get settingsPaymentMethodsPaypal => 'PayPal';
+
+  @override
+  String get settingsPaymentMethodsBitcoin => 'Bitcoin';
+
+  @override
+  String get settingsPrivacyExportTitle => 'Exportera dina data';
+
+  @override
+  String get settingsPrivacyExportDescriptionLong =>
+      'Ladda ner alla synkroniserade poster som ett säkert arkiv. Vi meddelar dig när exporten är klar.';
+
+  @override
+  String get settingsPrivacyExportButton => 'Begär export';
+
+  @override
+  String get settingsPrivacyDeleteTitle => 'Ta bort synkroniserade data';
+
+  @override
+  String get settingsPrivacyDeleteWarning =>
+      'När du tar bort kontot raderas all synkroniserad information.';
+
+  @override
+  String get settingsPrivacyDeleteDescriptionLong =>
+      'Denna åtgärd behåller lokala data på enheten men tar bort anteckningar, uppgifter och säkerhetskopior från servern.';
+
+  @override
+  String get settingsPrivacyDeleteButton => 'Begär borttagning';
 }
