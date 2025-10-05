@@ -1,0 +1,16 @@
+{
+  "@@locale": "sv",
+  "appTitle": "Tracker",
+  "tabDashboard": "Översikt",
+  "tabTasks": "Uppgifter",
+  "tabNotes": "Anteckningar",
+  "tabHabits": "Vanor",
+  "tabHousehold": "Hushåll",
+  "tabSettings": "Inställningar",
+  "dashboardPlaceholder": "Översikten byggs här.",
+  "tasksPlaceholder": "Planera och hantera uppgifter och möten här.",
+  "notesPlaceholder": "Skapa och organisera anteckningar här.",
+  "habitsPlaceholder": "Följ dina vanor på denna sida.",
+  "householdPlaceholder": "Hantera hushållets ekonomi här.",
+  "settingsPlaceholder": "Justera dina inställningar här."
+}

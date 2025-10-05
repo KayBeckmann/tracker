@@ -1,0 +1,16 @@
+{
+  "@@locale": "de",
+  "appTitle": "Tracker",
+  "tabDashboard": "Übersicht",
+  "tabTasks": "Termine",
+  "tabNotes": "Notizen",
+  "tabHabits": "Gewohnheiten",
+  "tabHousehold": "Haushalt",
+  "tabSettings": "Einstellungen",
+  "dashboardPlaceholder": "Die Übersichtsseite entsteht hier.",
+  "tasksPlaceholder": "Plane und verwalte deine Termine und Aufgaben hier.",
+  "notesPlaceholder": "Lege deine Notizen und Vorlagen hier an.",
+  "habitsPlaceholder": "Verfolge deine Gewohnheiten auf dieser Seite.",
+  "householdPlaceholder": "Verwalte Einnahmen und Ausgaben im Haushaltsbuch.",
+  "settingsPlaceholder": "Passe deine persönlichen Einstellungen hier an."
+}

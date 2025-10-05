@@ -1,0 +1,16 @@
+{
+  "@@locale": "en",
+  "appTitle": "Tracker",
+  "tabDashboard": "Dashboard",
+  "tabTasks": "Tasks",
+  "tabNotes": "Notes",
+  "tabHabits": "Habits",
+  "tabHousehold": "Household",
+  "tabSettings": "Settings",
+  "dashboardPlaceholder": "Dashboard overview coming soon.",
+  "tasksPlaceholder": "Plan and review your tasks here.",
+  "notesPlaceholder": "Create and organize notes here.",
+  "habitsPlaceholder": "Track habits from this screen.",
+  "householdPlaceholder": "Manage household finances here.",
+  "settingsPlaceholder": "Configure your preferences here."
+}

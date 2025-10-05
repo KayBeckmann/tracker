@@ -32,6 +32,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+lib/generated_plugin_registrant.dart
+**/Flutter/ephemeral/
 
 # Symbolication related
 app.*.symbols

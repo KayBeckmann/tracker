@@ -3,7 +3,7 @@
 ## To Do
 
 - [ ] Project Setup:
-    - [ ] Initialize Flutter project.
+    - [x] Initialize Flutter project.
     - [ ] Create Dockerfiles for Frontend (Flutter) and Backend.
     - [ ] Configure Docker Compose for multi-container setup.
 - [ ] Frontend Development (Flutter):
@@ -12,8 +12,8 @@
     - [ ] Integrate frontend SQL database.
     - [ ] Implement Multilingual Support:
         - [ ] Research Flutter internationalization (i18n) and localization (l10n) best practices.
-        - [ ] Set up localization files for German (de), English (en), and Swedish (sv).
-        - [ ] Integrate text strings into the UI using localization.
+        - [x] Set up localization files for German (de), English (en), and Swedish (sv).
+        - [x] Integrate text strings into the UI using localization.
         - [ ] Implement language switching functionality in settings.
     - [ ] Implement core features:
         - [ ] Dashboard Module:
