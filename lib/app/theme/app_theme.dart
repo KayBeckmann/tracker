@@ -3,20 +3,28 @@ import 'package:flutter/material.dart';
 class AppTheme {
   const AppTheme._();
 
-  static ThemeData light() {
+  static ThemeData light(Color seedColor) {
+    final colorScheme = ColorScheme.fromSeed(seedColor: seedColor);
     return ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+      colorScheme: colorScheme,
       useMaterial3: true,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.surfaceContainerHigh,
+      ),
     );
   }
 
-  static ThemeData dark() {
+  static ThemeData dark(Color seedColor) {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: seedColor,
+      brightness: Brightness.dark,
+    );
     return ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.teal,
-        brightness: Brightness.dark,
-      ),
+      colorScheme: colorScheme,
       useMaterial3: true,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.surfaceContainerHigh,
+      ),
     );
   }
 }

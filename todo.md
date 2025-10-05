@@ -14,7 +14,7 @@
         - [ ] Research Flutter internationalization (i18n) and localization (l10n) best practices.
         - [x] Set up localization files for German (de), English (en), and Swedish (sv).
         - [x] Integrate text strings into the UI using localization.
-        - [ ] Implement language switching functionality in settings.
+        - [x] Implement language switching functionality in settings.
     - [ ] Implement core features:
         - [ ] Dashboard Module:
             - [ ] Design and implement overview UI.
@@ -78,20 +78,22 @@
             - [ ] Design and implement user settings UI.
             - [ ] Implement local storage for user preferences.
             - [ ] Implement Theme Selection:
-                - [ ] UI for selecting System, Light, or Dark theme.
-                - [ ] Logic to apply selected theme.
-                - [ ] UI for color palette selection/customization.
-                - [ ] Logic to apply custom color scheme.
+                - [x] UI for selecting System, Light, or Dark theme.
+                - [x] Logic to apply selected theme.
+                - [x] UI for color palette selection/customization.
+                - [x] Logic to apply custom color scheme.
             - [ ] Implement Language Selection:
-                - [ ] UI for selecting German, English, or Swedish.
-                - [ ] Logic to apply selected language.
+                - [x] UI for selecting German, English, or Swedish.
+                - [x] Logic to apply selected language.
             - [ ] Implement Backend Login Integration:
                 - [ ] UI for backend login (email/password, Google, Apple ID).
                 - [ ] Integrate with backend authentication API.
             - [ ] Implement Backend Subscription Management:
+                - [ ] Dokumentiere das kostenpflichtige Sync-Angebot (1 € pro Monat / 10 € pro Jahr).
                 - [ ] UI for displaying subscription status.
                 - [ ] UI for initiating subscription (monthly/yearly).
                 - [ ] Integrate with payment gateway (PayPal, Bitcoin).
+                - [ ] Beschränke Backend-Synchronisation auf angemeldete Nutzer (Google, Apple ID, E-Mail+Passwort).
 - [ ] Backend Development:
     - [ ] Research and choose a backend framework (e.g., Node.js/Express, Python/FastAPI, Go/Gin).
     - [ ] Research and choose a SQL database for the backend (e.g., PostgreSQL, MySQL).

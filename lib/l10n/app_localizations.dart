@@ -177,6 +177,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Configure your preferences here.'**
   String get settingsPlaceholder;
+
+  /// No description provided for @settingsSectionAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get settingsSectionAccount;
+
+  /// No description provided for @settingsSectionAccountDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to unlock synchronization across your devices.'**
+  String get settingsSectionAccountDescription;
+
+  /// No description provided for @settingsAccountSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get settingsAccountSignIn;
+
+  /// No description provided for @settingsAccountSignInDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use email, Google, or Apple ID.'**
+  String get settingsAccountSignInDescription;
+
+  /// No description provided for @settingsAccountSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get settingsAccountSecurity;
+
+  /// No description provided for @settingsAccountSecurityDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Review password and linked providers.'**
+  String get settingsAccountSecurityDescription;
+
+  /// No description provided for @settingsSectionAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsSectionAppearance;
+
+  /// No description provided for @settingsSectionAppearanceDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalize how Tracker looks and feels.'**
+  String get settingsSectionAppearanceDescription;
+
+  /// No description provided for @settingsAppearanceTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get settingsAppearanceTheme;
+
+  /// No description provided for @settingsAppearanceThemeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose system, light, or dark mode.'**
+  String get settingsAppearanceThemeDescription;
+
+  /// No description provided for @settingsAppearanceLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsAppearanceLanguage;
+
+  /// No description provided for @settingsAppearanceLanguageDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between German, English, or Swedish.'**
+  String get settingsAppearanceLanguageDescription;
+
+  /// No description provided for @settingsAppearanceAccent.
+  ///
+  /// In en, this message translates to:
+  /// **'Accent color'**
+  String get settingsAppearanceAccent;
+
+  /// No description provided for @settingsAppearanceAccentDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a color palette that matches your mood.'**
+  String get settingsAppearanceAccentDescription;
+
+  /// No description provided for @settingsSectionSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Synchronization'**
+  String get settingsSectionSync;
+
+  /// No description provided for @settingsSectionSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Control when data syncs with the backend service.'**
+  String get settingsSectionSyncDescription;
+
+  /// No description provided for @settingsSyncStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable synchronization'**
+  String get settingsSyncStatus;
+
+  /// No description provided for @settingsSyncStatusDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep data up to date across devices when signed in.'**
+  String get settingsSyncStatusDescription;
+
+  /// No description provided for @settingsSyncAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backups'**
+  String get settingsSyncAuto;
+
+  /// No description provided for @settingsSyncAutoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Send changes in the background when connected to Wi‑Fi.'**
+  String get settingsSyncAutoDescription;
+
+  /// No description provided for @settingsSyncAutoDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate synchronization to manage automatic backups.'**
+  String get settingsSyncAutoDisabled;
+
+  /// No description provided for @settingsSectionSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription'**
+  String get settingsSectionSubscription;
+
+  /// No description provided for @settingsSectionSubscriptionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracker Sync costs €1/month or €10/year after the trial.'**
+  String get settingsSectionSubscriptionDescription;
+
+  /// No description provided for @settingsSubscriptionPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage plan'**
+  String get settingsSubscriptionPlan;
+
+  /// No description provided for @settingsSubscriptionPlanDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View your current tier and renewal date.'**
+  String get settingsSubscriptionPlanDescription;
+
+  /// No description provided for @settingsSubscriptionPaymentMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment methods'**
+  String get settingsSubscriptionPaymentMethods;
+
+  /// No description provided for @settingsSubscriptionPaymentMethodsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with PayPal or Bitcoin.'**
+  String get settingsSubscriptionPaymentMethodsDescription;
+
+  /// No description provided for @settingsSectionPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Data & Privacy'**
+  String get settingsSectionPrivacy;
+
+  /// No description provided for @settingsSectionPrivacyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Export or delete your stored information.'**
+  String get settingsSectionPrivacyDescription;
+
+  /// No description provided for @settingsPrivacyExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export data'**
+  String get settingsPrivacyExport;
+
+  /// No description provided for @settingsPrivacyExportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Download a copy of tasks, notes, and finances.'**
+  String get settingsPrivacyExportDescription;
+
+  /// No description provided for @settingsPrivacyDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get settingsPrivacyDelete;
+
+  /// No description provided for @settingsPrivacyDeleteDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Request removal of all synced data.'**
+  String get settingsPrivacyDeleteDescription;
+
+  /// No description provided for @settingsThemeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsThemeSystem;
+
+  /// No description provided for @settingsThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeLight;
+
+  /// No description provided for @settingsThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeDark;
+
+  /// No description provided for @settingsLanguageSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsLanguageSystem;
+
+  /// No description provided for @settingsLanguageGerman.
+  ///
+  /// In en, this message translates to:
+  /// **'German'**
+  String get settingsLanguageGerman;
+
+  /// No description provided for @settingsLanguageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get settingsLanguageEnglish;
+
+  /// No description provided for @settingsLanguageSwedish.
+  ///
+  /// In en, this message translates to:
+  /// **'Swedish'**
+  String get settingsLanguageSwedish;
+
+  /// No description provided for @settingsColorTeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Ocean teal'**
+  String get settingsColorTeal;
+
+  /// No description provided for @settingsColorBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'Sky blue'**
+  String get settingsColorBlue;
+
+  /// No description provided for @settingsColorAmber.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm amber'**
+  String get settingsColorAmber;
+
+  /// No description provided for @settingsColorPurple.
+  ///
+  /// In en, this message translates to:
+  /// **'Berry purple'**
+  String get settingsColorPurple;
+
+  /// No description provided for @settingsColorForest.
+  ///
+  /// In en, this message translates to:
+  /// **'Forest green'**
+  String get settingsColorForest;
+
+  /// No description provided for @settingsComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'This option will arrive soon.'**
+  String get settingsComingSoon;
 }
 
 class _AppLocalizationsDelegate
