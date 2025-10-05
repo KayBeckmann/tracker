@@ -17,3 +17,6 @@ homepage/dist/
 *.iml
 .idea/
 .vscode/
+
+# Serverpod local cache
+.serverpod-home/

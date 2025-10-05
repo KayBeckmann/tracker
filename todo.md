@@ -95,8 +95,8 @@
                 - [ ] Integrate with payment gateway (PayPal, Bitcoin).
                 - [ ] Beschränke Backend-Synchronisation auf angemeldete Nutzer (Google, Apple ID, E-Mail+Passwort).
 - [ ] Backend Development:
-    - [ ] Research and choose a backend framework (e.g., Node.js/Express, Python/FastAPI, Go/Gin).
-    - [ ] Research and choose a SQL database for the backend (e.g., PostgreSQL, MySQL).
+    - [x] Research and choose a backend framework (e.g., Node.js/Express, Python/FastAPI, Go/Gin).
+    - [x] Research and choose a SQL database for the backend (e.g., PostgreSQL, MySQL).
     - [ ] Set up backend database schema and migrations for all modules.
     - [ ] Implement basic API endpoints for frontend communication.
     - [ ] Implement User Authentication:

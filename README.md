@@ -3,7 +3,7 @@
 Dieses Repository ist in drei Hauptteile gegliedert:
 
 - `app/` – Flutter-Anwendung inkl. aller mobilen/desktop Builds und Tests.
-- `backend/` – Platzhalter für das kommende Backend (Dev-Stacks, APIs etc.).
+- `backend/` – Serverpod-Backend mit Docker-basierter Dev-Umgebung.
 - `homepage/` – Platzhalter für die Projekt-Homepage bzw. Marketing-Site.
 
 ## Entwickeln
@@ -17,9 +17,20 @@ flutter analyze
 flutter run
 ```
 
-### Backend / Homepage
+### Backend
 
-Zurzeit sind dies nur Ordnerstruktur-Platzhalter. Sobald wir das Backend aufsetzen, kommt hier eine Docker-basierte Dev-Umgebung mit flüchtiger Datenbank dazu, und die Homepage erhält das passende Build-Setup.
+```bash
+cd backend/tracker_backend/tracker_backend_server
+docker compose up --build -d
+dart bin/main.dart --apply-migrations
+```
+
+Weitere Hinweise (CLI-Wrapperskript, Migrationen, Konfiguration) findest du in
+`backend/README.md`.
+
+### Homepage
+
+Noch nicht umgesetzt. `homepage/README.md` dokumentiert geplante Inhalte.
 
 ## Weitere Unterlagen
 
