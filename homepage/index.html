@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tracker – Verfolge, analysiere, optimiere</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="top-bar">
+        <div class="brand">
+            <span class="logo">tracker</span>
+            <span class="tagline">Produktivität im Blick</span>
+        </div>
+        <nav class="main-nav" aria-label="Hauptnavigation">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#wiki">Wiki</a>
+            <a href="#contact">Kontakt</a>
+        </nav>
+        <button class="theme-toggle" id="themeToggle" aria-label="Darstellung umschalten">
+            <span class="icon-sun" aria-hidden="true">☀</span>
+            <span class="icon-moon" aria-hidden="true">☾</span>
+        </button>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Behalte deine Ziele im Fokus.</h1>
+                <p>tracker hilft Teams und Einzelpersonen, Fortschritte transparent zu machen, Routinen zu etablieren und Entscheidungen datenbasiert zu treffen.</p>
+                <div class="hero-actions">
+                    <a class="btn primary" href="#contact">Jetzt informieren</a>
+                    <a class="btn ghost" href="#wiki">Mehr erfahren</a>
+                </div>
+                <div class="hero-metrics">
+                    <div>
+                        <span class="metric-value">3,5 Mio+</span>
+                        <span class="metric-label">erfasste Tasks</span>
+                    </div>
+                    <div>
+                        <span class="metric-value">94%</span>
+                        <span class="metric-label">zufriedene Teams</span>
+                    </div>
+                    <div>
+                        <span class="metric-value">12 h</span>
+                        <span class="metric-label">Zeitersparnis pro Woche</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-preview" aria-hidden="true">
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <span class="preview-title">Sprint-Fortschritt</span>
+                        <span class="preview-date">KW 42</span>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-chart">
+                            <div class="bar bar-1"></div>
+                            <div class="bar bar-2"></div>
+                            <div class="bar bar-3"></div>
+                            <div class="bar bar-4"></div>
+                        </div>
+                        <ul class="preview-list">
+                            <li><span class="dot dot-green"></span> Launch-Kampagne</li>
+                            <li><span class="dot dot-amber"></span> Onboarding-Flow</li>
+                            <li><span class="dot dot-blue"></span> Reporting-API</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="feature-section">
+            <div class="section-header">
+                <h2>Feature-Highlights</h2>
+                <p>Alles, was du brauchst, um Arbeit transparent zu machen und besser zu planen.</p>
+            </div>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <h3>Automatische Insights</h3>
+                    <p>Erhalte wöchentliche Statusupdates mit klaren Empfehlungen, was als Nächstes Priorität hat.</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Flexibles Dashboard</h3>
+                    <p>Baue unterschiedliche Ansichten für Teams, Stakeholder und Kunden ohne Mehraufwand.</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Integrationen</h3>
+                    <p>Verbinde tracker mit Jira, Slack, Notion und über 20 weiteren Tools aus deinem Ökosystem.</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Focus-Modus</h3>
+                    <p>Setze Tagesziele, tracke Ablenkungen und sammele kleine Erfolge für nachhaltige Motivation.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="showcase" aria-labelledby="showcase-title">
+            <div class="section-header">
+                <h2 id="showcase-title">So arbeitet tracker</h2>
+                <p>Von der ersten Idee bis zum Release behältst du Klarheit über Aufgaben, Blocker und Ergebnisse.</p>
+            </div>
+            <div class="showcase-grid">
+                <div class="showcase-item">
+                    <span class="step">1</span>
+                    <h3>Planen</h3>
+                    <p>Strukturiere Ziele und Key Results, teile Verantwortlichkeiten und definiere Deadlines.</p>
+                </div>
+                <div class="showcase-item">
+                    <span class="step">2</span>
+                    <h3>Tracken</h3>
+                    <p>Verfolge Fortschritt in Echtzeit, markiere Blocker und erhalte Erinnerungen an kritische Punkte.</p>
+                </div>
+                <div class="showcase-item">
+                    <span class="step">3</span>
+                    <h3>Analysieren</h3>
+                    <p>Nutze intelligente Reports, die Produktivität und Fokuszeiten analysieren.</p>
+                </div>
+                <div class="showcase-item">
+                    <span class="step">4</span>
+                    <h3>Optimieren</h3>
+                    <p>Setze verbesserte Workflows um und dokumentiere Best Practices für dein Team.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="wiki" class="wiki">
+            <div class="section-header">
+                <h2>Produkt-Wiki</h2>
+                <p>Kurz erklärt: Wie tracker dich im Arbeitsalltag unterstützt.</p>
+            </div>
+            <div class="wiki-search">
+                <input type="search" id="wikiSearch" placeholder="Funktionen durchsuchen..." aria-label="Wiki durchsuchen">
+            </div>
+            <div class="wiki-tabs" role="tablist" aria-label="Wiki Kategorien">
+                <button role="tab" class="wiki-tab active" data-target="tab-overview" aria-selected="true">Überblick</button>
+                <button role="tab" class="wiki-tab" data-target="tab-features">Funktionen</button>
+                <button role="tab" class="wiki-tab" data-target="tab-integration">Integrationen</button>
+                <button role="tab" class="wiki-tab" data-target="tab-security">Sicherheit</button>
+            </div>
+            <div class="wiki-panels">
+                <article id="tab-overview" class="wiki-panel active" role="tabpanel">
+                    <h3>Was ist tracker?</h3>
+                    <p>tracker ist eine zentrale Plattform, um Ziele, Workflows und Fortschritt transparent zu koordinieren. Das System verbindet persönliche Fokuszeiten mit Team-Reporting und liefert verwertbare Erkenntnisse.</p>
+                    <ul class="wiki-list">
+                        <li data-tags="onboarding tips">Personalisierte Onboarding-Assistenten für neue Teammitglieder</li>
+                        <li data-tags="dashboard setup">Konfigurierbare Dashboards mit Live-Metriken</li>
+                        <li data-tags="ai coaching">AI-Coach, der bei Priorisierung und Retrospektiven hilft</li>
+                    </ul>
+                </article>
+                <article id="tab-features" class="wiki-panel" role="tabpanel" hidden>
+                    <h3>Feature-Details</h3>
+                    <ul class="wiki-list">
+                        <li data-tags="insights reports">Weekly Insights fassen Fortschritte, Blocker und To-dos zusammen.</li>
+                        <li data-tags="focus timer">Der Fokus-Timer trackt Deep-Work-Phasen und schlägt Pausen vor.</li>
+                        <li data-tags="automation rules">Automation Rules triggern Benachrichtigungen oder Statuswechsel.</li>
+                        <li data-tags="templates library">Vorlagen für Kick-offs, Sprint Reviews und Retros.</li>
+                    </ul>
+                </article>
+                <article id="tab-integration" class="wiki-panel" role="tabpanel" hidden>
+                    <h3>Integrationsübersicht</h3>
+                    <ul class="wiki-list">
+                        <li data-tags="integration jira">Jira-Boards synchronisieren Issues und Status in Echtzeit.</li>
+                        <li data-tags="integration slack">Slack-Benachrichtigungen informieren über kritische Updates.</li>
+                        <li data-tags="integration notion">Notion-Datenbanken werden eingebunden, um Dokumentation aktuell zu halten.</li>
+                        <li data-tags="integration calendar">Kalendersynchronisation setzt Fokusblöcke automatisch.</li>
+                    </ul>
+                </article>
+                <article id="tab-security" class="wiki-panel" role="tabpanel" hidden>
+                    <h3>Sicherheit & Compliance</h3>
+                    <ul class="wiki-list">
+                        <li data-tags="security encryption">Ende-zu-Ende-Verschlüsselung sensibler Projektdaten.</li>
+                        <li data-tags="security roles">Rollenbasierte Rechteverwaltung für granularen Zugriff.</li>
+                        <li data-tags="compliance gdpr">DSGVO-konforme Datenspeicherung in EU-Rechenzentren.</li>
+                        <li data-tags="audit trails">Audit Trails dokumentieren jede Änderung nachvollziehbar.</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section class="cta" id="contact">
+            <div class="cta-content">
+                <h2>Lass uns gemeinsam starten</h2>
+                <p>Buche eine Demo mit unserem Team und entdecke, wie tracker deine Abläufe beschleunigt.</p>
+                <form class="cta-form" aria-label="Kontaktformular">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Max Mustermann">
+                    <label for="email">E-Mail</label>
+                    <input type="email" id="email" name="email" placeholder="max@example.com">
+                    <label for="teamSize">Teamgröße</label>
+                    <select id="teamSize" name="teamSize">
+                        <option value="1-5">1-5 Personen</option>
+                        <option value="6-20">6-20 Personen</option>
+                        <option value="21-50">21-50 Personen</option>
+                        <option value="50+">50+ Personen</option>
+                    </select>
+                    <button type="submit" class="btn primary">Demo anfragen</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-brand">tracker</div>
+        <div class="footer-links">
+            <a href="#">Impressum</a>
+            <a href="#">Datenschutz</a>
+            <a href="#">Support</a>
+        </div>
+        <small>© <span id="year"></span> tracker. Alle Rechte vorbehalten.</small>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
