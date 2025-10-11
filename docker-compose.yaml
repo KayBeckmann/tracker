@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+      args:
+        FLUTTER_VERSION: 3.24.0
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      runmode: docker
+      serverid: default
+      logging: normal
+      role: monolith
+    ports:
+      - "8081:8080"
+      - "8082:8081"
+      - "8083:8082"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend/tracker_backend/tracker_backend_server/config/passwords.docker.yaml:/app/config/passwords.yaml:ro
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: tracker
+      POSTGRES_DB: tracker_backend
+    ports:
+      - "8090:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass tracker
+    environment:
+      REDIS_REPLICATION_MODE: master
+    ports:
+      - "8091:6379"

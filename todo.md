@@ -4,8 +4,8 @@
 
 - [ ] Project Setup:
     - [x] Initialize Flutter project.
-    - [ ] Create Dockerfiles for Frontend (Flutter) and Backend.
-    - [ ] Configure Docker Compose for multi-container setup.
+    - [x] Create Dockerfiles for Frontend (Flutter) and Backend.
+    - [x] Configure Docker Compose for multi-container setup.
 - [ ] Frontend Development (Flutter):
     - [ ] Research and choose a suitable SQL database for Flutter (e.g., sqflite, drift).
     - [ ] Implement basic UI for testing database integration.

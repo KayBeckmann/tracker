@@ -46,7 +46,7 @@ class AppSettings {
     return <String, dynamic>{
       'themeMode': themeMode.index,
       'languageCode': languageCode,
-      'seedColor': seedColor.toARGB32(),
+      'seedColor': seedColor.value,
       'syncEnabled': syncEnabled,
       'autoSyncEnabled': autoSyncEnabled,
     };
