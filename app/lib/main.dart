@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 
 import 'data/local/app_database.dart';
 import 'l10n/generated/app_localizations.dart';
-import 'package:app/notes/notes_page.dart';
 import 'models/membership_status.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
@@ -1098,6 +1097,10 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildNotes(BuildContext context) {
+    return NotesPage(database: _database);
   }
 
 
