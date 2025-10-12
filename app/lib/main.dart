@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
+import 'data/local/app_database.dart';
+
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
   defaultValue: 'http://127.0.0.1:8080',
@@ -15,11 +17,14 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox(trackerBoxName);
-  runApp(const TrackerApp());
+  final database = AppDatabase();
+  runApp(TrackerApp(database: database));
 }
 
 class TrackerApp extends StatelessWidget {
-  const TrackerApp({super.key});
+  const TrackerApp({super.key, required this.database});
+
+  final AppDatabase database;
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +34,15 @@ class TrackerApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: HomePage(database: database),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.database});
+
+  final AppDatabase database;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -107,6 +114,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _registerDisplayNameController =
       TextEditingController();
   late final Box<dynamic> _trackerBox;
+  late final AppDatabase _database;
   String _statusMessage = 'Backend wurde noch nicht kontaktiert.';
   bool _isLoading = false;
   bool _isAuthInProgress = false;
@@ -118,6 +126,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _database = widget.database;
     _trackerBox = Hive.box(trackerBoxName);
   }
 
@@ -160,14 +169,12 @@ class _HomePageState extends State<HomePage> {
           data['message'] as String? ?? 'Unerwartete Antwort vom Server.';
       final source = data['source'] as String? ?? 'unbekannt';
 
-      final entry = <String, dynamic>{
-        'name': name,
-        'message': message,
-        'source': source,
-        'timestamp': DateTime.now().toIso8601String(),
-      };
-
-      await _trackerBox.add(entry);
+      await _database.insertGreetingEntry(
+        name: name,
+        message: message,
+        source: source,
+        createdAt: DateTime.now(),
+      );
 
       if (!mounted) {
         return;
@@ -190,19 +197,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _clearHistory() async {
-    final keysToDelete = _trackerBox.keys.where((key) {
-      if (key is! int) {
-        return false;
-      }
-      final value = _trackerBox.get(key);
-      return value is Map && value.containsKey('timestamp');
-    }).toList();
-
-    if (keysToDelete.isEmpty) {
-      return;
-    }
-
-    await _trackerBox.deleteAll(keysToDelete);
+    await _database.clearGreetingEntries();
     if (!mounted) {
       return;
     }
@@ -418,58 +413,71 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<dynamic>>(
-      valueListenable: _trackerBox.listenable(),
+      valueListenable: _trackerBox.listenable(
+        keys: const ['auth_token', 'auth_user'],
+      ),
       builder: (context, box, _) {
         final String? authToken = box.get('auth_token') as String?;
         final AuthenticatedUser? currentUser = _readCurrentUser(box);
-
-        final entries = box.values
-            .whereType<Map>()
-            .map<Map<String, dynamic>>(
-              (value) =>
-                  value.map((key, dynamic v) => MapEntry(key.toString(), v)),
-            )
-            .where((entry) => entry.containsKey('timestamp'))
-            .toList()
-            .reversed
-            .toList();
 
         if (authToken == null || currentUser == null) {
           return _buildAuthScaffold(context);
         }
 
-        final bool useNavigationRail = MediaQuery.of(context).size.width >= 900;
+        return StreamBuilder<List<GreetingEntry>>(
+          stream: _database.watchGreetingEntries(),
+          builder: (context, snapshot) {
+            final entries = snapshot.data ?? const <GreetingEntry>[];
+            final bool isHistoryLoading =
+                snapshot.connectionState == ConnectionState.waiting &&
+                !snapshot.hasData;
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(_sectionTitle(_selectedSection)),
-            actions: [
-              if (_selectedSection == _AppSection.history && entries.isNotEmpty)
-                IconButton(
-                  tooltip: 'Lokale Historie löschen',
-                  onPressed: _clearHistory,
-                  icon: const Icon(Icons.delete_sweep),
-                ),
-              IconButton(
-                tooltip: 'Abmelden',
-                onPressed: _isAuthInProgress ? null : _handleLogout,
-                icon: const Icon(Icons.logout),
+            final bool useNavigationRail =
+                MediaQuery.of(context).size.width >= 900;
+
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(_sectionTitle(_selectedSection)),
+                actions: [
+                  if (_selectedSection == _AppSection.history &&
+                      (entries.isNotEmpty || isHistoryLoading))
+                    IconButton(
+                      tooltip: 'Lokale Historie löschen',
+                      onPressed: (isHistoryLoading || entries.isEmpty)
+                          ? null
+                          : _clearHistory,
+                      icon: const Icon(Icons.delete_sweep),
+                    ),
+                  IconButton(
+                    tooltip: 'Abmelden',
+                    onPressed: _isAuthInProgress ? null : _handleLogout,
+                    icon: const Icon(Icons.logout),
+                  ),
+                ],
               ),
-            ],
-          ),
-          drawer: useNavigationRail ? null : _buildDrawer(context, currentUser),
-          body: Row(
-            children: [
-              if (useNavigationRail) _buildNavigationRail(context, currentUser),
-              if (useNavigationRail) const VerticalDivider(width: 1),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: _buildSection(context, entries, currentUser),
-                ),
+              drawer: useNavigationRail
+                  ? null
+                  : _buildDrawer(context, currentUser),
+              body: Row(
+                children: [
+                  if (useNavigationRail)
+                    _buildNavigationRail(context, currentUser),
+                  if (useNavigationRail) const VerticalDivider(width: 1),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: _buildSection(
+                        context,
+                        entries,
+                        currentUser,
+                        isHistoryLoading: isHistoryLoading,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -782,26 +790,27 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSection(
     BuildContext context,
-    List<Map<String, dynamic>> entries,
-    AuthenticatedUser currentUser,
-  ) {
+    List<GreetingEntry> entries,
+    AuthenticatedUser currentUser, {
+    required bool isHistoryLoading,
+  }) {
     switch (_selectedSection) {
       case _AppSection.dashboard:
         return _buildDashboard(context, entries, currentUser);
       case _AppSection.communication:
         return _buildCommunication(context);
       case _AppSection.history:
-        return _buildHistory(entries);
+        return _buildHistory(entries, isHistoryLoading);
     }
   }
 
   Widget _buildDashboard(
     BuildContext context,
-    List<Map<String, dynamic>> entries,
+    List<GreetingEntry> entries,
     AuthenticatedUser currentUser,
   ) {
     final theme = Theme.of(context);
-    final Map<String, dynamic>? latestEntry = entries.isNotEmpty
+    final GreetingEntry? latestEntry = entries.isNotEmpty
         ? entries.first
         : null;
 
@@ -832,10 +841,9 @@ class _HomePageState extends State<HomePage> {
               icon: Icons.chat_bubble_outline,
               title: 'Letzte Nachricht',
               value:
-                  latestEntry?['message'] as String? ??
-                  'Noch keine Nachrichten gespeichert.',
+                  latestEntry?.message ?? 'Noch keine Nachrichten gespeichert.',
               subtitle: latestEntry != null
-                  ? 'Quelle: ${latestEntry['source'] ?? 'unbekannt'}'
+                  ? 'Quelle: ${latestEntry.source}'
                   : null,
             ),
             _buildMetricCard(
@@ -944,7 +952,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHistory(List<Map<String, dynamic>> entries) {
+  Widget _buildHistory(List<GreetingEntry> entries, bool isLoading) {
+    if (isLoading && entries.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     if (entries.isEmpty) {
       return const Center(
         child: Text('Es sind noch keine gespeicherten Antworten vorhanden.'),
@@ -957,12 +969,12 @@ class _HomePageState extends State<HomePage> {
       separatorBuilder: (_, __) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final entry = entries[index];
-        final ts = entry['timestamp'] as String? ?? '';
-        final name = entry['name'] as String? ?? '-';
-        final source = entry['source'] as String? ?? 'unbekannt';
+        final ts = entry.createdAt.toIso8601String();
+        final name = entry.name;
+        final source = entry.source;
         return ListTile(
           leading: const Icon(Icons.history),
-          title: Text(entry['message'] as String? ?? ''),
+          title: Text(entry.message),
           subtitle: Text('Name: $name, Quelle: $source, Zeit: $ts'),
         );
       },

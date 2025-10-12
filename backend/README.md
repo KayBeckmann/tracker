@@ -2,18 +2,28 @@
 
 Simple FastAPI backend exposing a greeting and health endpoint for the tracker demo.
 
-## Local development
+## Lokale Entwicklung
+
+### Ohne Docker
 
 ```bash
 pip install -r requirements.txt
+export DATABASE_URL="postgresql+psycopg://tracker:tracker@localhost:5432/tracker"
+export AUTH_SECRET_KEY="change-this-secret"
 uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
-## Docker
+Das Backend verwendet standardmäßig SQLite (`sqlite:///./tracker.db`). Sobald `DATABASE_URL`
+gesetzt ist, wird die angegebene SQL-Datenbank genutzt; für Postgres eignet sich der obige
+Connection-String.
+
+### Mit Docker Compose
 
 ```bash
-docker build -t tracker-backend ./backend
-docker run --rm -p 8080:8080 tracker-backend
+docker compose up --build
 ```
 
-Once running, try `curl http://127.0.0.1:8080/api/greeting?name=Flutter`.
+Compose startet automatisch eine Postgres-Instanz sowie das Backend mit dem
+vorkonfigurierten Connection-String `postgresql+psycopg://tracker:tracker@db:5432/tracker`.
+
+Nach dem Start lässt sich das Backend z.B. mit `curl http://127.0.0.1:8080/api/health` prüfen.
