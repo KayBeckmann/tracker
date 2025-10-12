@@ -20,3 +20,10 @@ homepage/dist/
 
 # Serverpod local cache
 .serverpod-home/
+
+# Flutter tooling caches
+.dart-tool/
+.dartServer/
+.flutter
+.pub-cache/
+.config/
