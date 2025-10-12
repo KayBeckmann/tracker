@@ -490,3 +490,83 @@ main {
         scroll-behavior: auto !important;
     }
 }
+
+.pricing-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.pricing-card {
+    background: var(--bg-alt);
+    padding: 2.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    transition: transform var(--transition), box-shadow var(--transition);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.pricing-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+}
+
+.pricing-card.featured {
+    transform: translateY(-10px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.2);
+}
+
+.pricing-card h3 {
+    font-size: 1.5rem;
+}
+
+.price {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.price span {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.pricing-card ul {
+    list-style: none;
+    display: grid;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.pricing-card li {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.pricing-card li::before {
+    content: '✔';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+}
+
+.cta-form textarea {
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-alt);
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+}
