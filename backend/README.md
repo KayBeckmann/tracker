@@ -27,3 +27,19 @@ Compose startet automatisch eine Postgres-Instanz sowie das Backend mit dem
 vorkonfigurierten Connection-String `postgresql+psycopg://tracker:tracker@db:5432/tracker`.
 
 Nach dem Start lässt sich das Backend z.B. mit `curl http://127.0.0.1:8080/api/health` prüfen.
+
+## Datenbank-Schema
+
+Das Backend verwendet SQLAlchemy, um das Datenbankschema automatisch aus den Modellen in `app/main.py` zu erstellen.
+
+**Wichtiger Hinweis:** Wenn Sie Änderungen am Datenbankschema vornehmen (z. B. neue Spalten zu einem Modell hinzufügen), müssen Sie die Datenbank manuell neu erstellen, damit die Änderungen wirksam werden. Da die Daten in einem Docker-Volume gespeichert werden, bleiben sie auch nach einem Neustart der Container erhalten.
+
+Um die Datenbank neu zu erstellen, führen Sie die folgenden Befehle aus:
+
+```bash
+docker compose down
+docker volume rm tracker_tracker-postgres-data
+docker compose up --build
+```
+
+**Achtung:** Dieser Vorgang löscht alle Daten in der Datenbank. Für eine Produktionsumgebung wird die Verwendung eines Migrationstools wie Alembic empfohlen.
