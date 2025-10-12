@@ -19,6 +19,13 @@ class GreetingEntries extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
+class NoteEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get content => text()();
+  TextColumn get tags => text().withDefault(const Constant(''))();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final directory = await getApplicationSupportDirectory();
@@ -27,7 +34,7 @@ LazyDatabase _openConnection() {
   });
 }
 
-@DriftDatabase(tables: [GreetingEntries])
+@DriftDatabase(tables: [GreetingEntries, NoteEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -39,7 +46,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   Stream<List<GreetingEntry>> watchGreetingEntries() {
     return (select(greetingEntries)..orderBy([
@@ -66,5 +73,46 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> clearGreetingEntries() {
     return delete(greetingEntries).go();
+  }
+
+  Stream<List<NoteEntry>> watchNoteEntries({
+    String? contentFilter,
+    String? tagFilter,
+  }) {
+    final query = select(noteEntries);
+
+    if (contentFilter != null && contentFilter.isNotEmpty) {
+      query.where((tbl) => tbl.content.like('%$contentFilter%'));
+    }
+
+    if (tagFilter != null && tagFilter.isNotEmpty) {
+      query.where((tbl) => tbl.tags.like('%$tagFilter%'));
+    }
+
+    query.orderBy([
+      (tbl) => OrderingTerm.desc(tbl.createdAt),
+      (tbl) => OrderingTerm.desc(tbl.id),
+    ]);
+
+    return query.watch();
+  }
+
+  Future<int> insertNoteEntry({
+    required String content,
+    required String tags,
+  }) {
+    final companion = NoteEntriesCompanion.insert(
+      content: content,
+      tags: tags,
+    );
+    return into(noteEntries).insert(companion);
+  }
+
+  Future<int> updateNoteEntry(NoteEntry entry) {
+    return update(noteEntries).replace(entry);
+  }
+
+  Future<int> deleteNoteEntry(int id) {
+    return (delete(noteEntries)..where((tbl) => tbl.id.equals(id))).go();
   }
 }
