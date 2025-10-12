@@ -31,15 +31,21 @@ LazyDatabase _openConnection() {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  // ignore: use_super_parameters
+  AppDatabase.test(QueryExecutor executor) : super(executor);
+
+  factory AppDatabase.inMemory() {
+    return AppDatabase.test(NativeDatabase.memory());
+  }
+
   @override
   int get schemaVersion => 1;
 
   Stream<List<GreetingEntry>> watchGreetingEntries() {
-    return (select(greetingEntries)
-          ..orderBy([
-            (tbl) => OrderingTerm.desc(tbl.createdAt),
-            (tbl) => OrderingTerm.desc(tbl.id),
-          ]))
+    return (select(greetingEntries)..orderBy([
+          (tbl) => OrderingTerm.desc(tbl.createdAt),
+          (tbl) => OrderingTerm.desc(tbl.id),
+        ]))
         .watch();
   }
 

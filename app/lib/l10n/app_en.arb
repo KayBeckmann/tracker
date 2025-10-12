@@ -1,0 +1,139 @@
+{
+  "@@locale": "en",
+  "appTitle": "Tracker",
+  "navDashboard": "Dashboard",
+  "navNotes": "Notes",
+  "navTasks": "Tasks",
+  "navHabits": "Habits",
+  "navLedger": "Household Ledger",
+  "navSettings": "Settings",
+  "navigationMenu": "Navigation",
+  "navigationUserTooltip": "Logged-in user",
+  "navLogout": "Sign out",
+  "navClearHistory": "Clear local history",
+  "dashboardWelcome": "Welcome to the dashboard, {name}",
+  "@dashboardWelcome": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardSignedInAs": "Signed in as {email}. Keep track of your backend communication and trigger actions right from here.",
+  "@dashboardSignedInAs": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardCardStoredResponses": "Stored responses",
+  "dashboardCardLatestMessage": "Latest message",
+  "dashboardCardBackendUrl": "Backend URL",
+  "dashboardCardUser": "User",
+  "dashboardCardStatus": "Status",
+  "dashboardQuickActionTitle": "Quick action",
+  "dashboardQuickActionDescription": "Fetch a new greeting from the backend and store it locally.",
+  "dashboardQuickActionButton": "Contact backend",
+  "dashboardQuickActionLoading": "Loading...",
+  "dashboardLatestEntriesTitle": "Recent responses",
+  "dashboardLatestEntriesEmpty": "No responses stored yet.",
+  "statusNotContacted": "The backend has not been contacted yet.",
+  "statusSendingRequest": "Sending request to {url}...",
+  "@statusSendingRequest": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "statusError": "Error: {description}",
+  "@statusError": {
+    "placeholders": {
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "statusHistoryCleared": "All local entries have been deleted.",
+  "communicationHeading": "Basic communication with the backend",
+  "communicationBackendUrl": "Current backend URL: {url}",
+  "@communicationBackendUrl": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "communicationNameLabel": "Name",
+  "communicationButton": "Contact backend",
+  "notesPlaceholder": "Your notes will appear here soon.",
+  "tasksPlaceholder": "Organise upcoming tasks here.",
+  "habitsPlaceholder": "Track your habits here.",
+  "ledgerPlaceholder": "Manage your household budget here.",
+  "historySubtitle": "Name: {name}, Source: {source}, Time: {timestamp}",
+  "@historySubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      },
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "historyEmpty": "No stored responses yet.",
+  "loginTabSignIn": "Sign in",
+  "loginTabRegister": "Register",
+  "loginHeading": "Sign in with your email address and password.",
+  "loginEmailLabel": "Email address",
+  "loginPasswordLabel": "Password",
+  "loginButton": "Sign in",
+  "loginGoogleButton": "Sign in with Google (coming soon)",
+  "registerHeading": "Create a new account with email and password.",
+  "registerDisplayNameLabel": "Display name (optional)",
+  "registerPasswordLabel": "Password (min. 8 characters)",
+  "registerButton": "Create account",
+  "registerGoogleButton": "Register with Google (coming soon)",
+  "authErrorInvalidEmailPassword": "Please enter a valid email address and a password with at least 8 characters.",
+  "authErrorMissingCredentials": "Please enter an email address and password.",
+  "authErrorEmailExists": "This email address is already registered.",
+  "authErrorGeneric": "Authentication error: {description}",
+  "@authErrorGeneric": {
+    "placeholders": {
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "authStatusSubmitting": "Submitting...",
+  "googlePlaceholder": "Google Sign-In will be added soon.",
+  "errorBadRequest": "The request was not valid.",
+  "errorUnauthorized": "Invalid credentials.",
+  "errorConflict": "This email address is already registered.",
+  "errorUnexpectedStatus": "Unexpected error (status {status}).",
+  "@errorUnexpectedStatus": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsLanguageSectionTitle": "Language",
+  "settingsLanguageDescription": "Select the language used in the app.",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageGerman": "German",
+  "settingsLanguageSwedish": "Swedish",
+  "settingsLanguageApply": "Apply language",
+  "settingsCurrentLanguage": "Current language: {language}",
+  "@settingsCurrentLanguage": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  }
+}

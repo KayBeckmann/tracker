@@ -1,30 +1,46 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive/hive.dart';
 
 import 'package:app/main.dart';
+import 'package:app/data/local/app_database.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  late Directory tempDir;
+  late AppDatabase database;
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  setUpAll(() async {
+    tempDir = await Directory.systemTemp.createTemp('tracker_hive_test');
+    Hive.init(tempDir.path);
+    await Hive.openBox(trackerBoxName);
+    database = AppDatabase.inMemory();
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  tearDown(() async {
+    await Hive.box(trackerBoxName).clear();
+  });
+
+  tearDownAll(() async {
+    await database.close();
+    final box = Hive.box(trackerBoxName);
+    await box.close();
+    await Hive.deleteBoxFromDisk(trackerBoxName);
+    await Hive.close();
+    await tempDir.delete(recursive: true);
+  });
+
+  testWidgets('renders initial tracker screen', (WidgetTester tester) async {
+    await tester.pumpWidget(TrackerApp(database: database));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sign in'), findsOneWidget);
+    expect(
+      find.text('Sign in with your email address and password.'),
+      findsOneWidget,
+    );
+    expect(find.text('Register'), findsOneWidget);
   });
 }

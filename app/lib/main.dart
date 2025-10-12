@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'l10n/generated/app_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import 'data/local/app_database.dart';
 
@@ -12,6 +14,13 @@ const String backendBaseUrl = String.fromEnvironment(
 );
 
 const String trackerBoxName = 'tracker_box';
+const String preferredLocaleKey = 'preferred_locale';
+
+const List<Locale> supportedAppLocales = <Locale>[
+  Locale('en'),
+  Locale('de'),
+  Locale('sv'),
+];
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,34 +30,74 @@ Future<void> main() async {
   runApp(TrackerApp(database: database));
 }
 
-class TrackerApp extends StatelessWidget {
+class TrackerApp extends StatefulWidget {
   const TrackerApp({super.key, required this.database});
 
   final AppDatabase database;
 
   @override
+  State<TrackerApp> createState() => _TrackerAppState();
+}
+
+class _TrackerAppState extends State<TrackerApp> {
+  Locale? _locale;
+
+  Box<dynamic> get _settingsBox => Hive.box(trackerBoxName);
+
+  @override
+  void initState() {
+    super.initState();
+    final String? storedLocale =
+        _settingsBox.get(preferredLocaleKey) as String?;
+    if (storedLocale != null && storedLocale.isNotEmpty) {
+      _locale = Locale(storedLocale);
+    }
+  }
+
+  void _handleLocaleChanged(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+    _settingsBox.put(preferredLocaleKey, locale.languageCode);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tracker',
+      locale: _locale,
+      supportedLocales: supportedAppLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: HomePage(database: database),
+      home: HomePage(
+        database: widget.database,
+        currentLocale: _locale ?? supportedAppLocales.first,
+        onLocaleChanged: _handleLocaleChanged,
+      ),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.database});
+  const HomePage({
+    super.key,
+    required this.database,
+    required this.currentLocale,
+    required this.onLocaleChanged,
+  });
 
   final AppDatabase database;
+  final Locale currentLocale;
+  final ValueChanged<Locale> onLocaleChanged;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-enum _AppSection { dashboard, communication, history }
+enum _AppSection { dashboard, notes, tasks, habits, ledger, settings }
 
 class AuthenticatedUser {
   const AuthenticatedUser({
@@ -65,12 +114,12 @@ class AuthenticatedUser {
 
   factory AuthenticatedUser.fromJson(Map<String, dynamic> json) {
     DateTime? parsedCreatedAt;
-    final createdAtRaw = json['created_at'];
-    if (createdAtRaw is String) {
-      parsedCreatedAt = DateTime.tryParse(createdAtRaw);
+    final Object? rawCreatedAt = json['created_at'];
+    if (rawCreatedAt is String) {
+      parsedCreatedAt = DateTime.tryParse(rawCreatedAt);
     }
 
-    final idValue = json['id'];
+    final Object? idValue = json['id'];
     final int id = switch (idValue) {
       int value => value,
       num value => value.toInt(),
@@ -94,10 +143,12 @@ class AuthenticatedUser {
     };
   }
 
-  String get displayLabel =>
-      (displayName != null && displayName!.trim().isNotEmpty)
-      ? displayName!
-      : email;
+  String get displayLabel {
+    if (displayName != null && displayName!.trim().isNotEmpty) {
+      return displayName!;
+    }
+    return email;
+  }
 }
 
 class _HomePageState extends State<HomePage> {
@@ -113,9 +164,12 @@ class _HomePageState extends State<HomePage> {
       TextEditingController();
   final TextEditingController _registerDisplayNameController =
       TextEditingController();
-  late final Box<dynamic> _trackerBox;
+
   late final AppDatabase _database;
-  String _statusMessage = 'Backend wurde noch nicht kontaktiert.';
+  late final Box<dynamic> _trackerBox;
+  Locale _pendingLocale = supportedAppLocales.first;
+
+  String? _statusMessage;
   bool _isLoading = false;
   bool _isAuthInProgress = false;
   bool _loginPasswordVisible = false;
@@ -128,6 +182,17 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _database = widget.database;
     _trackerBox = Hive.box(trackerBoxName);
+    _pendingLocale = widget.currentLocale;
+  }
+
+  @override
+  void didUpdateWidget(covariant HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentLocale != oldWidget.currentLocale) {
+      setState(() {
+        _pendingLocale = widget.currentLocale;
+      });
+    }
   }
 
   @override
@@ -142,32 +207,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchGreeting() async {
-    final name = _nameController.text.trim().isEmpty
+    final String name = _nameController.text.trim().isEmpty
         ? 'Flutter'
         : _nameController.text.trim();
 
+    final loc = AppLocalizations.of(context);
     setState(() {
       _isLoading = true;
-      _statusMessage = 'Sende Anfrage an $backendBaseUrl...';
+      _statusMessage = loc.statusSendingRequest(backendBaseUrl);
     });
 
     try {
-      final uri = Uri.parse(
+      final Uri uri = Uri.parse(
         '$backendBaseUrl/api/greeting',
-      ).replace(queryParameters: {'name': name});
-      final response = await http.get(uri);
+      ).replace(queryParameters: <String, String>{'name': name});
+      final http.Response response = await http.get(uri);
 
       if (response.statusCode != 200) {
-        throw Exception(
-          'Fehlerhafte Antwort: ${response.statusCode} ${response.reasonPhrase}',
-        );
+        throw Exception('HTTP ${response.statusCode} ${response.reasonPhrase}');
       }
 
       final Map<String, dynamic> data =
           jsonDecode(response.body) as Map<String, dynamic>;
-      final message =
-          data['message'] as String? ?? 'Unerwartete Antwort vom Server.';
-      final source = data['source'] as String? ?? 'unbekannt';
+      final String message =
+          data['message'] as String? ?? 'Unexpected response from server.';
+      final String source = data['source'] as String? ?? 'unknown';
 
       await _database.insertGreetingEntry(
         name: name,
@@ -184,8 +248,12 @@ class _HomePageState extends State<HomePage> {
         _statusMessage = message;
       });
     } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      final locAfterError = AppLocalizations.of(context);
       setState(() {
-        _statusMessage = 'Fehler: $error';
+        _statusMessage = locAfterError.statusError('$error');
       });
     } finally {
       if (mounted) {
@@ -197,12 +265,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _clearHistory() async {
+    final loc = AppLocalizations.of(context);
     await _database.clearGreetingEntries();
     if (!mounted) {
       return;
     }
     setState(() {
-      _statusMessage = 'Alle lokalen Einträge wurden gelöscht.';
+      _statusMessage = loc.statusHistoryCleared;
     });
   }
 
@@ -215,18 +284,18 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _authErrorMessage = null;
       _selectedSection = _AppSection.dashboard;
-      _statusMessage = 'Backend wurde noch nicht kontaktiert.';
+      _statusMessage = null;
     });
   }
 
   Future<void> _persistAuthResponse(Map<String, dynamic> data) async {
-    final token = data['access_token'];
-    final userRaw = data['user'];
+    final Object? token = data['access_token'];
+    final Object? userRaw = data['user'];
     if (token is! String || token.isEmpty || userRaw is! Map) {
-      throw Exception('Unerwartete Antwort vom Server.');
+      throw Exception('Unexpected response from server.');
     }
 
-    final userMap = userRaw.map(
+    final Map<String, dynamic> userMap = userRaw.map(
       (key, dynamic value) => MapEntry(key.toString(), value),
     );
 
@@ -235,25 +304,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _handleRegister() async {
-    final email = _registerEmailController.text.trim();
-    final password = _registerPasswordController.text;
-    final displayName = _registerDisplayNameController.text.trim();
+    final loc = AppLocalizations.of(context);
+    final String email = _registerEmailController.text.trim();
+    final String password = _registerPasswordController.text;
+    final String displayName = _registerDisplayNameController.text.trim();
 
     if (email.isEmpty || password.length < 8) {
       setState(() {
-        _authErrorMessage =
-            'Bitte gib eine gültige E-Mail-Adresse und ein Passwort mit mindestens 8 Zeichen an.';
+        _authErrorMessage = loc.authErrorInvalidEmailPassword;
       });
       return;
     }
 
-    final payload = <String, dynamic>{
+    final Map<String, dynamic> payload = <String, dynamic>{
       'email': email,
       'password': password,
       if (displayName.isNotEmpty) 'display_name': displayName,
     };
 
     await _submitAuthRequest(
+      context: context,
+      loc: loc,
       uri: Uri.parse('$backendBaseUrl/api/auth/register'),
       payload: payload,
       expectsCreated: true,
@@ -261,19 +332,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _handleLogin() async {
-    final email = _loginEmailController.text.trim();
-    final password = _loginPasswordController.text;
+    final loc = AppLocalizations.of(context);
+    final String email = _loginEmailController.text.trim();
+    final String password = _loginPasswordController.text;
 
     if (email.isEmpty || password.isEmpty) {
       setState(() {
-        _authErrorMessage = 'Bitte gib E-Mail-Adresse und Passwort ein.';
+        _authErrorMessage = loc.authErrorMissingCredentials;
       });
       return;
     }
 
-    final payload = <String, dynamic>{'email': email, 'password': password};
+    final Map<String, dynamic> payload = <String, dynamic>{
+      'email': email,
+      'password': password,
+    };
 
     await _submitAuthRequest(
+      context: context,
+      loc: loc,
       uri: Uri.parse('$backendBaseUrl/api/auth/login'),
       payload: payload,
       expectsCreated: false,
@@ -281,6 +358,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _submitAuthRequest({
+    required BuildContext context,
+    required AppLocalizations loc,
     required Uri uri,
     required Map<String, dynamic> payload,
     required bool expectsCreated,
@@ -291,9 +370,9 @@ class _HomePageState extends State<HomePage> {
     });
 
     try {
-      final response = await http.post(
+      final http.Response response = await http.post(
         uri,
-        headers: const {'Content-Type': 'application/json'},
+        headers: const <String, String>{'Content-Type': 'application/json'},
         body: jsonEncode(payload),
       );
 
@@ -302,13 +381,14 @@ class _HomePageState extends State<HomePage> {
           : response.statusCode == 200;
 
       if (!success) {
-        final message = _extractBackendError(
-          responseBody: response.body,
-          statusCode: response.statusCode,
-        );
         if (!mounted) {
           return;
         }
+        final String message = _extractBackendError(
+          loc,
+          responseBody: response.body,
+          statusCode: response.statusCode,
+        );
         setState(() {
           _authErrorMessage = message;
         });
@@ -336,7 +416,7 @@ class _HomePageState extends State<HomePage> {
         return;
       }
       setState(() {
-        _authErrorMessage = 'Fehler bei der Anmeldung: $error';
+        _authErrorMessage = loc.authErrorGeneric('$error');
       });
     } finally {
       if (mounted) {
@@ -347,55 +427,55 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  String _extractBackendError({
+  String _extractBackendError(
+    AppLocalizations loc, {
     required String responseBody,
     required int statusCode,
   }) {
     try {
-      final dynamic body = jsonDecode(responseBody);
+      final Object body = jsonDecode(responseBody);
       if (body is Map<String, dynamic>) {
-        final detail = body['detail'];
+        final Object? detail = body['detail'];
         if (detail is String && detail.isNotEmpty) {
           return detail;
         }
         if (detail is List && detail.isNotEmpty) {
-          final first = detail.first;
+          final Object first = detail.first;
           if (first is Map && first['msg'] is String) {
             return first['msg'] as String;
           }
         }
       }
     } catch (_) {
-      // Ignored: fallback below.
+      // Fallback to status-based messages below.
     }
 
     switch (statusCode) {
       case 400:
-        return 'Die Anfrage war nicht gültig.';
+        return loc.errorBadRequest;
       case 401:
-        return 'Ungültige Zugangsdaten.';
+        return loc.errorUnauthorized;
       case 409:
-        return 'Diese E-Mail-Adresse ist bereits registriert.';
+        return loc.errorConflict;
       default:
-        return 'Unerwarteter Fehler (Status $statusCode).';
+        return loc.errorUnexpectedStatus(statusCode);
     }
   }
 
   void _showGooglePlaceholder(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Google Sign-In wird demnächst hinzugefügt.'),
-      ),
-    );
+    final loc = AppLocalizations.of(context);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(loc.googlePlaceholder)));
   }
 
   AuthenticatedUser? _readCurrentUser(Box<dynamic> box) {
-    final raw = box.get('auth_user');
+    final Object? raw = box.get('auth_user');
     if (raw is! Map) {
       return null;
     }
 
-    final normalized = raw.map(
+    final Map<String, dynamic> normalized = raw.map(
       (key, dynamic value) => MapEntry(key.toString(), value),
     );
     return AuthenticatedUser.fromJson(normalized);
@@ -414,7 +494,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<dynamic>>(
       valueListenable: _trackerBox.listenable(
-        keys: const ['auth_token', 'auth_user'],
+        keys: const <String>['auth_token', 'auth_user'],
       ),
       builder: (context, box, _) {
         final String? authToken = box.get('auth_token') as String?;
@@ -427,29 +507,31 @@ class _HomePageState extends State<HomePage> {
         return StreamBuilder<List<GreetingEntry>>(
           stream: _database.watchGreetingEntries(),
           builder: (context, snapshot) {
-            final entries = snapshot.data ?? const <GreetingEntry>[];
+            final List<GreetingEntry> entries =
+                snapshot.data ?? const <GreetingEntry>[];
             final bool isHistoryLoading =
                 snapshot.connectionState == ConnectionState.waiting &&
                 !snapshot.hasData;
 
             final bool useNavigationRail =
                 MediaQuery.of(context).size.width >= 900;
+            final loc = AppLocalizations.of(context);
 
             return Scaffold(
               appBar: AppBar(
-                title: Text(_sectionTitle(_selectedSection)),
+                title: Text(_localizedSectionTitle(loc, _selectedSection)),
                 actions: [
-                  if (_selectedSection == _AppSection.history &&
+                  if (_selectedSection == _AppSection.dashboard &&
                       (entries.isNotEmpty || isHistoryLoading))
                     IconButton(
-                      tooltip: 'Lokale Historie löschen',
+                      tooltip: loc.navClearHistory,
                       onPressed: (isHistoryLoading || entries.isEmpty)
                           ? null
                           : _clearHistory,
                       icon: const Icon(Icons.delete_sweep),
                     ),
                   IconButton(
-                    tooltip: 'Abmelden',
+                    tooltip: loc.navLogout,
                     onPressed: _isAuthInProgress ? null : _handleLogout,
                     icon: const Icon(Icons.logout),
                   ),
@@ -457,11 +539,11 @@ class _HomePageState extends State<HomePage> {
               ),
               drawer: useNavigationRail
                   ? null
-                  : _buildDrawer(context, currentUser),
+                  : _buildDrawer(context, currentUser, entries),
               body: Row(
                 children: [
                   if (useNavigationRail)
-                    _buildNavigationRail(context, currentUser),
+                    _buildNavigationRail(context, currentUser, entries),
                   if (useNavigationRail) const VerticalDivider(width: 1),
                   Expanded(
                     child: Padding(
@@ -484,15 +566,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildAuthScaffold(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Willkommen bei Tracker'),
-          bottom: const TabBar(
+          title: Text(loc.appTitle),
+          bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.lock_open), text: 'Anmelden'),
-              Tab(icon: Icon(Icons.person_add), text: 'Registrieren'),
+              Tab(icon: const Icon(Icons.lock_open), text: loc.loginTabSignIn),
+              Tab(
+                icon: const Icon(Icons.person_add),
+                text: loc.loginTabRegister,
+              ),
             ],
           ),
         ),
@@ -504,23 +590,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildLoginForm(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'Melde dich mit deiner E-Mail-Adresse und deinem Passwort an.',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
+          Text(loc.loginHeading, style: Theme.of(context).textTheme.bodyLarge),
           const SizedBox(height: 24),
           TextField(
             controller: _loginEmailController,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(
-              labelText: 'E-Mail-Adresse',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: loc.loginEmailLabel,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 12),
@@ -534,7 +618,7 @@ class _HomePageState extends State<HomePage> {
               }
             },
             decoration: InputDecoration(
-              labelText: 'Passwort',
+              labelText: loc.loginPasswordLabel,
               border: const OutlineInputBorder(),
               suffixIcon: IconButton(
                 onPressed: () {
@@ -561,7 +645,9 @@ class _HomePageState extends State<HomePage> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.lock_open),
-            label: Text(_isAuthInProgress ? 'Wird gesendet...' : 'Anmelden'),
+            label: Text(
+              _isAuthInProgress ? loc.authStatusSubmitting : loc.loginButton,
+            ),
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(
@@ -569,7 +655,7 @@ class _HomePageState extends State<HomePage> {
                 ? null
                 : () => _showGooglePlaceholder(context),
             icon: const Icon(Icons.g_translate),
-            label: const Text('Mit Google anmelden (bald verfügbar)'),
+            label: Text(loc.loginGoogleButton),
           ),
         ],
       ),
@@ -577,13 +663,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildRegisterForm(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Erstelle ein neues Konto mit E-Mail-Adresse und Passwort.',
+            loc.registerHeading,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
@@ -591,18 +678,18 @@ class _HomePageState extends State<HomePage> {
             controller: _registerEmailController,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(
-              labelText: 'E-Mail-Adresse',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: loc.loginEmailLabel,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _registerDisplayNameController,
             textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(
-              labelText: 'Anzeigename (optional)',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: loc.registerDisplayNameLabel,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 12),
@@ -616,7 +703,7 @@ class _HomePageState extends State<HomePage> {
               }
             },
             decoration: InputDecoration(
-              labelText: 'Passwort (min. 8 Zeichen)',
+              labelText: loc.registerPasswordLabel,
               border: const OutlineInputBorder(),
               suffixIcon: IconButton(
                 onPressed: () {
@@ -644,7 +731,7 @@ class _HomePageState extends State<HomePage> {
                   )
                 : const Icon(Icons.person_add),
             label: Text(
-              _isAuthInProgress ? 'Wird gesendet...' : 'Konto erstellen',
+              _isAuthInProgress ? loc.authStatusSubmitting : loc.registerButton,
             ),
           ),
           const SizedBox(height: 12),
@@ -653,7 +740,7 @@ class _HomePageState extends State<HomePage> {
                 ? null
                 : () => _showGooglePlaceholder(context),
             icon: const Icon(Icons.g_translate),
-            label: const Text('Mit Google registrieren (bald verfügbar)'),
+            label: Text(loc.registerGoogleButton),
           ),
         ],
       ),
@@ -687,8 +774,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Drawer _buildDrawer(BuildContext context, AuthenticatedUser currentUser) {
-    final label = currentUser.displayLabel.trim();
+  Drawer _buildDrawer(
+    BuildContext context,
+    AuthenticatedUser currentUser,
+    List<GreetingEntry> entries,
+  ) {
+    final loc = AppLocalizations.of(context);
+    final String label = currentUser.displayLabel.trim();
     final String initial = label.isNotEmpty
         ? label.substring(0, 1).toUpperCase()
         : '?';
@@ -703,6 +795,13 @@ class _HomePageState extends State<HomePage> {
               accountName: Text(currentUser.displayLabel),
               accountEmail: Text(currentUser.email),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                loc.navigationMenu,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
             const Divider(height: 1),
             Expanded(
               child: ListView(
@@ -710,7 +809,7 @@ class _HomePageState extends State<HomePage> {
                     .map(
                       (section) => ListTile(
                         leading: Icon(_sectionIcon(section)),
-                        title: Text(_sectionTitle(section)),
+                        title: Text(_localizedSectionTitle(loc, section)),
                         selected: _selectedSection == section,
                         onTap: () {
                           Navigator.of(context).pop();
@@ -723,8 +822,19 @@ class _HomePageState extends State<HomePage> {
             ),
             const Divider(height: 1),
             ListTile(
+              leading: const Icon(Icons.delete_sweep),
+              title: Text(loc.navClearHistory),
+              enabled: entries.isNotEmpty,
+              onTap: entries.isEmpty
+                  ? null
+                  : () {
+                      Navigator.of(context).pop();
+                      _clearHistory();
+                    },
+            ),
+            ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text('Abmelden'),
+              title: Text(loc.navLogout),
               onTap: _isAuthInProgress
                   ? null
                   : () {
@@ -741,8 +851,10 @@ class _HomePageState extends State<HomePage> {
   NavigationRail _buildNavigationRail(
     BuildContext context,
     AuthenticatedUser currentUser,
+    List<GreetingEntry> entries,
   ) {
-    final label = currentUser.displayLabel.trim();
+    final loc = AppLocalizations.of(context);
+    final String label = currentUser.displayLabel.trim();
     final String initial = label.isNotEmpty
         ? label.substring(0, 1).toUpperCase()
         : '?';
@@ -754,7 +866,10 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: [
-            CircleAvatar(child: Text(initial)),
+            Tooltip(
+              message: loc.navigationUserTooltip,
+              child: CircleAvatar(child: Text(initial)),
+            ),
             const SizedBox(height: 8),
             SizedBox(
               width: 88,
@@ -770,7 +885,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       trailing: IconButton(
-        tooltip: 'Abmelden',
+        tooltip: loc.navLogout,
         icon: const Icon(Icons.logout),
         onPressed: _isAuthInProgress ? null : _handleLogout,
       ),
@@ -781,7 +896,7 @@ class _HomePageState extends State<HomePage> {
             (section) => NavigationRailDestination(
               icon: Icon(_sectionIcon(section)),
               selectedIcon: Icon(_sectionSelectedIcon(section)),
-              label: Text(_sectionTitle(section)),
+              label: Text(_localizedSectionTitle(loc, section)),
             ),
           )
           .toList(),
@@ -797,10 +912,16 @@ class _HomePageState extends State<HomePage> {
     switch (_selectedSection) {
       case _AppSection.dashboard:
         return _buildDashboard(context, entries, currentUser);
-      case _AppSection.communication:
-        return _buildCommunication(context);
-      case _AppSection.history:
-        return _buildHistory(entries, isHistoryLoading);
+      case _AppSection.notes:
+        return _buildNotes(context);
+      case _AppSection.tasks:
+        return _buildTasks(context);
+      case _AppSection.habits:
+        return _buildHabits(context);
+      case _AppSection.ledger:
+        return _buildLedger(context);
+      case _AppSection.settings:
+        return _buildSettings(context, entries, isHistoryLoading);
     }
   }
 
@@ -809,20 +930,22 @@ class _HomePageState extends State<HomePage> {
     List<GreetingEntry> entries,
     AuthenticatedUser currentUser,
   ) {
+    final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final GreetingEntry? latestEntry = entries.isNotEmpty
         ? entries.first
         : null;
 
     return ListView(
+      padding: const EdgeInsets.only(bottom: 32),
       children: [
         Text(
-          'Willkommen im Dashboard, ${currentUser.displayLabel}',
+          loc.dashboardWelcome(currentUser.displayLabel),
           style: theme.textTheme.headlineSmall,
         ),
         const SizedBox(height: 8),
         Text(
-          'Angemeldet als ${currentUser.email}. Behalte deine Backend-Kommunikation im Blick und starte Aktionen direkt von hier.',
+          loc.dashboardSignedInAs(currentUser.email),
           style: theme.textTheme.bodyMedium,
         ),
         const SizedBox(height: 24),
@@ -833,151 +956,290 @@ class _HomePageState extends State<HomePage> {
             _buildMetricCard(
               context: context,
               icon: Icons.storage,
-              title: 'Gespeicherte Antworten',
+              title: loc.dashboardCardStoredResponses,
               value: entries.length.toString(),
             ),
             _buildMetricCard(
               context: context,
               icon: Icons.chat_bubble_outline,
-              title: 'Letzte Nachricht',
-              value:
-                  latestEntry?.message ?? 'Noch keine Nachrichten gespeichert.',
+              title: loc.dashboardCardLatestMessage,
+              value: latestEntry?.message ?? loc.dashboardLatestEntriesEmpty,
               subtitle: latestEntry != null
-                  ? 'Quelle: ${latestEntry.source}'
+                  ? loc.historySubtitle(
+                      latestEntry.name,
+                      latestEntry.source,
+                      _formatTimestamp(context, latestEntry.createdAt),
+                    )
                   : null,
             ),
             _buildMetricCard(
               context: context,
               icon: Icons.cloud_queue,
-              title: 'Backend-URL',
+              title: loc.dashboardCardBackendUrl,
               value: backendBaseUrl,
             ),
             _buildMetricCard(
               context: context,
               icon: Icons.account_circle_outlined,
-              title: 'Benutzer',
+              title: loc.dashboardCardUser,
               value: currentUser.displayLabel,
               subtitle: currentUser.email,
             ),
             _buildMetricCard(
               context: context,
               icon: Icons.info_outline,
-              title: 'Status',
-              value: _statusMessage,
+              title: loc.dashboardCardStatus,
+              value: _statusMessage ?? loc.statusNotContacted,
             ),
           ],
         ),
         const SizedBox(height: 24),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+        _buildCommunicationCard(context),
+        const SizedBox(height: 24),
+        _buildRecentResponsesCard(context, entries),
+      ],
+    );
+  }
+
+  Widget _buildCommunicationCard(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.dashboardQuickActionTitle,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              loc.dashboardQuickActionDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              loc.communicationBackendUrl(backendBaseUrl),
+              style: theme.textTheme.bodySmall,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: loc.communicationNameLabel,
+                border: const OutlineInputBorder(),
+              ),
+              onSubmitted: (_) => _fetchGreeting(),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: _isLoading ? null : _fetchGreeting,
+                icon: _isLoading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.cloud),
+                label: Text(
+                  _isLoading
+                      ? loc.dashboardQuickActionLoading
+                      : loc.communicationButton,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _statusMessage ?? loc.statusNotContacted,
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentResponsesCard(
+    BuildContext context,
+    List<GreetingEntry> entries,
+  ) {
+    final loc = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final List<GreetingEntry> displayEntries = entries.take(5).toList();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.dashboardLatestEntriesTitle,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+            if (displayEntries.isEmpty)
+              Text(
+                loc.dashboardLatestEntriesEmpty,
+                style: theme.textTheme.bodyMedium,
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: displayEntries.length,
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  final entry = displayEntries[index];
+                  return ListTile(
+                    leading: const Icon(Icons.history),
+                    title: Text(entry.message),
+                    subtitle: Text(
+                      loc.historySubtitle(
+                        entry.name,
+                        entry.source,
+                        _formatTimestamp(context, entry.createdAt),
+                      ),
+                    ),
+                  );
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotes(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return Center(
+      child: Text(
+        loc.notesPlaceholder,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+    );
+  }
+
+  Widget _buildTasks(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return Center(
+      child: Text(
+        loc.tasksPlaceholder,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+    );
+  }
+
+  Widget _buildHabits(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return Center(
+      child: Text(
+        loc.habitsPlaceholder,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+    );
+  }
+
+  Widget _buildLedger(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return Center(
+      child: Text(
+        loc.ledgerPlaceholder,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+    );
+  }
+
+  Widget _buildSettings(
+    BuildContext context,
+    List<GreetingEntry> entries,
+    bool isHistoryLoading,
+  ) {
+    final loc = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    final Map<Locale, String> languageLabels = <Locale, String>{
+      const Locale('en'): loc.settingsLanguageEnglish,
+      const Locale('de'): loc.settingsLanguageGerman,
+      const Locale('sv'): loc.settingsLanguageSwedish,
+    };
+
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 32),
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                loc.settingsLanguageSectionTitle,
+                style: theme.textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                loc.settingsLanguageDescription,
+                style: theme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              DropdownButton<Locale>(
+                value: _pendingLocale,
+                items: supportedAppLocales
+                    .map(
+                      (locale) => DropdownMenuItem<Locale>(
+                        value: locale,
+                        child: Text(languageLabels[locale]!),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (Locale? locale) {
+                  if (locale == null) {
+                    return;
+                  }
+                  setState(() {
+                    _pendingLocale = locale;
+                  });
+                },
+              ),
+              const SizedBox(height: 12),
+              FilledButton(
+                onPressed: () => widget.onLocaleChanged(_pendingLocale),
+                child: Text(loc.settingsLanguageApply),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                loc.settingsCurrentLanguage(languageLabels[_pendingLocale]!),
+                style: theme.textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+        if (entries.isNotEmpty || isHistoryLoading)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Schnelle Aktion', style: theme.textTheme.titleMedium),
-                const SizedBox(height: 8),
-                Text(
-                  'Hole eine neue Begrüßung vom Backend und speichere sie lokal.',
-                  style: theme.textTheme.bodyMedium,
-                ),
+                const Divider(height: 32),
+                Text(loc.navClearHistory, style: theme.textTheme.titleMedium),
                 const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: FilledButton.icon(
-                    onPressed: _isLoading ? null : _fetchGreeting,
-                    icon: _isLoading
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.cloud_download),
-                    label: Text(
-                      _isLoading ? 'Wird geladen...' : 'Backend kontaktieren',
-                    ),
-                  ),
+                FilledButton.tonalIcon(
+                  onPressed: isHistoryLoading ? null : _clearHistory,
+                  icon: const Icon(Icons.delete_sweep),
+                  label: Text(loc.navClearHistory),
                 ),
               ],
             ),
           ),
-        ),
       ],
-    );
-  }
-
-  Widget _buildCommunication(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 24),
-      children: [
-        Text(
-          'Basiskommunikation mit dem Backend',
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          'Aktuelle Backend-URL: $backendBaseUrl',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(height: 24),
-        TextField(
-          controller: _nameController,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            border: OutlineInputBorder(),
-          ),
-          onSubmitted: (_) => _fetchGreeting(),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton.icon(
-            onPressed: _isLoading ? null : _fetchGreeting,
-            icon: _isLoading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.cloud),
-            label: Text(
-              _isLoading ? 'Wird geladen...' : 'Backend kontaktieren',
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        Text(_statusMessage, style: Theme.of(context).textTheme.bodyLarge),
-      ],
-    );
-  }
-
-  Widget _buildHistory(List<GreetingEntry> entries, bool isLoading) {
-    if (isLoading && entries.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (entries.isEmpty) {
-      return const Center(
-        child: Text('Es sind noch keine gespeicherten Antworten vorhanden.'),
-      );
-    }
-
-    return ListView.separated(
-      padding: const EdgeInsets.only(bottom: 24),
-      itemCount: entries.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
-      itemBuilder: (context, index) {
-        final entry = entries[index];
-        final ts = entry.createdAt.toIso8601String();
-        final name = entry.name;
-        final source = entry.source;
-        return ListTile(
-          leading: const Icon(Icons.history),
-          title: Text(entry.message),
-          subtitle: Text('Name: $name, Quelle: $source, Zeit: $ts'),
-        );
-      },
     );
   }
 
@@ -1018,14 +1280,20 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  String _sectionTitle(_AppSection section) {
+  String _localizedSectionTitle(AppLocalizations loc, _AppSection section) {
     switch (section) {
       case _AppSection.dashboard:
-        return 'Dashboard';
-      case _AppSection.communication:
-        return 'Kommunikation';
-      case _AppSection.history:
-        return 'Historie';
+        return loc.navDashboard;
+      case _AppSection.notes:
+        return loc.navNotes;
+      case _AppSection.tasks:
+        return loc.navTasks;
+      case _AppSection.habits:
+        return loc.navHabits;
+      case _AppSection.ledger:
+        return loc.navLedger;
+      case _AppSection.settings:
+        return loc.navSettings;
     }
   }
 
@@ -1033,10 +1301,16 @@ class _HomePageState extends State<HomePage> {
     switch (section) {
       case _AppSection.dashboard:
         return Icons.dashboard_outlined;
-      case _AppSection.communication:
-        return Icons.cloud_outlined;
-      case _AppSection.history:
-        return Icons.history;
+      case _AppSection.notes:
+        return Icons.note_alt_outlined;
+      case _AppSection.tasks:
+        return Icons.fact_check_outlined;
+      case _AppSection.habits:
+        return Icons.repeat;
+      case _AppSection.ledger:
+        return Icons.account_balance_wallet_outlined;
+      case _AppSection.settings:
+        return Icons.settings_outlined;
     }
   }
 
@@ -1044,10 +1318,21 @@ class _HomePageState extends State<HomePage> {
     switch (section) {
       case _AppSection.dashboard:
         return Icons.dashboard;
-      case _AppSection.communication:
-        return Icons.cloud;
-      case _AppSection.history:
-        return Icons.history;
+      case _AppSection.notes:
+        return Icons.note_alt;
+      case _AppSection.tasks:
+        return Icons.fact_check;
+      case _AppSection.habits:
+        return Icons.repeat;
+      case _AppSection.ledger:
+        return Icons.account_balance_wallet;
+      case _AppSection.settings:
+        return Icons.settings;
     }
+  }
+
+  String _formatTimestamp(BuildContext context, DateTime timestamp) {
+    final String localeTag = Localizations.localeOf(context).toLanguageTag();
+    return DateFormat.yMMMd(localeTag).add_Hms().format(timestamp.toLocal());
   }
 }
