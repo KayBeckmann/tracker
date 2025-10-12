@@ -135,5 +135,80 @@
         "type": "String"
       }
     }
-  }
+  },
+  "guestUserName": "Guest",
+  "guestUserEmail": "Local device",
+  "dashboardStatusGuest": "Sync is only available after sign-in.",
+  "dashboardGuestIntro": "Use the app offline or sign in to unlock sync and membership benefits.",
+  "dashboardGuestSyncTitle": "Unlock sync and backup",
+  "dashboardGuestSyncDescription": "Create a free account to enable encrypted sync once you start a membership.",
+  "dashboardGuestSyncButton": "Go to settings",
+  "membershipSectionTitle": "Membership",
+  "membershipStatusUnknown": "Membership status unknown.",
+  "membershipStatusActive": "Membership active until {date}.",
+  "@membershipStatusActive": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "membershipStatusActiveShort": "Active until {date}",
+  "@membershipStatusActiveShort": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "membershipStatusInactive": "No active membership.",
+  "membershipSyncEnabled": "Sync is enabled.",
+  "membershipSyncDisabled": "Sync is disabled.",
+  "membershipLastPayment": "Last payment via {method}.",
+  "@membershipLastPayment": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "membershipRetentionInfo": "Synced data will remain available until {date}.",
+  "@membershipRetentionInfo": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "membershipActionsTitle": "Choose a plan",
+  "membershipSubscribeMonthly": "Monthly membership ({price})",
+  "@membershipSubscribeMonthly": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "membershipSubscribeYearly": "Yearly membership ({price})",
+  "@membershipSubscribeYearly": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "membershipPayWithPaypal": "Pay with PayPal",
+  "membershipPayWithBitcoin": "Pay with Bitcoin",
+  "membershipCancelButton": "Cancel membership",
+  "membershipDeleteDataButton": "Delete synced data now",
+  "membershipSubscribeSuccess": "Membership updated successfully.",
+  "membershipCancelSuccess": "Membership cancelled.",
+  "membershipDeleteSuccess": "Synced data deleted.",
+  "membershipPlanMonthlyLabel": "Monthly membership",
+  "membershipPlanYearlyLabel": "Yearly membership",
+  "membershipPlanNoneLabel": "No membership",
+  "membershipPaymentMethodPaypal": "PayPal",
+  "membershipPaymentMethodBitcoin": "Bitcoin",
+  "settingsSignInPrompt": "Sign in to sync your notes across devices.",
+  "settingsOpenLogin": "Open login"
 }

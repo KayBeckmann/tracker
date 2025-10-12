@@ -236,4 +236,121 @@ class AppLocalizationsDe extends AppLocalizations {
   String settingsCurrentLanguage(String language) {
     return 'Aktuelle Sprache: $language';
   }
+
+  @override
+  String get guestUserName => 'Gast';
+
+  @override
+  String get guestUserEmail => 'Lokales Gerät';
+
+  @override
+  String get dashboardStatusGuest =>
+      'Synchronisation steht erst nach Anmeldung zur Verfügung.';
+
+  @override
+  String get dashboardGuestIntro =>
+      'Nutze die App offline oder melde dich an, um Synchronisation und Mitgliedschaften freizuschalten.';
+
+  @override
+  String get dashboardGuestSyncTitle => 'Synchronisierung freischalten';
+
+  @override
+  String get dashboardGuestSyncDescription =>
+      'Erstelle ein kostenloses Konto, um nach Abschluss einer Mitgliedschaft die verschlüsselte Synchronisierung zu aktivieren.';
+
+  @override
+  String get dashboardGuestSyncButton => 'Zu den Einstellungen';
+
+  @override
+  String get membershipSectionTitle => 'Mitgliedschaft';
+
+  @override
+  String get membershipStatusUnknown => 'Mitgliedschaftsstatus unbekannt.';
+
+  @override
+  String membershipStatusActive(String date) {
+    return 'Mitgliedschaft aktiv bis $date.';
+  }
+
+  @override
+  String membershipStatusActiveShort(String date) {
+    return 'Aktiv bis $date';
+  }
+
+  @override
+  String get membershipStatusInactive => 'Keine aktive Mitgliedschaft.';
+
+  @override
+  String get membershipSyncEnabled => 'Synchronisierung ist aktiviert.';
+
+  @override
+  String get membershipSyncDisabled => 'Synchronisierung ist deaktiviert.';
+
+  @override
+  String membershipLastPayment(String method) {
+    return 'Letzte Zahlung über $method.';
+  }
+
+  @override
+  String membershipRetentionInfo(String date) {
+    return 'Synchronisierte Daten werden bis $date aufbewahrt.';
+  }
+
+  @override
+  String get membershipActionsTitle => 'Tarif auswählen';
+
+  @override
+  String membershipSubscribeMonthly(String price) {
+    return 'Monatliche Mitgliedschaft ($price)';
+  }
+
+  @override
+  String membershipSubscribeYearly(String price) {
+    return 'Jährliche Mitgliedschaft ($price)';
+  }
+
+  @override
+  String get membershipPayWithPaypal => 'Mit PayPal bezahlen';
+
+  @override
+  String get membershipPayWithBitcoin => 'Mit Bitcoin bezahlen';
+
+  @override
+  String get membershipCancelButton => 'Mitgliedschaft kündigen';
+
+  @override
+  String get membershipDeleteDataButton =>
+      'Synchronisierte Daten jetzt löschen';
+
+  @override
+  String get membershipSubscribeSuccess => 'Mitgliedschaft wurde aktualisiert.';
+
+  @override
+  String get membershipCancelSuccess => 'Mitgliedschaft wurde beendet.';
+
+  @override
+  String get membershipDeleteSuccess =>
+      'Synchronisierte Daten wurden gelöscht.';
+
+  @override
+  String get membershipPlanMonthlyLabel => 'Monatliche Mitgliedschaft';
+
+  @override
+  String get membershipPlanYearlyLabel => 'Jährliche Mitgliedschaft';
+
+  @override
+  String get membershipPlanNoneLabel => 'Keine Mitgliedschaft';
+
+  @override
+  String get membershipPaymentMethodPaypal => 'PayPal';
+
+  @override
+  String get membershipPaymentMethodBitcoin => 'Bitcoin';
+
+  @override
+  String get settingsSignInPrompt =>
+      'Melde dich an, um deine Daten zwischen Geräten zu synchronisieren.';
+
+  @override
+  String get settingsOpenLogin => 'Login öffnen';
 }

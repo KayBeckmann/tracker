@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'l10n/generated/app_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import 'data/local/app_database.dart';
+import 'l10n/generated/app_localizations.dart';
+import 'models/membership_status.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
@@ -47,10 +48,9 @@ class _TrackerAppState extends State<TrackerApp> {
   @override
   void initState() {
     super.initState();
-    final String? storedLocale =
-        _settingsBox.get(preferredLocaleKey) as String?;
-    if (storedLocale != null && storedLocale.isNotEmpty) {
-      _locale = Locale(storedLocale);
+    final Object? stored = _settingsBox.get(preferredLocaleKey);
+    if (stored is String && stored.isNotEmpty) {
+      _locale = Locale(stored);
     }
   }
 
@@ -175,6 +175,8 @@ class _HomePageState extends State<HomePage> {
   bool _loginPasswordVisible = false;
   bool _registerPasswordVisible = false;
   String? _authErrorMessage;
+  MembershipStatus? _membershipStatus;
+  bool _isMembershipLoading = false;
   _AppSection _selectedSection = _AppSection.dashboard;
 
   @override
@@ -183,6 +185,16 @@ class _HomePageState extends State<HomePage> {
     _database = widget.database;
     _trackerBox = Hive.box(trackerBoxName);
     _pendingLocale = widget.currentLocale;
+
+    final Object? token = _trackerBox.get('auth_token');
+    final AuthenticatedUser? user = _readCurrentUser(_trackerBox);
+    if (token is String && user != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _refreshMembershipStatus();
+        }
+      });
+    }
   }
 
   @override
@@ -211,6 +223,9 @@ class _HomePageState extends State<HomePage> {
         ? 'Flutter'
         : _nameController.text.trim();
 
+    if (!mounted) {
+      return;
+    }
     final loc = AppLocalizations.of(context);
     setState(() {
       _isLoading = true;
@@ -265,11 +280,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _clearHistory() async {
-    final loc = AppLocalizations.of(context);
     await _database.clearGreetingEntries();
     if (!mounted) {
       return;
     }
+    final loc = AppLocalizations.of(context);
     setState(() {
       _statusMessage = loc.statusHistoryCleared;
     });
@@ -283,6 +298,7 @@ class _HomePageState extends State<HomePage> {
     }
     setState(() {
       _authErrorMessage = null;
+      _membershipStatus = null;
       _selectedSection = _AppSection.dashboard;
       _statusMessage = null;
     });
@@ -301,6 +317,9 @@ class _HomePageState extends State<HomePage> {
 
     await _trackerBox.put('auth_token', token);
     await _trackerBox.put('auth_user', userMap);
+    if (mounted) {
+      await _refreshMembershipStatus();
+    }
   }
 
   Future<void> _handleRegister() async {
@@ -381,14 +400,14 @@ class _HomePageState extends State<HomePage> {
           : response.statusCode == 200;
 
       if (!success) {
-        if (!mounted) {
-          return;
-        }
         final String message = _extractBackendError(
           loc,
           responseBody: response.body,
           statusCode: response.statusCode,
         );
+        if (!mounted) {
+          return;
+        }
         setState(() {
           _authErrorMessage = message;
         });
@@ -447,7 +466,7 @@ class _HomePageState extends State<HomePage> {
         }
       }
     } catch (_) {
-      // Fallback to status-based messages below.
+      // ignore decoding errors – fall back to status messages below
     }
 
     switch (statusCode) {
@@ -467,6 +486,232 @@ class _HomePageState extends State<HomePage> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(loc.googlePlaceholder)));
+  }
+
+  String? _currentAuthToken() {
+    final Object? raw = _trackerBox.get('auth_token');
+    return raw is String ? raw : null;
+  }
+
+  Future<void> _refreshMembershipStatus() async {
+    final String? token = _currentAuthToken();
+    if (token == null) {
+      if (mounted) {
+        setState(() {
+          _membershipStatus = null;
+          _isMembershipLoading = false;
+        });
+      }
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+
+    final loc = AppLocalizations.of(context);
+    setState(() {
+      _isMembershipLoading = true;
+    });
+
+    try {
+      final response = await http.get(
+        Uri.parse('$backendBaseUrl/api/membership'),
+        headers: <String, String>{'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> json =
+            jsonDecode(response.body) as Map<String, dynamic>;
+        final status = MembershipStatus.fromJson(json);
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _membershipStatus = status;
+        });
+      } else {
+        final message = _extractBackendError(
+          loc,
+          responseBody: response.body,
+          statusCode: response.statusCode,
+        );
+        _showSnackBar(message);
+      }
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      _showSnackBar(loc.authErrorGeneric('$error'));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isMembershipLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _subscribeToPlan(String plan, String paymentMethod) async {
+    final String? token = _currentAuthToken();
+    if (token == null || !mounted) {
+      return;
+    }
+    final loc = AppLocalizations.of(context);
+    setState(() {
+      _isMembershipLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('$backendBaseUrl/api/membership/subscribe'),
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(<String, String>{
+          'plan': plan,
+          'payment_method': paymentMethod,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> json =
+            jsonDecode(response.body) as Map<String, dynamic>;
+        final status = MembershipStatus.fromJson(json);
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _membershipStatus = status;
+        });
+        _showSnackBar(loc.membershipSubscribeSuccess);
+      } else {
+        final message = _extractBackendError(
+          loc,
+          responseBody: response.body,
+          statusCode: response.statusCode,
+        );
+        _showSnackBar(message);
+      }
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      _showSnackBar(loc.authErrorGeneric('$error'));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isMembershipLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _cancelMembership() async {
+    final String? token = _currentAuthToken();
+    if (token == null || !mounted) {
+      return;
+    }
+    final loc = AppLocalizations.of(context);
+    setState(() {
+      _isMembershipLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('$backendBaseUrl/api/membership/cancel'),
+        headers: <String, String>{'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> json =
+            jsonDecode(response.body) as Map<String, dynamic>;
+        final status = MembershipStatus.fromJson(json);
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _membershipStatus = status;
+        });
+        _showSnackBar(loc.membershipCancelSuccess);
+      } else {
+        final message = _extractBackendError(
+          loc,
+          responseBody: response.body,
+          statusCode: response.statusCode,
+        );
+        _showSnackBar(message);
+      }
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      _showSnackBar(loc.authErrorGeneric('$error'));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isMembershipLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _deleteSyncedData() async {
+    final String? token = _currentAuthToken();
+    if (token == null || !mounted) {
+      return;
+    }
+    final loc = AppLocalizations.of(context);
+    setState(() {
+      _isMembershipLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('$backendBaseUrl/api/membership/delete_synced_data'),
+        headers: <String, String>{'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> json =
+            jsonDecode(response.body) as Map<String, dynamic>;
+        final status = MembershipStatus.fromJson(json);
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _membershipStatus = status;
+        });
+        _showSnackBar(loc.membershipDeleteSuccess);
+      } else {
+        final message = _extractBackendError(
+          loc,
+          responseBody: response.body,
+          statusCode: response.statusCode,
+        );
+        _showSnackBar(message);
+      }
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      _showSnackBar(loc.authErrorGeneric('$error'));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isMembershipLoading = false;
+        });
+      }
+    }
+  }
+
+  void _showSnackBar(String message) {
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   AuthenticatedUser? _readCurrentUser(Box<dynamic> box) {
@@ -490,6 +735,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  String _userDisplayName(AppLocalizations loc, AuthenticatedUser? user) {
+    return user?.displayLabel ?? loc.guestUserName;
+  }
+
+  String _userEmail(AppLocalizations loc, AuthenticatedUser? user) {
+    return user?.email ?? loc.guestUserEmail;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<dynamic>>(
@@ -499,10 +752,8 @@ class _HomePageState extends State<HomePage> {
       builder: (context, box, _) {
         final String? authToken = box.get('auth_token') as String?;
         final AuthenticatedUser? currentUser = _readCurrentUser(box);
-
-        if (authToken == null || currentUser == null) {
-          return _buildAuthScaffold(context);
-        }
+        final bool isLoggedIn = authToken != null && currentUser != null;
+        final loc = AppLocalizations.of(context);
 
         return StreamBuilder<List<GreetingEntry>>(
           stream: _database.watchGreetingEntries(),
@@ -515,7 +766,6 @@ class _HomePageState extends State<HomePage> {
 
             final bool useNavigationRail =
                 MediaQuery.of(context).size.width >= 900;
-            final loc = AppLocalizations.of(context);
 
             return Scaffold(
               appBar: AppBar(
@@ -531,27 +781,37 @@ class _HomePageState extends State<HomePage> {
                       icon: const Icon(Icons.delete_sweep),
                     ),
                   IconButton(
-                    tooltip: loc.navLogout,
-                    onPressed: _isAuthInProgress ? null : _handleLogout,
-                    icon: const Icon(Icons.logout),
+                    tooltip: isLoggedIn ? loc.navLogout : loc.settingsOpenLogin,
+                    onPressed: isLoggedIn
+                        ? (_isAuthInProgress ? null : _handleLogout)
+                        : () => _onSelectSection(_AppSection.settings),
+                    icon: Icon(isLoggedIn ? Icons.logout : Icons.login),
                   ),
                 ],
               ),
               drawer: useNavigationRail
                   ? null
-                  : _buildDrawer(context, currentUser, entries),
+                  : _buildDrawer(
+                      context,
+                      loc,
+                      isLoggedIn,
+                      currentUser,
+                      entries,
+                    ),
               body: Row(
                 children: [
                   if (useNavigationRail)
-                    _buildNavigationRail(context, currentUser, entries),
+                    _buildNavigationRail(context, loc, isLoggedIn, currentUser),
                   if (useNavigationRail) const VerticalDivider(width: 1),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: _buildSection(
                         context,
+                        loc,
                         entries,
                         currentUser,
+                        isLoggedIn,
                         isHistoryLoading: isHistoryLoading,
                       ),
                     ),
@@ -565,353 +825,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildAuthScaffold(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(loc.appTitle),
-          bottom: TabBar(
-            tabs: [
-              Tab(icon: const Icon(Icons.lock_open), text: loc.loginTabSignIn),
-              Tab(
-                icon: const Icon(Icons.person_add),
-                text: loc.loginTabRegister,
-              ),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: [_buildLoginForm(context), _buildRegisterForm(context)],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoginForm(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(loc.loginHeading, style: Theme.of(context).textTheme.bodyLarge),
-          const SizedBox(height: 24),
-          TextField(
-            controller: _loginEmailController,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              labelText: loc.loginEmailLabel,
-              border: const OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _loginPasswordController,
-            obscureText: !_loginPasswordVisible,
-            textInputAction: TextInputAction.done,
-            onSubmitted: (_) {
-              if (!_isAuthInProgress) {
-                _handleLogin();
-              }
-            },
-            decoration: InputDecoration(
-              labelText: loc.loginPasswordLabel,
-              border: const OutlineInputBorder(),
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    _loginPasswordVisible = !_loginPasswordVisible;
-                  });
-                },
-                icon: Icon(
-                  _loginPasswordVisible
-                      ? Icons.visibility_off
-                      : Icons.visibility,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          if (_authErrorMessage != null) _buildAuthError(context),
-          FilledButton.icon(
-            onPressed: _isAuthInProgress ? null : _handleLogin,
-            icon: _isAuthInProgress
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.lock_open),
-            label: Text(
-              _isAuthInProgress ? loc.authStatusSubmitting : loc.loginButton,
-            ),
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
-            onPressed: _isAuthInProgress
-                ? null
-                : () => _showGooglePlaceholder(context),
-            icon: const Icon(Icons.g_translate),
-            label: Text(loc.loginGoogleButton),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRegisterForm(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            loc.registerHeading,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 24),
-          TextField(
-            controller: _registerEmailController,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              labelText: loc.loginEmailLabel,
-              border: const OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _registerDisplayNameController,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              labelText: loc.registerDisplayNameLabel,
-              border: const OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _registerPasswordController,
-            obscureText: !_registerPasswordVisible,
-            textInputAction: TextInputAction.done,
-            onSubmitted: (_) {
-              if (!_isAuthInProgress) {
-                _handleRegister();
-              }
-            },
-            decoration: InputDecoration(
-              labelText: loc.registerPasswordLabel,
-              border: const OutlineInputBorder(),
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    _registerPasswordVisible = !_registerPasswordVisible;
-                  });
-                },
-                icon: Icon(
-                  _registerPasswordVisible
-                      ? Icons.visibility_off
-                      : Icons.visibility,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          if (_authErrorMessage != null) _buildAuthError(context),
-          FilledButton.icon(
-            onPressed: _isAuthInProgress ? null : _handleRegister,
-            icon: _isAuthInProgress
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.person_add),
-            label: Text(
-              _isAuthInProgress ? loc.authStatusSubmitting : loc.registerButton,
-            ),
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
-            onPressed: _isAuthInProgress
-                ? null
-                : () => _showGooglePlaceholder(context),
-            icon: const Icon(Icons.g_translate),
-            label: Text(loc.registerGoogleButton),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAuthError(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.error_outline, color: theme.colorScheme.onErrorContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              _authErrorMessage ?? '',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onErrorContainer,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Drawer _buildDrawer(
-    BuildContext context,
-    AuthenticatedUser currentUser,
-    List<GreetingEntry> entries,
-  ) {
-    final loc = AppLocalizations.of(context);
-    final String label = currentUser.displayLabel.trim();
-    final String initial = label.isNotEmpty
-        ? label.substring(0, 1).toUpperCase()
-        : '?';
-
-    return Drawer(
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            UserAccountsDrawerHeader(
-              currentAccountPicture: CircleAvatar(child: Text(initial)),
-              accountName: Text(currentUser.displayLabel),
-              accountEmail: Text(currentUser.email),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                loc.navigationMenu,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            const Divider(height: 1),
-            Expanded(
-              child: ListView(
-                children: _AppSection.values
-                    .map(
-                      (section) => ListTile(
-                        leading: Icon(_sectionIcon(section)),
-                        title: Text(_localizedSectionTitle(loc, section)),
-                        selected: _selectedSection == section,
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          _onSelectSection(section);
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.delete_sweep),
-              title: Text(loc.navClearHistory),
-              enabled: entries.isNotEmpty,
-              onTap: entries.isEmpty
-                  ? null
-                  : () {
-                      Navigator.of(context).pop();
-                      _clearHistory();
-                    },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: Text(loc.navLogout),
-              onTap: _isAuthInProgress
-                  ? null
-                  : () {
-                      Navigator.of(context).pop();
-                      _handleLogout();
-                    },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  NavigationRail _buildNavigationRail(
-    BuildContext context,
-    AuthenticatedUser currentUser,
-    List<GreetingEntry> entries,
-  ) {
-    final loc = AppLocalizations.of(context);
-    final String label = currentUser.displayLabel.trim();
-    final String initial = label.isNotEmpty
-        ? label.substring(0, 1).toUpperCase()
-        : '?';
-
-    return NavigationRail(
-      selectedIndex: _selectedSection.index,
-      labelType: NavigationRailLabelType.all,
-      leading: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-          children: [
-            Tooltip(
-              message: loc.navigationUserTooltip,
-              child: CircleAvatar(child: Text(initial)),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              width: 88,
-              child: Text(
-                currentUser.displayLabel,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-      trailing: IconButton(
-        tooltip: loc.navLogout,
-        icon: const Icon(Icons.logout),
-        onPressed: _isAuthInProgress ? null : _handleLogout,
-      ),
-      onDestinationSelected: (index) =>
-          _onSelectSection(_AppSection.values[index]),
-      destinations: _AppSection.values
-          .map(
-            (section) => NavigationRailDestination(
-              icon: Icon(_sectionIcon(section)),
-              selectedIcon: Icon(_sectionSelectedIcon(section)),
-              label: Text(_localizedSectionTitle(loc, section)),
-            ),
-          )
-          .toList(),
-    );
-  }
-
   Widget _buildSection(
     BuildContext context,
+    AppLocalizations loc,
     List<GreetingEntry> entries,
-    AuthenticatedUser currentUser, {
+    AuthenticatedUser? currentUser,
+    bool isLoggedIn, {
     required bool isHistoryLoading,
   }) {
     switch (_selectedSection) {
       case _AppSection.dashboard:
-        return _buildDashboard(context, entries, currentUser);
+        return _buildDashboard(context, loc, entries, currentUser, isLoggedIn);
       case _AppSection.notes:
         return _buildNotes(context);
       case _AppSection.tasks:
@@ -921,31 +845,60 @@ class _HomePageState extends State<HomePage> {
       case _AppSection.ledger:
         return _buildLedger(context);
       case _AppSection.settings:
-        return _buildSettings(context, entries, isHistoryLoading);
+        return _buildSettings(
+          context,
+          loc,
+          entries,
+          isHistoryLoading,
+          isLoggedIn,
+        );
     }
   }
 
   Widget _buildDashboard(
     BuildContext context,
+    AppLocalizations loc,
     List<GreetingEntry> entries,
-    AuthenticatedUser currentUser,
+    AuthenticatedUser? currentUser,
+    bool isLoggedIn,
   ) {
-    final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final GreetingEntry? latestEntry = entries.isNotEmpty
         ? entries.first
         : null;
+    final String userLabel = _userDisplayName(loc, currentUser);
+    final String userEmail = _userEmail(loc, currentUser);
+    final bool syncEnabled = _membershipStatus?.syncEnabled ?? false;
+    final bool membershipActive = _membershipStatus?.isActive ?? false;
+
+    String statusValue;
+    if (!isLoggedIn) {
+      statusValue = loc.dashboardStatusGuest;
+    } else if (_membershipStatus == null) {
+      statusValue = loc.membershipStatusUnknown;
+    } else if (membershipActive &&
+        _membershipStatus?.membershipExpiresAt != null) {
+      statusValue = loc.membershipStatusActiveShort(
+        _formatDate(context, _membershipStatus!.membershipExpiresAt!),
+      );
+    } else if (syncEnabled) {
+      statusValue = loc.membershipSyncEnabled;
+    } else {
+      statusValue = loc.membershipSyncDisabled;
+    }
 
     return ListView(
       padding: const EdgeInsets.only(bottom: 32),
       children: [
         Text(
-          loc.dashboardWelcome(currentUser.displayLabel),
+          loc.dashboardWelcome(userLabel),
           style: theme.textTheme.headlineSmall,
         ),
         const SizedBox(height: 8),
         Text(
-          loc.dashboardSignedInAs(currentUser.email),
+          isLoggedIn
+              ? loc.dashboardSignedInAs(userEmail)
+              : loc.dashboardGuestIntro,
           style: theme.textTheme.bodyMedium,
         ),
         const SizedBox(height: 24),
@@ -982,22 +935,54 @@ class _HomePageState extends State<HomePage> {
               context: context,
               icon: Icons.account_circle_outlined,
               title: loc.dashboardCardUser,
-              value: currentUser.displayLabel,
-              subtitle: currentUser.email,
+              value: userLabel,
+              subtitle: userEmail,
             ),
             _buildMetricCard(
               context: context,
               icon: Icons.info_outline,
               title: loc.dashboardCardStatus,
-              value: _statusMessage ?? loc.statusNotContacted,
+              value: _statusMessage ?? statusValue,
             ),
           ],
         ),
         const SizedBox(height: 24),
         _buildCommunicationCard(context),
         const SizedBox(height: 24),
+        if (!isLoggedIn) _buildGuestSyncCard(context),
+        if (!isLoggedIn) const SizedBox(height: 24),
         _buildRecentResponsesCard(context, entries),
       ],
+    );
+  }
+
+  Widget _buildGuestSyncCard(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.dashboardGuestSyncTitle,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              loc.dashboardGuestSyncDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              onPressed: () => _onSelectSection(_AppSection.settings),
+              icon: const Icon(Icons.login),
+              label: Text(loc.dashboardGuestSyncButton),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1160,18 +1145,68 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSettings(
     BuildContext context,
+    AppLocalizations loc,
+    List<GreetingEntry> entries,
+    bool isHistoryLoading,
+    bool isLoggedIn,
+  ) {
+    if (!isLoggedIn) {
+      return _buildGuestSettings(context, loc);
+    }
+    return _buildMemberSettings(context, loc, entries, isHistoryLoading);
+  }
+
+  Widget _buildGuestSettings(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Text(loc.settingsSignInPrompt, style: theme.textTheme.titleMedium),
+        const SizedBox(height: 16),
+        DefaultTabController(
+          length: 2,
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  TabBar(
+                    tabs: [
+                      Tab(
+                        icon: const Icon(Icons.lock_open),
+                        text: loc.loginTabSignIn,
+                      ),
+                      Tab(
+                        icon: const Icon(Icons.person_add),
+                        text: loc.loginTabRegister,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 360,
+                    child: TabBarView(
+                      children: [
+                        _buildLoginForm(context),
+                        _buildRegisterForm(context),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMemberSettings(
+    BuildContext context,
+    AppLocalizations loc,
     List<GreetingEntry> entries,
     bool isHistoryLoading,
   ) {
-    final loc = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-
-    final Map<Locale, String> languageLabels = <Locale, String>{
-      const Locale('en'): loc.settingsLanguageEnglish,
-      const Locale('de'): loc.settingsLanguageGerman,
-      const Locale('sv'): loc.settingsLanguageSwedish,
-    };
-
     return ListView(
       padding: const EdgeInsets.only(bottom: 32),
       children: [
@@ -1180,45 +1215,9 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                loc.settingsLanguageSectionTitle,
-                style: theme.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                loc.settingsLanguageDescription,
-                style: theme.textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 16),
-              DropdownButton<Locale>(
-                value: _pendingLocale,
-                items: supportedAppLocales
-                    .map(
-                      (locale) => DropdownMenuItem<Locale>(
-                        value: locale,
-                        child: Text(languageLabels[locale]!),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (Locale? locale) {
-                  if (locale == null) {
-                    return;
-                  }
-                  setState(() {
-                    _pendingLocale = locale;
-                  });
-                },
-              ),
-              const SizedBox(height: 12),
-              FilledButton(
-                onPressed: () => widget.onLocaleChanged(_pendingLocale),
-                child: Text(loc.settingsLanguageApply),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                loc.settingsCurrentLanguage(languageLabels[_pendingLocale]!),
-                style: theme.textTheme.bodyMedium,
-              ),
+              _buildMembershipCard(context, loc),
+              const SizedBox(height: 24),
+              _buildLanguageCard(context, loc),
             ],
           ),
         ),
@@ -1229,8 +1228,6 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Divider(height: 32),
-                Text(loc.navClearHistory, style: theme.textTheme.titleMedium),
-                const SizedBox(height: 12),
                 FilledButton.tonalIcon(
                   onPressed: isHistoryLoading ? null : _clearHistory,
                   icon: const Icon(Icons.delete_sweep),
@@ -1240,6 +1237,541 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
       ],
+    );
+  }
+
+  Widget _buildMembershipCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    final status = _membershipStatus;
+    final bool isActive = status?.isActive ?? false;
+    final bool syncEnabled = status?.syncEnabled ?? false;
+
+    String statusText;
+    if (status == null) {
+      statusText = loc.membershipStatusUnknown;
+    } else if (isActive && status.membershipExpiresAt != null) {
+      statusText = loc.membershipStatusActive(
+        _formatDate(context, status.membershipExpiresAt!),
+      );
+    } else {
+      statusText = loc.membershipStatusInactive;
+    }
+
+    final String syncText = syncEnabled
+        ? loc.membershipSyncEnabled
+        : loc.membershipSyncDisabled;
+    final String? lastPaymentText = status?.paymentMethodLabel(loc);
+    final String? retentionText = status?.syncRetentionUntil != null
+        ? loc.membershipRetentionInfo(
+            _formatDate(context, status!.syncRetentionUntil!),
+          )
+        : null;
+
+    final String monthlyPrice = _formatCurrency(
+      context,
+      status?.priceMonthly ?? 1.0,
+    );
+    final String yearlyPrice = _formatCurrency(
+      context,
+      status?.priceYearly ?? 10.0,
+    );
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    loc.membershipSectionTitle,
+                    style: theme.textTheme.headlineSmall,
+                  ),
+                ),
+                if (_isMembershipLoading)
+                  const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(statusText, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text(syncText, style: theme.textTheme.bodyMedium),
+            if (lastPaymentText != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                loc.membershipLastPayment(lastPaymentText),
+                style: theme.textTheme.bodyMedium,
+              ),
+            ],
+            if (retentionText != null) ...[
+              const SizedBox(height: 8),
+              Text(retentionText, style: theme.textTheme.bodyMedium),
+            ],
+            const SizedBox(height: 16),
+            Text(
+              loc.membershipActionsTitle,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+            _buildSubscriptionRow(
+              context,
+              loc.membershipSubscribeMonthly(monthlyPrice),
+              monthly: true,
+            ),
+            const SizedBox(height: 12),
+            _buildSubscriptionRow(
+              context,
+              loc.membershipSubscribeYearly(yearlyPrice),
+              monthly: false,
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                FilledButton.tonal(
+                  onPressed: _isMembershipLoading ? null : _cancelMembership,
+                  child: Text(loc.membershipCancelButton),
+                ),
+                OutlinedButton(
+                  onPressed: _isMembershipLoading ? null : _deleteSyncedData,
+                  child: Text(loc.membershipDeleteDataButton),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubscriptionRow(
+    BuildContext context,
+    String title, {
+    required bool monthly,
+  }) {
+    final loc = AppLocalizations.of(context);
+    final bool disabled = _isMembershipLoading;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: Theme.of(context).textTheme.bodyLarge),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 12,
+          children: [
+            FilledButton(
+              onPressed: disabled
+                  ? null
+                  : () => _subscribeToPlan(
+                      monthly ? 'monthly' : 'yearly',
+                      'paypal',
+                    ),
+              child: Text(loc.membershipPayWithPaypal),
+            ),
+            OutlinedButton(
+              onPressed: disabled
+                  ? null
+                  : () => _subscribeToPlan(
+                      monthly ? 'monthly' : 'yearly',
+                      'bitcoin',
+                    ),
+              child: Text(loc.membershipPayWithBitcoin),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLanguageCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    final Map<Locale, String> languageLabels = <Locale, String>{
+      const Locale('en'): loc.settingsLanguageEnglish,
+      const Locale('de'): loc.settingsLanguageGerman,
+      const Locale('sv'): loc.settingsLanguageSwedish,
+    };
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.settingsLanguageSectionTitle,
+              style: theme.textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.settingsLanguageDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            DropdownButton<Locale>(
+              value: _pendingLocale,
+              items: supportedAppLocales
+                  .map(
+                    (locale) => DropdownMenuItem<Locale>(
+                      value: locale,
+                      child: Text(
+                        languageLabels[locale] ?? locale.languageCode,
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (Locale? locale) {
+                if (locale == null) {
+                  return;
+                }
+                setState(() {
+                  _pendingLocale = locale;
+                });
+              },
+            ),
+            const SizedBox(height: 12),
+            FilledButton(
+              onPressed: () => widget.onLocaleChanged(_pendingLocale),
+              child: Text(loc.settingsLanguageApply),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.settingsCurrentLanguage(
+                languageLabels[_pendingLocale] ?? _pendingLocale.languageCode,
+              ),
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAuthError(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, color: theme.colorScheme.onErrorContainer),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              _authErrorMessage ?? '',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onErrorContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoginForm(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(loc.loginHeading, style: Theme.of(context).textTheme.bodyLarge),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _loginEmailController,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            decoration: InputDecoration(
+              labelText: loc.loginEmailLabel,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _loginPasswordController,
+            obscureText: !_loginPasswordVisible,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) {
+              if (!_isAuthInProgress) {
+                _handleLogin();
+              }
+            },
+            decoration: InputDecoration(
+              labelText: loc.loginPasswordLabel,
+              border: const OutlineInputBorder(),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    _loginPasswordVisible = !_loginPasswordVisible;
+                  });
+                },
+                icon: Icon(
+                  _loginPasswordVisible
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (_authErrorMessage != null) _buildAuthError(context),
+          FilledButton.icon(
+            onPressed: _isAuthInProgress ? null : _handleLogin,
+            icon: _isAuthInProgress
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.lock_open),
+            label: Text(
+              _isAuthInProgress ? loc.authStatusSubmitting : loc.loginButton,
+            ),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _isAuthInProgress
+                ? null
+                : () => _showGooglePlaceholder(context),
+            icon: const Icon(Icons.g_translate),
+            label: Text(loc.loginGoogleButton),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRegisterForm(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            loc.registerHeading,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _registerEmailController,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            decoration: InputDecoration(
+              labelText: loc.loginEmailLabel,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _registerDisplayNameController,
+            textInputAction: TextInputAction.next,
+            decoration: InputDecoration(
+              labelText: loc.registerDisplayNameLabel,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _registerPasswordController,
+            obscureText: !_registerPasswordVisible,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) {
+              if (!_isAuthInProgress) {
+                _handleRegister();
+              }
+            },
+            decoration: InputDecoration(
+              labelText: loc.registerPasswordLabel,
+              border: const OutlineInputBorder(),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    _registerPasswordVisible = !_registerPasswordVisible;
+                  });
+                },
+                icon: Icon(
+                  _registerPasswordVisible
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (_authErrorMessage != null) _buildAuthError(context),
+          FilledButton.icon(
+            onPressed: _isAuthInProgress ? null : _handleRegister,
+            icon: _isAuthInProgress
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.person_add),
+            label: Text(
+              _isAuthInProgress ? loc.authStatusSubmitting : loc.registerButton,
+            ),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _isAuthInProgress
+                ? null
+                : () => _showGooglePlaceholder(context),
+            icon: const Icon(Icons.g_translate),
+            label: Text(loc.registerGoogleButton),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Drawer _buildDrawer(
+    BuildContext context,
+    AppLocalizations loc,
+    bool isLoggedIn,
+    AuthenticatedUser? currentUser,
+    List<GreetingEntry> entries,
+  ) {
+    final String userLabel = _userDisplayName(loc, currentUser);
+    final String userEmail = _userEmail(loc, currentUser);
+    final String initial = userLabel.trim().isNotEmpty
+        ? userLabel.trim().substring(0, 1).toUpperCase()
+        : '?';
+
+    return Drawer(
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            UserAccountsDrawerHeader(
+              currentAccountPicture: CircleAvatar(child: Text(initial)),
+              accountName: Text(userLabel),
+              accountEmail: Text(userEmail),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                loc.navigationMenu,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView(
+                children: _AppSection.values
+                    .map(
+                      (section) => ListTile(
+                        leading: Icon(_sectionIcon(section)),
+                        title: Text(_localizedSectionTitle(loc, section)),
+                        selected: _selectedSection == section,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _onSelectSection(section);
+                        },
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.delete_sweep),
+              title: Text(loc.navClearHistory),
+              enabled: entries.isNotEmpty,
+              onTap: entries.isEmpty
+                  ? null
+                  : () {
+                      Navigator.of(context).pop();
+                      _clearHistory();
+                    },
+            ),
+            ListTile(
+              leading: Icon(isLoggedIn ? Icons.logout : Icons.login),
+              title: Text(isLoggedIn ? loc.navLogout : loc.settingsOpenLogin),
+              onTap: () {
+                Navigator.of(context).pop();
+                if (isLoggedIn) {
+                  if (!_isAuthInProgress) {
+                    _handleLogout();
+                  }
+                } else {
+                  _onSelectSection(_AppSection.settings);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  NavigationRail _buildNavigationRail(
+    BuildContext context,
+    AppLocalizations loc,
+    bool isLoggedIn,
+    AuthenticatedUser? currentUser,
+  ) {
+    final String userLabel = _userDisplayName(loc, currentUser);
+    final String initial = userLabel.trim().isNotEmpty
+        ? userLabel.trim().substring(0, 1).toUpperCase()
+        : '?';
+
+    return NavigationRail(
+      selectedIndex: _selectedSection.index,
+      labelType: NavigationRailLabelType.all,
+      leading: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          children: [
+            Tooltip(
+              message: userLabel,
+              child: CircleAvatar(child: Text(initial)),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: 88,
+              child: Text(
+                userLabel,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+      trailing: IconButton(
+        tooltip: isLoggedIn ? loc.navLogout : loc.settingsOpenLogin,
+        icon: Icon(isLoggedIn ? Icons.logout : Icons.login),
+        onPressed: isLoggedIn
+            ? (_isAuthInProgress ? null : _handleLogout)
+            : () => _onSelectSection(_AppSection.settings),
+      ),
+      onDestinationSelected: (index) =>
+          _onSelectSection(_AppSection.values[index]),
+      destinations: _AppSection.values
+          .map(
+            (section) => NavigationRailDestination(
+              icon: Icon(_sectionIcon(section)),
+              selectedIcon: Icon(_sectionSelectedIcon(section)),
+              label: Text(_localizedSectionTitle(loc, section)),
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -1334,5 +1866,19 @@ class _HomePageState extends State<HomePage> {
   String _formatTimestamp(BuildContext context, DateTime timestamp) {
     final String localeTag = Localizations.localeOf(context).toLanguageTag();
     return DateFormat.yMMMd(localeTag).add_Hms().format(timestamp.toLocal());
+  }
+
+  String _formatDate(BuildContext context, DateTime timestamp) {
+    final String localeTag = Localizations.localeOf(context).toLanguageTag();
+    return DateFormat.yMMMd(localeTag).format(timestamp.toLocal());
+  }
+
+  String _formatCurrency(BuildContext context, double amount) {
+    final String localeTag = Localizations.localeOf(context).toLanguageTag();
+    final NumberFormat formatter = NumberFormat.simpleCurrency(
+      locale: localeTag,
+      name: 'EUR',
+    );
+    return formatter.format(amount);
   }
 }

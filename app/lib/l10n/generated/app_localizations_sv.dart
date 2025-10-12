@@ -231,4 +231,119 @@ class AppLocalizationsSv extends AppLocalizations {
   String settingsCurrentLanguage(String language) {
     return 'Aktuellt språk: $language';
   }
+
+  @override
+  String get guestUserName => 'Gäst';
+
+  @override
+  String get guestUserEmail => 'Lokal enhet';
+
+  @override
+  String get dashboardStatusGuest =>
+      'Synkronisering är endast tillgänglig efter inloggning.';
+
+  @override
+  String get dashboardGuestIntro =>
+      'Använd appen offline eller logga in för att låsa upp synkronisering och medlemsförmåner.';
+
+  @override
+  String get dashboardGuestSyncTitle => 'Lås upp synkronisering';
+
+  @override
+  String get dashboardGuestSyncDescription =>
+      'Skapa ett kostnadsfritt konto för att aktivera krypterad synkronisering när du startar ett medlemskap.';
+
+  @override
+  String get dashboardGuestSyncButton => 'Gå till inställningar';
+
+  @override
+  String get membershipSectionTitle => 'Medlemskap';
+
+  @override
+  String get membershipStatusUnknown => 'Medlemsstatus okänd.';
+
+  @override
+  String membershipStatusActive(String date) {
+    return 'Medlemskapet är aktivt till $date.';
+  }
+
+  @override
+  String membershipStatusActiveShort(String date) {
+    return 'Aktivt till $date';
+  }
+
+  @override
+  String get membershipStatusInactive => 'Inget aktivt medlemskap.';
+
+  @override
+  String get membershipSyncEnabled => 'Synkronisering är aktiverad.';
+
+  @override
+  String get membershipSyncDisabled => 'Synkronisering är inaktiverad.';
+
+  @override
+  String membershipLastPayment(String method) {
+    return 'Senaste betalningen via $method.';
+  }
+
+  @override
+  String membershipRetentionInfo(String date) {
+    return 'Synkade data sparas till $date.';
+  }
+
+  @override
+  String get membershipActionsTitle => 'Välj ett abonnemang';
+
+  @override
+  String membershipSubscribeMonthly(String price) {
+    return 'Månadsmedlemskap ($price)';
+  }
+
+  @override
+  String membershipSubscribeYearly(String price) {
+    return 'Årsmedlemskap ($price)';
+  }
+
+  @override
+  String get membershipPayWithPaypal => 'Betala med PayPal';
+
+  @override
+  String get membershipPayWithBitcoin => 'Betala med Bitcoin';
+
+  @override
+  String get membershipCancelButton => 'Avsluta medlemskap';
+
+  @override
+  String get membershipDeleteDataButton => 'Radera synkade data nu';
+
+  @override
+  String get membershipSubscribeSuccess => 'Medlemskapet uppdaterades.';
+
+  @override
+  String get membershipCancelSuccess => 'Medlemskapet har avslutats.';
+
+  @override
+  String get membershipDeleteSuccess => 'Synkade data har raderats.';
+
+  @override
+  String get membershipPlanMonthlyLabel => 'Månadsmedlemskap';
+
+  @override
+  String get membershipPlanYearlyLabel => 'Årsmedlemskap';
+
+  @override
+  String get membershipPlanNoneLabel => 'Inget medlemskap';
+
+  @override
+  String get membershipPaymentMethodPaypal => 'PayPal';
+
+  @override
+  String get membershipPaymentMethodBitcoin => 'Bitcoin';
+
+  @override
+  String get settingsSignInPrompt =>
+      'Logga in för att synka dina data mellan enheter.';
+
+  @override
+  String get settingsOpenLogin => 'Öppna inloggning';
 }

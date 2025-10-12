@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from datetime import datetime, timedelta
-from typing import Annotated, Generator
+from typing import Annotated, Generator, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,7 +10,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
-from sqlalchemy import DateTime, Integer, String, create_engine, func, select
+from sqlalchemy import Boolean, DateTime, Integer, String, create_engine, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
@@ -32,6 +32,27 @@ class User(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
+    )
+    membership_level: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="none",
+        server_default="none",
+    )
+    membership_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    sync_enabled: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="0",
+    )
+    last_payment_method: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    sync_retention_until: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
     )
 
 
@@ -85,6 +106,51 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
+def _now_utc() -> datetime:
+    return datetime.utcnow()
+
+
+def _ensure_membership_state(user: User) -> None:
+    """Update membership flags when a membership may have expired."""
+
+    before_retention = user.sync_retention_until
+
+    if user.membership_level == "none" and user.sync_enabled:
+        # Safety: sync should never be enabled without a membership
+        user.sync_enabled = False
+
+    if user.membership_level != "none" and user.membership_expires_at is not None:
+        if user.membership_expires_at <= _now_utc():
+            user.membership_level = "none"
+            user.sync_enabled = False
+            if user.sync_retention_until is None:
+                user.sync_retention_until = _now_utc() + timedelta(days=90)
+    elif user.membership_level != "none":
+        user.sync_retention_until = None
+
+    if user.sync_retention_until != before_retention:
+        # pass to caller to decide on persisting; nothing to do here
+        pass
+
+
+def _membership_delta(plan: str) -> timedelta:
+    if plan == "monthly":
+        return timedelta(days=30)
+    if plan == "yearly":
+        return timedelta(days=365)
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unbekannter Tarif.")
+
+
+def _membership_status_from_user(user: User) -> MembershipStatusResponse:
+    return MembershipStatusResponse(
+        membership_level=user.membership_level,
+        membership_expires_at=user.membership_expires_at,
+        sync_enabled=user.sync_enabled,
+        last_payment_method=user.last_payment_method,
+        sync_retention_until=user.sync_retention_until,
+    )
+
+
 class RegisterRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
@@ -103,6 +169,11 @@ class UserOut(BaseModel):
     email: EmailStr
     display_name: str | None = None
     created_at: datetime
+    membership_level: str
+    membership_expires_at: datetime | None = None
+    sync_enabled: bool
+    last_payment_method: str | None = None
+    sync_retention_until: datetime | None = None
 
 
 class AuthResponse(BaseModel):
@@ -113,6 +184,21 @@ class AuthResponse(BaseModel):
 
 class TokenData(BaseModel):
     sub: str | None = None
+
+
+class MembershipStatusResponse(BaseModel):
+    membership_level: str
+    membership_expires_at: datetime | None = None
+    sync_enabled: bool
+    last_payment_method: str | None = None
+    sync_retention_until: datetime | None = None
+    price_monthly: float = 1.0
+    price_yearly: float = 10.0
+
+
+class SubscribeRequest(BaseModel):
+    plan: Literal["monthly", "yearly"]
+    payment_method: Literal["paypal", "bitcoin"]
 
 
 def normalize_email(email: str) -> str:
@@ -139,6 +225,17 @@ async def get_current_user(
     user = db.get(User, int(user_id))
     if user is None:
         raise credentials_exception
+    before_level = user.membership_level
+    before_enabled = user.sync_enabled
+    before_retention = user.sync_retention_until
+    _ensure_membership_state(user)
+    if (
+        user.membership_level != before_level
+        or user.sync_enabled != before_enabled
+        or user.sync_retention_until != before_retention
+    ):
+        db.commit()
+        db.refresh(user)
     return user
 
 
@@ -217,6 +314,18 @@ def login_user(payload: LoginRequest, db: Annotated[Session, Depends(get_db)]) -
             detail="Ungültige Zugangsdaten.",
         )
 
+    before_level = user.membership_level
+    before_enabled = user.sync_enabled
+    before_retention = user.sync_retention_until
+    _ensure_membership_state(user)
+    if (
+        user.membership_level != before_level
+        or user.sync_enabled != before_enabled
+        or user.sync_retention_until != before_retention
+    ):
+        db.commit()
+        db.refresh(user)
+
     token = create_access_token({"sub": str(user.id)})
     return AuthResponse(access_token=token, user=UserOut.model_validate(user))
 
@@ -225,4 +334,73 @@ def login_user(payload: LoginRequest, db: Annotated[Session, Depends(get_db)]) -
 async def read_current_user(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> UserOut:
+    _ensure_membership_state(current_user)
     return UserOut.model_validate(current_user)
+
+
+@app.get("/api/membership", response_model=MembershipStatusResponse)
+def get_membership_status(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> MembershipStatusResponse:
+    before_level = current_user.membership_level
+    before_enabled = current_user.sync_enabled
+    before_retention = current_user.sync_retention_until
+    _ensure_membership_state(current_user)
+    if (
+        current_user.membership_level != before_level
+        or current_user.sync_enabled != before_enabled
+        or current_user.sync_retention_until != before_retention
+    ):
+        db.commit()
+    return _membership_status_from_user(current_user)
+
+
+@app.post("/api/membership/subscribe", response_model=MembershipStatusResponse)
+def subscribe_membership(
+    request: SubscribeRequest,
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> MembershipStatusResponse:
+    delta = _membership_delta(request.plan)
+    now = _now_utc()
+    current_user.membership_level = request.plan
+    current_user.membership_expires_at = now + delta
+    current_user.sync_enabled = True
+    current_user.last_payment_method = request.payment_method
+    current_user.sync_retention_until = None
+    db.add(current_user)
+    db.commit()
+    db.refresh(current_user)
+    return _membership_status_from_user(current_user)
+
+
+@app.post("/api/membership/cancel", response_model=MembershipStatusResponse)
+def cancel_membership(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> MembershipStatusResponse:
+    now = _now_utc()
+    current_user.membership_level = "none"
+    current_user.sync_enabled = False
+    current_user.sync_retention_until = now + timedelta(days=90)
+    current_user.membership_expires_at = now
+    db.add(current_user)
+    db.commit()
+    db.refresh(current_user)
+    return _membership_status_from_user(current_user)
+
+
+@app.post("/api/membership/delete_synced_data", response_model=MembershipStatusResponse)
+def delete_synced_data(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> MembershipStatusResponse:
+    current_user.membership_level = "none"
+    current_user.sync_enabled = False
+    current_user.membership_expires_at = None
+    current_user.sync_retention_until = None
+    db.add(current_user)
+    db.commit()
+    db.refresh(current_user)
+    return _membership_status_from_user(current_user)

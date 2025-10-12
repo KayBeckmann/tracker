@@ -501,6 +501,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Current language: {language}'**
   String settingsCurrentLanguage(String language);
+
+  /// No description provided for @guestUserName.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guestUserName;
+
+  /// No description provided for @guestUserEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Local device'**
+  String get guestUserEmail;
+
+  /// No description provided for @dashboardStatusGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is only available after sign-in.'**
+  String get dashboardStatusGuest;
+
+  /// No description provided for @dashboardGuestIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the app offline or sign in to unlock sync and membership benefits.'**
+  String get dashboardGuestIntro;
+
+  /// No description provided for @dashboardGuestSyncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock sync and backup'**
+  String get dashboardGuestSyncTitle;
+
+  /// No description provided for @dashboardGuestSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a free account to enable encrypted sync once you start a membership.'**
+  String get dashboardGuestSyncDescription;
+
+  /// No description provided for @dashboardGuestSyncButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to settings'**
+  String get dashboardGuestSyncButton;
+
+  /// No description provided for @membershipSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership'**
+  String get membershipSectionTitle;
+
+  /// No description provided for @membershipStatusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership status unknown.'**
+  String get membershipStatusUnknown;
+
+  /// No description provided for @membershipStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership active until {date}.'**
+  String membershipStatusActive(String date);
+
+  /// No description provided for @membershipStatusActiveShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Active until {date}'**
+  String membershipStatusActiveShort(String date);
+
+  /// No description provided for @membershipStatusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'No active membership.'**
+  String get membershipStatusInactive;
+
+  /// No description provided for @membershipSyncEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is enabled.'**
+  String get membershipSyncEnabled;
+
+  /// No description provided for @membershipSyncDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is disabled.'**
+  String get membershipSyncDisabled;
+
+  /// No description provided for @membershipLastPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Last payment via {method}.'**
+  String membershipLastPayment(String method);
+
+  /// No description provided for @membershipRetentionInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced data will remain available until {date}.'**
+  String membershipRetentionInfo(String date);
+
+  /// No description provided for @membershipActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a plan'**
+  String get membershipActionsTitle;
+
+  /// No description provided for @membershipSubscribeMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly membership ({price})'**
+  String membershipSubscribeMonthly(String price);
+
+  /// No description provided for @membershipSubscribeYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly membership ({price})'**
+  String membershipSubscribeYearly(String price);
+
+  /// No description provided for @membershipPayWithPaypal.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with PayPal'**
+  String get membershipPayWithPaypal;
+
+  /// No description provided for @membershipPayWithBitcoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with Bitcoin'**
+  String get membershipPayWithBitcoin;
+
+  /// No description provided for @membershipCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel membership'**
+  String get membershipCancelButton;
+
+  /// No description provided for @membershipDeleteDataButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete synced data now'**
+  String get membershipDeleteDataButton;
+
+  /// No description provided for @membershipSubscribeSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership updated successfully.'**
+  String get membershipSubscribeSuccess;
+
+  /// No description provided for @membershipCancelSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership cancelled.'**
+  String get membershipCancelSuccess;
+
+  /// No description provided for @membershipDeleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced data deleted.'**
+  String get membershipDeleteSuccess;
+
+  /// No description provided for @membershipPlanMonthlyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly membership'**
+  String get membershipPlanMonthlyLabel;
+
+  /// No description provided for @membershipPlanYearlyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly membership'**
+  String get membershipPlanYearlyLabel;
+
+  /// No description provided for @membershipPlanNoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'No membership'**
+  String get membershipPlanNoneLabel;
+
+  /// No description provided for @membershipPaymentMethodPaypal.
+  ///
+  /// In en, this message translates to:
+  /// **'PayPal'**
+  String get membershipPaymentMethodPaypal;
+
+  /// No description provided for @membershipPaymentMethodBitcoin.
+  ///
+  /// In en, this message translates to:
+  /// **'Bitcoin'**
+  String get membershipPaymentMethodBitcoin;
+
+  /// No description provided for @settingsSignInPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to sync your notes across devices.'**
+  String get settingsSignInPrompt;
+
+  /// No description provided for @settingsOpenLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Open login'**
+  String get settingsOpenLogin;
 }
 
 class _AppLocalizationsDelegate

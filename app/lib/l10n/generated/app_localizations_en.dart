@@ -231,4 +231,118 @@ class AppLocalizationsEn extends AppLocalizations {
   String settingsCurrentLanguage(String language) {
     return 'Current language: $language';
   }
+
+  @override
+  String get guestUserName => 'Guest';
+
+  @override
+  String get guestUserEmail => 'Local device';
+
+  @override
+  String get dashboardStatusGuest => 'Sync is only available after sign-in.';
+
+  @override
+  String get dashboardGuestIntro =>
+      'Use the app offline or sign in to unlock sync and membership benefits.';
+
+  @override
+  String get dashboardGuestSyncTitle => 'Unlock sync and backup';
+
+  @override
+  String get dashboardGuestSyncDescription =>
+      'Create a free account to enable encrypted sync once you start a membership.';
+
+  @override
+  String get dashboardGuestSyncButton => 'Go to settings';
+
+  @override
+  String get membershipSectionTitle => 'Membership';
+
+  @override
+  String get membershipStatusUnknown => 'Membership status unknown.';
+
+  @override
+  String membershipStatusActive(String date) {
+    return 'Membership active until $date.';
+  }
+
+  @override
+  String membershipStatusActiveShort(String date) {
+    return 'Active until $date';
+  }
+
+  @override
+  String get membershipStatusInactive => 'No active membership.';
+
+  @override
+  String get membershipSyncEnabled => 'Sync is enabled.';
+
+  @override
+  String get membershipSyncDisabled => 'Sync is disabled.';
+
+  @override
+  String membershipLastPayment(String method) {
+    return 'Last payment via $method.';
+  }
+
+  @override
+  String membershipRetentionInfo(String date) {
+    return 'Synced data will remain available until $date.';
+  }
+
+  @override
+  String get membershipActionsTitle => 'Choose a plan';
+
+  @override
+  String membershipSubscribeMonthly(String price) {
+    return 'Monthly membership ($price)';
+  }
+
+  @override
+  String membershipSubscribeYearly(String price) {
+    return 'Yearly membership ($price)';
+  }
+
+  @override
+  String get membershipPayWithPaypal => 'Pay with PayPal';
+
+  @override
+  String get membershipPayWithBitcoin => 'Pay with Bitcoin';
+
+  @override
+  String get membershipCancelButton => 'Cancel membership';
+
+  @override
+  String get membershipDeleteDataButton => 'Delete synced data now';
+
+  @override
+  String get membershipSubscribeSuccess => 'Membership updated successfully.';
+
+  @override
+  String get membershipCancelSuccess => 'Membership cancelled.';
+
+  @override
+  String get membershipDeleteSuccess => 'Synced data deleted.';
+
+  @override
+  String get membershipPlanMonthlyLabel => 'Monthly membership';
+
+  @override
+  String get membershipPlanYearlyLabel => 'Yearly membership';
+
+  @override
+  String get membershipPlanNoneLabel => 'No membership';
+
+  @override
+  String get membershipPaymentMethodPaypal => 'PayPal';
+
+  @override
+  String get membershipPaymentMethodBitcoin => 'Bitcoin';
+
+  @override
+  String get settingsSignInPrompt =>
+      'Sign in to sync your notes across devices.';
+
+  @override
+  String get settingsOpenLogin => 'Open login';
 }
