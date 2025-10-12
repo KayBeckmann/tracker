@@ -103,12 +103,12 @@ class AppDatabase extends _$AppDatabase {
   }) {
     final companion = NoteEntriesCompanion.insert(
       content: content,
-      tags: Value(tags),
+      tags: tags,
     );
     return into(noteEntries).insert(companion);
   }
 
-  Future<bool> updateNoteEntry(NoteEntry entry) {
+  Future<int> updateNoteEntry(NoteEntry entry) {
     return update(noteEntries).replace(entry);
   }
 
