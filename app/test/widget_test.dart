@@ -6,48 +6,25 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:tracker/app/app.dart';
-import 'package:tracker/core/network/serverpod_client.dart';
-import 'package:tracker/core/storage/settings_repository.dart';
-import 'package:tracker/features/settings/application/settings_controller.dart';
-import 'package:tracker/features/settings/domain/app_settings.dart';
-import 'package:tracker_backend_client/tracker_backend_client.dart';
+import 'package:app/main.dart';
 
 void main() {
-  testWidgets('Tracker app renders the dashboard tab by default', (
-    tester,
-  ) async {
-    final repository = _InMemorySettingsRepository();
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const MyApp());
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          settingsRepositoryProvider.overrideWithValue(repository),
-          serverpodClientProvider.overrideWithValue(
-            Client('http://localhost:8080/'),
-          ),
-        ],
-        child: const TrackerApp(),
-      ),
-    );
-    await tester.pumpAndSettle();
+    // Verify that our counter starts at 0.
+    expect(find.text('0'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
 
-    expect(find.text('Dashboard'), findsOneWidget);
-    expect(find.byType(NavigationBar), findsOneWidget);
+    // Tap the '+' icon and trigger a frame.
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pump();
+
+    // Verify that our counter has incremented.
+    expect(find.text('0'), findsNothing);
+    expect(find.text('1'), findsOneWidget);
   });
-}
-
-class _InMemorySettingsRepository implements SettingsRepository {
-  AppSettings _settings = AppSettings.initial();
-
-  @override
-  AppSettings load() => _settings;
-
-  @override
-  Future<void> persist(AppSettings settings) async {
-    _settings = settings;
-  }
 }
