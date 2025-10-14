@@ -23,6 +23,7 @@
             - [ ] Design and implement task/appointment creation and management UI.
             - [ ] Implement local storage for tasks/appointments.
             - [ ] Develop pop-up notification and reminder functionality.
+            - [ ] Zeiterfassung mit Task.
             - [ ] Implement Calendar Overview:
                 - [ ] Display calendar view.
                 - [ ] Visually highlight days with appointments.
@@ -44,6 +45,7 @@
                 - [ ] Logic to automatically set first line as title.
                 - [ ] Store creation and last modification dates.
                 - [ ] Allow multiple tags per note.
+            - [ ] Notizen um Freihand/Grafik Eingaben erweitern.
             - [ ] Implement Initial Notes:
                 - [ ] Create predefined notes for app functionalities and Markdown introduction.
                 - [ ] Assign appropriate tags for each module's note.
@@ -60,11 +62,13 @@
             - [ ] Implement Bidirectional Linking (Appointments <-> Notes):
                 - [ ] UI for linking notes to appointments.
                 - [ ] UI for linking appointments to notes.
-                - [ ] Logic to manage linked entities.
+            - [ ] Logic to manage linked entities.
             - [ ] Implement Image Insertion:
                 - [ ] UI for selecting and inserting images from device.
                 - [ ] Logic for storing images locally.
                 - [ ] Logic for synchronizing images with backend (conditional on paid subscription).
+        - [ ] Journal/Tagebuch Modul:
+            - [ ] Journal/Tagebuch mit Mood-Tracker.
         - [ ] Habits Module:
             - [ ] Design and implement habit tracking UI.
             - [ ] Implement local storage for habits data.
