@@ -310,6 +310,228 @@ abstract class AppLocalizations {
   /// **'Your notes will appear here soon.'**
   String get notesPlaceholder;
 
+  /// No description provided for @notesCreateButtonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New note'**
+  String get notesCreateButtonLabel;
+
+  /// No description provided for @notesCreateMarkdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Markdown note'**
+  String get notesCreateMarkdown;
+
+  /// No description provided for @notesCreateDrawing.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawing note'**
+  String get notesCreateDrawing;
+
+  /// No description provided for @notesClearFiltersTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get notesClearFiltersTooltip;
+
+  /// No description provided for @notesSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notes'**
+  String get notesSearchHint;
+
+  /// No description provided for @notesSearchTagHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter tags'**
+  String get notesSearchTagHint;
+
+  /// No description provided for @notesEmptyPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes yet. Create the first one to start collecting ideas.'**
+  String get notesEmptyPlaceholder;
+
+  /// No description provided for @notesUntitled.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled note'**
+  String get notesUntitled;
+
+  /// No description provided for @notesTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get notesTitleLabel;
+
+  /// No description provided for @notesTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional title (first line used if empty)'**
+  String get notesTitleHint;
+
+  /// No description provided for @notesTagLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get notesTagLabel;
+
+  /// No description provided for @notesTagHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Comma-separated tags'**
+  String get notesTagHint;
+
+  /// No description provided for @notesMarkdownLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Markdown content'**
+  String get notesMarkdownLabel;
+
+  /// No description provided for @notesMarkdownHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your note using Markdown formatting.'**
+  String get notesMarkdownHint;
+
+  /// No description provided for @notesMarkdownTabEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Markdown'**
+  String get notesMarkdownTabEdit;
+
+  /// No description provided for @notesMarkdownTabPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get notesMarkdownTabPreview;
+
+  /// No description provided for @notesMarkdownPreviewEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to preview yet.'**
+  String get notesMarkdownPreviewEmpty;
+
+  /// No description provided for @notesMarkdownEmptyWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Add some content before saving the note.'**
+  String get notesMarkdownEmptyWarning;
+
+  /// No description provided for @notesEditorTitleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New note'**
+  String get notesEditorTitleNew;
+
+  /// No description provided for @notesEditorTitleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit note'**
+  String get notesEditorTitleEdit;
+
+  /// No description provided for @notesEditorSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get notesEditorSave;
+
+  /// No description provided for @notesDeleteTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete note'**
+  String get notesDeleteTooltip;
+
+  /// No description provided for @notesDeleteDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete note?'**
+  String get notesDeleteDialogTitle;
+
+  /// No description provided for @notesDeleteDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This note will be removed from this device. This action cannot be undone.'**
+  String get notesDeleteDialogMessage;
+
+  /// No description provided for @notesDeleteDialogConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get notesDeleteDialogConfirm;
+
+  /// No description provided for @notesDrawingTitleNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New drawing'**
+  String get notesDrawingTitleNew;
+
+  /// No description provided for @notesDrawingTitleEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit drawing'**
+  String get notesDrawingTitleEdit;
+
+  /// No description provided for @notesDrawingTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional title for this drawing'**
+  String get notesDrawingTitleHint;
+
+  /// No description provided for @notesDrawingEmptyWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one stroke before saving.'**
+  String get notesDrawingEmptyWarning;
+
+  /// No description provided for @notesDrawingUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo last stroke'**
+  String get notesDrawingUndo;
+
+  /// No description provided for @notesDrawingClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear canvas'**
+  String get notesDrawingClear;
+
+  /// No description provided for @notesDrawingToolPen.
+  ///
+  /// In en, this message translates to:
+  /// **'Pen'**
+  String get notesDrawingToolPen;
+
+  /// No description provided for @notesDrawingToolLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Line'**
+  String get notesDrawingToolLine;
+
+  /// No description provided for @notesDrawingToolRectangle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rectangle'**
+  String get notesDrawingToolRectangle;
+
+  /// No description provided for @notesDrawingToolEllipse.
+  ///
+  /// In en, this message translates to:
+  /// **'Ellipse'**
+  String get notesDrawingToolEllipse;
+
+  /// No description provided for @notesDrawingStrokeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stroke width'**
+  String get notesDrawingStrokeLabel;
+
+  /// No description provided for @genericCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get genericCancel;
+
   /// No description provided for @tasksPlaceholder.
   ///
   /// In en, this message translates to:

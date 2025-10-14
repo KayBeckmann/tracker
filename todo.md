@@ -37,15 +37,15 @@
                 - [ ] Dedicated UI for managing categories.
                 - [ ] Logic for automatic category creation if not existing during appointment creation.
         - [ ] Notes Module:
-            - [ ] Design and implement notes creation and management UI.
-            - [ ] Implement local storage for notes.
-            - [ ] Add tagging, filtering, and search capabilities.
-            - [ ] Integrate Markdown rendering and editing.
+        - [x] Design and implement notes creation and management UI.
+        - [x] Implement local storage for notes.
+        - [x] Add tagging, filtering, and search capabilities.
+        - [x] Integrate Markdown rendering and editing.
             - [ ] Implement Note Structure:
                 - [ ] Logic to automatically set first line as title.
                 - [ ] Store creation and last modification dates.
                 - [ ] Allow multiple tags per note.
-            - [ ] Notizen um Freihand/Grafik Eingaben erweitern.
+            - [x] Notizen um Freihand/Grafik Eingaben erweitern.
             - [ ] Implement Initial Notes:
                 - [ ] Create predefined notes for app functionalities and Markdown introduction.
                 - [ ] Assign appropriate tags for each module's note.

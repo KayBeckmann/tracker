@@ -125,6 +125,121 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesPlaceholder => 'Dina anteckningar visas här snart.';
 
   @override
+  String get notesCreateButtonLabel => 'Ny anteckning';
+
+  @override
+  String get notesCreateMarkdown => 'Markdown-anteckning';
+
+  @override
+  String get notesCreateDrawing => 'Teckning';
+
+  @override
+  String get notesClearFiltersTooltip => 'Rensa filter';
+
+  @override
+  String get notesSearchHint => 'Sök anteckningar';
+
+  @override
+  String get notesSearchTagHint => 'Filtrera taggar';
+
+  @override
+  String get notesEmptyPlaceholder =>
+      'Inga anteckningar ännu. Skapa din första anteckning för att samla idéer.';
+
+  @override
+  String get notesUntitled => 'Namnlös anteckning';
+
+  @override
+  String get notesTitleLabel => 'Titel';
+
+  @override
+  String get notesTitleHint => 'Valfri titel (första raden används annars)';
+
+  @override
+  String get notesTagLabel => 'Taggar';
+
+  @override
+  String get notesTagHint => 'Taggar separerade med komma';
+
+  @override
+  String get notesMarkdownLabel => 'Markdown-innehåll';
+
+  @override
+  String get notesMarkdownHint => 'Skriv din anteckning med Markdown.';
+
+  @override
+  String get notesMarkdownTabEdit => 'Markdown';
+
+  @override
+  String get notesMarkdownTabPreview => 'Förhandsgranska';
+
+  @override
+  String get notesMarkdownPreviewEmpty => 'Inget att visa ännu.';
+
+  @override
+  String get notesMarkdownEmptyWarning =>
+      'Lägg till innehåll innan du sparar anteckningen.';
+
+  @override
+  String get notesEditorTitleNew => 'Ny anteckning';
+
+  @override
+  String get notesEditorTitleEdit => 'Redigera anteckning';
+
+  @override
+  String get notesEditorSave => 'Spara';
+
+  @override
+  String get notesDeleteTooltip => 'Ta bort anteckning';
+
+  @override
+  String get notesDeleteDialogTitle => 'Ta bort anteckning?';
+
+  @override
+  String get notesDeleteDialogMessage =>
+      'Den här anteckningen tas bort från den här enheten. Åtgärden kan inte ångras.';
+
+  @override
+  String get notesDeleteDialogConfirm => 'Ta bort';
+
+  @override
+  String get notesDrawingTitleNew => 'Ny teckning';
+
+  @override
+  String get notesDrawingTitleEdit => 'Redigera teckning';
+
+  @override
+  String get notesDrawingTitleHint => 'Valfri titel för teckningen';
+
+  @override
+  String get notesDrawingEmptyWarning =>
+      'Lägg till minst ett streck innan du sparar.';
+
+  @override
+  String get notesDrawingUndo => 'Ångra senaste streck';
+
+  @override
+  String get notesDrawingClear => 'Rensa ritfält';
+
+  @override
+  String get notesDrawingToolPen => 'Penna';
+
+  @override
+  String get notesDrawingToolLine => 'Linje';
+
+  @override
+  String get notesDrawingToolRectangle => 'Rektangel';
+
+  @override
+  String get notesDrawingToolEllipse => 'Ellips';
+
+  @override
+  String get notesDrawingStrokeLabel => 'Linjebredd';
+
+  @override
+  String get genericCancel => 'Avbryt';
+
+  @override
   String get tasksPlaceholder => 'Organisera kommande uppgifter här.';
 
   @override

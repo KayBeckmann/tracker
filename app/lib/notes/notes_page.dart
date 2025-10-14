@@ -1,11 +1,15 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+
 import '../data/local/app_database.dart';
+import '../l10n/generated/app_localizations.dart';
+import 'note_drawing_page.dart';
 import 'note_edit_page.dart';
 
 class NotesPage extends StatefulWidget {
-  const NotesPage({super.key, required this.database});
+  const NotesPage({
+    super.key,
+    required this.database,
+  });
 
   final AppDatabase database;
 
@@ -14,9 +18,8 @@ class NotesPage extends StatefulWidget {
 }
 
 class _NotesPageState extends State<NotesPage> {
-  final _contentFilterController = TextEditingController();
-  final _tagFilterController = TextEditingController();
-  Timer? _debounce;
+  final TextEditingController _contentFilterController = TextEditingController();
+  final TextEditingController _tagFilterController = TextEditingController();
 
   String _contentFilter = '';
   String _tagFilter = '';
@@ -24,112 +27,217 @@ class _NotesPageState extends State<NotesPage> {
   @override
   void initState() {
     super.initState();
-    _contentFilterController.addListener(_onContentFilterChanged);
-    _tagFilterController.addListener(_onTagFilterChanged);
+    _contentFilterController.addListener(_handleContentFilterChanged);
+    _tagFilterController.addListener(_handleTagFilterChanged);
   }
 
   @override
   void dispose() {
-    _contentFilterController.dispose();
-    _tagFilterController.dispose();
-    _debounce?.cancel();
+    _contentFilterController
+      ..removeListener(_handleContentFilterChanged)
+      ..dispose();
+    _tagFilterController
+      ..removeListener(_handleTagFilterChanged)
+      ..dispose();
     super.dispose();
   }
 
-  void _onContentFilterChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      setState(() {
-        _contentFilter = _contentFilterController.text;
-      });
+  void _handleContentFilterChanged() {
+    setState(() {
+      _contentFilter = _contentFilterController.text;
     });
   }
 
-  void _onTagFilterChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      setState(() {
-        _tagFilter = _tagFilterController.text;
-      });
+  void _handleTagFilterChanged() {
+    setState(() {
+      _tagFilter = _tagFilterController.text;
     });
+  }
+
+  Future<void> _openEditorForNew(NoteKind kind) async {
+    switch (kind) {
+      case NoteKind.markdown:
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => NoteEditPage(database: widget.database),
+          ),
+        );
+      case NoteKind.drawing:
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => DrawingNotePage(database: widget.database),
+          ),
+        );
+    }
+  }
+
+  Future<void> _openEditor(NoteEntry note) async {
+    switch (note.kind) {
+      case NoteKind.markdown:
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => NoteEditPage(
+              database: widget.database,
+              note: note,
+            ),
+          ),
+        );
+      case NoteKind.drawing:
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => DrawingNotePage(
+              database: widget.database,
+              note: note,
+            ),
+          ),
+        );
+    }
+  }
+
+  Future<void> _showCreateNoteSheet() async {
+    final loc = AppLocalizations.of(context);
+    final NoteKind? selectedKind = await showModalBottomSheet<NoteKind>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.notes),
+                title: Text(loc.notesCreateMarkdown),
+                onTap: () => Navigator.of(context).pop(NoteKind.markdown),
+              ),
+              ListTile(
+                leading: const Icon(Icons.gesture),
+                title: Text(loc.notesCreateDrawing),
+                onTap: () => Navigator.of(context).pop(NoteKind.drawing),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (!mounted || selectedKind == null) {
+      return;
+    }
+    await _openEditorForNew(selectedKind);
+  }
+
+  String _formatTags(String tags) {
+    final normalized = tags
+        .split(',')
+        .map((tag) => tag.trim())
+        .where((tag) => tag.isNotEmpty)
+        .toList();
+    return normalized.join(', ');
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+      appBar: AppBar(
+        title: Text(loc.navNotes),
+        actions: [
+          IconButton(
+            tooltip: loc.notesClearFiltersTooltip,
+            onPressed: () {
+              _contentFilterController.clear();
+              _tagFilterController.clear();
+            },
+            icon: const Icon(Icons.filter_alt_off),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _showCreateNoteSheet,
+        icon: const Icon(Icons.add),
+        label: Text(loc.notesCreateButtonLabel),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _contentFilterController,
-                    decoration: const InputDecoration(
-                      hintText: 'Notizen durchsuchen...',
-                      border: InputBorder.none,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.search),
+                      labelText: loc.notesSearchHint,
                     ),
                   ),
                 ),
+                const SizedBox(width: 16),
                 Expanded(
                   child: TextField(
                     controller: _tagFilterController,
-                    decoration: const InputDecoration(
-                      hintText: 'Tags durchsuchen...',
-                      border: InputBorder.none,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.tag),
+                      labelText: loc.notesSearchTagHint,
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-          const Divider(),
-          Expanded(
-            child: StreamBuilder<List<NoteEntry>>(
-              stream: widget.database.watchNoteEntries(
-                contentFilter: _contentFilter,
-                tagFilter: _tagFilter,
-              ),
-              builder: (context, snapshot) {
-                final notes = snapshot.data ?? [];
-                return ListView.builder(
-                  itemCount: notes.length,
-                  itemBuilder: (context, index) {
-                    final note = notes[index];
-                    final title = note.content.split('\n').first;
-                    return ListTile(
-                      title: Text(title),
-                      subtitle: Text(note.tags),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => NoteEditPage(
-                              database: widget.database,
-                              note: note,
-                            ),
-                          ),
-                        );
-                      },
+            const SizedBox(height: 16),
+            Expanded(
+              child: StreamBuilder<List<NoteEntry>>(
+                stream: widget.database.watchNoteEntries(
+                  contentFilter: _contentFilter,
+                  tagFilter: _tagFilter,
+                ),
+                builder: (context, snapshot) {
+                  final notes = snapshot.data ?? const <NoteEntry>[];
+                  if (notes.isEmpty) {
+                    return Center(
+                      child: Text(
+                        loc.notesEmptyPlaceholder,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
                     );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => NoteEditPage(
-                database: widget.database,
+                  }
+                  return ListView.separated(
+                    itemCount: notes.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final note = notes[index];
+                      final title = note.title.trim().isEmpty
+                          ? loc.notesUntitled
+                          : note.title.trim();
+                      final subtitleBuffer = <String>[];
+                      if (note.kind == NoteKind.markdown &&
+                          (note.content ?? '').isNotEmpty) {
+                        subtitleBuffer.add(
+                          note.content!.split('\n').first.trim(),
+                        );
+                      }
+                      final formattedTags = _formatTags(note.tags);
+                      if (formattedTags.isNotEmpty) {
+                        subtitleBuffer.add('${loc.notesTagLabel}: $formattedTags');
+                      }
+                      final icon = note.kind == NoteKind.markdown
+                          ? Icons.notes
+                          : Icons.brush;
+                      return ListTile(
+                        leading: Icon(icon),
+                        title: Text(title),
+                        subtitle: subtitleBuffer.isEmpty
+                            ? null
+                            : Text(subtitleBuffer.join('\n')),
+                        onTap: () => _openEditor(note),
+                      );
+                    },
+                  );
+                },
               ),
             ),
-          );
-        },
-        child: const Icon(Icons.add),
+          ],
+        ),
       ),
     );
   }

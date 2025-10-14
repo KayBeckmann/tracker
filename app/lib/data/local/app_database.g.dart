@@ -341,17 +341,524 @@ class GreetingEntriesCompanion extends UpdateCompanion<GreetingEntry> {
   }
 }
 
+class $NoteEntriesTable extends NoteEntries
+    with TableInfo<$NoteEntriesTable, NoteEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NoteEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+    'content',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _drawingJsonMeta = const VerificationMeta(
+    'drawingJson',
+  );
+  @override
+  late final GeneratedColumn<String> drawingJson = GeneratedColumn<String>(
+    'drawing_json',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _tagsMeta = const VerificationMeta('tags');
+  @override
+  late final GeneratedColumn<String> tags = GeneratedColumn<String>(
+    'tags',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<NoteKind, String> kind =
+      GeneratedColumn<String>(
+        'kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(NoteKind.markdown.name),
+      ).withConverter<NoteKind>($NoteEntriesTable.$converterkind);
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    title,
+    content,
+    drawingJson,
+    tags,
+    kind,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'note_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<NoteEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
+    }
+    if (data.containsKey('drawing_json')) {
+      context.handle(
+        _drawingJsonMeta,
+        drawingJson.isAcceptableOrUnknown(
+          data['drawing_json']!,
+          _drawingJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('tags')) {
+      context.handle(
+        _tagsMeta,
+        tags.isAcceptableOrUnknown(data['tags']!, _tagsMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  NoteEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NoteEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content'],
+      ),
+      drawingJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}drawing_json'],
+      ),
+      tags: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tags'],
+      )!,
+      kind: $NoteEntriesTable.$converterkind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}kind'],
+        )!,
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $NoteEntriesTable createAlias(String alias) {
+    return $NoteEntriesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<NoteKind, String, String> $converterkind =
+      const EnumNameConverter<NoteKind>(NoteKind.values);
+}
+
+class NoteEntry extends DataClass implements Insertable<NoteEntry> {
+  final int id;
+  final String title;
+  final String? content;
+  final String? drawingJson;
+  final String tags;
+  final NoteKind kind;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const NoteEntry({
+    required this.id,
+    required this.title,
+    this.content,
+    this.drawingJson,
+    required this.tags,
+    required this.kind,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || content != null) {
+      map['content'] = Variable<String>(content);
+    }
+    if (!nullToAbsent || drawingJson != null) {
+      map['drawing_json'] = Variable<String>(drawingJson);
+    }
+    map['tags'] = Variable<String>(tags);
+    {
+      map['kind'] = Variable<String>(
+        $NoteEntriesTable.$converterkind.toSql(kind),
+      );
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  NoteEntriesCompanion toCompanion(bool nullToAbsent) {
+    return NoteEntriesCompanion(
+      id: Value(id),
+      title: Value(title),
+      content: content == null && nullToAbsent
+          ? const Value.absent()
+          : Value(content),
+      drawingJson: drawingJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(drawingJson),
+      tags: Value(tags),
+      kind: Value(kind),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory NoteEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NoteEntry(
+      id: serializer.fromJson<int>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      content: serializer.fromJson<String?>(json['content']),
+      drawingJson: serializer.fromJson<String?>(json['drawingJson']),
+      tags: serializer.fromJson<String>(json['tags']),
+      kind: $NoteEntriesTable.$converterkind.fromJson(
+        serializer.fromJson<String>(json['kind']),
+      ),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'title': serializer.toJson<String>(title),
+      'content': serializer.toJson<String?>(content),
+      'drawingJson': serializer.toJson<String?>(drawingJson),
+      'tags': serializer.toJson<String>(tags),
+      'kind': serializer.toJson<String>(
+        $NoteEntriesTable.$converterkind.toJson(kind),
+      ),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  NoteEntry copyWith({
+    int? id,
+    String? title,
+    Value<String?> content = const Value.absent(),
+    Value<String?> drawingJson = const Value.absent(),
+    String? tags,
+    NoteKind? kind,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => NoteEntry(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    content: content.present ? content.value : this.content,
+    drawingJson: drawingJson.present ? drawingJson.value : this.drawingJson,
+    tags: tags ?? this.tags,
+    kind: kind ?? this.kind,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  NoteEntry copyWithCompanion(NoteEntriesCompanion data) {
+    return NoteEntry(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      content: data.content.present ? data.content.value : this.content,
+      drawingJson: data.drawingJson.present
+          ? data.drawingJson.value
+          : this.drawingJson,
+      tags: data.tags.present ? data.tags.value : this.tags,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NoteEntry(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('drawingJson: $drawingJson, ')
+          ..write('tags: $tags, ')
+          ..write('kind: $kind, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    title,
+    content,
+    drawingJson,
+    tags,
+    kind,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NoteEntry &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.content == this.content &&
+          other.drawingJson == this.drawingJson &&
+          other.tags == this.tags &&
+          other.kind == this.kind &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
+  final Value<int> id;
+  final Value<String> title;
+  final Value<String?> content;
+  final Value<String?> drawingJson;
+  final Value<String> tags;
+  final Value<NoteKind> kind;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const NoteEntriesCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.content = const Value.absent(),
+    this.drawingJson = const Value.absent(),
+    this.tags = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  NoteEntriesCompanion.insert({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.content = const Value.absent(),
+    this.drawingJson = const Value.absent(),
+    this.tags = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  static Insertable<NoteEntry> custom({
+    Expression<int>? id,
+    Expression<String>? title,
+    Expression<String>? content,
+    Expression<String>? drawingJson,
+    Expression<String>? tags,
+    Expression<String>? kind,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (content != null) 'content': content,
+      if (drawingJson != null) 'drawing_json': drawingJson,
+      if (tags != null) 'tags': tags,
+      if (kind != null) 'kind': kind,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  NoteEntriesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? title,
+    Value<String?>? content,
+    Value<String?>? drawingJson,
+    Value<String>? tags,
+    Value<NoteKind>? kind,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return NoteEntriesCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      drawingJson: drawingJson ?? this.drawingJson,
+      tags: tags ?? this.tags,
+      kind: kind ?? this.kind,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (drawingJson.present) {
+      map['drawing_json'] = Variable<String>(drawingJson.value);
+    }
+    if (tags.present) {
+      map['tags'] = Variable<String>(tags.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(
+        $NoteEntriesTable.$converterkind.toSql(kind.value),
+      );
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NoteEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('drawingJson: $drawingJson, ')
+          ..write('tags: $tags, ')
+          ..write('kind: $kind, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $GreetingEntriesTable greetingEntries = $GreetingEntriesTable(
     this,
   );
+  late final $NoteEntriesTable noteEntries = $NoteEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [greetingEntries];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    greetingEntries,
+    noteEntries,
+  ];
 }
 
 typedef $$GreetingEntriesTableCreateCompanionBuilder =
@@ -550,10 +1057,263 @@ typedef $$GreetingEntriesTableProcessedTableManager =
       GreetingEntry,
       PrefetchHooks Function()
     >;
+typedef $$NoteEntriesTableCreateCompanionBuilder =
+    NoteEntriesCompanion Function({
+      Value<int> id,
+      Value<String> title,
+      Value<String?> content,
+      Value<String?> drawingJson,
+      Value<String> tags,
+      Value<NoteKind> kind,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$NoteEntriesTableUpdateCompanionBuilder =
+    NoteEntriesCompanion Function({
+      Value<int> id,
+      Value<String> title,
+      Value<String?> content,
+      Value<String?> drawingJson,
+      Value<String> tags,
+      Value<NoteKind> kind,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+
+class $$NoteEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $NoteEntriesTable> {
+  $$NoteEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get drawingJson => $composableBuilder(
+    column: $table.drawingJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tags => $composableBuilder(
+    column: $table.tags,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<NoteKind, NoteKind, String> get kind =>
+      $composableBuilder(
+        column: $table.kind,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NoteEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $NoteEntriesTable> {
+  $$NoteEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get drawingJson => $composableBuilder(
+    column: $table.drawingJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tags => $composableBuilder(
+    column: $table.tags,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NoteEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NoteEntriesTable> {
+  $$NoteEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<String> get drawingJson => $composableBuilder(
+    column: $table.drawingJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get tags =>
+      $composableBuilder(column: $table.tags, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<NoteKind, String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$NoteEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NoteEntriesTable,
+          NoteEntry,
+          $$NoteEntriesTableFilterComposer,
+          $$NoteEntriesTableOrderingComposer,
+          $$NoteEntriesTableAnnotationComposer,
+          $$NoteEntriesTableCreateCompanionBuilder,
+          $$NoteEntriesTableUpdateCompanionBuilder,
+          (
+            NoteEntry,
+            BaseReferences<_$AppDatabase, $NoteEntriesTable, NoteEntry>,
+          ),
+          NoteEntry,
+          PrefetchHooks Function()
+        > {
+  $$NoteEntriesTableTableManager(_$AppDatabase db, $NoteEntriesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NoteEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$NoteEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$NoteEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> content = const Value.absent(),
+                Value<String?> drawingJson = const Value.absent(),
+                Value<String> tags = const Value.absent(),
+                Value<NoteKind> kind = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => NoteEntriesCompanion(
+                id: id,
+                title: title,
+                content: content,
+                drawingJson: drawingJson,
+                tags: tags,
+                kind: kind,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> content = const Value.absent(),
+                Value<String?> drawingJson = const Value.absent(),
+                Value<String> tags = const Value.absent(),
+                Value<NoteKind> kind = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => NoteEntriesCompanion.insert(
+                id: id,
+                title: title,
+                content: content,
+                drawingJson: drawingJson,
+                tags: tags,
+                kind: kind,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NoteEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NoteEntriesTable,
+      NoteEntry,
+      $$NoteEntriesTableFilterComposer,
+      $$NoteEntriesTableOrderingComposer,
+      $$NoteEntriesTableAnnotationComposer,
+      $$NoteEntriesTableCreateCompanionBuilder,
+      $$NoteEntriesTableUpdateCompanionBuilder,
+      (NoteEntry, BaseReferences<_$AppDatabase, $NoteEntriesTable, NoteEntry>),
+      NoteEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$GreetingEntriesTableTableManager get greetingEntries =>
       $$GreetingEntriesTableTableManager(_db, _db.greetingEntries);
+  $$NoteEntriesTableTableManager get noteEntries =>
+      $$NoteEntriesTableTableManager(_db, _db.noteEntries);
 }

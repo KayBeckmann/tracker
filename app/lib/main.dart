@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'data/local/app_database.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'models/membership_status.dart';
+import 'notes/notes_page.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
@@ -1113,14 +1114,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildNotes(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return Center(
-      child: Text(
-        loc.notesPlaceholder,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-    );
+    return NotesPage(database: _database);
   }
 
   Widget _buildTasks(BuildContext context) {

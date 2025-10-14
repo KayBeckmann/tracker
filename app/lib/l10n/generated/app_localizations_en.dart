@@ -125,6 +125,121 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesPlaceholder => 'Your notes will appear here soon.';
 
   @override
+  String get notesCreateButtonLabel => 'New note';
+
+  @override
+  String get notesCreateMarkdown => 'Markdown note';
+
+  @override
+  String get notesCreateDrawing => 'Drawing note';
+
+  @override
+  String get notesClearFiltersTooltip => 'Clear filters';
+
+  @override
+  String get notesSearchHint => 'Search notes';
+
+  @override
+  String get notesSearchTagHint => 'Filter tags';
+
+  @override
+  String get notesEmptyPlaceholder =>
+      'No notes yet. Create the first one to start collecting ideas.';
+
+  @override
+  String get notesUntitled => 'Untitled note';
+
+  @override
+  String get notesTitleLabel => 'Title';
+
+  @override
+  String get notesTitleHint => 'Optional title (first line used if empty)';
+
+  @override
+  String get notesTagLabel => 'Tags';
+
+  @override
+  String get notesTagHint => 'Comma-separated tags';
+
+  @override
+  String get notesMarkdownLabel => 'Markdown content';
+
+  @override
+  String get notesMarkdownHint => 'Write your note using Markdown formatting.';
+
+  @override
+  String get notesMarkdownTabEdit => 'Markdown';
+
+  @override
+  String get notesMarkdownTabPreview => 'Preview';
+
+  @override
+  String get notesMarkdownPreviewEmpty => 'Nothing to preview yet.';
+
+  @override
+  String get notesMarkdownEmptyWarning =>
+      'Add some content before saving the note.';
+
+  @override
+  String get notesEditorTitleNew => 'New note';
+
+  @override
+  String get notesEditorTitleEdit => 'Edit note';
+
+  @override
+  String get notesEditorSave => 'Save';
+
+  @override
+  String get notesDeleteTooltip => 'Delete note';
+
+  @override
+  String get notesDeleteDialogTitle => 'Delete note?';
+
+  @override
+  String get notesDeleteDialogMessage =>
+      'This note will be removed from this device. This action cannot be undone.';
+
+  @override
+  String get notesDeleteDialogConfirm => 'Delete';
+
+  @override
+  String get notesDrawingTitleNew => 'New drawing';
+
+  @override
+  String get notesDrawingTitleEdit => 'Edit drawing';
+
+  @override
+  String get notesDrawingTitleHint => 'Optional title for this drawing';
+
+  @override
+  String get notesDrawingEmptyWarning =>
+      'Add at least one stroke before saving.';
+
+  @override
+  String get notesDrawingUndo => 'Undo last stroke';
+
+  @override
+  String get notesDrawingClear => 'Clear canvas';
+
+  @override
+  String get notesDrawingToolPen => 'Pen';
+
+  @override
+  String get notesDrawingToolLine => 'Line';
+
+  @override
+  String get notesDrawingToolRectangle => 'Rectangle';
+
+  @override
+  String get notesDrawingToolEllipse => 'Ellipse';
+
+  @override
+  String get notesDrawingStrokeLabel => 'Stroke width';
+
+  @override
+  String get genericCancel => 'Cancel';
+
+  @override
   String get tasksPlaceholder => 'Organise upcoming tasks here.';
 
   @override

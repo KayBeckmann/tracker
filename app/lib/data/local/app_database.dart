@@ -3,6 +3,8 @@ import 'connection/connection.dart';
 
 part 'app_database.g.dart';
 
+enum NoteKind { markdown, drawing }
+
 class GreetingEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -15,7 +17,26 @@ class GreetingEntries extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-@DriftDatabase(tables: [GreetingEntries])
+class NoteEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get title => text().withDefault(const Constant(''))();
+
+  TextColumn get content => text().nullable()();
+
+  TextColumn get drawingJson => text().nullable()();
+
+  TextColumn get tags => text().withDefault(const Constant(''))();
+
+  TextColumn get kind =>
+      textEnum<NoteKind>().withDefault(Constant(NoteKind.markdown.name))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+@DriftDatabase(tables: [GreetingEntries, NoteEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openConnection());
 
@@ -27,7 +48,19 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (Migrator m) async {
+          await m.createAll();
+        },
+        onUpgrade: (Migrator m, int from, int to) async {
+          if (from < 2) {
+            await m.createTable(noteEntries);
+          }
+        },
+      );
 
   Stream<List<GreetingEntry>> watchGreetingEntries() {
     return (select(greetingEntries)..orderBy([
@@ -54,5 +87,83 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> clearGreetingEntries() {
     return delete(greetingEntries).go();
+  }
+
+  Selectable<NoteEntry> _baseNoteQuery({
+    String contentFilter = '',
+    String tagFilter = '',
+  }) {
+    final query = select(noteEntries)
+      ..orderBy(
+        [
+          (tbl) => OrderingTerm.desc(tbl.updatedAt),
+          (tbl) => OrderingTerm.desc(tbl.id),
+        ],
+      );
+
+    if (contentFilter.trim().isNotEmpty) {
+      final pattern = '%${contentFilter.trim()}%';
+      query.where(
+        (tbl) {
+          final titleMatch =
+              tbl.title.collate(Collate.noCase).like(pattern);
+          final contentMatch = tbl.content.isNotNull() &
+              tbl.content.collate(Collate.noCase).like(pattern);
+          return titleMatch | contentMatch;
+        },
+      );
+    }
+
+    if (tagFilter.trim().isNotEmpty) {
+      final pattern = '%${tagFilter.trim()}%';
+      query.where(
+        (tbl) => tbl.tags.collate(Collate.noCase).like(pattern),
+      );
+    }
+
+    return query;
+  }
+
+  Stream<List<NoteEntry>> watchNoteEntries({
+    String contentFilter = '',
+    String tagFilter = '',
+  }) {
+    return _baseNoteQuery(
+      contentFilter: contentFilter,
+      tagFilter: tagFilter,
+    ).watch();
+  }
+
+  Future<int> insertNoteEntry({
+    required NoteKind kind,
+    String title = '',
+    String? content,
+    String? drawingJson,
+    String tags = '',
+  }) async {
+    assert(
+      kind == NoteKind.markdown ? content != null : drawingJson != null,
+      'Note content must match the selected kind.',
+    );
+    final now = DateTime.now().toUtc();
+    final companion = NoteEntriesCompanion.insert(
+      kind: Value(kind),
+      title: Value(title),
+      content: Value(content),
+      drawingJson: Value(drawingJson),
+      tags: Value(tags),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(noteEntries).insert(companion);
+  }
+
+  Future<void> updateNoteEntry(NoteEntry note) async {
+    final updated = note.copyWith(updatedAt: DateTime.now().toUtc());
+    await update(noteEntries).replace(updated);
+  }
+
+  Future<int> deleteNoteEntry(int id) {
+    return (delete(noteEntries)..where((tbl) => tbl.id.equals(id))).go();
   }
 }

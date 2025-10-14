@@ -127,6 +127,122 @@ class AppLocalizationsDe extends AppLocalizations {
       'Hier werden demnächst deine Notizen erscheinen.';
 
   @override
+  String get notesCreateButtonLabel => 'Neue Notiz';
+
+  @override
+  String get notesCreateMarkdown => 'Markdown-Notiz';
+
+  @override
+  String get notesCreateDrawing => 'Zeichnung';
+
+  @override
+  String get notesClearFiltersTooltip => 'Filter zurücksetzen';
+
+  @override
+  String get notesSearchHint => 'Notizen durchsuchen';
+
+  @override
+  String get notesSearchTagHint => 'Nach Tags filtern';
+
+  @override
+  String get notesEmptyPlaceholder =>
+      'Noch keine Notizen vorhanden. Lege deine erste Notiz an, um Ideen zu sammeln.';
+
+  @override
+  String get notesUntitled => 'Unbenannte Notiz';
+
+  @override
+  String get notesTitleLabel => 'Titel';
+
+  @override
+  String get notesTitleHint =>
+      'Optionaler Titel (erste Zeile wird sonst verwendet)';
+
+  @override
+  String get notesTagLabel => 'Tags';
+
+  @override
+  String get notesTagHint => 'Tags, durch Kommas getrennt';
+
+  @override
+  String get notesMarkdownLabel => 'Markdown-Inhalt';
+
+  @override
+  String get notesMarkdownHint => 'Schreibe deine Notiz in Markdown.';
+
+  @override
+  String get notesMarkdownTabEdit => 'Markdown';
+
+  @override
+  String get notesMarkdownTabPreview => 'Vorschau';
+
+  @override
+  String get notesMarkdownPreviewEmpty => 'Noch nichts zum Anzeigen vorhanden.';
+
+  @override
+  String get notesMarkdownEmptyWarning =>
+      'Bitte füge Inhalt hinzu, bevor du die Notiz speicherst.';
+
+  @override
+  String get notesEditorTitleNew => 'Neue Notiz';
+
+  @override
+  String get notesEditorTitleEdit => 'Notiz bearbeiten';
+
+  @override
+  String get notesEditorSave => 'Speichern';
+
+  @override
+  String get notesDeleteTooltip => 'Notiz löschen';
+
+  @override
+  String get notesDeleteDialogTitle => 'Notiz löschen?';
+
+  @override
+  String get notesDeleteDialogMessage =>
+      'Diese Notiz wird auf diesem Gerät entfernt. Dieser Vorgang kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get notesDeleteDialogConfirm => 'Löschen';
+
+  @override
+  String get notesDrawingTitleNew => 'Neue Zeichnung';
+
+  @override
+  String get notesDrawingTitleEdit => 'Zeichnung bearbeiten';
+
+  @override
+  String get notesDrawingTitleHint => 'Optionaler Titel für diese Zeichnung';
+
+  @override
+  String get notesDrawingEmptyWarning =>
+      'Füge mindestens einen Strich hinzu, bevor du speicherst.';
+
+  @override
+  String get notesDrawingUndo => 'Letzten Strich rückgängig';
+
+  @override
+  String get notesDrawingClear => 'Zeichenfläche leeren';
+
+  @override
+  String get notesDrawingToolPen => 'Stift';
+
+  @override
+  String get notesDrawingToolLine => 'Linie';
+
+  @override
+  String get notesDrawingToolRectangle => 'Rechteck';
+
+  @override
+  String get notesDrawingToolEllipse => 'Ellipse';
+
+  @override
+  String get notesDrawingStrokeLabel => 'Strichstärke';
+
+  @override
+  String get genericCancel => 'Abbrechen';
+
+  @override
   String get tasksPlaceholder => 'Plane und strukturiere hier deine Aufgaben.';
 
   @override
