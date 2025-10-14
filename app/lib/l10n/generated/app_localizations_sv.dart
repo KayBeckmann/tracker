@@ -21,6 +21,12 @@ class AppLocalizationsSv extends AppLocalizations {
   String get navTasks => 'Uppgifter';
 
   @override
+  String get navTimeTracking => 'Tidsspårning';
+
+  @override
+  String get navJournal => 'Journal';
+
+  @override
   String get navHabits => 'Vanor';
 
   @override
@@ -120,6 +126,14 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get tasksPlaceholder => 'Organisera kommande uppgifter här.';
+
+  @override
+  String get timeTrackingPlaceholder =>
+      'Registrera dina arbetspass här snart och koppla ihop dem med uppgifter genom gemensamma taggar.';
+
+  @override
+  String get journalPlaceholder =>
+      'Samla dina journalanteckningar här och länka dem till alla moduler via delade taggar.';
 
   @override
   String get habitsPlaceholder => 'Följ dina vanor här.';

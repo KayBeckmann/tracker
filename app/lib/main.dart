@@ -97,7 +97,16 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-enum _AppSection { dashboard, notes, tasks, habits, ledger, settings }
+enum _AppSection {
+  dashboard,
+  notes,
+  tasks,
+  timeTracking,
+  journal,
+  habits,
+  ledger,
+  settings,
+}
 
 class AuthenticatedUser {
   const AuthenticatedUser({
@@ -840,6 +849,10 @@ class _HomePageState extends State<HomePage> {
         return _buildNotes(context);
       case _AppSection.tasks:
         return _buildTasks(context);
+      case _AppSection.timeTracking:
+        return _buildTimeTracking(context);
+      case _AppSection.journal:
+        return _buildJournal(context);
       case _AppSection.habits:
         return _buildHabits(context);
       case _AppSection.ledger:
@@ -1115,6 +1128,28 @@ class _HomePageState extends State<HomePage> {
     return Center(
       child: Text(
         loc.tasksPlaceholder,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+    );
+  }
+
+  Widget _buildTimeTracking(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return Center(
+      child: Text(
+        loc.timeTrackingPlaceholder,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+    );
+  }
+
+  Widget _buildJournal(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return Center(
+      child: Text(
+        loc.journalPlaceholder,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyLarge,
       ),
@@ -1820,6 +1855,10 @@ class _HomePageState extends State<HomePage> {
         return loc.navNotes;
       case _AppSection.tasks:
         return loc.navTasks;
+      case _AppSection.timeTracking:
+        return loc.navTimeTracking;
+      case _AppSection.journal:
+        return loc.navJournal;
       case _AppSection.habits:
         return loc.navHabits;
       case _AppSection.ledger:
@@ -1837,6 +1876,10 @@ class _HomePageState extends State<HomePage> {
         return Icons.note_alt_outlined;
       case _AppSection.tasks:
         return Icons.fact_check_outlined;
+      case _AppSection.timeTracking:
+        return Icons.access_time;
+      case _AppSection.journal:
+        return Icons.menu_book_outlined;
       case _AppSection.habits:
         return Icons.repeat;
       case _AppSection.ledger:
@@ -1854,6 +1897,10 @@ class _HomePageState extends State<HomePage> {
         return Icons.note_alt;
       case _AppSection.tasks:
         return Icons.fact_check;
+      case _AppSection.timeTracking:
+        return Icons.access_time_filled;
+      case _AppSection.journal:
+        return Icons.menu_book;
       case _AppSection.habits:
         return Icons.repeat;
       case _AppSection.ledger:

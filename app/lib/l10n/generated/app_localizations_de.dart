@@ -21,6 +21,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navTasks => 'Aufgaben';
 
   @override
+  String get navTimeTracking => 'Zeiterfassung';
+
+  @override
+  String get navJournal => 'Journal';
+
+  @override
   String get navHabits => 'Gewohnheiten';
 
   @override
@@ -122,6 +128,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tasksPlaceholder => 'Plane und strukturiere hier deine Aufgaben.';
+
+  @override
+  String get timeTrackingPlaceholder =>
+      'Erfasse deine Arbeitszeiten bald direkt hier und verknüpfe sie über gemeinsame Tags mit den Aufgaben.';
+
+  @override
+  String get journalPlaceholder =>
+      'Halte deine Einträge hier fest und verbinde sie über Tags mit Notizen, Aufgaben und der Zeiterfassung.';
 
   @override
   String get habitsPlaceholder =>

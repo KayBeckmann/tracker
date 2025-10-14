@@ -2,19 +2,19 @@
 
 ## To Do
 
-- [ ] Project Setup:
-    - [ ] Initialize Flutter project.
-    - [ ] Create Dockerfiles for Frontend (Flutter) and Backend.
-    - [ ] Configure Docker Compose for multi-container setup.
+- [x] Project Setup:
+    - [x] Initialize Flutter project.
+    - [x] Create Dockerfiles for Frontend (Flutter) and Backend.
+    - [x] Configure Docker Compose for multi-container setup.
 - [ ] Frontend Development (Flutter):
-    - [ ] Research and choose a suitable SQL database for Flutter (e.g., sqflite, drift).
-    - [ ] Implement basic UI for testing database integration.
-    - [ ] Integrate frontend SQL database.
-    - [ ] Implement Multilingual Support:
-        - [ ] Research Flutter internationalization (i18n) and localization (l10n) best practices.
-        - [ ] Set up localization files for German (de), English (en), and Swedish (sv).
-        - [ ] Integrate text strings into the UI using localization.
-        - [ ] Implement language switching functionality in settings.
+    - [x] Research and choose a suitable SQL database for Flutter (e.g., sqflite, drift).
+    - [x] Implement basic UI for testing database integration.
+    - [x] Integrate frontend SQL database.
+    - [x] Implement Multilingual Support:
+        - [x] Research Flutter internationalization (i18n) and localization (l10n) best practices.
+        - [x] Set up localization files for German (de), English (en), and Swedish (sv).
+        - [x] Integrate text strings into the UI using localization.
+        - [x] Implement language switching functionality in settings.
     - [ ] Implement core features:
         - [ ] Dashboard Module:
             - [ ] Design and implement overview UI.
@@ -99,12 +99,12 @@
                 - [ ] Integrate with payment gateway (PayPal, Bitcoin).
                 - [ ] Beschränke Backend-Synchronisation auf angemeldete Nutzer (Google, Apple ID, E-Mail+Passwort).
 - [ ] Backend Development:
-    - [ ] Research and choose a backend framework (e.g., Node.js/Express, Python/FastAPI, Go/Gin).
-    - [ ] Research and choose a SQL database for the backend (e.g., PostgreSQL, MySQL).
+    - [x] Research and choose a backend framework (e.g., Node.js/Express, Python/FastAPI, Go/Gin).
+    - [x] Research and choose a SQL database for the backend (e.g., PostgreSQL, MySQL).
     - [ ] Set up backend database schema and migrations for all modules.
-    - [ ] Implement basic API endpoints for frontend communication.
+    - [x] Implement basic API endpoints for frontend communication.
     - [ ] Implement User Authentication:
-        - [ ] Develop API for email/password registration and login.
+        - [x] Develop API for email/password registration and login.
         - [ ] Integrate Apple ID authentication.
         - [ ] Integrate Google authentication.
     - [ ] Implement Data Synchronization API:

@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+import 'connection/connection.dart';
 
 part 'app_database.g.dart';
 
@@ -19,23 +15,15 @@ class GreetingEntries extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final directory = await getApplicationSupportDirectory();
-    final file = File(p.join(directory.path, 'tracker.sqlite'));
-    return NativeDatabase.createInBackground(file);
-  });
-}
-
 @DriftDatabase(tables: [GreetingEntries])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  AppDatabase() : super(openConnection());
 
   // ignore: use_super_parameters
   AppDatabase.test(QueryExecutor executor) : super(executor);
 
   factory AppDatabase.inMemory() {
-    return AppDatabase.test(NativeDatabase.memory());
+    return AppDatabase.test(openInMemoryConnection());
   }
 
   @override

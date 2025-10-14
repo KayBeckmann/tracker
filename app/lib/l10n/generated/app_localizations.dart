@@ -124,6 +124,18 @@ abstract class AppLocalizations {
   /// **'Tasks'**
   String get navTasks;
 
+  /// No description provided for @navTimeTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Time tracking'**
+  String get navTimeTracking;
+
+  /// No description provided for @navJournal.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal'**
+  String get navJournal;
+
   /// No description provided for @navHabits.
   ///
   /// In en, this message translates to:
@@ -303,6 +315,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Organise upcoming tasks here.'**
   String get tasksPlaceholder;
+
+  /// No description provided for @timeTrackingPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your work sessions here soon and link them directly to tasks with shared tags.'**
+  String get timeTrackingPlaceholder;
+
+  /// No description provided for @journalPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture your journal entries here and connect them with every module through shared tags.'**
+  String get journalPlaceholder;
 
   /// No description provided for @habitsPlaceholder.
   ///
