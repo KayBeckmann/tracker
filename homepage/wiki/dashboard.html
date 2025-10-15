@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracker Wiki – Dashboard</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body class="wiki-body">
+    <header class="wiki-header">
+      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <nav class="wiki-nav">
+        <a href="index.html">Wiki Übersicht</a>
+        <a href="../index.html#module">Module</a>
+      </nav>
+    </header>
+    <main class="wiki-content">
+      <article class="wiki-article">
+        <h1>Dashboard</h1>
+        <section>
+          <h2>Bedienung</h2>
+          <ul>
+            <li>Startseite der App nach Login oder lokalem Start.</li>
+            <li>Zeigt Willkommensnachricht, Statusmeldungen und Kennzahlen anderer Module.</li>
+            <li>Schnellzugriff auf Backend-Kommunikation und gespeicherte Antworten.</li>
+            <li>Lösch-Schaltfläche entfernt lokale Antworten.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Datenmodell</h2>
+          <ul>
+            <li>Nutzt Drift-Tabelle <code>greeting_entries</code> für gespeicherte Serverantworten.</li>
+            <li>Greift auf Hive für Sprache, Theme und Modul-Konfiguration zu.</li>
+            <li>Keine eigenen Synchronisationsdaten.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Synchronisation</h2>
+          <ul>
+            <li>Einträge aus dem Begrüßungsservice bleiben lokal.</li>
+            <li>Bei aktiver Mitgliedschaft sind erweiterte Dashboard-Kennzahlen geplant.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Roadmap</h2>
+          <ul>
+            <li>Integration echter Modul-Daten (Tasks, Habits, Ledger).</li>
+            <li>Personalisierbares Layout (Widgets, Reihenfolge).</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+    <footer class="wiki-footer">
+      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracker Wiki – Einstellungen</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body class="wiki-body">
+    <header class="wiki-header">
+      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <nav class="wiki-nav">
+        <a href="index.html">Wiki Übersicht</a>
+        <a href="../index.html#module">Module</a>
+      </nav>
+    </header>
+    <main class="wiki-content">
+      <article class="wiki-article">
+        <h1>Einstellungen</h1>
+        <section>
+          <h2>Bedienung</h2>
+          <ul>
+            <li>Sprache, Theme, Module (Sichtbarkeit &amp; Reihenfolge) und Synchronisation verwalten.</li>
+            <li>Änderungen werden direkt in Hive gespeichert.</li>
+            <li>Synchronisationsstatus &amp; Mitgliedschaft nach Backend-Login sichtbar.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Datenmodell</h2>
+          <ul>
+            <li>Hive-Keys: <code>preferred_locale</code>, <code>preferred_theme_mode</code>, <code>preferred_seed_color</code>, <code>enabled_modules</code>, <code>module_order</code>.</li>
+            <li>Membership-Infos via Backend <code>/api/membership</code>.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Synchronisation</h2>
+          <ul>
+            <li>Settings bleiben lokal; Modul-Sichtbarkeit und Reihenfolge sind gerätespezifisch.</li>
+            <li>Mitgliedschaftsstatus steuert Sync-Freischaltung.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Roadmap</h2>
+          <ul>
+            <li>Erweiterte Theme-Verwaltung (eigene Paletten).</li>
+            <li>Export/Import für Einstellungen.</li>
+            <li>Integration externer Identity Provider (Google, Apple ID).</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+    <footer class="wiki-footer">
+      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+    </footer>
+  </body>
+</html>

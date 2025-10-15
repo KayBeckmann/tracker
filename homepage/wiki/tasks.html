@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracker Wiki – Aufgaben &amp; Termine</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body class="wiki-body">
+    <header class="wiki-header">
+      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <nav class="wiki-nav">
+        <a href="index.html">Wiki Übersicht</a>
+        <a href="../index.html#module">Module</a>
+      </nav>
+    </header>
+    <main class="wiki-content">
+      <article class="wiki-article">
+        <h1>Aufgaben &amp; Termine</h1>
+        <section>
+          <h2>Bedienung</h2>
+          <ul>
+            <li>Planung von Aufgaben, Terminen und Erinnerungen.</li>
+            <li>Kalenderansicht hebt Tage mit Terminen hervor.</li>
+            <li>Listen mit Sortierung nach Fälligkeit, Priorität und Kategorie.</li>
+            <li>Kategorieverwaltung mit automatischer Erstellung beim Anlegen neuer Einträge.</li>
+            <li>Zeiterfassung direkt aus Aufgaben starten.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Datenmodell (geplant)</h2>
+          <ul>
+            <li>Tabellen <code>tasks</code>, <code>appointments</code>, <code>categories</code>, <code>reminders</code>.</li>
+            <li>Relationen: <code>tasks</code> ↔ <code>time_entries</code> (1:n), Aufgaben ↔ Notizen (n:m geplant).</li>
+            <li>Kategorien als referenzielle Entities.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Synchronisation</h2>
+          <ul>
+            <li>Lokal voll funktionsfähig.</li>
+            <li>Mit Mitgliedschaft: verschlüsselte Synchronisation aller Aufgaben, Termine, Erinnerungen.</li>
+            <li>Konfliktstrategie (Roadmap Phase 3): letzte Änderung gewinnt, Versionierung geplant.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Roadmap</h2>
+          <ul>
+            <li>UI/UX Implementierung.</li>
+            <li>Erinnerungssystem &amp; Notifications.</li>
+            <li>Kalender- und Listenansichten finalisieren.</li>
+            <li>Kategorien-UI + automatische Erstellung.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+    <footer class="wiki-footer">
+      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+    </footer>
+  </body>
+</html>

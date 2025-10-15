@@ -42,6 +42,13 @@ a:hover {
   margin: 0 auto;
 }
 
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
 .hero h1 {
   font-size: clamp(3rem, 6vw, 4.5rem);
   margin-bottom: 16px;
@@ -61,6 +68,22 @@ a:hover {
   font-weight: 600;
   border-radius: 999px;
   box-shadow: var(--shadow);
+}
+.cta-secondary {
+  display: inline-block;
+  margin-top: 24px;
+  margin-left: 12px;
+  padding: 14px 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: var(--text);
+  font-weight: 600;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.cta-secondary:hover {
+  border-color: #fff;
+  color: #fff;
+  text-decoration: none;
 }
 
 .section {
@@ -166,6 +189,92 @@ a:hover {
   text-align: center;
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.85rem;
+}
+
+/* Wiki */
+.wiki-body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.wiki-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 32px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.wiki-logo {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #fff;
+}
+.wiki-nav a {
+  margin-left: 20px;
+  color: var(--text-muted);
+}
+.wiki-nav a:hover {
+  color: #fff;
+}
+.wiki-content {
+  flex: 1;
+  padding: 60px 24px 80px;
+}
+.wiki-article {
+  max-width: 880px;
+  margin: 0 auto;
+  background: var(--card);
+  padding: 48px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.wiki-article h1 {
+  margin-top: 0;
+  font-size: 2.6rem;
+}
+.wiki-article section + section {
+  margin-top: 32px;
+}
+.wiki-article ul {
+  padding-left: 20px;
+  color: var(--text-muted);
+}
+.wiki-footer {
+  text-align: center;
+  padding: 32px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+.wiki-card-grid {
+  margin-top: 32px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.wiki-card {
+  display: block;
+  background: rgba(31, 41, 55, 0.85);
+  padding: 24px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  color: var(--text);
+}
+.wiki-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.wiki-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
 }
 
 @media (max-width: 640px) {

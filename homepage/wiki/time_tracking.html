@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracker Wiki – Zeiterfassung</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body class="wiki-body">
+    <header class="wiki-header">
+      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <nav class="wiki-nav">
+        <a href="index.html">Wiki Übersicht</a>
+        <a href="../index.html#module">Module</a>
+      </nav>
+    </header>
+    <main class="wiki-content">
+      <article class="wiki-article">
+        <h1>Zeiterfassung</h1>
+        <section>
+          <h2>Bedienung</h2>
+          <ul>
+            <li>Sessions manuell oder per Timer erfassen.</li>
+            <li>Aufgabenverknüpfung ermöglicht Zuordnung zu Projekten.</li>
+            <li>Tags für gruppierte Auswertungen.</li>
+            <li>Geplante UI: Start/Stop-Timer, Sessionliste, Filter nach Aufgabe/Tag.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Datenmodell (geplant)</h2>
+          <ul>
+            <li>Tabelle <code>time_entries</code> mit Feldern: <code>task_id</code>, <code>started_at</code>, <code>ended_at</code>, <code>duration</code>, <code>tags</code>.</li>
+            <li>Verknüpfung zu Aufgaben (FK) und Tags.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Synchronisation</h2>
+          <ul>
+            <li>Offline nutzbar; Sessions bleiben lokal.</li>
+            <li>Mit Mitgliedschaft: verschlüsselte Synchronisation aller Zeiteinträge.</li>
+            <li>Konfliktauflösung: Merge per Session-ID, Änderungen versioniert.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Roadmap</h2>
+          <ul>
+            <li>Integration ins Aufgabenmodul.</li>
+            <li>Visualisierungen (Diagramme, Wochenübersichten).</li>
+            <li>Automatische Pausenerkennung &amp; Fokus-Modus.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+    <footer class="wiki-footer">
+      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+    </footer>
+  </body>
+</html>
