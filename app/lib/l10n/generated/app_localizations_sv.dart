@@ -392,14 +392,15 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settingsSeedColorDescription => 'Välj en accentfärg för appen.';
 
   @override
-  String get settingsModulesSectionTitle => 'Modules';
+  String get settingsModulesSectionTitle => 'Moduler';
 
   @override
   String get settingsModulesDescription =>
-      'Choose which modules are visible in the menu.';
+      'Välj vilka moduler som ska visas i menyn.';
 
   @override
-  String get settingsModulesDragHint => 'Drag the handle to reorder.';
+  String get settingsModulesDragHint =>
+      'Dra i handtaget för att ändra ordningen.';
 
   @override
   String get settingsSyncInfoTitle => 'Krypterad synkronisering';
