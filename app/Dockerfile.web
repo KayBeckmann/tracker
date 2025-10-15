@@ -1,0 +1,7 @@
+FROM ghcr.io/cirruslabs/flutter:3.32.8 as builder
+WORKDIR /build
+COPY . .
+RUN flutter pub get && flutter build web --release
+
+FROM nginx:alpine
+COPY --from=builder /build/build/web /usr/share/nginx/html

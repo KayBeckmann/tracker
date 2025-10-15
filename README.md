@@ -28,9 +28,20 @@ dart bin/main.dart --apply-migrations
 Weitere Hinweise (CLI-Wrapperskript, Migrationen, Konfiguration) findest du in
 `backend/README.md`.
 
-### Homepage
+### Homepage & Web-App
 
-Noch nicht umgesetzt. `homepage/README.md` dokumentiert geplante Inhalte.
+Die statische Produktseite + Wiki sowie die Flutter-Web-App lassen sich via Docker Compose starten:
+
+```bash
+docker compose -f docker-compose.homepage.yml up --build
+```
+
+Anschließend:
+
+- Homepage: <http://localhost:8080>
+- Web-App: <http://localhost:8081>
+
+Weitere Details findest du in `homepage/README.md`.
 
 ## Weitere Unterlagen
 

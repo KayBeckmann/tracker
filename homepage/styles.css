@@ -131,6 +131,30 @@ a:hover {
   font-size: 1.4rem;
 }
 
+.card--link {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-link {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.card-link::after {
+  content: "→";
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.card-link:hover::after {
+  transform: translateX(4px);
+}
+
 .card ul,
 .module-card ul,
 .roadmap-card ul {
