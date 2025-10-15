@@ -371,6 +371,49 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsAppearanceSectionTitle => 'Appearance';
+
+  @override
+  String get settingsThemeModeLabel => 'Theme mode';
+
+  @override
+  String get settingsThemeModeSystem => 'System default';
+
+  @override
+  String get settingsThemeModeLight => 'Light';
+
+  @override
+  String get settingsThemeModeDark => 'Dark';
+
+  @override
+  String get settingsSeedColorLabel => 'Accent color';
+
+  @override
+  String get settingsSeedColorDescription =>
+      'Pick a highlight color for the app.';
+
+  @override
+  String get settingsModulesSectionTitle => 'Modules';
+
+  @override
+  String get settingsModulesDescription =>
+      'Choose which modules are visible in the menu.';
+
+  @override
+  String get settingsModulesDragHint => 'Drag the handle to reorder.';
+
+  @override
+  String get settingsSyncInfoTitle => 'Encrypted synchronisation';
+
+  @override
+  String get settingsSyncInfoDescription =>
+      'Sign in only if you want to synchronise your data with the backend. Without sign-in, everything stays on this device.';
+
+  @override
+  String get settingsSyncMembershipInfo =>
+      'Sync becomes available after you start a membership.';
+
+  @override
   String get guestUserName => 'Guest';
 
   @override

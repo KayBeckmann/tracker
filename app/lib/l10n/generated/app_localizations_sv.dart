@@ -371,6 +371,48 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
+  String get settingsAppearanceSectionTitle => 'Utseende';
+
+  @override
+  String get settingsThemeModeLabel => 'Temaläge';
+
+  @override
+  String get settingsThemeModeSystem => 'Systemstandard';
+
+  @override
+  String get settingsThemeModeLight => 'Ljust';
+
+  @override
+  String get settingsThemeModeDark => 'Mörkt';
+
+  @override
+  String get settingsSeedColorLabel => 'Accentfärg';
+
+  @override
+  String get settingsSeedColorDescription => 'Välj en accentfärg för appen.';
+
+  @override
+  String get settingsModulesSectionTitle => 'Modules';
+
+  @override
+  String get settingsModulesDescription =>
+      'Choose which modules are visible in the menu.';
+
+  @override
+  String get settingsModulesDragHint => 'Drag the handle to reorder.';
+
+  @override
+  String get settingsSyncInfoTitle => 'Krypterad synkronisering';
+
+  @override
+  String get settingsSyncInfoDescription =>
+      'Logga bara in om du vill synkronisera dina data med backend. Utan inloggning stannar allt på den här enheten.';
+
+  @override
+  String get settingsSyncMembershipInfo =>
+      'Synkningen blir tillgänglig när du har ett aktivt medlemskap.';
+
+  @override
   String get guestUserName => 'Gäst';
 
   @override

@@ -377,6 +377,49 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get settingsAppearanceSectionTitle => 'Darstellung';
+
+  @override
+  String get settingsThemeModeLabel => 'Designmodus';
+
+  @override
+  String get settingsThemeModeSystem => 'Systemstandard';
+
+  @override
+  String get settingsThemeModeLight => 'Hell';
+
+  @override
+  String get settingsThemeModeDark => 'Dunkel';
+
+  @override
+  String get settingsSeedColorLabel => 'Akzentfarbe';
+
+  @override
+  String get settingsSeedColorDescription => 'Wähle die Akzentfarbe der App.';
+
+  @override
+  String get settingsModulesSectionTitle => 'Module';
+
+  @override
+  String get settingsModulesDescription =>
+      'Lege fest, welche Module im Menü sichtbar sind.';
+
+  @override
+  String get settingsModulesDragHint =>
+      'Ziehe am Griff, um die Reihenfolge zu ändern.';
+
+  @override
+  String get settingsSyncInfoTitle => 'Verschlüsselte Synchronisierung';
+
+  @override
+  String get settingsSyncInfoDescription =>
+      'Melde dich nur an, wenn du deine Daten mit dem Backend synchronisieren möchtest. Ohne Anmeldung bleiben alle Daten auf diesem Gerät.';
+
+  @override
+  String get settingsSyncMembershipInfo =>
+      'Die Synchronisierung wird freigeschaltet, sobald eine Mitgliedschaft aktiv ist.';
+
+  @override
   String get guestUserName => 'Gast';
 
   @override

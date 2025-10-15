@@ -17,6 +17,10 @@ const String backendBaseUrl = String.fromEnvironment(
 
 const String trackerBoxName = 'tracker_box';
 const String preferredLocaleKey = 'preferred_locale';
+const String preferredThemeModeKey = 'preferred_theme_mode';
+const String preferredSeedColorKey = 'preferred_seed_color';
+const String enabledModulesKey = 'enabled_modules';
+const String moduleOrderKey = 'module_order';
 
 const List<Locale> supportedAppLocales = <Locale>[
   Locale('en'),
@@ -43,6 +47,8 @@ class TrackerApp extends StatefulWidget {
 
 class _TrackerAppState extends State<TrackerApp> {
   Locale? _locale;
+  ThemeMode _themeMode = ThemeMode.system;
+  Color _seedColor = Colors.blue;
 
   Box<dynamic> get _settingsBox => Hive.box(trackerBoxName);
 
@@ -53,6 +59,18 @@ class _TrackerAppState extends State<TrackerApp> {
     if (stored is String && stored.isNotEmpty) {
       _locale = Locale(stored);
     }
+    final Object? storedThemeMode = _settingsBox.get(preferredThemeModeKey);
+    if (storedThemeMode is String) {
+      _themeMode = switch (storedThemeMode) {
+        'light' => ThemeMode.light,
+        'dark' => ThemeMode.dark,
+        _ => ThemeMode.system,
+      };
+    }
+    final Object? storedSeed = _settingsBox.get(preferredSeedColorKey);
+    if (storedSeed is int) {
+      _seedColor = Color(storedSeed);
+    }
   }
 
   void _handleLocaleChanged(Locale locale) {
@@ -60,6 +78,25 @@ class _TrackerAppState extends State<TrackerApp> {
       _locale = locale;
     });
     _settingsBox.put(preferredLocaleKey, locale.languageCode);
+  }
+
+  void _handleThemeModeChanged(ThemeMode mode) {
+    setState(() {
+      _themeMode = mode;
+    });
+    final String value = switch (mode) {
+      ThemeMode.light => 'light',
+      ThemeMode.dark => 'dark',
+      _ => 'system',
+    };
+    _settingsBox.put(preferredThemeModeKey, value);
+  }
+
+  void _handleSeedColorChanged(Color color) {
+    setState(() {
+      _seedColor = color;
+    });
+    _settingsBox.put(preferredSeedColorKey, color.toARGB32());
   }
 
   @override
@@ -70,13 +107,27 @@ class _TrackerAppState extends State<TrackerApp> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: _seedColor),
         useMaterial3: true,
+        brightness: Brightness.light,
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _seedColor,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      ),
+      themeMode: _themeMode,
       home: HomePage(
         database: widget.database,
         currentLocale: _locale ?? supportedAppLocales.first,
         onLocaleChanged: _handleLocaleChanged,
+        themeMode: _themeMode,
+        onThemeModeChanged: _handleThemeModeChanged,
+        seedColor: _seedColor,
+        onSeedColorChanged: _handleSeedColorChanged,
       ),
     );
   }
@@ -88,11 +139,19 @@ class HomePage extends StatefulWidget {
     required this.database,
     required this.currentLocale,
     required this.onLocaleChanged,
+    required this.themeMode,
+    required this.onThemeModeChanged,
+    required this.seedColor,
+    required this.onSeedColorChanged,
   });
 
   final AppDatabase database;
   final Locale currentLocale;
   final ValueChanged<Locale> onLocaleChanged;
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode> onThemeModeChanged;
+  final Color seedColor;
+  final ValueChanged<Color> onSeedColorChanged;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -162,6 +221,15 @@ class AuthenticatedUser {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const List<_AppSection> _defaultModuleOrder = <_AppSection>[
+    _AppSection.dashboard,
+    _AppSection.notes,
+    _AppSection.tasks,
+    _AppSection.timeTracking,
+    _AppSection.journal,
+    _AppSection.habits,
+    _AppSection.ledger,
+  ];
   final TextEditingController _nameController = TextEditingController(
     text: 'Flutter',
   );
@@ -178,6 +246,8 @@ class _HomePageState extends State<HomePage> {
   late final AppDatabase _database;
   late final Box<dynamic> _trackerBox;
   Locale _pendingLocale = supportedAppLocales.first;
+  ThemeMode _pendingThemeMode = ThemeMode.system;
+  Color _pendingSeedColor = Colors.blue;
 
   String? _statusMessage;
   bool _isLoading = false;
@@ -188,6 +258,8 @@ class _HomePageState extends State<HomePage> {
   MembershipStatus? _membershipStatus;
   bool _isMembershipLoading = false;
   _AppSection _selectedSection = _AppSection.dashboard;
+  late List<_AppSection> _moduleOrder;
+  late Set<_AppSection> _enabledModules;
 
   @override
   void initState() {
@@ -195,6 +267,11 @@ class _HomePageState extends State<HomePage> {
     _database = widget.database;
     _trackerBox = Hive.box(trackerBoxName);
     _pendingLocale = widget.currentLocale;
+    _moduleOrder = List<_AppSection>.from(_defaultModuleOrder);
+    _enabledModules = _defaultModuleOrder.toSet();
+    _loadModuleSettings();
+    _pendingThemeMode = widget.themeMode;
+    _pendingSeedColor = widget.seedColor;
 
     final Object? token = _trackerBox.get('auth_token');
     final AuthenticatedUser? user = _readCurrentUser(_trackerBox);
@@ -213,6 +290,16 @@ class _HomePageState extends State<HomePage> {
     if (widget.currentLocale != oldWidget.currentLocale) {
       setState(() {
         _pendingLocale = widget.currentLocale;
+      });
+    }
+    if (widget.themeMode != oldWidget.themeMode) {
+      setState(() {
+        _pendingThemeMode = widget.themeMode;
+      });
+    }
+    if (widget.seedColor != oldWidget.seedColor) {
+      setState(() {
+        _pendingSeedColor = widget.seedColor;
       });
     }
   }
@@ -312,6 +399,64 @@ class _HomePageState extends State<HomePage> {
       _selectedSection = _AppSection.dashboard;
       _statusMessage = null;
     });
+  }
+
+  void _loadModuleSettings() {
+    final List<dynamic>? storedOrderRaw =
+        _trackerBox.get(moduleOrderKey) as List<dynamic>?;
+    if (storedOrderRaw != null && storedOrderRaw.isNotEmpty) {
+      final List<_AppSection> parsed = storedOrderRaw
+          .map((dynamic name) => _parseSectionName('$name'))
+          .whereType<_AppSection>()
+          .where(_defaultModuleOrder.contains)
+          .toList();
+      if (parsed.isNotEmpty) {
+        _moduleOrder = parsed;
+        for (final section in _defaultModuleOrder) {
+          if (!_moduleOrder.contains(section)) {
+            _moduleOrder.add(section);
+          }
+        }
+      }
+    }
+
+    final List<dynamic>? storedEnabledRaw =
+        _trackerBox.get(enabledModulesKey) as List<dynamic>?;
+    if (storedEnabledRaw != null) {
+      final parsed = storedEnabledRaw
+          .map((dynamic name) => _parseSectionName('$name'))
+          .whereType<_AppSection>()
+          .where(_defaultModuleOrder.contains)
+          .toSet();
+      if (parsed.isNotEmpty) {
+        _enabledModules = parsed;
+      }
+    }
+  }
+
+  void _persistModuleSettings() {
+    final List<String> orderNames =
+        _moduleOrder.map((section) => section.name).toList();
+    _trackerBox.put(moduleOrderKey, orderNames);
+    final List<String> enabledNames =
+        _enabledModules.map((section) => section.name).toList();
+    _trackerBox.put(enabledModulesKey, enabledNames);
+  }
+
+  _AppSection? _parseSectionName(String name) {
+    try {
+      return _AppSection.values.byName(name);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  List<_AppSection> get _visibleNavigationSections {
+    final List<_AppSection> modules = _moduleOrder
+        .where((section) => _enabledModules.contains(section))
+        .toList();
+    modules.add(_AppSection.settings);
+    return modules;
   }
 
   Future<void> _persistAuthResponse(Map<String, dynamic> data) async {
@@ -737,6 +882,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onSelectSection(_AppSection section) {
+    if (!_visibleNavigationSections.contains(section)) {
+      return;
+    }
     if (_selectedSection == section) {
       return;
     }
@@ -1190,42 +1338,17 @@ class _HomePageState extends State<HomePage> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        _buildLanguageCard(context, loc),
+        const SizedBox(height: 24),
+        _buildAppearanceCard(context, loc),
+        const SizedBox(height: 24),
+        _buildModulesCard(context, loc),
+        const SizedBox(height: 24),
+        _buildSyncInfoCard(context, loc),
+        const SizedBox(height: 24),
         Text(loc.settingsSignInPrompt, style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
-        DefaultTabController(
-          length: 2,
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  TabBar(
-                    tabs: [
-                      Tab(
-                        icon: const Icon(Icons.lock_open),
-                        text: loc.loginTabSignIn,
-                      ),
-                      Tab(
-                        icon: const Icon(Icons.person_add),
-                        text: loc.loginTabRegister,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 360,
-                    child: TabBarView(
-                      children: [
-                        _buildLoginForm(context),
-                        _buildRegisterForm(context),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        _buildAuthTabsCard(context, loc),
       ],
     );
   }
@@ -1236,36 +1359,28 @@ class _HomePageState extends State<HomePage> {
     List<GreetingEntry> entries,
     bool isHistoryLoading,
   ) {
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 32),
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildMembershipCard(context, loc),
-              const SizedBox(height: 24),
-              _buildLanguageCard(context, loc),
-            ],
-          ),
+    final children = <Widget>[
+      _buildMembershipCard(context, loc),
+      const SizedBox(height: 24),
+      _buildAppearanceCard(context, loc),
+      const SizedBox(height: 24),
+      _buildModulesCard(context, loc),
+      const SizedBox(height: 24),
+      _buildLanguageCard(context, loc),
+    ];
+    if (entries.isNotEmpty || isHistoryLoading) {
+      children.addAll([
+        const SizedBox(height: 24),
+        FilledButton.tonalIcon(
+          onPressed: isHistoryLoading ? null : _clearHistory,
+          icon: const Icon(Icons.delete_sweep),
+          label: Text(loc.navClearHistory),
         ),
-        if (entries.isNotEmpty || isHistoryLoading)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Divider(height: 32),
-                FilledButton.tonalIcon(
-                  onPressed: isHistoryLoading ? null : _clearHistory,
-                  icon: const Icon(Icons.delete_sweep),
-                  label: Text(loc.navClearHistory),
-                ),
-              ],
-            ),
-          ),
-      ],
+      ]);
+    }
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: children,
     );
   }
 
@@ -1331,6 +1446,11 @@ class _HomePageState extends State<HomePage> {
             Text(statusText, style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             Text(syncText, style: theme.textTheme.bodyMedium),
+            const SizedBox(height: 8),
+            Text(
+              loc.settingsSyncMembershipInfo,
+              style: theme.textTheme.bodySmall,
+            ),
             if (lastPaymentText != null) ...[
               const SizedBox(height: 8),
               Text(
@@ -1375,6 +1495,264 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppearanceCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    final modeOptions = <({ThemeMode mode, String label, IconData icon})>[
+      (mode: ThemeMode.system, label: loc.settingsThemeModeSystem, icon: Icons.brightness_auto),
+      (mode: ThemeMode.light, label: loc.settingsThemeModeLight, icon: Icons.light_mode_outlined),
+      (mode: ThemeMode.dark, label: loc.settingsThemeModeDark, icon: Icons.dark_mode_outlined),
+    ];
+    final colorOptions = <Color>[
+      Colors.blue,
+      Colors.teal,
+      Colors.deepPurple,
+      Colors.orange,
+      Colors.green,
+      Colors.pink,
+      Colors.indigo,
+      Colors.brown,
+    ];
+    if (!colorOptions.any((color) => color == _pendingSeedColor)) {
+      colorOptions.add(_pendingSeedColor);
+    }
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.settingsAppearanceSectionTitle,
+              style: theme.textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.settingsThemeModeLabel,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            ...modeOptions.map(
+              (option) => RadioListTile<ThemeMode>(
+                value: option.mode,
+                groupValue: _pendingThemeMode,
+                onChanged: (value) {
+                  if (value == null) {
+                    return;
+                  }
+                  setState(() {
+                    _pendingThemeMode = value;
+                  });
+                  widget.onThemeModeChanged(value);
+                },
+                secondary: Icon(option.icon),
+                title: Text(option.label),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              loc.settingsSeedColorLabel,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              loc.settingsSeedColorDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: colorOptions.map((color) {
+                final bool isSelected = color == _pendingSeedColor;
+                final brightness = ThemeData.estimateBrightnessForColor(color);
+                final iconColor = brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _pendingSeedColor = color;
+                    });
+                    widget.onSeedColorChanged(color);
+                  },
+                  child: Tooltip(
+                    message:
+                        '#${color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase()}',
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: color,
+                        border: Border.all(
+                          color: isSelected
+                              ? theme.colorScheme.onSurface
+                              : theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.2),
+                          width: isSelected ? 3 : 2,
+                        ),
+                      ),
+                      child: isSelected
+                          ? Icon(Icons.check, color: iconColor, size: 20)
+                          : null,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModulesCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    final sections = _moduleOrder;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.settingsModulesSectionTitle,
+              style: theme.textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.settingsModulesDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.settingsModulesDragHint,
+              style: theme.textTheme.bodySmall,
+            ),
+            const SizedBox(height: 16),
+            ReorderableListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              itemCount: sections.length,
+              onReorder: _handleModuleReorder,
+              buildDefaultDragHandles: false,
+              itemBuilder: (context, index) {
+                final section = sections[index];
+                final title = _localizedSectionTitle(loc, section);
+                final bool enabled = _enabledModules.contains(section);
+                return ListTile(
+                  key: ValueKey<String>('module_${section.name}'),
+                  leading: ReorderableDragStartListener(
+                    index: index,
+                    child: const Icon(Icons.drag_handle),
+                  ),
+                  title: Text(title),
+                  trailing: Switch(
+                    value: enabled,
+                    onChanged: (value) => _handleModuleToggle(section, value),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleModuleToggle(_AppSection section, bool enabled) {
+    setState(() {
+      if (enabled) {
+        _enabledModules.add(section);
+      } else {
+        _enabledModules.remove(section);
+        final visible = _visibleNavigationSections;
+        if (!visible.contains(_selectedSection)) {
+          _selectedSection = visible.first;
+        }
+      }
+    });
+    _persistModuleSettings();
+  }
+
+  void _handleModuleReorder(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    setState(() {
+      final section = _moduleOrder.removeAt(oldIndex);
+      _moduleOrder.insert(newIndex, section);
+    });
+    _persistModuleSettings();
+  }
+
+  Widget _buildSyncInfoCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.settingsSyncInfoTitle,
+              style: theme.textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.settingsSyncInfoDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              loc.settingsSyncMembershipInfo,
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAuthTabsCard(BuildContext context, AppLocalizations loc) {
+    return DefaultTabController(
+      length: 2,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              TabBar(
+                tabs: [
+                  Tab(
+                    icon: const Icon(Icons.lock_open),
+                    text: loc.loginTabSignIn,
+                  ),
+                  Tab(
+                    icon: const Icon(Icons.person_add),
+                    text: loc.loginTabRegister,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                height: 360,
+                child: TabBarView(
+                  children: [
+                    _buildLoginForm(context),
+                    _buildRegisterForm(context),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1679,6 +2057,7 @@ class _HomePageState extends State<HomePage> {
     final String initial = userLabel.trim().isNotEmpty
         ? userLabel.trim().substring(0, 1).toUpperCase()
         : '?';
+    final sections = _visibleNavigationSections;
 
     return Drawer(
       child: SafeArea(
@@ -1700,7 +2079,7 @@ class _HomePageState extends State<HomePage> {
             const Divider(height: 1),
             Expanded(
               child: ListView(
-                children: _AppSection.values
+                children: sections
                     .map(
                       (section) => ListTile(
                         leading: Icon(_sectionIcon(section)),
@@ -1757,9 +2136,11 @@ class _HomePageState extends State<HomePage> {
     final String initial = userLabel.trim().isNotEmpty
         ? userLabel.trim().substring(0, 1).toUpperCase()
         : '?';
+    final sections = _visibleNavigationSections;
+    final int selectedIndex = sections.indexOf(_selectedSection).clamp(0, sections.length - 1);
 
     return NavigationRail(
-      selectedIndex: _selectedSection.index,
+      selectedIndex: selectedIndex,
       labelType: NavigationRailLabelType.all,
       leading: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -1791,8 +2172,8 @@ class _HomePageState extends State<HomePage> {
             : () => _onSelectSection(_AppSection.settings),
       ),
       onDestinationSelected: (index) =>
-          _onSelectSection(_AppSection.values[index]),
-      destinations: _AppSection.values
+          _onSelectSection(sections[index]),
+      destinations: sections
           .map(
             (section) => NavigationRailDestination(
               icon: Icon(_sectionIcon(section)),

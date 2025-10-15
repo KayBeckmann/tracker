@@ -766,6 +766,84 @@ abstract class AppLocalizations {
   /// **'Current language: {language}'**
   String settingsCurrentLanguage(String language);
 
+  /// No description provided for @settingsAppearanceSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearanceSectionTitle;
+
+  /// No description provided for @settingsThemeModeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme mode'**
+  String get settingsThemeModeLabel;
+
+  /// No description provided for @settingsThemeModeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get settingsThemeModeSystem;
+
+  /// No description provided for @settingsThemeModeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsThemeModeLight;
+
+  /// No description provided for @settingsThemeModeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsThemeModeDark;
+
+  /// No description provided for @settingsSeedColorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Accent color'**
+  String get settingsSeedColorLabel;
+
+  /// No description provided for @settingsSeedColorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a highlight color for the app.'**
+  String get settingsSeedColorDescription;
+
+  /// No description provided for @settingsModulesSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Modules'**
+  String get settingsModulesSectionTitle;
+
+  /// No description provided for @settingsModulesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which modules are visible in the menu.'**
+  String get settingsModulesDescription;
+
+  /// No description provided for @settingsModulesDragHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag the handle to reorder.'**
+  String get settingsModulesDragHint;
+
+  /// No description provided for @settingsSyncInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted synchronisation'**
+  String get settingsSyncInfoTitle;
+
+  /// No description provided for @settingsSyncInfoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in only if you want to synchronise your data with the backend. Without sign-in, everything stays on this device.'**
+  String get settingsSyncInfoDescription;
+
+  /// No description provided for @settingsSyncMembershipInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync becomes available after you start a membership.'**
+  String get settingsSyncMembershipInfo;
+
   /// No description provided for @guestUserName.
   ///
   /// In en, this message translates to:
