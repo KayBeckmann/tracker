@@ -134,6 +134,24 @@ class AppDatabase extends _$AppDatabase {
     ).watch();
   }
 
+  Stream<List<String>> watchAllNoteTags() {
+    return select(noteEntries).watch().map((rows) {
+      final tags = <String>{};
+      for (final note in rows) {
+        final parts = note.tags
+            .split(',')
+            .map((tag) => tag.trim())
+            .where((tag) => tag.isNotEmpty);
+        tags.addAll(parts);
+      }
+      final result = tags.toList()
+        ..sort(
+          (a, b) => a.toLowerCase().compareTo(b.toLowerCase()),
+        );
+      return result;
+    });
+  }
+
   Future<int> insertNoteEntry({
     required NoteKind kind,
     String title = '',

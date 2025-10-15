@@ -143,6 +143,15 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesSearchTagHint => 'Filtrera taggar';
 
   @override
+  String get notesTagFilterLabel => 'Taggfilter';
+
+  @override
+  String get notesTagFilterAll => 'Alla taggar';
+
+  @override
+  String get notesTagSuggestionsLabel => 'Förslag';
+
+  @override
   String get notesEmptyPlaceholder =>
       'Inga anteckningar ännu. Skapa din första anteckning för att samla idéer.';
 

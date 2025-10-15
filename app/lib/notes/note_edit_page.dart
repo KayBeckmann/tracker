@@ -25,35 +25,39 @@ class NoteEditPage extends StatefulWidget {
 
 class _NoteEditPageState extends State<NoteEditPage>
     with SingleTickerProviderStateMixin {
-  late final TextEditingController _titleController;
   late final TextEditingController _tagsController;
   late final TextEditingController _contentController;
   late final TabController _tabController;
 
   bool _isSaving = false;
 
+  void _handleTagsChanged() {
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.note?.title);
     _tagsController = TextEditingController(text: widget.note?.tags);
     _contentController = TextEditingController(text: widget.note?.content);
     _tabController = TabController(length: 2, vsync: this);
+    _tagsController.addListener(_handleTagsChanged);
   }
 
   @override
   void dispose() {
-    _titleController.dispose();
-    _tagsController.dispose();
+    _tagsController
+      ..removeListener(_handleTagsChanged)
+      ..dispose();
     _contentController.dispose();
     _tabController.dispose();
     super.dispose();
   }
 
-  String _deriveTitle(String content, AppLocalizations loc) {
+  String _computeTitle(String content) {
     final trimmed = content.trim();
     if (trimmed.isEmpty) {
-      return loc.notesUntitled;
+      return '';
     }
     return trimmed.split('\n').first.trim();
   }
@@ -65,6 +69,27 @@ class _NoteEditPageState extends State<NoteEditPage>
         .where((tag) => tag.isNotEmpty)
         .toList();
     return tags.join(', ');
+  }
+
+  Set<String> _currentTagsSet() {
+    return _tagsController.text
+        .split(',')
+        .map((tag) => tag.trim())
+        .where((tag) => tag.isNotEmpty)
+        .toSet();
+  }
+
+  void _toggleTag(String tag) {
+    final tags = _currentTagsSet();
+    if (!tags.add(tag)) {
+      tags.remove(tag);
+    }
+    final ordered = tags.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    final value = ordered.join(', ');
+    setState(() {
+      _tagsController.text = value;
+    });
   }
 
   Future<void> _save() async {
@@ -79,25 +104,22 @@ class _NoteEditPageState extends State<NoteEditPage>
       return;
     }
 
-    final explicitTitle = _titleController.text.trim();
-    final title = explicitTitle.isEmpty
-        ? _deriveTitle(content, loc)
-        : explicitTitle;
+    final title = _computeTitle(content);
 
     setState(() {
       _isSaving = true;
     });
 
     try {
-      if (widget.note == null) {
-        await widget.database.insertNoteEntry(
-          kind: NoteKind.markdown,
-          title: title,
-          content: content,
-          tags: tags,
-        );
-      } else {
-        final updated = widget.note!.copyWith(
+          if (widget.note == null) {
+            await widget.database.insertNoteEntry(
+              kind: NoteKind.markdown,
+              title: title,
+              content: content,
+              tags: tags,
+            );
+          } else {
+            final updated = widget.note!.copyWith(
           title: title,
           content: Value(content),
           drawingJson: const Value.absent(),
@@ -199,19 +221,45 @@ class _NoteEditPageState extends State<NoteEditPage>
       child: Column(
         children: [
           TextField(
-            controller: _titleController,
-            decoration: InputDecoration(
-              labelText: loc.notesTitleLabel,
-              hintText: loc.notesTitleHint,
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
             controller: _tagsController,
             decoration: InputDecoration(
               labelText: loc.notesTagLabel,
               hintText: loc.notesTagHint,
             ),
+          ),
+          const SizedBox(height: 8),
+          StreamBuilder<List<String>>(
+            stream: widget.database.watchAllNoteTags(),
+            builder: (context, snapshot) {
+              final tags = snapshot.data ?? const <String>[];
+              if (tags.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              final selected = _currentTagsSet();
+              return Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: Text(
+                        '${loc.notesTagSuggestionsLabel}:',
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                    ),
+                    ...tags.map(
+                      (tag) => FilterChip(
+                        label: Text(tag),
+                        selected: selected.contains(tag),
+                        onSelected: (_) => _toggleTag(tag),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
           const SizedBox(height: 12),
           Expanded(

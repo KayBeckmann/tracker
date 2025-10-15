@@ -143,6 +143,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesSearchTagHint => 'Filter tags';
 
   @override
+  String get notesTagFilterLabel => 'Tag filter';
+
+  @override
+  String get notesTagFilterAll => 'All tags';
+
+  @override
+  String get notesTagSuggestionsLabel => 'Suggestions';
+
+  @override
   String get notesEmptyPlaceholder =>
       'No notes yet. Create the first one to start collecting ideas.';
 

@@ -19,16 +19,13 @@ class NotesPage extends StatefulWidget {
 
 class _NotesPageState extends State<NotesPage> {
   final TextEditingController _contentFilterController = TextEditingController();
-  final TextEditingController _tagFilterController = TextEditingController();
-
   String _contentFilter = '';
-  String _tagFilter = '';
+  String? _selectedTag;
 
   @override
   void initState() {
     super.initState();
     _contentFilterController.addListener(_handleContentFilterChanged);
-    _tagFilterController.addListener(_handleTagFilterChanged);
   }
 
   @override
@@ -36,21 +33,12 @@ class _NotesPageState extends State<NotesPage> {
     _contentFilterController
       ..removeListener(_handleContentFilterChanged)
       ..dispose();
-    _tagFilterController
-      ..removeListener(_handleTagFilterChanged)
-      ..dispose();
     super.dispose();
   }
 
   void _handleContentFilterChanged() {
     setState(() {
       _contentFilter = _contentFilterController.text;
-    });
-  }
-
-  void _handleTagFilterChanged() {
-    setState(() {
-      _tagFilter = _tagFilterController.text;
     });
   }
 
@@ -145,7 +133,9 @@ class _NotesPageState extends State<NotesPage> {
             tooltip: loc.notesClearFiltersTooltip,
             onPressed: () {
               _contentFilterController.clear();
-              _tagFilterController.clear();
+              setState(() {
+                _selectedTag = null;
+              });
             },
             icon: const Icon(Icons.filter_alt_off),
           ),
@@ -173,12 +163,47 @@ class _NotesPageState extends State<NotesPage> {
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: TextField(
-                    controller: _tagFilterController,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.tag),
-                      labelText: loc.notesSearchTagHint,
-                    ),
+                  child: StreamBuilder<List<String>>(
+                    stream: widget.database.watchAllNoteTags(),
+                    builder: (context, snapshot) {
+                      final tags = snapshot.data ?? const <String>[];
+                      final currentValue =
+                          tags.contains(_selectedTag) ? _selectedTag : null;
+                      if (_selectedTag != null && currentValue == null) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            setState(() {
+                              _selectedTag = null;
+                            });
+                          }
+                        });
+                      }
+                      final items = <DropdownMenuItem<String?>>[
+                        DropdownMenuItem<String?>(
+                          value: null,
+                          child: Text(loc.notesTagFilterAll),
+                        ),
+                        ...tags.map(
+                          (tag) => DropdownMenuItem<String?>(
+                            value: tag,
+                            child: Text(tag),
+                          ),
+                        ),
+                      ];
+                      return DropdownButtonFormField<String?>(
+                        value: currentValue,
+                        items: items,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedTag = value;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.tag),
+                          labelText: loc.notesTagFilterLabel,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -188,7 +213,7 @@ class _NotesPageState extends State<NotesPage> {
               child: StreamBuilder<List<NoteEntry>>(
                 stream: widget.database.watchNoteEntries(
                   contentFilter: _contentFilter,
-                  tagFilter: _tagFilter,
+                  tagFilter: _selectedTag ?? '',
                 ),
                 builder: (context, snapshot) {
                   final notes = snapshot.data ?? const <NoteEntry>[];

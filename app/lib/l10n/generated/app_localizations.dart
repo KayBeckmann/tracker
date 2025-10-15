@@ -346,6 +346,24 @@ abstract class AppLocalizations {
   /// **'Filter tags'**
   String get notesSearchTagHint;
 
+  /// No description provided for @notesTagFilterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag filter'**
+  String get notesTagFilterLabel;
+
+  /// No description provided for @notesTagFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All tags'**
+  String get notesTagFilterAll;
+
+  /// No description provided for @notesTagSuggestionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions'**
+  String get notesTagSuggestionsLabel;
+
   /// No description provided for @notesEmptyPlaceholder.
   ///
   /// In en, this message translates to:
