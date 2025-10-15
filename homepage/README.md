@@ -1,10 +1,29 @@
-# Projekt-Homepage (in Planung)
+# Tracker Homepage
 
-Dieser Ordner ist für die öffentliche Website von *tracker* reserviert.
+Diese statische Seite dient als Produkt- und Feature-Übersicht der Tracker-App.
 
-Geplant ist:
-- Vorstellung der App und Feature-Übersicht.
-- Verlinkungen zu Download-Stores und Support.
-- Optional ein Blog/Changelog.
+## Inhalte
 
-Das konkrete Build-Setup (z. B. Flutter Web, Astro, Next.js) wird definiert, sobald das Design steht.
+- **Vision**: Warum Tracker entwickelt wird und welchen Mehrwert die App liefert.
+- **Module**: Überblick über Dashboard, Aufgaben, Notizen, Journal, Habits, Haushaltsbuch, Zeiterfassung und Einstellungen.
+- **Synchronisation**: Darstellung der Offline-first-Strategie sowie der verschlüsselten Cloud-Synchronisierung.
+- **Roadmap**: Wichtigste To-do-Blöcke basierend auf `../todo.md`.
+
+## Struktur
+
+```
+homepage/
+├── index.html      # Produktseite
+├── styles.css      # Styling im dunklen Look
+└── wiki/           # Detailbeschreibungen je Modul
+```
+
+## Lokale Vorschau
+
+Einfach mit einem beliebigen Webserver starten, z. B.:
+
+```bash
+python -m http.server --directory homepage 8080
+```
+
+Danach im Browser `http://localhost:8080` öffnen.
