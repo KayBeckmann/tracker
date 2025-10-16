@@ -173,8 +173,34 @@ class _NoteEditPageState extends State<NoteEditPage>
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final mediaQuery = MediaQuery.of(context);
+    final theme = Theme.of(context);
+    final bool isCompactLayout =
+        mediaQuery.size.height < 600 || mediaQuery.size.width < 600;
+    final double toolbarHeight =
+        isCompactLayout ? 48.0 : kToolbarHeight;
+    final double tabBarHeight =
+        isCompactLayout ? 40.0 : kTextTabBarHeight;
+
+    final tabBar = TabBar(
+      controller: _tabController,
+      labelStyle:
+          isCompactLayout ? theme.textTheme.bodyMedium : null,
+      labelPadding: EdgeInsets.symmetric(
+        horizontal: isCompactLayout ? 12 : 16,
+      ),
+      tabs: [
+        Tab(text: loc.notesMarkdownTabEdit),
+        Tab(text: loc.notesMarkdownTabPreview),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: toolbarHeight,
+        titleTextStyle:
+            isCompactLayout ? theme.textTheme.titleMedium : null,
+        titleSpacing: isCompactLayout ? 8 : null,
         title: Text(
           widget.isEditing ? loc.notesEditorTitleEdit : loc.notesEditorTitleNew,
         ),
@@ -197,12 +223,12 @@ class _NoteEditPageState extends State<NoteEditPage>
                 : const Icon(Icons.save),
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(text: loc.notesMarkdownTabEdit),
-            Tab(text: loc.notesMarkdownTabPreview),
-          ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(tabBarHeight),
+          child: SizedBox(
+            height: tabBarHeight,
+            child: tabBar,
+          ),
         ),
       ),
       body: TabBarView(

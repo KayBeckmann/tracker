@@ -306,8 +306,19 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final mediaQuery = MediaQuery.of(context);
+    final theme = Theme.of(context);
+    final bool isCompactLayout =
+        mediaQuery.size.height < 600 || mediaQuery.size.width < 600;
+    final double toolbarHeight =
+        isCompactLayout ? 48.0 : kToolbarHeight;
+
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: toolbarHeight,
+        titleTextStyle:
+            isCompactLayout ? theme.textTheme.titleMedium : null,
+        titleSpacing: isCompactLayout ? 8 : null,
         title: Text(
           widget.isEditing
               ? loc.notesDrawingTitleEdit
