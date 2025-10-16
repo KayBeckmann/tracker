@@ -35,10 +35,10 @@
   <!-- sql.js is required by drift/web.dart to provide sqlite support in the browser -->
   <script>
     window.initSqlJs = {
-      locateFile: (file) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/${file}`,
+      locateFile: (file) => file,
     };
   </script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+  <script defer src="sql-wasm.js"></script>
 </head>
 <body>
   <!-- Ensure flutter bootstrap runs after sql.js finished loading -->
