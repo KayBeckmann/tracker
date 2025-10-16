@@ -41,17 +41,17 @@
         - [x] Implement local storage for notes.
         - [x] Add tagging, filtering, and search capabilities.
         - [x] Integrate Markdown rendering and editing.
-            - [ ] Implement Note Structure:
-                - [ ] Logic to automatically set first line as title.
-                - [ ] Store creation and last modification dates.
-                - [ ] Allow multiple tags per note.
+            - [x] Implement Note Structure:
+                - [x] Logic to automatically set first line as title.
+                - [x] Store creation and last modification dates.
+                - [x] Allow multiple tags per note.
             - [x] Notizen um Freihand/Grafik Eingaben erweitern.
             - [ ] Implement Initial Notes:
                 - [ ] Create predefined notes for app functionalities and Markdown introduction.
                 - [ ] Assign appropriate tags for each module's note.
             - [ ] Implement Notes Overview:
-                - [ ] Display list of all notes.
-                - [ ] Implement filtering by input field (search).
+                - [x] Display list of all notes.
+                - [x] Implement filtering by input field (search).
                 - [ ] Implement filtering by multiple tag selection.
             - [ ] Implement Note Templates:
                 - [ ] Functionality to mark notes as templates.
