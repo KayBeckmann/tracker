@@ -43,6 +43,44 @@
   "@dashboardNotesNoTags": {
     "description": "Visas när det inte finns några taggar att visa i anteckningskortet."
   },
+  "dashboardTasksSummaryTitle": "Översikt över uppgifter",
+  "dashboardTasksTotal": "Alla uppgifter: {count}",
+  "@dashboardTasksTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardTasksInProgress": "Pågår: {count}",
+  "@dashboardTasksInProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardTasksHighPriority": "Hög prioritet: {count}",
+  "@dashboardTasksHighPriority": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardTasksNextDue": "Nästa förfallande: {title} (förfaller {date})",
+  "@dashboardTasksNextDue": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardTasksNoUpcoming": "Inga kommande uppgifter.",
+  "dashboardOpenTasksTooltip": "Öppna uppgifter",
   "statusNotContacted": "Backend har ännu inte kontaktats.",
   "statusSendingRequest": "Skickar förfrågan till {url}...",
   "statusError": "Fel: {description}",
@@ -96,6 +134,56 @@
   "notesDrawingStrokeLabel": "Linjebredd",
   "genericCancel": "Avbryt",
   "tasksPlaceholder": "Organisera kommande uppgifter här.",
+  "tasksTabList": "Lista",
+  "tasksTabCalendar": "Kalender",
+  "tasksCreateButton": "Ny uppgift",
+  "tasksEmptyPlaceholder": "Inga uppgifter ännu. Skapa din första uppgift för att hålla koll.",
+  "tasksCalendarEmpty": "Inga uppgifter förfaller den här dagen.",
+  "tasksCreateTitle": "Ny uppgift",
+  "tasksEditTitle": "Redigera uppgift",
+  "tasksSaveButton": "Spara",
+  "tasksTitleLabel": "Titel",
+  "tasksTitleHint": "Vad behöver göras?",
+  "tasksTitleValidationError": "Ange en titel för uppgiften.",
+  "tasksStatusLabel": "Status",
+  "tasksPriorityLabel": "Prioritet",
+  "tasksDueDateLabel": "Förfallodatum",
+  "tasksDueDateHelper": "Uppgifter visas i kalendern baserat på förfallodatum.",
+  "tasksPickDateButton": "Välj datum",
+  "tasksTagsLabel": "Taggar",
+  "tasksTagsHint": "Taggar separerade med kommatecken",
+  "tasksTagSuggestionsLabel": "Förslag",
+  "tasksFiltersReset": "Återställ",
+  "tasksSortLabel": "Sortera efter",
+  "tasksSortDueDateAsc": "Förfallodatum ↑",
+  "tasksSortDueDateDesc": "Förfallodatum ↓",
+  "tasksSortPriority": "Prioritet",
+  "tasksSortStatus": "Status",
+  "tasksLinkedNoteLabel": "Länkad anteckning",
+  "tasksNoNoteLinked": "Ingen anteckning länkad ännu.",
+  "tasksRemoveNoteTooltip": "Ta bort länkad anteckning",
+  "tasksSelectNoteButton": "Länka befintlig anteckning",
+  "tasksCreateNoteButton": "Skapa ny anteckning",
+  "tasksCreateMarkdownNote": "Skapa Markdown-anteckning",
+  "tasksCreateDrawingNote": "Skapa teckningsanteckning",
+  "tasksNoNotesFound": "Inga anteckningar tillgängliga ännu.",
+  "tasksOpenLinkedNoteButton": "Öppna anteckning",
+  "tasksTrackedTimePlaceholder": "När tidrapporteringen kopplats visas registrerade tider här.",
+  "tasksDueDateLabelValue": "Förfallodatum: {date}",
+  "@tasksDueDateLabelValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksStatusTodo": "Att göra",
+  "tasksStatusInProgress": "Pågår",
+  "tasksStatusDone": "Klar",
+  "tasksPriorityLow": "Låg prioritet",
+  "tasksPriorityMedium": "Medelhög prioritet",
+  "tasksPriorityHigh": "Hög prioritet",
+  "tasksPreviewOpenEditor": "Öppna i redigerare",
   "timeTrackingPlaceholder": "Registrera dina arbetspass här snart och koppla ihop dem med uppgifter genom gemensamma taggar.",
   "journalPlaceholder": "Samla dina journalanteckningar här och länka dem till alla moduler via delade taggar.",
   "habitsPlaceholder": "Följ dina vanor här.",

@@ -9,6 +9,7 @@ import 'data/local/app_database.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'models/membership_status.dart';
 import 'notes/notes_page.dart';
+import 'tasks/tasks_page.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
@@ -971,22 +972,26 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Wrap(
-          spacing: 16,
-          runSpacing: 16,
-          children: modules
-              .map(
-                (section) => section == _AppSection.notes
-                    ? _buildNotesDashboardCard(context, loc)
-                    : _buildModuleCard(context, loc, section),
-              )
-              .toList(),
-        ),
-      ],
+    final children = <Widget>[];
+    if (_enabledModules.contains(_AppSection.tasks)) {
+      children.add(_buildTasksSummaryCard(context, loc));
+      children.add(const SizedBox(height: 16));
+    }
+    children.add(
+      Wrap(
+        spacing: 16,
+        runSpacing: 16,
+        children: modules
+            .map(
+              (section) => section == _AppSection.notes
+                  ? _buildNotesDashboardCard(context, loc)
+                  : _buildModuleCard(context, loc, section),
+            )
+            .toList(),
+      ),
     );
+
+    return ListView(padding: const EdgeInsets.all(16), children: children);
   }
 
   Widget _buildNotesDashboardCard(BuildContext context, AppLocalizations loc) {
@@ -1082,6 +1087,94 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildTasksSummaryCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    return StreamBuilder<List<TaskEntry>>(
+      stream: _database.watchTaskEntries(),
+      builder: (context, snapshot) {
+        final tasks = snapshot.data ?? const <TaskEntry>[];
+        final totalTasks = tasks.length;
+        final inProgressTasks = tasks
+            .where((task) => task.status == TaskStatus.inProgress)
+            .length;
+        final highPriorityTasks = tasks
+            .where((task) => task.priority == TaskPriority.high)
+            .length;
+        final sortedTasks = List<TaskEntry>.from(tasks)
+          ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
+        final now = DateTime.now();
+        TaskEntry? nextDue;
+        for (final task in sortedTasks) {
+          if (!task.dueDate.isBefore(now)) {
+            nextDue = task;
+            break;
+          }
+        }
+        nextDue ??= sortedTasks.isEmpty ? null : sortedTasks.first;
+        final nextDueTitle = nextDue == null || nextDue.title.trim().isEmpty
+            ? loc.dashboardTasksNoUpcoming
+            : loc.dashboardTasksNextDue(
+                nextDue.title.trim(),
+                _formatDate(context, nextDue.dueDate),
+              );
+
+        return ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 220, maxWidth: 400),
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        _sectionIcon(_AppSection.tasks),
+                        size: 32,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          loc.dashboardTasksSummaryTitle,
+                          style: theme.textTheme.titleMedium,
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: loc.dashboardOpenTasksTooltip,
+                        onPressed: () => _onSelectSection(_AppSection.tasks),
+                        icon: const Icon(Icons.chevron_right),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    loc.dashboardTasksTotal(totalTasks),
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    loc.dashboardTasksInProgress(inProgressTasks),
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    loc.dashboardTasksHighPriority(highPriorityTasks),
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(nextDueTitle, style: theme.textTheme.labelLarge),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildModuleCard(
     BuildContext context,
     AppLocalizations loc,
@@ -1135,14 +1228,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTasks(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return Center(
-      child: Text(
-        loc.tasksPlaceholder,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-    );
+    return TasksPage(database: _database);
   }
 
   Widget _buildTimeTracking(BuildContext context) {

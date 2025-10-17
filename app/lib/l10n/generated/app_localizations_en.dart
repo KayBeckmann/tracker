@@ -103,6 +103,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardNotesNoTags => 'No tags yet.';
 
   @override
+  String get dashboardTasksSummaryTitle => 'Tasks overview';
+
+  @override
+  String dashboardTasksTotal(int count) {
+    return 'All tasks: $count';
+  }
+
+  @override
+  String dashboardTasksInProgress(int count) {
+    return 'In progress: $count';
+  }
+
+  @override
+  String dashboardTasksHighPriority(int count) {
+    return 'High priority: $count';
+  }
+
+  @override
+  String dashboardTasksNextDue(String title, String date) {
+    return 'Next due: $title (due $date)';
+  }
+
+  @override
+  String get dashboardTasksNoUpcoming => 'No upcoming tasks.';
+
+  @override
+  String get dashboardOpenTasksTooltip => 'Open tasks';
+
+  @override
   String get statusNotContacted => 'The backend has not been contacted yet.';
 
   @override
@@ -270,6 +299,140 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksPlaceholder => 'Organise upcoming tasks here.';
+
+  @override
+  String get tasksTabList => 'List';
+
+  @override
+  String get tasksTabCalendar => 'Calendar';
+
+  @override
+  String get tasksCreateButton => 'New task';
+
+  @override
+  String get tasksEmptyPlaceholder =>
+      'No tasks yet. Create your first task to stay organised.';
+
+  @override
+  String get tasksCalendarEmpty => 'No tasks are due on this day.';
+
+  @override
+  String get tasksCreateTitle => 'New task';
+
+  @override
+  String get tasksEditTitle => 'Edit task';
+
+  @override
+  String get tasksSaveButton => 'Save';
+
+  @override
+  String get tasksTitleLabel => 'Title';
+
+  @override
+  String get tasksTitleHint => 'What needs to be done?';
+
+  @override
+  String get tasksTitleValidationError => 'Please enter a title for the task.';
+
+  @override
+  String get tasksStatusLabel => 'Status';
+
+  @override
+  String get tasksPriorityLabel => 'Priority';
+
+  @override
+  String get tasksDueDateLabel => 'Due date';
+
+  @override
+  String get tasksDueDateHelper =>
+      'Tasks are shown in the calendar by their due date.';
+
+  @override
+  String get tasksPickDateButton => 'Select date';
+
+  @override
+  String get tasksTagsLabel => 'Tags';
+
+  @override
+  String get tasksTagsHint => 'Tags separated by commas';
+
+  @override
+  String get tasksTagSuggestionsLabel => 'Suggestions';
+
+  @override
+  String get tasksFiltersReset => 'Reset';
+
+  @override
+  String get tasksSortLabel => 'Sort by';
+
+  @override
+  String get tasksSortDueDateAsc => 'Due date ↑';
+
+  @override
+  String get tasksSortDueDateDesc => 'Due date ↓';
+
+  @override
+  String get tasksSortPriority => 'Priority';
+
+  @override
+  String get tasksSortStatus => 'Status';
+
+  @override
+  String get tasksLinkedNoteLabel => 'Linked note';
+
+  @override
+  String get tasksNoNoteLinked => 'No note linked yet.';
+
+  @override
+  String get tasksRemoveNoteTooltip => 'Remove linked note';
+
+  @override
+  String get tasksSelectNoteButton => 'Link existing note';
+
+  @override
+  String get tasksCreateNoteButton => 'Create new note';
+
+  @override
+  String get tasksCreateMarkdownNote => 'Create Markdown note';
+
+  @override
+  String get tasksCreateDrawingNote => 'Create drawing note';
+
+  @override
+  String get tasksNoNotesFound => 'No notes available yet.';
+
+  @override
+  String get tasksOpenLinkedNoteButton => 'Open note';
+
+  @override
+  String get tasksTrackedTimePlaceholder =>
+      'Tracked time will appear here once time tracking is connected.';
+
+  @override
+  String tasksDueDateLabelValue(String date) {
+    return 'Due: $date';
+  }
+
+  @override
+  String get tasksStatusTodo => 'To do';
+
+  @override
+  String get tasksStatusInProgress => 'In progress';
+
+  @override
+  String get tasksStatusDone => 'Done';
+
+  @override
+  String get tasksPriorityLow => 'Low priority';
+
+  @override
+  String get tasksPriorityMedium => 'Medium priority';
+
+  @override
+  String get tasksPriorityHigh => 'High priority';
+
+  @override
+  String get tasksPreviewOpenEditor => 'Open in editor';
 
   @override
   String get timeTrackingPlaceholder =>

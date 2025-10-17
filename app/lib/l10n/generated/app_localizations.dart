@@ -274,6 +274,48 @@ abstract class AppLocalizations {
   /// **'No tags yet.'**
   String get dashboardNotesNoTags;
 
+  /// No description provided for @dashboardTasksSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks overview'**
+  String get dashboardTasksSummaryTitle;
+
+  /// No description provided for @dashboardTasksTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'All tasks: {count}'**
+  String dashboardTasksTotal(int count);
+
+  /// No description provided for @dashboardTasksInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress: {count}'**
+  String dashboardTasksInProgress(int count);
+
+  /// No description provided for @dashboardTasksHighPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'High priority: {count}'**
+  String dashboardTasksHighPriority(int count);
+
+  /// No description provided for @dashboardTasksNextDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Next due: {title} (due {date})'**
+  String dashboardTasksNextDue(String title, String date);
+
+  /// No description provided for @dashboardTasksNoUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming tasks.'**
+  String get dashboardTasksNoUpcoming;
+
+  /// No description provided for @dashboardOpenTasksTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Open tasks'**
+  String get dashboardOpenTasksTooltip;
+
   /// No description provided for @statusNotContacted.
   ///
   /// In en, this message translates to:
@@ -591,6 +633,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Organise upcoming tasks here.'**
   String get tasksPlaceholder;
+
+  /// No description provided for @tasksTabList.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get tasksTabList;
+
+  /// No description provided for @tasksTabCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get tasksTabCalendar;
+
+  /// No description provided for @tasksCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'New task'**
+  String get tasksCreateButton;
+
+  /// No description provided for @tasksEmptyPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks yet. Create your first task to stay organised.'**
+  String get tasksEmptyPlaceholder;
+
+  /// No description provided for @tasksCalendarEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks are due on this day.'**
+  String get tasksCalendarEmpty;
+
+  /// No description provided for @tasksCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New task'**
+  String get tasksCreateTitle;
+
+  /// No description provided for @tasksEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit task'**
+  String get tasksEditTitle;
+
+  /// No description provided for @tasksSaveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get tasksSaveButton;
+
+  /// No description provided for @tasksTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get tasksTitleLabel;
+
+  /// No description provided for @tasksTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What needs to be done?'**
+  String get tasksTitleHint;
+
+  /// No description provided for @tasksTitleValidationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title for the task.'**
+  String get tasksTitleValidationError;
+
+  /// No description provided for @tasksStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get tasksStatusLabel;
+
+  /// No description provided for @tasksPriorityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get tasksPriorityLabel;
+
+  /// No description provided for @tasksDueDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get tasksDueDateLabel;
+
+  /// No description provided for @tasksDueDateHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks are shown in the calendar by their due date.'**
+  String get tasksDueDateHelper;
+
+  /// No description provided for @tasksPickDateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get tasksPickDateButton;
+
+  /// No description provided for @tasksTagsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get tasksTagsLabel;
+
+  /// No description provided for @tasksTagsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags separated by commas'**
+  String get tasksTagsHint;
+
+  /// No description provided for @tasksTagSuggestionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions'**
+  String get tasksTagSuggestionsLabel;
+
+  /// No description provided for @tasksFiltersReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get tasksFiltersReset;
+
+  /// No description provided for @tasksSortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get tasksSortLabel;
+
+  /// No description provided for @tasksSortDueDateAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date ↑'**
+  String get tasksSortDueDateAsc;
+
+  /// No description provided for @tasksSortDueDateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date ↓'**
+  String get tasksSortDueDateDesc;
+
+  /// No description provided for @tasksSortPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get tasksSortPriority;
+
+  /// No description provided for @tasksSortStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get tasksSortStatus;
+
+  /// No description provided for @tasksLinkedNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked note'**
+  String get tasksLinkedNoteLabel;
+
+  /// No description provided for @tasksNoNoteLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'No note linked yet.'**
+  String get tasksNoNoteLinked;
+
+  /// No description provided for @tasksRemoveNoteTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove linked note'**
+  String get tasksRemoveNoteTooltip;
+
+  /// No description provided for @tasksSelectNoteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Link existing note'**
+  String get tasksSelectNoteButton;
+
+  /// No description provided for @tasksCreateNoteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new note'**
+  String get tasksCreateNoteButton;
+
+  /// No description provided for @tasksCreateMarkdownNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Markdown note'**
+  String get tasksCreateMarkdownNote;
+
+  /// No description provided for @tasksCreateDrawingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Create drawing note'**
+  String get tasksCreateDrawingNote;
+
+  /// No description provided for @tasksNoNotesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes available yet.'**
+  String get tasksNoNotesFound;
+
+  /// No description provided for @tasksOpenLinkedNoteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Open note'**
+  String get tasksOpenLinkedNoteButton;
+
+  /// No description provided for @tasksTrackedTimePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracked time will appear here once time tracking is connected.'**
+  String get tasksTrackedTimePlaceholder;
+
+  /// No description provided for @tasksDueDateLabelValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due: {date}'**
+  String tasksDueDateLabelValue(String date);
+
+  /// No description provided for @tasksStatusTodo.
+  ///
+  /// In en, this message translates to:
+  /// **'To do'**
+  String get tasksStatusTodo;
+
+  /// No description provided for @tasksStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get tasksStatusInProgress;
+
+  /// No description provided for @tasksStatusDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get tasksStatusDone;
+
+  /// No description provided for @tasksPriorityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low priority'**
+  String get tasksPriorityLow;
+
+  /// No description provided for @tasksPriorityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium priority'**
+  String get tasksPriorityMedium;
+
+  /// No description provided for @tasksPriorityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High priority'**
+  String get tasksPriorityHigh;
+
+  /// No description provided for @tasksPreviewOpenEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in editor'**
+  String get tasksPreviewOpenEditor;
 
   /// No description provided for @timeTrackingPlaceholder.
   ///

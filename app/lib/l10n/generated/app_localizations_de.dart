@@ -104,6 +104,35 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dashboardNotesNoTags => 'Keine Tags vorhanden.';
 
   @override
+  String get dashboardTasksSummaryTitle => 'Aufgabenüberblick';
+
+  @override
+  String dashboardTasksTotal(int count) {
+    return 'Alle Aufgaben: $count';
+  }
+
+  @override
+  String dashboardTasksInProgress(int count) {
+    return 'In Bearbeitung: $count';
+  }
+
+  @override
+  String dashboardTasksHighPriority(int count) {
+    return 'Hohe Priorität: $count';
+  }
+
+  @override
+  String dashboardTasksNextDue(String title, String date) {
+    return 'Nächste fällige Aufgabe: $title (fällig am $date)';
+  }
+
+  @override
+  String get dashboardTasksNoUpcoming => 'Keine anstehenden Aufgaben.';
+
+  @override
+  String get dashboardOpenTasksTooltip => 'Aufgaben öffnen';
+
+  @override
   String get statusNotContacted => 'Das Backend wurde noch nicht kontaktiert.';
 
   @override
@@ -273,6 +302,141 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tasksPlaceholder => 'Plane und strukturiere hier deine Aufgaben.';
+
+  @override
+  String get tasksTabList => 'Liste';
+
+  @override
+  String get tasksTabCalendar => 'Kalender';
+
+  @override
+  String get tasksCreateButton => 'Neue Aufgabe';
+
+  @override
+  String get tasksEmptyPlaceholder =>
+      'Noch keine Aufgaben. Erstelle deine erste Aufgabe, um den Überblick zu behalten.';
+
+  @override
+  String get tasksCalendarEmpty => 'Für diesen Tag sind keine Aufgaben fällig.';
+
+  @override
+  String get tasksCreateTitle => 'Neue Aufgabe';
+
+  @override
+  String get tasksEditTitle => 'Aufgabe bearbeiten';
+
+  @override
+  String get tasksSaveButton => 'Speichern';
+
+  @override
+  String get tasksTitleLabel => 'Titel';
+
+  @override
+  String get tasksTitleHint => 'Was soll erledigt werden?';
+
+  @override
+  String get tasksTitleValidationError =>
+      'Bitte gib einen Titel für die Aufgabe ein.';
+
+  @override
+  String get tasksStatusLabel => 'Status';
+
+  @override
+  String get tasksPriorityLabel => 'Priorität';
+
+  @override
+  String get tasksDueDateLabel => 'Fälligkeitsdatum';
+
+  @override
+  String get tasksDueDateHelper =>
+      'Aufgaben werden im Kalender anhand ihres Fälligkeitsdatums angezeigt.';
+
+  @override
+  String get tasksPickDateButton => 'Datum wählen';
+
+  @override
+  String get tasksTagsLabel => 'Tags';
+
+  @override
+  String get tasksTagsHint => 'Tags, durch Kommas getrennt';
+
+  @override
+  String get tasksTagSuggestionsLabel => 'Vorschläge';
+
+  @override
+  String get tasksFiltersReset => 'Zurücksetzen';
+
+  @override
+  String get tasksSortLabel => 'Sortieren nach';
+
+  @override
+  String get tasksSortDueDateAsc => 'Fälligkeit ↑';
+
+  @override
+  String get tasksSortDueDateDesc => 'Fälligkeit ↓';
+
+  @override
+  String get tasksSortPriority => 'Priorität';
+
+  @override
+  String get tasksSortStatus => 'Status';
+
+  @override
+  String get tasksLinkedNoteLabel => 'Verknüpfte Notiz';
+
+  @override
+  String get tasksNoNoteLinked => 'Noch keine Notiz verknüpft.';
+
+  @override
+  String get tasksRemoveNoteTooltip => 'Verknüpfte Notiz entfernen';
+
+  @override
+  String get tasksSelectNoteButton => 'Bestehende Notiz verknüpfen';
+
+  @override
+  String get tasksCreateNoteButton => 'Neue Notiz erstellen';
+
+  @override
+  String get tasksCreateMarkdownNote => 'Markdown-Notiz erstellen';
+
+  @override
+  String get tasksCreateDrawingNote => 'Zeichnungsnotiz erstellen';
+
+  @override
+  String get tasksNoNotesFound => 'Es sind noch keine Notizen vorhanden.';
+
+  @override
+  String get tasksOpenLinkedNoteButton => 'Notiz öffnen';
+
+  @override
+  String get tasksTrackedTimePlaceholder =>
+      'Sobald die Zeiterfassung verbunden ist, erscheinen hier die erfassten Zeiten.';
+
+  @override
+  String tasksDueDateLabelValue(String date) {
+    return 'Fällig: $date';
+  }
+
+  @override
+  String get tasksStatusTodo => 'Offen';
+
+  @override
+  String get tasksStatusInProgress => 'In Arbeit';
+
+  @override
+  String get tasksStatusDone => 'Erledigt';
+
+  @override
+  String get tasksPriorityLow => 'Niedrige Priorität';
+
+  @override
+  String get tasksPriorityMedium => 'Mittlere Priorität';
+
+  @override
+  String get tasksPriorityHigh => 'Hohe Priorität';
+
+  @override
+  String get tasksPreviewOpenEditor => 'Im Editor öffnen';
 
   @override
   String get timeTrackingPlaceholder =>

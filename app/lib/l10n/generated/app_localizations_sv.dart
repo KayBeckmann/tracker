@@ -103,6 +103,35 @@ class AppLocalizationsSv extends AppLocalizations {
   String get dashboardNotesNoTags => 'Inga taggar ännu.';
 
   @override
+  String get dashboardTasksSummaryTitle => 'Översikt över uppgifter';
+
+  @override
+  String dashboardTasksTotal(int count) {
+    return 'Alla uppgifter: $count';
+  }
+
+  @override
+  String dashboardTasksInProgress(int count) {
+    return 'Pågår: $count';
+  }
+
+  @override
+  String dashboardTasksHighPriority(int count) {
+    return 'Hög prioritet: $count';
+  }
+
+  @override
+  String dashboardTasksNextDue(String title, String date) {
+    return 'Nästa förfallande: $title (förfaller $date)';
+  }
+
+  @override
+  String get dashboardTasksNoUpcoming => 'Inga kommande uppgifter.';
+
+  @override
+  String get dashboardOpenTasksTooltip => 'Öppna uppgifter';
+
+  @override
   String get statusNotContacted => 'Backend har ännu inte kontaktats.';
 
   @override
@@ -270,6 +299,140 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get tasksPlaceholder => 'Organisera kommande uppgifter här.';
+
+  @override
+  String get tasksTabList => 'Lista';
+
+  @override
+  String get tasksTabCalendar => 'Kalender';
+
+  @override
+  String get tasksCreateButton => 'Ny uppgift';
+
+  @override
+  String get tasksEmptyPlaceholder =>
+      'Inga uppgifter ännu. Skapa din första uppgift för att hålla koll.';
+
+  @override
+  String get tasksCalendarEmpty => 'Inga uppgifter förfaller den här dagen.';
+
+  @override
+  String get tasksCreateTitle => 'Ny uppgift';
+
+  @override
+  String get tasksEditTitle => 'Redigera uppgift';
+
+  @override
+  String get tasksSaveButton => 'Spara';
+
+  @override
+  String get tasksTitleLabel => 'Titel';
+
+  @override
+  String get tasksTitleHint => 'Vad behöver göras?';
+
+  @override
+  String get tasksTitleValidationError => 'Ange en titel för uppgiften.';
+
+  @override
+  String get tasksStatusLabel => 'Status';
+
+  @override
+  String get tasksPriorityLabel => 'Prioritet';
+
+  @override
+  String get tasksDueDateLabel => 'Förfallodatum';
+
+  @override
+  String get tasksDueDateHelper =>
+      'Uppgifter visas i kalendern baserat på förfallodatum.';
+
+  @override
+  String get tasksPickDateButton => 'Välj datum';
+
+  @override
+  String get tasksTagsLabel => 'Taggar';
+
+  @override
+  String get tasksTagsHint => 'Taggar separerade med kommatecken';
+
+  @override
+  String get tasksTagSuggestionsLabel => 'Förslag';
+
+  @override
+  String get tasksFiltersReset => 'Återställ';
+
+  @override
+  String get tasksSortLabel => 'Sortera efter';
+
+  @override
+  String get tasksSortDueDateAsc => 'Förfallodatum ↑';
+
+  @override
+  String get tasksSortDueDateDesc => 'Förfallodatum ↓';
+
+  @override
+  String get tasksSortPriority => 'Prioritet';
+
+  @override
+  String get tasksSortStatus => 'Status';
+
+  @override
+  String get tasksLinkedNoteLabel => 'Länkad anteckning';
+
+  @override
+  String get tasksNoNoteLinked => 'Ingen anteckning länkad ännu.';
+
+  @override
+  String get tasksRemoveNoteTooltip => 'Ta bort länkad anteckning';
+
+  @override
+  String get tasksSelectNoteButton => 'Länka befintlig anteckning';
+
+  @override
+  String get tasksCreateNoteButton => 'Skapa ny anteckning';
+
+  @override
+  String get tasksCreateMarkdownNote => 'Skapa Markdown-anteckning';
+
+  @override
+  String get tasksCreateDrawingNote => 'Skapa teckningsanteckning';
+
+  @override
+  String get tasksNoNotesFound => 'Inga anteckningar tillgängliga ännu.';
+
+  @override
+  String get tasksOpenLinkedNoteButton => 'Öppna anteckning';
+
+  @override
+  String get tasksTrackedTimePlaceholder =>
+      'När tidrapporteringen kopplats visas registrerade tider här.';
+
+  @override
+  String tasksDueDateLabelValue(String date) {
+    return 'Förfallodatum: $date';
+  }
+
+  @override
+  String get tasksStatusTodo => 'Att göra';
+
+  @override
+  String get tasksStatusInProgress => 'Pågår';
+
+  @override
+  String get tasksStatusDone => 'Klar';
+
+  @override
+  String get tasksPriorityLow => 'Låg prioritet';
+
+  @override
+  String get tasksPriorityMedium => 'Medelhög prioritet';
+
+  @override
+  String get tasksPriorityHigh => 'Hög prioritet';
+
+  @override
+  String get tasksPreviewOpenEditor => 'Öppna i redigerare';
 
   @override
   String get timeTrackingPlaceholder =>

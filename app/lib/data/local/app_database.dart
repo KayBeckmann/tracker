@@ -5,6 +5,10 @@ part 'app_database.g.dart';
 
 enum NoteKind { markdown, drawing }
 
+enum TaskStatus { todo, inProgress, done }
+
+enum TaskPriority { low, medium, high }
+
 class GreetingEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -36,7 +40,34 @@ class NoteEntries extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-@DriftDatabase(tables: [GreetingEntries, NoteEntries])
+class TaskEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get title => text()();
+
+  TextColumn get status =>
+      textEnum<TaskStatus>().withDefault(Constant(TaskStatus.todo.name))();
+
+  TextColumn get priority => textEnum<TaskPriority>().withDefault(
+    Constant(TaskPriority.medium.name),
+  )();
+
+  DateTimeColumn get dueDate => dateTime()();
+
+  IntColumn get noteId => integer().nullable().references(
+    NoteEntries,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  TextColumn get tags => text().withDefault(const Constant(''))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+@DriftDatabase(tables: [GreetingEntries, NoteEntries, TaskEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openConnection());
 
@@ -48,19 +79,22 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (Migrator m) async {
-          await m.createAll();
-        },
-        onUpgrade: (Migrator m, int from, int to) async {
-          if (from < 2) {
-            await m.createTable(noteEntries);
-          }
-        },
-      );
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      if (from < 2) {
+        await m.createTable(noteEntries);
+      }
+      if (from < 3) {
+        await m.createTable(taskEntries);
+      }
+    },
+  );
 
   Stream<List<GreetingEntry>> watchGreetingEntries() {
     return (select(greetingEntries)..orderBy([
@@ -94,31 +128,25 @@ class AppDatabase extends _$AppDatabase {
     String tagFilter = '',
   }) {
     final query = select(noteEntries)
-      ..orderBy(
-        [
-          (tbl) => OrderingTerm.desc(tbl.updatedAt),
-          (tbl) => OrderingTerm.desc(tbl.id),
-        ],
-      );
+      ..orderBy([
+        (tbl) => OrderingTerm.desc(tbl.updatedAt),
+        (tbl) => OrderingTerm.desc(tbl.id),
+      ]);
 
     if (contentFilter.trim().isNotEmpty) {
       final pattern = '%${contentFilter.trim()}%';
-      query.where(
-        (tbl) {
-          final titleMatch =
-              tbl.title.collate(Collate.noCase).like(pattern);
-          final contentMatch = tbl.content.isNotNull() &
-              tbl.content.collate(Collate.noCase).like(pattern);
-          return titleMatch | contentMatch;
-        },
-      );
+      query.where((tbl) {
+        final titleMatch = tbl.title.collate(Collate.noCase).like(pattern);
+        final contentMatch =
+            tbl.content.isNotNull() &
+            tbl.content.collate(Collate.noCase).like(pattern);
+        return titleMatch | contentMatch;
+      });
     }
 
     if (tagFilter.trim().isNotEmpty) {
       final pattern = '%${tagFilter.trim()}%';
-      query.where(
-        (tbl) => tbl.tags.collate(Collate.noCase).like(pattern),
-      );
+      query.where((tbl) => tbl.tags.collate(Collate.noCase).like(pattern));
     }
 
     return query;
@@ -145,9 +173,7 @@ class AppDatabase extends _$AppDatabase {
         tags.addAll(parts);
       }
       final result = tags.toList()
-        ..sort(
-          (a, b) => a.toLowerCase().compareTo(b.toLowerCase()),
-        );
+        ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
       return result;
     });
   }
@@ -183,5 +209,89 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> deleteNoteEntry(int id) {
     return (delete(noteEntries)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<NoteEntry?> getNoteEntryById(int id) {
+    return (select(
+      noteEntries,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Stream<List<TaskEntry>> watchTaskEntries() {
+    return (select(taskEntries)..orderBy([
+          (tbl) => OrderingTerm.asc(tbl.dueDate),
+          (tbl) => OrderingTerm.desc(tbl.updatedAt),
+          (tbl) => OrderingTerm.desc(tbl.id),
+        ]))
+        .watch();
+  }
+
+  Stream<List<TaskEntry>> watchTasksForDay(DateTime day) {
+    final DateTime start = DateTime.utc(day.year, day.month, day.day);
+    final DateTime end = start.add(const Duration(days: 1));
+    return (select(taskEntries)
+          ..where(
+            (tbl) =>
+                tbl.dueDate.isBiggerOrEqualValue(start) &
+                tbl.dueDate.isSmallerThanValue(end),
+          )
+          ..orderBy([
+            (tbl) => OrderingTerm.asc(tbl.dueDate),
+            (tbl) => OrderingTerm.desc(tbl.updatedAt),
+          ]))
+        .watch();
+  }
+
+  Future<int> insertTaskEntry({
+    required String title,
+    required TaskStatus status,
+    required TaskPriority priority,
+    required DateTime dueDate,
+    int? noteId,
+    String tags = '',
+  }) {
+    final now = DateTime.now().toUtc();
+    final companion = TaskEntriesCompanion.insert(
+      title: Value(title),
+      status: Value(status),
+      priority: Value(priority),
+      dueDate: Value(dueDate.toUtc()),
+      noteId: noteId == null ? const Value.absent() : Value(noteId),
+      tags: Value(tags),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(taskEntries).insert(companion);
+  }
+
+  Future<void> updateTaskEntry(TaskEntry task) {
+    final updated = task.copyWith(updatedAt: DateTime.now().toUtc());
+    return update(taskEntries).replace(updated);
+  }
+
+  Future<int> deleteTaskEntry(int id) {
+    return (delete(taskEntries)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<TaskEntry?> getTaskById(int id) {
+    return (select(
+      taskEntries,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Stream<List<String>> watchAllTaskTags() {
+    return select(taskEntries).watch().map((rows) {
+      final tags = <String>{};
+      for (final task in rows) {
+        final parts = task.tags
+            .split(',')
+            .map((tag) => tag.trim())
+            .where((tag) => tag.isNotEmpty);
+        tags.addAll(parts);
+      }
+      final result = tags.toList()
+        ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+      return result;
+    });
   }
 }

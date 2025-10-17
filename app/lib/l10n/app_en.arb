@@ -57,6 +57,44 @@
   "@dashboardNotesNoTags": {
     "description": "Shown when there are no tags to display in the dashboard notes card."
   },
+  "dashboardTasksSummaryTitle": "Tasks overview",
+  "dashboardTasksTotal": "All tasks: {count}",
+  "@dashboardTasksTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardTasksInProgress": "In progress: {count}",
+  "@dashboardTasksInProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardTasksHighPriority": "High priority: {count}",
+  "@dashboardTasksHighPriority": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardTasksNextDue": "Next due: {title} (due {date})",
+  "@dashboardTasksNextDue": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardTasksNoUpcoming": "No upcoming tasks.",
+  "dashboardOpenTasksTooltip": "Open tasks",
   "statusNotContacted": "The backend has not been contacted yet.",
   "statusSendingRequest": "Sending request to {url}...",
   "@statusSendingRequest": {
@@ -131,6 +169,56 @@
   "notesDrawingStrokeLabel": "Stroke width",
   "genericCancel": "Cancel",
   "tasksPlaceholder": "Organise upcoming tasks here.",
+  "tasksTabList": "List",
+  "tasksTabCalendar": "Calendar",
+  "tasksCreateButton": "New task",
+  "tasksEmptyPlaceholder": "No tasks yet. Create your first task to stay organised.",
+  "tasksCalendarEmpty": "No tasks are due on this day.",
+  "tasksCreateTitle": "New task",
+  "tasksEditTitle": "Edit task",
+  "tasksSaveButton": "Save",
+  "tasksTitleLabel": "Title",
+  "tasksTitleHint": "What needs to be done?",
+  "tasksTitleValidationError": "Please enter a title for the task.",
+  "tasksStatusLabel": "Status",
+  "tasksPriorityLabel": "Priority",
+  "tasksDueDateLabel": "Due date",
+  "tasksDueDateHelper": "Tasks are shown in the calendar by their due date.",
+  "tasksPickDateButton": "Select date",
+  "tasksTagsLabel": "Tags",
+  "tasksTagsHint": "Tags separated by commas",
+  "tasksTagSuggestionsLabel": "Suggestions",
+  "tasksFiltersReset": "Reset",
+  "tasksSortLabel": "Sort by",
+  "tasksSortDueDateAsc": "Due date ↑",
+  "tasksSortDueDateDesc": "Due date ↓",
+  "tasksSortPriority": "Priority",
+  "tasksSortStatus": "Status",
+  "tasksLinkedNoteLabel": "Linked note",
+  "tasksNoNoteLinked": "No note linked yet.",
+  "tasksRemoveNoteTooltip": "Remove linked note",
+  "tasksSelectNoteButton": "Link existing note",
+  "tasksCreateNoteButton": "Create new note",
+  "tasksCreateMarkdownNote": "Create Markdown note",
+  "tasksCreateDrawingNote": "Create drawing note",
+  "tasksNoNotesFound": "No notes available yet.",
+  "tasksOpenLinkedNoteButton": "Open note",
+  "tasksTrackedTimePlaceholder": "Tracked time will appear here once time tracking is connected.",
+  "tasksDueDateLabelValue": "Due: {date}",
+  "@tasksDueDateLabelValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksStatusTodo": "To do",
+  "tasksStatusInProgress": "In progress",
+  "tasksStatusDone": "Done",
+  "tasksPriorityLow": "Low priority",
+  "tasksPriorityMedium": "Medium priority",
+  "tasksPriorityHigh": "High priority",
+  "tasksPreviewOpenEditor": "Open in editor",
   "timeTrackingPlaceholder": "Track your work sessions here soon and link them directly to tasks with shared tags.",
   "journalPlaceholder": "Capture your journal entries here and connect them with every module through shared tags.",
   "habitsPlaceholder": "Track your habits here.",

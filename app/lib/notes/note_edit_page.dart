@@ -8,11 +8,7 @@ import '../data/local/app_database.dart';
 import '../l10n/generated/app_localizations.dart';
 
 class NoteEditPage extends StatefulWidget {
-  const NoteEditPage({
-    super.key,
-    required this.database,
-    this.note,
-  });
+  const NoteEditPage({super.key, required this.database, this.note});
 
   final AppDatabase database;
   final NoteEntry? note;
@@ -98,9 +94,9 @@ class _NoteEditPageState extends State<NoteEditPage>
     final tags = _normalizeTags(_tagsController.text);
     if (content.trim().isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.notesMarkdownEmptyWarning)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.notesMarkdownEmptyWarning)));
       return;
     }
 
@@ -111,24 +107,26 @@ class _NoteEditPageState extends State<NoteEditPage>
     });
 
     try {
-          if (widget.note == null) {
-            await widget.database.insertNoteEntry(
-              kind: NoteKind.markdown,
-              title: title,
-              content: content,
-              tags: tags,
-            );
-          } else {
-            final updated = widget.note!.copyWith(
+      int? noteId;
+      if (widget.note == null) {
+        noteId = await widget.database.insertNoteEntry(
+          kind: NoteKind.markdown,
+          title: title,
+          content: content,
+          tags: tags,
+        );
+      } else {
+        final updated = widget.note!.copyWith(
           title: title,
           content: Value(content),
           drawingJson: const Value.absent(),
           tags: tags,
         );
         await widget.database.updateNoteEntry(updated);
+        noteId = widget.note!.id;
       }
       if (mounted) {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(noteId);
       }
     } finally {
       if (mounted) {
@@ -177,18 +175,13 @@ class _NoteEditPageState extends State<NoteEditPage>
     final theme = Theme.of(context);
     final bool isCompactLayout =
         mediaQuery.size.height < 600 || mediaQuery.size.width < 600;
-    final double toolbarHeight =
-        isCompactLayout ? 48.0 : kToolbarHeight;
-    final double tabBarHeight =
-        isCompactLayout ? 40.0 : kTextTabBarHeight;
+    final double toolbarHeight = isCompactLayout ? 48.0 : kToolbarHeight;
+    final double tabBarHeight = isCompactLayout ? 40.0 : kTextTabBarHeight;
 
     final tabBar = TabBar(
       controller: _tabController,
-      labelStyle:
-          isCompactLayout ? theme.textTheme.bodyMedium : null,
-      labelPadding: EdgeInsets.symmetric(
-        horizontal: isCompactLayout ? 12 : 16,
-      ),
+      labelStyle: isCompactLayout ? theme.textTheme.bodyMedium : null,
+      labelPadding: EdgeInsets.symmetric(horizontal: isCompactLayout ? 12 : 16),
       tabs: [
         Tab(text: loc.notesMarkdownTabEdit),
         Tab(text: loc.notesMarkdownTabPreview),
@@ -198,8 +191,7 @@ class _NoteEditPageState extends State<NoteEditPage>
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: toolbarHeight,
-        titleTextStyle:
-            isCompactLayout ? theme.textTheme.titleMedium : null,
+        titleTextStyle: isCompactLayout ? theme.textTheme.titleMedium : null,
         titleSpacing: isCompactLayout ? 8 : null,
         title: Text(
           widget.isEditing ? loc.notesEditorTitleEdit : loc.notesEditorTitleNew,
@@ -225,18 +217,12 @@ class _NoteEditPageState extends State<NoteEditPage>
         ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(tabBarHeight),
-          child: SizedBox(
-            height: tabBarHeight,
-            child: tabBar,
-          ),
+          child: SizedBox(height: tabBarHeight, child: tabBar),
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _buildEditorTab(loc),
-          _buildPreviewTab(loc),
-        ],
+        children: [_buildEditorTab(loc), _buildPreviewTab(loc)],
       ),
     );
   }

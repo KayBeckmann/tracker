@@ -43,6 +43,44 @@
   "@dashboardNotesNoTags": {
     "description": "Hinweis, wenn keine Tags für die Notizkarte verfügbar sind."
   },
+  "dashboardTasksSummaryTitle": "Aufgabenüberblick",
+  "dashboardTasksTotal": "Alle Aufgaben: {count}",
+  "@dashboardTasksTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardTasksInProgress": "In Bearbeitung: {count}",
+  "@dashboardTasksInProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardTasksHighPriority": "Hohe Priorität: {count}",
+  "@dashboardTasksHighPriority": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardTasksNextDue": "Nächste fällige Aufgabe: {title} (fällig am {date})",
+  "@dashboardTasksNextDue": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "dashboardTasksNoUpcoming": "Keine anstehenden Aufgaben.",
+  "dashboardOpenTasksTooltip": "Aufgaben öffnen",
   "statusNotContacted": "Das Backend wurde noch nicht kontaktiert.",
   "statusSendingRequest": "Sende Anfrage an {url}...",
   "statusError": "Fehler: {description}",
@@ -96,6 +134,56 @@
   "notesDrawingStrokeLabel": "Strichstärke",
   "genericCancel": "Abbrechen",
   "tasksPlaceholder": "Plane und strukturiere hier deine Aufgaben.",
+  "tasksTabList": "Liste",
+  "tasksTabCalendar": "Kalender",
+  "tasksCreateButton": "Neue Aufgabe",
+  "tasksEmptyPlaceholder": "Noch keine Aufgaben. Erstelle deine erste Aufgabe, um den Überblick zu behalten.",
+  "tasksCalendarEmpty": "Für diesen Tag sind keine Aufgaben fällig.",
+  "tasksCreateTitle": "Neue Aufgabe",
+  "tasksEditTitle": "Aufgabe bearbeiten",
+  "tasksSaveButton": "Speichern",
+  "tasksTitleLabel": "Titel",
+  "tasksTitleHint": "Was soll erledigt werden?",
+  "tasksTitleValidationError": "Bitte gib einen Titel für die Aufgabe ein.",
+  "tasksStatusLabel": "Status",
+  "tasksPriorityLabel": "Priorität",
+  "tasksDueDateLabel": "Fälligkeitsdatum",
+  "tasksDueDateHelper": "Aufgaben werden im Kalender anhand ihres Fälligkeitsdatums angezeigt.",
+  "tasksPickDateButton": "Datum wählen",
+  "tasksTagsLabel": "Tags",
+  "tasksTagsHint": "Tags, durch Kommas getrennt",
+  "tasksTagSuggestionsLabel": "Vorschläge",
+  "tasksFiltersReset": "Zurücksetzen",
+  "tasksSortLabel": "Sortieren nach",
+  "tasksSortDueDateAsc": "Fälligkeit ↑",
+  "tasksSortDueDateDesc": "Fälligkeit ↓",
+  "tasksSortPriority": "Priorität",
+  "tasksSortStatus": "Status",
+  "tasksLinkedNoteLabel": "Verknüpfte Notiz",
+  "tasksNoNoteLinked": "Noch keine Notiz verknüpft.",
+  "tasksRemoveNoteTooltip": "Verknüpfte Notiz entfernen",
+  "tasksSelectNoteButton": "Bestehende Notiz verknüpfen",
+  "tasksCreateNoteButton": "Neue Notiz erstellen",
+  "tasksCreateMarkdownNote": "Markdown-Notiz erstellen",
+  "tasksCreateDrawingNote": "Zeichnungsnotiz erstellen",
+  "tasksNoNotesFound": "Es sind noch keine Notizen vorhanden.",
+  "tasksOpenLinkedNoteButton": "Notiz öffnen",
+  "tasksTrackedTimePlaceholder": "Sobald die Zeiterfassung verbunden ist, erscheinen hier die erfassten Zeiten.",
+  "tasksDueDateLabelValue": "Fällig: {date}",
+  "@tasksDueDateLabelValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksStatusTodo": "Offen",
+  "tasksStatusInProgress": "In Arbeit",
+  "tasksStatusDone": "Erledigt",
+  "tasksPriorityLow": "Niedrige Priorität",
+  "tasksPriorityMedium": "Mittlere Priorität",
+  "tasksPriorityHigh": "Hohe Priorität",
+  "tasksPreviewOpenEditor": "Im Editor öffnen",
   "timeTrackingPlaceholder": "Erfasse deine Arbeitszeiten bald direkt hier und verknüpfe sie über gemeinsame Tags mit den Aufgaben.",
   "journalPlaceholder": "Halte deine Einträge hier fest und verbinde sie über Tags mit Notizen, Aufgaben und der Zeiterfassung.",
   "habitsPlaceholder": "Verfolge deine Gewohnheiten an dieser Stelle.",

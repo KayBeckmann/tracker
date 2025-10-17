@@ -232,8 +232,9 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
       _isSaving = true;
     });
     try {
+      int? noteId;
       if (widget.note == null) {
-        await widget.database.insertNoteEntry(
+        noteId = await widget.database.insertNoteEntry(
           kind: NoteKind.drawing,
           title: title,
           drawingJson: drawingJson,
@@ -247,9 +248,10 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
           tags: tags,
         );
         await widget.database.updateNoteEntry(updated);
+        noteId = widget.note!.id;
       }
       if (mounted) {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(noteId);
       }
     } finally {
       if (mounted) {
