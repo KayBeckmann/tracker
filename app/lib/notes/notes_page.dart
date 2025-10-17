@@ -193,10 +193,13 @@ class _NotesPageState extends State<NotesPage> {
                     stream: widget.database.watchAllNoteTags(),
                     builder: (context, snapshot) {
                       final tags = snapshot.data ?? const <String>[];
-                      final currentValue = tags.contains(_selectedTag)
-                          ? _selectedTag
-                          : null;
-                      if (_selectedTag != null && currentValue == null) {
+                      final bool tagAvailable =
+                          _selectedTag != null && tags.contains(_selectedTag);
+                      final currentValue = tagAvailable ? _selectedTag : null;
+                      if (snapshot.hasData &&
+                          _selectedTag != null &&
+                          !tagAvailable &&
+                          tags.isNotEmpty) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           if (mounted) {
                             _updateSelectedTag(null);
