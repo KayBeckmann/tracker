@@ -26,6 +26,23 @@
   "dashboardQuickActionLoading": "Wird geladen...",
   "dashboardLatestEntriesTitle": "Aktuelle Antworten",
   "dashboardLatestEntriesEmpty": "Es sind noch keine Antworten gespeichert.",
+  "dashboardNotesCount": "Notizen insgesamt: {count}",
+  "@dashboardNotesCount": {
+    "description": "Gesamtanzahl der Notizen im Dashboard.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardNotesTopTags": "Beliebteste Tags",
+  "@dashboardNotesTopTags": {
+    "description": "Überschrift für die häufigsten Tags in der Notizkarte des Dashboards."
+  },
+  "dashboardNotesNoTags": "Keine Tags vorhanden.",
+  "@dashboardNotesNoTags": {
+    "description": "Hinweis, wenn keine Tags für die Notizkarte verfügbar sind."
+  },
   "statusNotContacted": "Das Backend wurde noch nicht kontaktiert.",
   "statusSendingRequest": "Sende Anfrage an {url}...",
   "statusError": "Fehler: {description}",

@@ -92,6 +92,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardLatestEntriesEmpty => 'No responses stored yet.';
 
   @override
+  String dashboardNotesCount(int count) {
+    return 'Total notes: $count';
+  }
+
+  @override
+  String get dashboardNotesTopTags => 'Top tags';
+
+  @override
+  String get dashboardNotesNoTags => 'No tags yet.';
+
+  @override
   String get statusNotContacted => 'The backend has not been contacted yet.';
 
   @override

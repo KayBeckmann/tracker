@@ -230,9 +230,6 @@ class _HomePageState extends State<HomePage> {
     _AppSection.habits,
     _AppSection.ledger,
   ];
-  final TextEditingController _nameController = TextEditingController(
-    text: 'Flutter',
-  );
   final TextEditingController _loginEmailController = TextEditingController();
   final TextEditingController _loginPasswordController =
       TextEditingController();
@@ -249,8 +246,6 @@ class _HomePageState extends State<HomePage> {
   ThemeMode _pendingThemeMode = ThemeMode.system;
   Color _pendingSeedColor = Colors.blue;
 
-  String? _statusMessage;
-  bool _isLoading = false;
   bool _isAuthInProgress = false;
   bool _loginPasswordVisible = false;
   bool _registerPasswordVisible = false;
@@ -258,6 +253,7 @@ class _HomePageState extends State<HomePage> {
   MembershipStatus? _membershipStatus;
   bool _isMembershipLoading = false;
   _AppSection _selectedSection = _AppSection.dashboard;
+  String? _notesTagFilter;
   late List<_AppSection> _moduleOrder;
   late Set<_AppSection> _enabledModules;
 
@@ -306,7 +302,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _nameController.dispose();
     _loginEmailController.dispose();
     _loginPasswordController.dispose();
     _registerEmailController.dispose();
@@ -315,76 +310,8 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Future<void> _fetchGreeting() async {
-    final String name = _nameController.text.trim().isEmpty
-        ? 'Flutter'
-        : _nameController.text.trim();
-
-    if (!mounted) {
-      return;
-    }
-    final loc = AppLocalizations.of(context);
-    setState(() {
-      _isLoading = true;
-      _statusMessage = loc.statusSendingRequest(backendBaseUrl);
-    });
-
-    try {
-      final Uri uri = Uri.parse(
-        '$backendBaseUrl/api/greeting',
-      ).replace(queryParameters: <String, String>{'name': name});
-      final http.Response response = await http.get(uri);
-
-      if (response.statusCode != 200) {
-        throw Exception('HTTP ${response.statusCode} ${response.reasonPhrase}');
-      }
-
-      final Map<String, dynamic> data =
-          jsonDecode(response.body) as Map<String, dynamic>;
-      final String message =
-          data['message'] as String? ?? 'Unexpected response from server.';
-      final String source = data['source'] as String? ?? 'unknown';
-
-      await _database.insertGreetingEntry(
-        name: name,
-        message: message,
-        source: source,
-        createdAt: DateTime.now(),
-      );
-
-      if (!mounted) {
-        return;
-      }
-
-      setState(() {
-        _statusMessage = message;
-      });
-    } catch (error) {
-      if (!mounted) {
-        return;
-      }
-      final locAfterError = AppLocalizations.of(context);
-      setState(() {
-        _statusMessage = locAfterError.statusError('$error');
-      });
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
   Future<void> _clearHistory() async {
     await _database.clearGreetingEntries();
-    if (!mounted) {
-      return;
-    }
-    final loc = AppLocalizations.of(context);
-    setState(() {
-      _statusMessage = loc.statusHistoryCleared;
-    });
   }
 
   Future<void> _handleLogout() async {
@@ -397,7 +324,6 @@ class _HomePageState extends State<HomePage> {
       _authErrorMessage = null;
       _membershipStatus = null;
       _selectedSection = _AppSection.dashboard;
-      _statusMessage = null;
     });
   }
 
@@ -435,11 +361,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _persistModuleSettings() {
-    final List<String> orderNames =
-        _moduleOrder.map((section) => section.name).toList();
+    final List<String> orderNames = _moduleOrder
+        .map((section) => section.name)
+        .toList();
     _trackerBox.put(moduleOrderKey, orderNames);
-    final List<String> enabledNames =
-        _enabledModules.map((section) => section.name).toList();
+    final List<String> enabledNames = _enabledModules
+        .map((section) => section.name)
+        .toList();
     _trackerBox.put(enabledModulesKey, enabledNames);
   }
 
@@ -893,6 +821,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _openNotes({String? tag}) {
+    if (_notesTagFilter != tag) {
+      setState(() {
+        _notesTagFilter = tag;
+      });
+    }
+    _onSelectSection(_AppSection.notes);
+  }
+
   String _userDisplayName(AppLocalizations loc, AuthenticatedUser? user) {
     return user?.displayLabel ?? loc.guestUserName;
   }
@@ -993,7 +930,7 @@ class _HomePageState extends State<HomePage> {
   }) {
     switch (_selectedSection) {
       case _AppSection.dashboard:
-        return _buildDashboard(context, loc, entries, currentUser, isLoggedIn);
+        return _buildDashboard(context, loc);
       case _AppSection.notes:
         return _buildNotes(context);
       case _AppSection.tasks:
@@ -1017,252 +954,184 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget _buildDashboard(
-    BuildContext context,
-    AppLocalizations loc,
-    List<GreetingEntry> entries,
-    AuthenticatedUser? currentUser,
-    bool isLoggedIn,
-  ) {
+  Widget _buildDashboard(BuildContext context, AppLocalizations loc) {
     final theme = Theme.of(context);
-    final GreetingEntry? latestEntry = entries.isNotEmpty
-        ? entries.first
-        : null;
-    final String userLabel = _userDisplayName(loc, currentUser);
-    final String userEmail = _userEmail(loc, currentUser);
-    final bool syncEnabled = _membershipStatus?.syncEnabled ?? false;
-    final bool membershipActive = _membershipStatus?.isActive ?? false;
+    final List<_AppSection> modules = _moduleOrder
+        .where((section) => section != _AppSection.dashboard)
+        .where(_enabledModules.contains)
+        .toList();
 
-    String statusValue;
-    if (!isLoggedIn) {
-      statusValue = loc.dashboardStatusGuest;
-    } else if (_membershipStatus == null) {
-      statusValue = loc.membershipStatusUnknown;
-    } else if (membershipActive &&
-        _membershipStatus?.membershipExpiresAt != null) {
-      statusValue = loc.membershipStatusActiveShort(
-        _formatDate(context, _membershipStatus!.membershipExpiresAt!),
+    if (modules.isEmpty) {
+      return Center(
+        child: Text(
+          loc.settingsModulesDescription,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyMedium,
+        ),
       );
-    } else if (syncEnabled) {
-      statusValue = loc.membershipSyncEnabled;
-    } else {
-      statusValue = loc.membershipSyncDisabled;
     }
 
     return ListView(
-      padding: const EdgeInsets.only(bottom: 32),
+      padding: const EdgeInsets.all(16),
       children: [
-        Text(
-          loc.dashboardWelcome(userLabel),
-          style: theme.textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          isLoggedIn
-              ? loc.dashboardSignedInAs(userEmail)
-              : loc.dashboardGuestIntro,
-          style: theme.textTheme.bodyMedium,
-        ),
-        const SizedBox(height: 24),
         Wrap(
           spacing: 16,
           runSpacing: 16,
-          children: [
-            _buildMetricCard(
-              context: context,
-              icon: Icons.storage,
-              title: loc.dashboardCardStoredResponses,
-              value: entries.length.toString(),
-            ),
-            _buildMetricCard(
-              context: context,
-              icon: Icons.chat_bubble_outline,
-              title: loc.dashboardCardLatestMessage,
-              value: latestEntry?.message ?? loc.dashboardLatestEntriesEmpty,
-              subtitle: latestEntry != null
-                  ? loc.historySubtitle(
-                      latestEntry.name,
-                      latestEntry.source,
-                      _formatTimestamp(context, latestEntry.createdAt),
-                    )
-                  : null,
-            ),
-            _buildMetricCard(
-              context: context,
-              icon: Icons.cloud_queue,
-              title: loc.dashboardCardBackendUrl,
-              value: backendBaseUrl,
-            ),
-            _buildMetricCard(
-              context: context,
-              icon: Icons.account_circle_outlined,
-              title: loc.dashboardCardUser,
-              value: userLabel,
-              subtitle: userEmail,
-            ),
-            _buildMetricCard(
-              context: context,
-              icon: Icons.info_outline,
-              title: loc.dashboardCardStatus,
-              value: _statusMessage ?? statusValue,
-            ),
-          ],
+          children: modules
+              .map(
+                (section) => section == _AppSection.notes
+                    ? _buildNotesDashboardCard(context, loc)
+                    : _buildModuleCard(context, loc, section),
+              )
+              .toList(),
         ),
-        const SizedBox(height: 24),
-        _buildCommunicationCard(context),
-        const SizedBox(height: 24),
-        if (!isLoggedIn) _buildGuestSyncCard(context),
-        if (!isLoggedIn) const SizedBox(height: 24),
-        _buildRecentResponsesCard(context, entries),
       ],
     );
   }
 
-  Widget _buildGuestSyncCard(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              loc.dashboardGuestSyncTitle,
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              loc.dashboardGuestSyncDescription,
-              style: theme.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 12),
-            FilledButton.icon(
-              onPressed: () => _onSelectSection(_AppSection.settings),
-              icon: const Icon(Icons.login),
-              label: Text(loc.dashboardGuestSyncButton),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCommunicationCard(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              loc.dashboardQuickActionTitle,
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              loc.dashboardQuickActionDescription,
-              style: theme.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              loc.communicationBackendUrl(backendBaseUrl),
-              style: theme.textTheme.bodySmall,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: loc.communicationNameLabel,
-                border: const OutlineInputBorder(),
-              ),
-              onSubmitted: (_) => _fetchGreeting(),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: _isLoading ? null : _fetchGreeting,
-                icon: _isLoading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+  Widget _buildNotesDashboardCard(BuildContext context, AppLocalizations loc) {
+    return StreamBuilder<List<NoteEntry>>(
+      stream: _database.watchNoteEntries(),
+      builder: (context, snapshot) {
+        final notes = snapshot.data ?? const <NoteEntry>[];
+        final tagCounts = <String, int>{};
+        for (final note in notes) {
+          final tags = note.tags
+              .split(',')
+              .map((tag) => tag.trim())
+              .where((tag) => tag.isNotEmpty);
+          for (final tag in tags) {
+            tagCounts.update(tag, (value) => value + 1, ifAbsent: () => 1);
+          }
+        }
+        final List<MapEntry<String, int>> topTags = tagCounts.entries.toList()
+          ..sort((a, b) {
+            final countCompare = b.value.compareTo(a.value);
+            if (countCompare != 0) {
+              return countCompare;
+            }
+            return a.key.toLowerCase().compareTo(b.key.toLowerCase());
+          });
+        final displayedTags = topTags.take(3).toList();
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        return ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 220, maxWidth: 320),
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => _openNotes(tag: _notesTagFilter),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          _sectionIcon(_AppSection.notes),
+                          size: 32,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            _localizedSectionTitle(loc, _AppSection.notes),
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      loc.dashboardNotesCount(notes.length),
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      loc.dashboardNotesTopTags,
+                      style: theme.textTheme.labelLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    if (displayedTags.isEmpty)
+                      Text(
+                        loc.dashboardNotesNoTags,
+                        style: theme.textTheme.bodyMedium,
                       )
-                    : const Icon(Icons.cloud),
-                label: Text(
-                  _isLoading
-                      ? loc.dashboardQuickActionLoading
-                      : loc.communicationButton,
+                    else
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: displayedTags
+                            .map(
+                              (entry) => ActionChip(
+                                label: Text('${entry.key} (${entry.value})'),
+                                onPressed: () => _openNotes(tag: entry.key),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              _statusMessage ?? loc.statusNotContacted,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildRecentResponsesCard(
+  Widget _buildModuleCard(
     BuildContext context,
-    List<GreetingEntry> entries,
+    AppLocalizations loc,
+    _AppSection section,
   ) {
-    final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final List<GreetingEntry> displayEntries = entries.take(5).toList();
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              loc.dashboardLatestEntriesTitle,
-              style: theme.textTheme.titleMedium,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 220, maxWidth: 320),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => _onSelectSection(section),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Icon(
+                  _sectionIcon(section),
+                  size: 32,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    _localizedSectionTitle(loc, section),
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+                const Icon(Icons.chevron_right),
+              ],
             ),
-            const SizedBox(height: 12),
-            if (displayEntries.isEmpty)
-              Text(
-                loc.dashboardLatestEntriesEmpty,
-                style: theme.textTheme.bodyMedium,
-              )
-            else
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: displayEntries.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
-                itemBuilder: (context, index) {
-                  final entry = displayEntries[index];
-                  return ListTile(
-                    leading: const Icon(Icons.history),
-                    title: Text(entry.message),
-                    subtitle: Text(
-                      loc.historySubtitle(
-                        entry.name,
-                        entry.source,
-                        _formatTimestamp(context, entry.createdAt),
-                      ),
-                    ),
-                  );
-                },
-              ),
-          ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildNotes(BuildContext context) {
-    return NotesPage(database: _database);
+    return NotesPage(
+      database: _database,
+      initialTag: _notesTagFilter,
+      onTagFilterChanged: (tag) {
+        if (_notesTagFilter == tag) {
+          return;
+        }
+        setState(() {
+          _notesTagFilter = tag;
+        });
+      },
+    );
   }
 
   Widget _buildTasks(BuildContext context) {
@@ -1378,10 +1247,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ]);
     }
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: children,
-    );
+    return ListView(padding: const EdgeInsets.all(16), children: children);
   }
 
   Widget _buildMembershipCard(BuildContext context, AppLocalizations loc) {
@@ -1503,9 +1369,21 @@ class _HomePageState extends State<HomePage> {
   Widget _buildAppearanceCard(BuildContext context, AppLocalizations loc) {
     final theme = Theme.of(context);
     final modeOptions = <({ThemeMode mode, String label, IconData icon})>[
-      (mode: ThemeMode.system, label: loc.settingsThemeModeSystem, icon: Icons.brightness_auto),
-      (mode: ThemeMode.light, label: loc.settingsThemeModeLight, icon: Icons.light_mode_outlined),
-      (mode: ThemeMode.dark, label: loc.settingsThemeModeDark, icon: Icons.dark_mode_outlined),
+      (
+        mode: ThemeMode.system,
+        label: loc.settingsThemeModeSystem,
+        icon: Icons.brightness_auto,
+      ),
+      (
+        mode: ThemeMode.light,
+        label: loc.settingsThemeModeLight,
+        icon: Icons.light_mode_outlined,
+      ),
+      (
+        mode: ThemeMode.dark,
+        label: loc.settingsThemeModeDark,
+        icon: Icons.dark_mode_outlined,
+      ),
     ];
     final colorOptions = <Color>[
       Colors.blue,
@@ -1593,8 +1471,9 @@ class _HomePageState extends State<HomePage> {
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.onSurface
-                              : theme.colorScheme.onSurface
-                                  .withValues(alpha: 0.2),
+                              : theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.2,
+                                ),
                           width: isSelected ? 3 : 2,
                         ),
                       ),
@@ -1631,10 +1510,7 @@ class _HomePageState extends State<HomePage> {
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 12),
-            Text(
-              loc.settingsModulesDragHint,
-              style: theme.textTheme.bodySmall,
-            ),
+            Text(loc.settingsModulesDragHint, style: theme.textTheme.bodySmall),
             const SizedBox(height: 16),
             ReorderableListView.builder(
               shrinkWrap: true,
@@ -2137,7 +2013,9 @@ class _HomePageState extends State<HomePage> {
         ? userLabel.trim().substring(0, 1).toUpperCase()
         : '?';
     final sections = _visibleNavigationSections;
-    final int selectedIndex = sections.indexOf(_selectedSection).clamp(0, sections.length - 1);
+    final int selectedIndex = sections
+        .indexOf(_selectedSection)
+        .clamp(0, sections.length - 1);
 
     return NavigationRail(
       selectedIndex: selectedIndex,
@@ -2171,8 +2049,7 @@ class _HomePageState extends State<HomePage> {
             ? (_isAuthInProgress ? null : _handleLogout)
             : () => _onSelectSection(_AppSection.settings),
       ),
-      onDestinationSelected: (index) =>
-          _onSelectSection(sections[index]),
+      onDestinationSelected: (index) => _onSelectSection(sections[index]),
       destinations: sections
           .map(
             (section) => NavigationRailDestination(
@@ -2182,43 +2059,6 @@ class _HomePageState extends State<HomePage> {
             ),
           )
           .toList(),
-    );
-  }
-
-  Widget _buildMetricCard({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String value,
-    String? subtitle,
-  }) {
-    final theme = Theme.of(context);
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 240, maxWidth: 320),
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(icon, size: 32, color: theme.colorScheme.primary),
-              const SizedBox(height: 12),
-              Text(title, style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Text(
-                value,
-                style: theme.textTheme.headlineSmall,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-              if (subtitle != null) ...[
-                const SizedBox(height: 8),
-                Text(subtitle, style: theme.textTheme.bodySmall),
-              ],
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -2283,11 +2123,6 @@ class _HomePageState extends State<HomePage> {
       case _AppSection.settings:
         return Icons.settings;
     }
-  }
-
-  String _formatTimestamp(BuildContext context, DateTime timestamp) {
-    final String localeTag = Localizations.localeOf(context).toLanguageTag();
-    return DateFormat.yMMMd(localeTag).add_Hms().format(timestamp.toLocal());
   }
 
   String _formatDate(BuildContext context, DateTime timestamp) {

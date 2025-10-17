@@ -9,16 +9,21 @@ class NotesPage extends StatefulWidget {
   const NotesPage({
     super.key,
     required this.database,
+    this.initialTag,
+    this.onTagFilterChanged,
   });
 
   final AppDatabase database;
+  final String? initialTag;
+  final ValueChanged<String?>? onTagFilterChanged;
 
   @override
   State<NotesPage> createState() => _NotesPageState();
 }
 
 class _NotesPageState extends State<NotesPage> {
-  final TextEditingController _contentFilterController = TextEditingController();
+  final TextEditingController _contentFilterController =
+      TextEditingController();
   String _contentFilter = '';
   String? _selectedTag;
 
@@ -26,6 +31,15 @@ class _NotesPageState extends State<NotesPage> {
   void initState() {
     super.initState();
     _contentFilterController.addListener(_handleContentFilterChanged);
+    _selectedTag = widget.initialTag;
+  }
+
+  @override
+  void didUpdateWidget(covariant NotesPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialTag != oldWidget.initialTag) {
+      _updateSelectedTag(widget.initialTag, notifyParent: false);
+    }
   }
 
   @override
@@ -34,6 +48,24 @@ class _NotesPageState extends State<NotesPage> {
       ..removeListener(_handleContentFilterChanged)
       ..dispose();
     super.dispose();
+  }
+
+  void _updateSelectedTag(String? value, {bool notifyParent = true}) {
+    if (_selectedTag == value) {
+      if (notifyParent) {
+        widget.onTagFilterChanged?.call(value);
+      }
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _selectedTag = value;
+    });
+    if (notifyParent) {
+      widget.onTagFilterChanged?.call(value);
+    }
   }
 
   void _handleContentFilterChanged() {
@@ -64,19 +96,15 @@ class _NotesPageState extends State<NotesPage> {
       case NoteKind.markdown:
         await Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (context) => NoteEditPage(
-              database: widget.database,
-              note: note,
-            ),
+            builder: (context) =>
+                NoteEditPage(database: widget.database, note: note),
           ),
         );
       case NoteKind.drawing:
         await Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (context) => DrawingNotePage(
-              database: widget.database,
-              note: note,
-            ),
+            builder: (context) =>
+                DrawingNotePage(database: widget.database, note: note),
           ),
         );
     }
@@ -133,9 +161,7 @@ class _NotesPageState extends State<NotesPage> {
             tooltip: loc.notesClearFiltersTooltip,
             onPressed: () {
               _contentFilterController.clear();
-              setState(() {
-                _selectedTag = null;
-              });
+              _updateSelectedTag(null);
             },
             icon: const Icon(Icons.filter_alt_off),
           ),
@@ -167,14 +193,13 @@ class _NotesPageState extends State<NotesPage> {
                     stream: widget.database.watchAllNoteTags(),
                     builder: (context, snapshot) {
                       final tags = snapshot.data ?? const <String>[];
-                      final currentValue =
-                          tags.contains(_selectedTag) ? _selectedTag : null;
+                      final currentValue = tags.contains(_selectedTag)
+                          ? _selectedTag
+                          : null;
                       if (_selectedTag != null && currentValue == null) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           if (mounted) {
-                            setState(() {
-                              _selectedTag = null;
-                            });
+                            _updateSelectedTag(null);
                           }
                         });
                       }
@@ -194,9 +219,7 @@ class _NotesPageState extends State<NotesPage> {
                         value: currentValue,
                         items: items,
                         onChanged: (value) {
-                          setState(() {
-                            _selectedTag = value;
-                          });
+                          _updateSelectedTag(value);
                         },
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.tag),
@@ -243,7 +266,9 @@ class _NotesPageState extends State<NotesPage> {
                       }
                       final formattedTags = _formatTags(note.tags);
                       if (formattedTags.isNotEmpty) {
-                        subtitleBuffer.add('${loc.notesTagLabel}: $formattedTags');
+                        subtitleBuffer.add(
+                          '${loc.notesTagLabel}: $formattedTags',
+                        );
                       }
                       final icon = note.kind == NoteKind.markdown
                           ? Icons.notes

@@ -92,6 +92,17 @@ class AppLocalizationsSv extends AppLocalizations {
   String get dashboardLatestEntriesEmpty => 'Inga svar har sparats ännu.';
 
   @override
+  String dashboardNotesCount(int count) {
+    return 'Totalt antal anteckningar: $count';
+  }
+
+  @override
+  String get dashboardNotesTopTags => 'Populäraste taggarna';
+
+  @override
+  String get dashboardNotesNoTags => 'Inga taggar ännu.';
+
+  @override
   String get statusNotContacted => 'Backend har ännu inte kontaktats.';
 
   @override

@@ -26,6 +26,23 @@
   "dashboardQuickActionLoading": "Laddar...",
   "dashboardLatestEntriesTitle": "Senaste svar",
   "dashboardLatestEntriesEmpty": "Inga svar har sparats ännu.",
+  "dashboardNotesCount": "Totalt antal anteckningar: {count}",
+  "@dashboardNotesCount": {
+    "description": "Totalt antal anteckningar på instrumentpanelen.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardNotesTopTags": "Populäraste taggarna",
+  "@dashboardNotesTopTags": {
+    "description": "Rubrik för de vanligaste taggarna i anteckningskortet på instrumentpanelen."
+  },
+  "dashboardNotesNoTags": "Inga taggar ännu.",
+  "@dashboardNotesNoTags": {
+    "description": "Visas när det inte finns några taggar att visa i anteckningskortet."
+  },
   "statusNotContacted": "Backend har ännu inte kontaktats.",
   "statusSendingRequest": "Skickar förfrågan till {url}...",
   "statusError": "Fel: {description}",

@@ -93,6 +93,17 @@ class AppLocalizationsDe extends AppLocalizations {
       'Es sind noch keine Antworten gespeichert.';
 
   @override
+  String dashboardNotesCount(int count) {
+    return 'Notizen insgesamt: $count';
+  }
+
+  @override
+  String get dashboardNotesTopTags => 'Beliebteste Tags';
+
+  @override
+  String get dashboardNotesNoTags => 'Keine Tags vorhanden.';
+
+  @override
   String get statusNotContacted => 'Das Backend wurde noch nicht kontaktiert.';
 
   @override

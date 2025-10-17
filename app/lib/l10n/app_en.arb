@@ -40,6 +40,23 @@
   "dashboardQuickActionLoading": "Loading...",
   "dashboardLatestEntriesTitle": "Recent responses",
   "dashboardLatestEntriesEmpty": "No responses stored yet.",
+  "dashboardNotesCount": "Total notes: {count}",
+  "@dashboardNotesCount": {
+    "description": "Displays the total number of notes on the dashboard card.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardNotesTopTags": "Top tags",
+  "@dashboardNotesTopTags": {
+    "description": "Heading for the most frequently used tags in the notes dashboard card."
+  },
+  "dashboardNotesNoTags": "No tags yet.",
+  "@dashboardNotesNoTags": {
+    "description": "Shown when there are no tags to display in the dashboard notes card."
+  },
   "statusNotContacted": "The backend has not been contacted yet.",
   "statusSendingRequest": "Sending request to {url}...",
   "@statusSendingRequest": {

@@ -256,6 +256,24 @@ abstract class AppLocalizations {
   /// **'No responses stored yet.'**
   String get dashboardLatestEntriesEmpty;
 
+  /// Displays the total number of notes on the dashboard card.
+  ///
+  /// In en, this message translates to:
+  /// **'Total notes: {count}'**
+  String dashboardNotesCount(int count);
+
+  /// Heading for the most frequently used tags in the notes dashboard card.
+  ///
+  /// In en, this message translates to:
+  /// **'Top tags'**
+  String get dashboardNotesTopTags;
+
+  /// Shown when there are no tags to display in the dashboard notes card.
+  ///
+  /// In en, this message translates to:
+  /// **'No tags yet.'**
+  String get dashboardNotesNoTags;
+
   /// No description provided for @statusNotContacted.
   ///
   /// In en, this message translates to:
