@@ -242,7 +242,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesDrawingClear => 'Clear canvas';
 
   @override
+  String get notesDrawingHideDetails => 'Hide details';
+
+  @override
+  String get notesDrawingShowDetails => 'Show details';
+
+  @override
   String get notesDrawingToolPen => 'Pen';
+
+  @override
+  String get notesDrawingToolEraser => 'Eraser';
 
   @override
   String get notesDrawingToolLine => 'Line';

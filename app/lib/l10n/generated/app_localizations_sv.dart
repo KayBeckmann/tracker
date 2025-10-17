@@ -242,7 +242,16 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesDrawingClear => 'Rensa ritfält';
 
   @override
+  String get notesDrawingHideDetails => 'Dölj detaljer';
+
+  @override
+  String get notesDrawingShowDetails => 'Visa detaljer';
+
+  @override
   String get notesDrawingToolPen => 'Penna';
+
+  @override
+  String get notesDrawingToolEraser => 'Suddgummi';
 
   @override
   String get notesDrawingToolLine => 'Linje';

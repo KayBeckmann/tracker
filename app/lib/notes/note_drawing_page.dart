@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../data/local/app_database.dart';
 import '../l10n/generated/app_localizations.dart';
 
-enum DrawingTool { pen, line, rectangle, ellipse }
+enum DrawingTool { pen, eraser, line, rectangle, ellipse }
 
 class DrawingElement {
   const DrawingElement({
@@ -25,10 +25,7 @@ class DrawingElement {
     return <String, dynamic>{
       'tool': tool.name,
       'points': points
-          .map((offset) => <String, dynamic>{
-                'dx': offset.dx,
-                'dy': offset.dy,
-              })
+          .map((offset) => <String, dynamic>{'dx': offset.dx, 'dy': offset.dy})
           .toList(),
       'color': _encodeColor(color),
       'strokeWidth': strokeWidth,
@@ -85,11 +82,7 @@ int _encodeColor(Color color) {
 Color _decodeColor(int value) => Color(value);
 
 class DrawingNotePage extends StatefulWidget {
-  const DrawingNotePage({
-    super.key,
-    required this.database,
-    this.note,
-  });
+  const DrawingNotePage({super.key, required this.database, this.note});
 
   final AppDatabase database;
   final NoteEntry? note;
@@ -112,6 +105,13 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
   DrawingElement? _inProgress;
 
   bool _isSaving = false;
+  bool _detailsVisible = true;
+
+  void _toggleDetailsVisibility() {
+    setState(() {
+      _detailsVisible = !_detailsVisible;
+    });
+  }
 
   @override
   void initState() {
@@ -125,9 +125,9 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
       _elements
         ..clear()
         ..addAll(
-          decoded
-              .whereType<Map<String, dynamic>>()
-              .map(DrawingElement.fromJson),
+          decoded.whereType<Map<String, dynamic>>().map(
+            DrawingElement.fromJson,
+          ),
         );
     }
   }
@@ -179,7 +179,9 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
     _inProgress = DrawingElement(
       tool: _selectedTool,
       points: <Offset>[startPoint],
-      color: _selectedColor,
+      color: _selectedTool == DrawingTool.eraser
+          ? Colors.transparent
+          : _selectedColor,
       strokeWidth: _strokeWidth,
     );
   }
@@ -187,7 +189,8 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
   void _updateStroke(Offset nextPoint) {
     if (_inProgress == null) return;
     final updatedPoints = List<Offset>.from(_inProgress!.points);
-    if (_inProgress!.tool == DrawingTool.pen) {
+    if (_inProgress!.tool == DrawingTool.pen ||
+        _inProgress!.tool == DrawingTool.eraser) {
       updatedPoints.add(nextPoint);
     } else {
       if (updatedPoints.length == 1) {
@@ -212,13 +215,14 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
   Future<void> _save() async {
     final loc = AppLocalizations.of(context);
     if (_elements.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.notesDrawingEmptyWarning)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.notesDrawingEmptyWarning)));
       return;
     }
-    final drawingJson =
-        jsonEncode(_elements.map((element) => element.toJson()).toList());
+    final drawingJson = jsonEncode(
+      _elements.map((element) => element.toJson()).toList(),
+    );
     final tags = _normalizeTags(_tagsController.text);
     final title = _titleController.text.trim().isEmpty
         ? loc.notesUntitled
@@ -310,14 +314,12 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
     final theme = Theme.of(context);
     final bool isCompactLayout =
         mediaQuery.size.height < 600 || mediaQuery.size.width < 600;
-    final double toolbarHeight =
-        isCompactLayout ? 48.0 : kToolbarHeight;
+    final double toolbarHeight = isCompactLayout ? 48.0 : kToolbarHeight;
 
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: toolbarHeight,
-        titleTextStyle:
-            isCompactLayout ? theme.textTheme.titleMedium : null,
+        titleTextStyle: isCompactLayout ? theme.textTheme.titleMedium : null,
         titleSpacing: isCompactLayout ? 8 : null,
         title: Text(
           widget.isEditing
@@ -325,6 +327,17 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
               : loc.notesDrawingTitleNew,
         ),
         actions: [
+          IconButton(
+            tooltip: _detailsVisible
+                ? loc.notesDrawingHideDetails
+                : loc.notesDrawingShowDetails,
+            onPressed: _toggleDetailsVisibility,
+            icon: Icon(
+              _detailsVisible
+                  ? Icons.keyboard_arrow_up
+                  : Icons.keyboard_arrow_down,
+            ),
+          ),
           if (widget.isEditing)
             IconButton(
               tooltip: loc.notesDeleteTooltip,
@@ -356,61 +369,68 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: loc.notesTitleLabel,
-                    hintText: loc.notesDrawingTitleHint,
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
+            crossFadeState: _detailsVisible
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            firstChild: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      labelText: loc.notesTitleLabel,
+                      hintText: loc.notesDrawingTitleHint,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _tagsController,
-                  decoration: InputDecoration(
-                    labelText: loc.notesTagLabel,
-                    hintText: loc.notesTagHint,
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _tagsController,
+                    decoration: InputDecoration(
+                      labelText: loc.notesTagLabel,
+                      hintText: loc.notesTagHint,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                StreamBuilder<List<String>>(
-                  stream: widget.database.watchAllNoteTags(),
-                  builder: (context, snapshot) {
-                    final tags = snapshot.data ?? const <String>[];
-                    if (tags.isEmpty) {
-                      return const SizedBox.shrink();
-                    }
-                    final selected = _currentTagsSet();
-                    return Align(
-                      alignment: Alignment.centerLeft,
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 4),
-                            child: Text(
-                              '${loc.notesTagSuggestionsLabel}:',
-                              style: Theme.of(context).textTheme.labelMedium,
+                  const SizedBox(height: 8),
+                  StreamBuilder<List<String>>(
+                    stream: widget.database.watchAllNoteTags(),
+                    builder: (context, snapshot) {
+                      final tags = snapshot.data ?? const <String>[];
+                      if (tags.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+                      final selected = _currentTagsSet();
+                      return Align(
+                        alignment: Alignment.centerLeft,
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: Text(
+                                '${loc.notesTagSuggestionsLabel}:',
+                                style: Theme.of(context).textTheme.labelMedium,
+                              ),
                             ),
-                          ),
-                          ...tags.map(
-                            (tag) => FilterChip(
-                              label: Text(tag),
-                              selected: selected.contains(tag),
-                              onSelected: (_) => _toggleTag(tag),
+                            ...tags.map(
+                              (tag) => FilterChip(
+                                label: Text(tag),
+                                selected: selected.contains(tag),
+                                onSelected: (_) => _toggleTag(tag),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ],
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
+            secondChild: const SizedBox.shrink(),
           ),
           _buildToolbar(loc),
           Expanded(
@@ -418,12 +438,13 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
               builder: (context, constraints) {
                 return GestureDetector(
                   onPanStart: (details) => _beginStroke(details.localPosition),
-                  onPanUpdate: (details) => _updateStroke(details.localPosition),
+                  onPanUpdate: (details) =>
+                      _updateStroke(details.localPosition),
                   onPanEnd: (_) => _endStroke(),
                   child: ColoredBox(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .surfaceContainerHighest,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     child: CustomPaint(
                       painter: _DrawingPainter(
                         elements: _elements,
@@ -465,6 +486,11 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
                 value: DrawingTool.pen,
                 label: Text(loc.notesDrawingToolPen),
                 icon: const Icon(Icons.gesture),
+              ),
+              ButtonSegment(
+                value: DrawingTool.eraser,
+                label: Text(loc.notesDrawingToolEraser),
+                icon: const Icon(Icons.auto_fix_off),
               ),
               ButtonSegment(
                 value: DrawingTool.line,
@@ -540,22 +566,21 @@ class _DrawingNotePageState extends State<DrawingNotePage> {
 }
 
 class _DrawingPainter extends CustomPainter {
-  _DrawingPainter({
-    required this.elements,
-    required this.inProgress,
-  });
+  _DrawingPainter({required this.elements, required this.inProgress});
 
   final List<DrawingElement> elements;
   final DrawingElement? inProgress;
 
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.saveLayer(Offset.zero & size, Paint());
     for (final element in elements) {
       _paintElement(canvas, element);
     }
     if (inProgress != null) {
       _paintElement(canvas, inProgress!);
     }
+    canvas.restore();
   }
 
   void _paintElement(Canvas canvas, DrawingElement element) {
@@ -582,24 +607,40 @@ class _DrawingPainter extends CustomPainter {
         }
         canvas.drawPath(path, paint);
         return;
+      case DrawingTool.eraser:
+        final points = element.points;
+        if (points.isEmpty) return;
+        final eraserStroke = Paint()
+          ..blendMode = BlendMode.clear
+          ..strokeWidth = element.strokeWidth
+          ..strokeCap = StrokeCap.round
+          ..strokeJoin = StrokeJoin.round
+          ..style = PaintingStyle.stroke;
+        if (points.length == 1) {
+          final dotPaint = Paint()
+            ..blendMode = BlendMode.clear
+            ..style = PaintingStyle.fill;
+          canvas.drawCircle(points.first, element.strokeWidth / 2, dotPaint);
+          return;
+        }
+        final path = Path()..moveTo(points.first.dx, points.first.dy);
+        for (var i = 1; i < points.length; i++) {
+          path.lineTo(points[i].dx, points[i].dy);
+        }
+        canvas.drawPath(path, eraserStroke);
+        return;
       case DrawingTool.line:
         if (element.points.length < 2) return;
         canvas.drawLine(element.points.first, element.points.last, paint);
         return;
       case DrawingTool.rectangle:
         if (element.points.length < 2) return;
-        final rect = Rect.fromPoints(
-          element.points.first,
-          element.points.last,
-        );
+        final rect = Rect.fromPoints(element.points.first, element.points.last);
         canvas.drawRect(rect, paint);
         return;
       case DrawingTool.ellipse:
         if (element.points.length < 2) return;
-        final rect = Rect.fromPoints(
-          element.points.first,
-          element.points.last,
-        );
+        final rect = Rect.fromPoints(element.points.first, element.points.last);
         canvas.drawOval(rect, paint);
         return;
     }

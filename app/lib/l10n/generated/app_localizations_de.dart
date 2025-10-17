@@ -245,7 +245,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notesDrawingClear => 'Zeichenfläche leeren';
 
   @override
+  String get notesDrawingHideDetails => 'Details ausblenden';
+
+  @override
+  String get notesDrawingShowDetails => 'Details einblenden';
+
+  @override
   String get notesDrawingToolPen => 'Stift';
+
+  @override
+  String get notesDrawingToolEraser => 'Radiergummi';
 
   @override
   String get notesDrawingToolLine => 'Linie';

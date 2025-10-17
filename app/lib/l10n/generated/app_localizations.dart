@@ -532,11 +532,29 @@ abstract class AppLocalizations {
   /// **'Clear canvas'**
   String get notesDrawingClear;
 
+  /// No description provided for @notesDrawingHideDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide details'**
+  String get notesDrawingHideDetails;
+
+  /// No description provided for @notesDrawingShowDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Show details'**
+  String get notesDrawingShowDetails;
+
   /// No description provided for @notesDrawingToolPen.
   ///
   /// In en, this message translates to:
   /// **'Pen'**
   String get notesDrawingToolPen;
+
+  /// No description provided for @notesDrawingToolEraser.
+  ///
+  /// In en, this message translates to:
+  /// **'Eraser'**
+  String get notesDrawingToolEraser;
 
   /// No description provided for @notesDrawingToolLine.
   ///
