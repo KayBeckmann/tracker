@@ -299,5 +299,16 @@
   "membershipPaymentMethodPaypal": "PayPal",
   "membershipPaymentMethodBitcoin": "Bitcoin",
   "settingsSignInPrompt": "Logga in för att synka dina data mellan enheter.",
-  "settingsOpenLogin": "Öppna inloggning"
+  "settingsOpenLogin": "Öppna inloggning",
+  "syncNowButton": "Synka nu",
+  "syncInProgress": "Synkroniserar …",
+  "syncSuccess": "Synkroniseringen är klar.",
+  "syncNotReady": "Logga in innan du synkroniserar.",
+  "syncConflictTitle": "Synkroniseringskonflikt",
+  "syncConflictMessage": "Välj vilken version som ska behållas.",
+  "syncConflictKeepLocal": "Behåll enhetens version",
+  "syncConflictKeepServer": "Behåll serverversionen",
+  "syncConflictResolved": "Konflikter lösta.",
+  "syncConflictDeviceLabel": "Enhet",
+  "syncConflictServerLabel": "Server"
 }

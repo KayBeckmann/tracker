@@ -1467,6 +1467,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open login'**
   String get settingsOpenLogin;
+
+  /// No description provided for @syncNowButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get syncNowButton;
+
+  /// No description provided for @syncInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing…'**
+  String get syncInProgress;
+
+  /// No description provided for @syncSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync completed.'**
+  String get syncSuccess;
+
+  /// No description provided for @syncNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in before synchronising.'**
+  String get syncNotReady;
+
+  /// No description provided for @syncConflictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Synchronisation conflict'**
+  String get syncConflictTitle;
+
+  /// No description provided for @syncConflictMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select which version should be kept.'**
+  String get syncConflictMessage;
+
+  /// No description provided for @syncConflictKeepLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep device version'**
+  String get syncConflictKeepLocal;
+
+  /// No description provided for @syncConflictKeepServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep server version'**
+  String get syncConflictKeepServer;
+
+  /// No description provided for @syncConflictResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflicts resolved.'**
+  String get syncConflictResolved;
+
+  /// No description provided for @syncConflictDeviceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Device'**
+  String get syncConflictDeviceLabel;
+
+  /// No description provided for @syncConflictServerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Server'**
+  String get syncConflictServerLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -436,6 +436,55 @@ class $NoteEntriesTable extends NoteEntries
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -446,6 +495,10 @@ class $NoteEntriesTable extends NoteEntries
     kind,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -501,6 +554,33 @@ class $NoteEntriesTable extends NoteEntries
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -544,6 +624,22 @@ class $NoteEntriesTable extends NoteEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -565,6 +661,10 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   final NoteKind kind;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const NoteEntry({
     required this.id,
     required this.title,
@@ -574,6 +674,10 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     required this.kind,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -594,6 +698,14 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -611,6 +723,14 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       kind: Value(kind),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -630,6 +750,10 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       ),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -646,6 +770,10 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       ),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -658,6 +786,10 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     NoteKind? kind,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => NoteEntry(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -667,6 +799,10 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     kind: kind ?? this.kind,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   NoteEntry copyWithCompanion(NoteEntriesCompanion data) {
     return NoteEntry(
@@ -680,6 +816,12 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       kind: data.kind.present ? data.kind.value : this.kind,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -693,7 +835,11 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           ..write('tags: $tags, ')
           ..write('kind: $kind, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -708,6 +854,10 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     kind,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -720,7 +870,11 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           other.tags == this.tags &&
           other.kind == this.kind &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
@@ -732,6 +886,10 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
   final Value<NoteKind> kind;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const NoteEntriesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -741,6 +899,10 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     this.kind = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   NoteEntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -751,6 +913,10 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     this.kind = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   static Insertable<NoteEntry> custom({
     Expression<int>? id,
@@ -761,6 +927,10 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     Expression<String>? kind,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -771,6 +941,10 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
       if (kind != null) 'kind': kind,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -783,6 +957,10 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     Value<NoteKind>? kind,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return NoteEntriesCompanion(
       id: id ?? this.id,
@@ -793,6 +971,10 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
       kind: kind ?? this.kind,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -825,6 +1007,18 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -838,7 +1032,11 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
           ..write('tags: $tags, ')
           ..write('kind: $kind, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -960,6 +1158,55 @@ class $TaskEntriesTable extends TaskEntries
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -972,6 +1219,10 @@ class $TaskEntriesTable extends TaskEntries
     createdAt,
     updatedAt,
     reminderAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1034,6 +1285,33 @@ class $TaskEntriesTable extends TaskEntries
         reminderAt.isAcceptableOrUnknown(data['reminder_at']!, _reminderAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -1087,6 +1365,22 @@ class $TaskEntriesTable extends TaskEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}reminder_at'],
       ),
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -1112,6 +1406,10 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? reminderAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const TaskEntry({
     required this.id,
     required this.title,
@@ -1123,6 +1421,10 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     required this.createdAt,
     required this.updatedAt,
     this.reminderAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1149,6 +1451,14 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     if (!nullToAbsent || reminderAt != null) {
       map['reminder_at'] = Variable<DateTime>(reminderAt);
     }
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -1168,6 +1478,14 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
       reminderAt: reminderAt == null && nullToAbsent
           ? const Value.absent()
           : Value(reminderAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -1191,6 +1509,10 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       reminderAt: serializer.fromJson<DateTime?>(json['reminderAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -1211,6 +1533,10 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'reminderAt': serializer.toJson<DateTime?>(reminderAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -1225,6 +1551,10 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     DateTime? createdAt,
     DateTime? updatedAt,
     Value<DateTime?> reminderAt = const Value.absent(),
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => TaskEntry(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -1236,6 +1566,10 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     reminderAt: reminderAt.present ? reminderAt.value : this.reminderAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   TaskEntry copyWithCompanion(TaskEntriesCompanion data) {
     return TaskEntry(
@@ -1251,6 +1585,12 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
       reminderAt: data.reminderAt.present
           ? data.reminderAt.value
           : this.reminderAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -1266,7 +1606,11 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
           ..write('tags: $tags, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('reminderAt: $reminderAt')
+          ..write('reminderAt: $reminderAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -1283,6 +1627,10 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     createdAt,
     updatedAt,
     reminderAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -1297,7 +1645,11 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
           other.tags == this.tags &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
-          other.reminderAt == this.reminderAt);
+          other.reminderAt == this.reminderAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
@@ -1311,6 +1663,10 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> reminderAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const TaskEntriesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -1322,6 +1678,10 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.reminderAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   TaskEntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -1334,6 +1694,10 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.reminderAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : title = Value(title),
        dueDate = Value(dueDate);
   static Insertable<TaskEntry> custom({
@@ -1347,6 +1711,10 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? reminderAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1359,6 +1727,10 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (reminderAt != null) 'reminder_at': reminderAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -1373,6 +1745,10 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<DateTime?>? reminderAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return TaskEntriesCompanion(
       id: id ?? this.id,
@@ -1385,6 +1761,10 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       reminderAt: reminderAt ?? this.reminderAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -1425,6 +1805,18 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     if (reminderAt.present) {
       map['reminder_at'] = Variable<DateTime>(reminderAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -1440,7 +1832,11 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
           ..write('tags: $tags, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('reminderAt: $reminderAt')
+          ..write('reminderAt: $reminderAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -1681,6 +2077,10 @@ typedef $$NoteEntriesTableCreateCompanionBuilder =
       Value<NoteKind> kind,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$NoteEntriesTableUpdateCompanionBuilder =
     NoteEntriesCompanion Function({
@@ -1692,6 +2092,10 @@ typedef $$NoteEntriesTableUpdateCompanionBuilder =
       Value<NoteKind> kind,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$NoteEntriesTableReferences
@@ -1764,6 +2168,26 @@ class $$NoteEntriesTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1841,6 +2265,26 @@ class $$NoteEntriesTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$NoteEntriesTableAnnotationComposer
@@ -1877,6 +2321,20 @@ class $$NoteEntriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
   Expression<T> taskEntriesRefs<T extends Object>(
     Expression<T> Function($$TaskEntriesTableAnnotationComposer a) f,
@@ -1940,6 +2398,10 @@ class $$NoteEntriesTableTableManager
                 Value<NoteKind> kind = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => NoteEntriesCompanion(
                 id: id,
                 title: title,
@@ -1949,6 +2411,10 @@ class $$NoteEntriesTableTableManager
                 kind: kind,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -1960,6 +2426,10 @@ class $$NoteEntriesTableTableManager
                 Value<NoteKind> kind = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => NoteEntriesCompanion.insert(
                 id: id,
                 title: title,
@@ -1969,6 +2439,10 @@ class $$NoteEntriesTableTableManager
                 kind: kind,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -2038,6 +2512,10 @@ typedef $$TaskEntriesTableCreateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> reminderAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$TaskEntriesTableUpdateCompanionBuilder =
     TaskEntriesCompanion Function({
@@ -2051,6 +2529,10 @@ typedef $$TaskEntriesTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> reminderAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$TaskEntriesTableReferences
@@ -2133,6 +2615,26 @@ class $$TaskEntriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$NoteEntriesTableFilterComposer get noteId {
     final $$NoteEntriesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -2211,6 +2713,26 @@ class $$TaskEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$NoteEntriesTableOrderingComposer get noteId {
     final $$NoteEntriesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2272,6 +2794,20 @@ class $$TaskEntriesTableAnnotationComposer
     column: $table.reminderAt,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
   $$NoteEntriesTableAnnotationComposer get noteId {
     final $$NoteEntriesTableAnnotationComposer composer = $composerBuilder(
@@ -2335,6 +2871,10 @@ class $$TaskEntriesTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> reminderAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => TaskEntriesCompanion(
                 id: id,
                 title: title,
@@ -2346,6 +2886,10 @@ class $$TaskEntriesTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 reminderAt: reminderAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -2359,6 +2903,10 @@ class $$TaskEntriesTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> reminderAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => TaskEntriesCompanion.insert(
                 id: id,
                 title: title,
@@ -2370,6 +2918,10 @@ class $$TaskEntriesTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 reminderAt: reminderAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(

@@ -1,4 +1,6 @@
 import 'package:drift/drift.dart';
+import 'package:uuid/uuid.dart';
+
 import 'connection/connection.dart';
 
 part 'app_database.g.dart';
@@ -8,6 +10,8 @@ enum NoteKind { markdown, drawing }
 enum TaskStatus { todo, inProgress, done }
 
 enum TaskPriority { low, medium, high }
+
+const Uuid _uuid = Uuid();
 
 class GreetingEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -38,6 +42,14 @@ class NoteEntries extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class TaskEntries extends Table {
@@ -67,6 +79,14 @@ class TaskEntries extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get reminderAt => dateTime().nullable()();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 @DriftDatabase(tables: [GreetingEntries, NoteEntries, TaskEntries])
@@ -81,7 +101,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -97,6 +117,16 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 4) {
         await m.addColumn(taskEntries, taskEntries.reminderAt);
+      }
+      if (from < 5) {
+        await m.addColumn(noteEntries, noteEntries.remoteId);
+        await m.addColumn(noteEntries, noteEntries.remoteVersion);
+        await m.addColumn(noteEntries, noteEntries.needsSync);
+        await m.addColumn(noteEntries, noteEntries.syncedAt);
+        await m.addColumn(taskEntries, taskEntries.remoteId);
+        await m.addColumn(taskEntries, taskEntries.remoteVersion);
+        await m.addColumn(taskEntries, taskEntries.needsSync);
+        await m.addColumn(taskEntries, taskEntries.syncedAt);
       }
     },
   );
@@ -189,12 +219,14 @@ class AppDatabase extends _$AppDatabase {
     String? content,
     String? drawingJson,
     String tags = '',
+    String? remoteId,
   }) async {
     assert(
       kind == NoteKind.markdown ? content != null : drawingJson != null,
       'Note content must match the selected kind.',
     );
     final now = DateTime.now().toUtc();
+    final resolvedRemoteId = remoteId ?? _uuid.v4();
     final companion = NoteEntriesCompanion.insert(
       kind: Value(kind),
       title: Value(title),
@@ -203,12 +235,19 @@ class AppDatabase extends _$AppDatabase {
       tags: Value(tags),
       createdAt: Value(now),
       updatedAt: Value(now),
+      remoteId: Value(resolvedRemoteId),
+      remoteVersion: const Value(0),
+      needsSync: const Value(true),
+      syncedAt: const Value.absent(),
     );
     return into(noteEntries).insert(companion);
   }
 
   Future<void> updateNoteEntry(NoteEntry note) async {
-    final updated = note.copyWith(updatedAt: DateTime.now().toUtc());
+    final updated = note.copyWith(
+      updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
+    );
     await update(noteEntries).replace(updated);
   }
 
@@ -220,6 +259,46 @@ class AppDatabase extends _$AppDatabase {
     return (select(
       noteEntries,
     )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<NoteEntry?> getNoteByRemoteId(String remoteId) {
+    return (select(
+      noteEntries,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<NoteEntry>> getNotesNeedingSync() {
+    return (select(
+      noteEntries,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> markNoteSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(noteEntries)..where((tbl) => tbl.id.equals(id))).write(
+      NoteEntriesCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
+  }
+
+  Future<void> assignNoteRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(noteEntries)..where((tbl) => tbl.id.equals(id))).write(
+      NoteEntriesCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
   }
 
   Stream<List<TaskEntry>> watchTaskEntries() {
@@ -255,8 +334,10 @@ class AppDatabase extends _$AppDatabase {
     int? noteId,
     String tags = '',
     DateTime? reminderAt,
+    String? remoteId,
   }) {
     final now = DateTime.now().toUtc();
+    final resolvedRemoteId = remoteId ?? _uuid.v4();
     final companion = TaskEntriesCompanion.insert(
       title: title,
       status: Value(status),
@@ -269,12 +350,19 @@ class AppDatabase extends _$AppDatabase {
       reminderAt: reminderAt == null
           ? const Value.absent()
           : Value(reminderAt.toUtc()),
+      remoteId: Value(resolvedRemoteId),
+      remoteVersion: const Value(0),
+      needsSync: const Value(true),
+      syncedAt: const Value.absent(),
     );
     return into(taskEntries).insert(companion);
   }
 
   Future<void> updateTaskEntry(TaskEntry task) {
-    final updated = task.copyWith(updatedAt: DateTime.now().toUtc());
+    final updated = task.copyWith(
+      updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
+    );
     return update(taskEntries).replace(updated);
   }
 
@@ -286,6 +374,46 @@ class AppDatabase extends _$AppDatabase {
     return (select(
       taskEntries,
     )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<TaskEntry?> getTaskByRemoteId(String remoteId) {
+    return (select(
+      taskEntries,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<TaskEntry>> getTasksNeedingSync() {
+    return (select(
+      taskEntries,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> markTaskSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(taskEntries)..where((tbl) => tbl.id.equals(id))).write(
+      TaskEntriesCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
+  }
+
+  Future<void> assignTaskRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(taskEntries)..where((tbl) => tbl.id.equals(id))).write(
+      TaskEntriesCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
   }
 
   Stream<List<String>> watchAllTaskTags() {

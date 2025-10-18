@@ -410,5 +410,16 @@
   "membershipPaymentMethodPaypal": "PayPal",
   "membershipPaymentMethodBitcoin": "Bitcoin",
   "settingsSignInPrompt": "Sign in to sync your notes across devices.",
-  "settingsOpenLogin": "Open login"
+  "settingsOpenLogin": "Open login",
+  "syncNowButton": "Sync now",
+  "syncInProgress": "Syncing…",
+  "syncSuccess": "Sync completed.",
+  "syncNotReady": "Please sign in before synchronising.",
+  "syncConflictTitle": "Synchronisation conflict",
+  "syncConflictMessage": "Select which version should be kept.",
+  "syncConflictKeepLocal": "Keep device version",
+  "syncConflictKeepServer": "Keep server version",
+  "syncConflictResolved": "Conflicts resolved.",
+  "syncConflictDeviceLabel": "Device",
+  "syncConflictServerLabel": "Server"
 }

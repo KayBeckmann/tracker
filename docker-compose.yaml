@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: tracker
       POSTGRES_PASSWORD: tracker
     volumes:
-      - tracker-postgres-data:/var/lib/postgresql/data
+      - ./db:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
@@ -15,11 +15,12 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./backend_dart
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql+psycopg://tracker:tracker@db:5432/tracker
+      DATABASE_URL: postgres://tracker:tracker@db:5432/tracker
       AUTH_SECRET_KEY: change-this-secret
+      CORS_ALLOW_ORIGINS: "*"
     depends_on:
       db:
         condition: service_healthy

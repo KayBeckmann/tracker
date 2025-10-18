@@ -299,5 +299,16 @@
   "membershipPaymentMethodPaypal": "PayPal",
   "membershipPaymentMethodBitcoin": "Bitcoin",
   "settingsSignInPrompt": "Melde dich an, um deine Daten zwischen Geräten zu synchronisieren.",
-  "settingsOpenLogin": "Login öffnen"
+  "settingsOpenLogin": "Login öffnen",
+  "syncNowButton": "Jetzt synchronisieren",
+  "syncInProgress": "Synchronisiere …",
+  "syncSuccess": "Synchronisation abgeschlossen.",
+  "syncNotReady": "Bitte melde dich an, bevor du synchronisierst.",
+  "syncConflictTitle": "Synchronisationskonflikt",
+  "syncConflictMessage": "Wähle, welche Version behalten werden soll.",
+  "syncConflictKeepLocal": "Geräteversion behalten",
+  "syncConflictKeepServer": "Serverversion übernehmen",
+  "syncConflictResolved": "Konflikte wurden gelöst.",
+  "syncConflictDeviceLabel": "Gerät",
+  "syncConflictServerLabel": "Server"
 }

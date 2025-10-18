@@ -11,6 +11,9 @@ import 'l10n/generated/app_localizations.dart';
 import 'models/membership_status.dart';
 import 'notes/notes_page.dart';
 import 'tasks/tasks_page.dart';
+import 'sync/encryption_service.dart';
+import 'sync/sync_api_client.dart';
+import 'sync/sync_engine.dart';
 import 'tasks/task_reminder_service.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
@@ -260,6 +263,10 @@ class _HomePageState extends State<HomePage> {
   String? _notesTagFilter;
   late List<_AppSection> _moduleOrder;
   late Set<_AppSection> _enabledModules;
+  late final SyncApiClient _syncClient;
+  late final EncryptionService _encryptionService;
+  late final SyncEngine _syncEngine;
+  bool _isSyncInProgress = false;
   StreamSubscription<List<TaskEntry>>? _taskReminderSubscription;
 
   @override
@@ -267,6 +274,15 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _database = widget.database;
     _trackerBox = Hive.box(trackerBoxName);
+    _syncClient = SyncApiClient(baseUrl: backendBaseUrl);
+    _encryptionService = EncryptionService();
+    _syncEngine = SyncEngine(
+      database: _database,
+      apiClient: _syncClient,
+      encryptionService: _encryptionService,
+      storageBox: _trackerBox,
+    );
+    _syncEngine.loadStoredKey();
     _pendingLocale = widget.currentLocale;
     _moduleOrder = List<_AppSection>.from(_defaultModuleOrder);
     _enabledModules = _defaultModuleOrder.toSet();
@@ -276,6 +292,9 @@ class _HomePageState extends State<HomePage> {
 
     final Object? token = _trackerBox.get('auth_token');
     final AuthenticatedUser? user = _readCurrentUser(_trackerBox);
+    if (token is String && token.isNotEmpty) {
+      _syncEngine.authToken = token;
+    }
     if (token is String && user != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -337,10 +356,12 @@ class _HomePageState extends State<HomePage> {
   Future<void> _handleLogout() async {
     await _trackerBox.delete('auth_token');
     await _trackerBox.delete('auth_user');
+    await _syncEngine.clearState();
     if (!mounted) {
       return;
     }
     setState(() {
+      _isSyncInProgress = false;
       _authErrorMessage = null;
       _membershipStatus = null;
       _selectedSection = _AppSection.dashboard;
@@ -407,7 +428,10 @@ class _HomePageState extends State<HomePage> {
     return modules;
   }
 
-  Future<void> _persistAuthResponse(Map<String, dynamic> data) async {
+  Future<void> _persistAuthResponse(
+    Map<String, dynamic> data, {
+    String? password,
+  }) async {
     final Object? token = data['access_token'];
     final Object? userRaw = data['user'];
     if (token is! String || token.isEmpty || userRaw is! Map) {
@@ -420,6 +444,22 @@ class _HomePageState extends State<HomePage> {
 
     await _trackerBox.put('auth_token', token);
     await _trackerBox.put('auth_user', userMap);
+    _syncEngine.authToken = token;
+
+    final Object? saltRaw = userMap['encryption_salt'];
+    if (saltRaw is String && saltRaw.isNotEmpty) {
+      _syncEngine.storeEncryptionSalt(saltRaw);
+      if (password != null && password.isNotEmpty) {
+        await _encryptionService.deriveKey(
+          password: password,
+          saltBase64: saltRaw,
+        );
+        _syncEngine.storeDerivedKey();
+      } else {
+        _syncEngine.loadStoredKey();
+      }
+    }
+
     if (mounted) {
       await _refreshMembershipStatus();
     }
@@ -450,6 +490,7 @@ class _HomePageState extends State<HomePage> {
       uri: Uri.parse('$backendBaseUrl/api/auth/register'),
       payload: payload,
       expectsCreated: true,
+      password: password,
     );
   }
 
@@ -476,6 +517,7 @@ class _HomePageState extends State<HomePage> {
       uri: Uri.parse('$backendBaseUrl/api/auth/login'),
       payload: payload,
       expectsCreated: false,
+      password: password,
     );
   }
 
@@ -485,6 +527,7 @@ class _HomePageState extends State<HomePage> {
     required Uri uri,
     required Map<String, dynamic> payload,
     required bool expectsCreated,
+    String? password,
   }) async {
     setState(() {
       _isAuthInProgress = true;
@@ -519,7 +562,7 @@ class _HomePageState extends State<HomePage> {
 
       final Map<String, dynamic> data =
           jsonDecode(response.body) as Map<String, dynamic>;
-      await _persistAuthResponse(data);
+      await _persistAuthResponse(data, password: password);
 
       _loginPasswordController.clear();
       _registerPasswordController.clear();
@@ -806,6 +849,188 @@ class _HomePageState extends State<HomePage> {
         });
       }
     }
+  }
+
+  Future<void> _handleSyncNow() async {
+    final loc = AppLocalizations.of(context);
+    if (!_syncEngine.isReady) {
+      _showSnackBar(loc.syncNotReady);
+      return;
+    }
+    if (_isSyncInProgress) {
+      return;
+    }
+    setState(() {
+      _isSyncInProgress = true;
+    });
+
+    try {
+      final result = await _syncEngine.synchronize();
+      if (!mounted) {
+        return;
+      }
+      if (result.hasConflicts) {
+        final resolved = await _resolveConflicts(result.conflicts);
+        if (!resolved) {
+          return;
+        }
+        final retryResult = await _syncEngine.synchronize();
+        if (!mounted) {
+          return;
+        }
+        if (retryResult.hasConflicts) {
+          _showSnackBar(loc.syncConflictMessage);
+        } else {
+          _showSnackBar(loc.syncSuccess);
+        }
+      } else {
+        _showSnackBar(loc.syncSuccess);
+      }
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      _showSnackBar(loc.authErrorGeneric('$error'));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSyncInProgress = false;
+        });
+      }
+    }
+  }
+
+  Future<bool> _resolveConflicts(List<SyncConflictData> conflicts) async {
+    final loc = AppLocalizations.of(context);
+    for (final conflict in conflicts) {
+      final decision = await _showConflictDialog(conflict);
+      if (decision == null) {
+        return false;
+      }
+      await _syncEngine.applyResolution(conflict, decision);
+    }
+    if (mounted) {
+      _showSnackBar(loc.syncConflictResolved);
+    }
+    return true;
+  }
+
+  Future<ConflictDecision?> _showConflictDialog(SyncConflictData conflict) {
+    final loc = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final String deviceTitle = _conflictTitle(
+      conflict,
+      isDevice: true,
+      loc: loc,
+    );
+    final String serverTitle = _conflictTitle(
+      conflict,
+      isDevice: false,
+      loc: loc,
+    );
+    final DateTime? deviceUpdated = conflict.collection == 'notes'
+        ? conflict.note?.updatedAt
+        : conflict.task?.updatedAt;
+    final DateTime serverUpdated = conflict.server.updatedAt;
+
+    return showDialog<ConflictDecision>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(loc.syncConflictTitle),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(loc.syncConflictMessage),
+              const SizedBox(height: 16),
+              _buildConflictTile(
+                context: context,
+                label: loc.syncConflictDeviceLabel,
+                title: deviceTitle,
+                updatedAt: deviceUpdated,
+                theme: theme,
+              ),
+              const SizedBox(height: 12),
+              _buildConflictTile(
+                context: context,
+                label: loc.syncConflictServerLabel,
+                title: serverTitle,
+                updatedAt: serverUpdated,
+                theme: theme,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+            ),
+            TextButton(
+              onPressed: () =>
+                  Navigator.of(context).pop(ConflictDecision.keepServer),
+              child: Text(loc.syncConflictKeepServer),
+            ),
+            FilledButton(
+              onPressed: () =>
+                  Navigator.of(context).pop(ConflictDecision.keepLocal),
+              child: Text(loc.syncConflictKeepLocal),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildConflictTile({
+    required BuildContext context,
+    required String label,
+    required String title,
+    required ThemeData theme,
+    DateTime? updatedAt,
+  }) {
+    final subtitle = updatedAt == null
+        ? null
+        : _formatDateTime(context, updatedAt.toLocal());
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: theme.textTheme.labelLarge),
+        const SizedBox(height: 4),
+        Text(title, style: theme.textTheme.bodyMedium),
+        if (subtitle != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(subtitle, style: theme.textTheme.bodySmall),
+          ),
+      ],
+    );
+  }
+
+  String _conflictTitle(
+    SyncConflictData conflict, {
+    required bool isDevice,
+    required AppLocalizations loc,
+  }) {
+    if (conflict.collection == 'notes') {
+      if (isDevice) {
+        final note = conflict.note;
+        if (note == null || note.title.trim().isEmpty) {
+          return loc.notesUntitled;
+        }
+        return note.title;
+      }
+      final serverTitle = conflict.serverPayload['title'] as String?;
+      if (serverTitle == null || serverTitle.trim().isEmpty) {
+        return loc.notesUntitled;
+      }
+      return serverTitle;
+    }
+
+    if (isDevice) {
+      return conflict.task?.title ?? '';
+    }
+    return conflict.serverPayload['title'] as String? ?? '';
   }
 
   void _showSnackBar(String message) {
@@ -1114,7 +1339,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildTasksSummaryCard(BuildContext context, AppLocalizations loc) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return StreamBuilder<List<TaskEntry>>(
+    final card = StreamBuilder<List<TaskEntry>>(
       stream: _database.watchTaskEntries(),
       builder: (context, snapshot) {
         final tasks = snapshot.data ?? const <TaskEntry>[];
@@ -1144,7 +1369,7 @@ class _HomePageState extends State<HomePage> {
               );
 
         return ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 220, maxWidth: 400),
+          constraints: const BoxConstraints(minWidth: 220, maxWidth: 656),
           child: Card(
             clipBehavior: Clip.antiAlias,
             child: Padding(
@@ -1196,6 +1421,14 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       },
+    );
+
+    return Align(
+      alignment: Alignment.topLeft,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 656),
+        child: card,
+      ),
     );
   }
 
@@ -1460,12 +1693,36 @@ class _HomePageState extends State<HomePage> {
               spacing: 12,
               runSpacing: 12,
               children: [
+                if (syncEnabled)
+                  FilledButton.icon(
+                    onPressed: !_syncEngine.isReady || _isSyncInProgress
+                        ? null
+                        : _handleSyncNow,
+                    icon: _isSyncInProgress
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.sync),
+                    label: Text(
+                      !_syncEngine.isReady
+                          ? loc.syncNotReady
+                          : _isSyncInProgress
+                          ? loc.syncInProgress
+                          : loc.syncNowButton,
+                    ),
+                  ),
                 FilledButton.tonal(
-                  onPressed: _isMembershipLoading ? null : _cancelMembership,
+                  onPressed: _isMembershipLoading || _isSyncInProgress
+                      ? null
+                      : _cancelMembership,
                   child: Text(loc.membershipCancelButton),
                 ),
                 OutlinedButton(
-                  onPressed: _isMembershipLoading ? null : _deleteSyncedData,
+                  onPressed: _isMembershipLoading || _isSyncInProgress
+                      ? null
+                      : _deleteSyncedData,
                   child: Text(loc.membershipDeleteDataButton),
                 ),
               ],
@@ -2238,6 +2495,17 @@ class _HomePageState extends State<HomePage> {
   String _formatDate(BuildContext context, DateTime timestamp) {
     final String localeTag = Localizations.localeOf(context).toLanguageTag();
     return DateFormat.yMMMd(localeTag).format(timestamp.toLocal());
+  }
+
+  String _formatDateTime(BuildContext context, DateTime timestamp) {
+    final String localeTag = Localizations.localeOf(context).toLanguageTag();
+    final String dateText = DateFormat.yMMMd(
+      localeTag,
+    ).format(timestamp.toLocal());
+    final String timeText = TimeOfDay.fromDateTime(
+      timestamp.toLocal(),
+    ).format(context);
+    return '$dateText • $timeText';
   }
 
   String _formatCurrency(BuildContext context, double amount) {

@@ -762,4 +762,37 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get settingsOpenLogin => 'Öppna inloggning';
+
+  @override
+  String get syncNowButton => 'Synka nu';
+
+  @override
+  String get syncInProgress => 'Synkroniserar …';
+
+  @override
+  String get syncSuccess => 'Synkroniseringen är klar.';
+
+  @override
+  String get syncNotReady => 'Logga in innan du synkroniserar.';
+
+  @override
+  String get syncConflictTitle => 'Synkroniseringskonflikt';
+
+  @override
+  String get syncConflictMessage => 'Välj vilken version som ska behållas.';
+
+  @override
+  String get syncConflictKeepLocal => 'Behåll enhetens version';
+
+  @override
+  String get syncConflictKeepServer => 'Behåll serverversionen';
+
+  @override
+  String get syncConflictResolved => 'Konflikter lösta.';
+
+  @override
+  String get syncConflictDeviceLabel => 'Enhet';
+
+  @override
+  String get syncConflictServerLabel => 'Server';
 }

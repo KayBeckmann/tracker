@@ -762,4 +762,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsOpenLogin => 'Open login';
+
+  @override
+  String get syncNowButton => 'Sync now';
+
+  @override
+  String get syncInProgress => 'Syncing…';
+
+  @override
+  String get syncSuccess => 'Sync completed.';
+
+  @override
+  String get syncNotReady => 'Please sign in before synchronising.';
+
+  @override
+  String get syncConflictTitle => 'Synchronisation conflict';
+
+  @override
+  String get syncConflictMessage => 'Select which version should be kept.';
+
+  @override
+  String get syncConflictKeepLocal => 'Keep device version';
+
+  @override
+  String get syncConflictKeepServer => 'Keep server version';
+
+  @override
+  String get syncConflictResolved => 'Conflicts resolved.';
+
+  @override
+  String get syncConflictDeviceLabel => 'Device';
+
+  @override
+  String get syncConflictServerLabel => 'Server';
 }
