@@ -24,12 +24,12 @@
             - [x] Implement local storage for tasks/appointments.
             - [x] Develop pop-up notification and reminder functionality.
             - [ ] Zeiterfassung mit Task.
-            - [ ] Implement Calendar Overview:
-                - [ ] Display calendar view.
+            - [x] Implement Calendar Overview:
+                - [x] Display calendar view.
                 - [x] Visually highlight days with appointments.
-            - [ ] Implement Appointment List:
-                - [ ] Display list of all appointments.
-                - [ ] Implement sorting by due date, priority, and category.
+            - [x] Implement Appointment List:
+                - [x] Display list of all appointments.
+                - [x] Implement sorting by due date, priority, and category.
             - [ ] Implement Appointment Details (Create/Edit):
                 - [ ] UI for title, due date, creation date (auto-filled), priority, description, category.
                 - [ ] Logic for saving and updating appointments.
