@@ -150,10 +150,22 @@
   "tasksDueDateLabel": "Fälligkeitsdatum",
   "tasksDueDateHelper": "Aufgaben werden im Kalender anhand ihres Fälligkeitsdatums angezeigt.",
   "tasksPickDateButton": "Datum wählen",
+  "tasksReminderToggleLabel": "Erinnerung aktivieren",
+  "tasksReminderToggleDescription": "Zeigt zum gewählten Zeitpunkt eine Gerätebenachrichtigung an.",
+  "tasksReminderScheduleLabel": "Erinnerungszeit",
+  "tasksReminderScheduleHelper": "Lege fest, wann das Gerät dich erinnern soll.",
+  "tasksReminderUnset": "Noch keine Erinnerung festgelegt.",
+  "tasksReminderPickDateButton": "Erinnerungsdatum wählen",
+  "tasksReminderPickTimeButton": "Erinnerungszeit wählen",
+  "tasksReminderClearButton": "Erinnerung entfernen",
+  "tasksReminderValidationMissing": "Bitte wähle Datum und Uhrzeit für die Erinnerung.",
+  "tasksReminderValidationPast": "Die Erinnerung muss in der Zukunft liegen.",
   "tasksTagsLabel": "Tags",
   "tasksTagsHint": "Tags, durch Kommas getrennt",
   "tasksTagSuggestionsLabel": "Vorschläge",
   "tasksFiltersReset": "Zurücksetzen",
+  "tasksShowFiltersTooltip": "Filter einblenden",
+  "tasksHideFiltersTooltip": "Filter ausblenden",
   "tasksSortLabel": "Sortieren nach",
   "tasksSortDueDateAsc": "Fälligkeit ↑",
   "tasksSortDueDateDesc": "Fälligkeit ↓",
@@ -169,10 +181,33 @@
   "tasksNoNotesFound": "Es sind noch keine Notizen vorhanden.",
   "tasksOpenLinkedNoteButton": "Notiz öffnen",
   "tasksTrackedTimePlaceholder": "Sobald die Zeiterfassung verbunden ist, erscheinen hier die erfassten Zeiten.",
+  "tasksReminderNotificationGenericTitle": "Aufgaben-Erinnerung",
+  "tasksReminderNotificationBody": "Erinnerung für {date} um {time}.",
+  "@tasksReminderNotificationBody": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "tasksDueDateLabelValue": "Fällig: {date}",
   "@tasksDueDateLabelValue": {
     "placeholders": {
       "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksReminderLabelValue": "Erinnerung: {date} um {time}",
+  "@tasksReminderLabelValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
         "type": "String"
       }
     }

@@ -355,6 +355,40 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksPickDateButton => 'Datum wählen';
 
   @override
+  String get tasksReminderToggleLabel => 'Erinnerung aktivieren';
+
+  @override
+  String get tasksReminderToggleDescription =>
+      'Zeigt zum gewählten Zeitpunkt eine Gerätebenachrichtigung an.';
+
+  @override
+  String get tasksReminderScheduleLabel => 'Erinnerungszeit';
+
+  @override
+  String get tasksReminderScheduleHelper =>
+      'Lege fest, wann das Gerät dich erinnern soll.';
+
+  @override
+  String get tasksReminderUnset => 'Noch keine Erinnerung festgelegt.';
+
+  @override
+  String get tasksReminderPickDateButton => 'Erinnerungsdatum wählen';
+
+  @override
+  String get tasksReminderPickTimeButton => 'Erinnerungszeit wählen';
+
+  @override
+  String get tasksReminderClearButton => 'Erinnerung entfernen';
+
+  @override
+  String get tasksReminderValidationMissing =>
+      'Bitte wähle Datum und Uhrzeit für die Erinnerung.';
+
+  @override
+  String get tasksReminderValidationPast =>
+      'Die Erinnerung muss in der Zukunft liegen.';
+
+  @override
   String get tasksTagsLabel => 'Tags';
 
   @override
@@ -365,6 +399,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tasksFiltersReset => 'Zurücksetzen';
+
+  @override
+  String get tasksShowFiltersTooltip => 'Filter einblenden';
+
+  @override
+  String get tasksHideFiltersTooltip => 'Filter ausblenden';
 
   @override
   String get tasksSortLabel => 'Sortieren nach';
@@ -413,8 +453,21 @@ class AppLocalizationsDe extends AppLocalizations {
       'Sobald die Zeiterfassung verbunden ist, erscheinen hier die erfassten Zeiten.';
 
   @override
+  String get tasksReminderNotificationGenericTitle => 'Aufgaben-Erinnerung';
+
+  @override
+  String tasksReminderNotificationBody(String date, String time) {
+    return 'Erinnerung für $date um $time.';
+  }
+
+  @override
   String tasksDueDateLabelValue(String date) {
     return 'Fällig: $date';
+  }
+
+  @override
+  String tasksReminderLabelValue(String date, String time) {
+    return 'Erinnerung: $date um $time';
   }
 
   @override

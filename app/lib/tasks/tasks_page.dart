@@ -29,6 +29,7 @@ class _TasksPageState extends State<TasksPage>
   final Set<TaskStatus> _selectedStatuses = {...TaskStatus.values};
   final Set<TaskPriority> _selectedPriorities = {...TaskPriority.values};
   TaskSortMode _sortMode = TaskSortMode.dueDateAsc;
+  bool _showFilters = true;
   List<TaskEntry> _tasks = const <TaskEntry>[];
 
   @override
@@ -272,8 +273,18 @@ class _TasksPageState extends State<TasksPage>
   Widget _buildTaskListView(AppLocalizations loc, List<TaskEntry> tasks) {
     return Column(
       children: [
-        _buildFilters(loc),
-        const Divider(height: 1),
+        AnimatedCrossFade(
+          alignment: Alignment.topCenter,
+          sizeCurve: Curves.easeInOut,
+          duration: const Duration(milliseconds: 200),
+          crossFadeState: _showFilters
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
+          firstChild: Column(
+            children: [_buildFilters(loc), const Divider(height: 1)],
+          ),
+          secondChild: const SizedBox.shrink(),
+        ),
         Expanded(
           child: tasks.isEmpty
               ? Center(
@@ -316,6 +327,19 @@ class _TasksPageState extends State<TasksPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.navTasks),
+        actions: [
+          IconButton(
+            tooltip: _showFilters
+                ? loc.tasksHideFiltersTooltip
+                : loc.tasksShowFiltersTooltip,
+            onPressed: () {
+              setState(() {
+                _showFilters = !_showFilters;
+              });
+            },
+            icon: Icon(_showFilters ? Icons.filter_alt_off : Icons.filter_alt),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: [
@@ -490,66 +514,105 @@ class _TasksPageState extends State<TasksPage>
     final days = _generateMonthDays(month);
     final theme = Theme.of(context);
     final today = _normalizeDate(DateTime.now());
-    return SizedBox(
-      height: 288,
-      child: GridView.builder(
-        itemCount: days.length,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 7,
-        ),
-        itemBuilder: (context, index) {
-          final day = days[index];
-          final normalizedDate = _normalizeDate(day.date);
-          final bool isSelected = DateUtils.isSameDay(
-            selectedDay,
-            normalizedDate,
-          );
-          final bool isToday = normalizedDate == today;
-          final bool hasTask = highlightedDays.contains(normalizedDate);
-          final bool isCurrentMonth = day.isCurrentMonth;
-          final ColorScheme scheme = theme.colorScheme;
-          Color? background;
-          Color textColor;
-          if (isSelected) {
-            background = scheme.primary;
-            textColor = scheme.onPrimary;
-          } else if (hasTask) {
-            background = scheme.primary.withValues(alpha: 0.18);
-            textColor = isCurrentMonth
-                ? scheme.onSurface
-                : scheme.onSurface.withValues(alpha: 0.4);
-          } else if (isToday) {
-            background = scheme.secondaryContainer.withValues(alpha: 0.3);
-            textColor = scheme.onSurface;
-          } else {
-            background = Colors.transparent;
-            textColor = isCurrentMonth
-                ? scheme.onSurface
-                : scheme.onSurface.withValues(alpha: 0.4);
+    final rowCount = days.isEmpty ? 0 : (days.length / 7).ceil();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double screenHeight = MediaQuery.of(context).size.height;
+        final double maxGridHeight = (screenHeight * 0.45)
+            .clamp(240.0, 360.0)
+            .toDouble();
+        final double cellWidth =
+            constraints.maxWidth.isFinite && constraints.maxWidth > 0
+            ? constraints.maxWidth / 7
+            : 48;
+        final double maxCellHeight = rowCount == 0
+            ? maxGridHeight
+            : maxGridHeight / rowCount;
+        const double minCellHeight = 36;
+        double cellHeight = cellWidth;
+        if (maxCellHeight.isFinite && cellHeight > maxCellHeight) {
+          cellHeight = maxCellHeight;
+        }
+        if (maxCellHeight >= minCellHeight) {
+          if (cellHeight < minCellHeight) {
+            cellHeight = minCellHeight;
           }
+        } else if (maxCellHeight.isFinite) {
+          cellHeight = maxCellHeight;
+        }
+        if (!cellHeight.isFinite || cellHeight <= 0) {
+          cellHeight = minCellHeight;
+        }
+        final double childAspectRatio = cellHeight == 0
+            ? 1
+            : cellWidth / cellHeight;
+        final double gridHeight = rowCount == 0
+            ? cellHeight
+            : cellHeight * rowCount;
 
-          return Padding(
-            padding: const EdgeInsets.all(4),
-            child: Material(
-              color: background,
-              borderRadius: BorderRadius.circular(12),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: () => _selectDay(day.date),
-                child: Center(
-                  child: Text(
-                    '${day.date.day}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: textColor,
+        return SizedBox(
+          height: gridHeight,
+          child: GridView.builder(
+            itemCount: days.length,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              childAspectRatio: childAspectRatio,
+            ),
+            itemBuilder: (context, index) {
+              final day = days[index];
+              final normalizedDate = _normalizeDate(day.date);
+              final bool isSelected = DateUtils.isSameDay(
+                selectedDay,
+                normalizedDate,
+              );
+              final bool isToday = normalizedDate == today;
+              final bool hasTask = highlightedDays.contains(normalizedDate);
+              final bool isCurrentMonth = day.isCurrentMonth;
+              final ColorScheme scheme = theme.colorScheme;
+              Color? background;
+              Color textColor;
+              if (isSelected) {
+                background = scheme.primary;
+                textColor = scheme.onPrimary;
+              } else if (hasTask) {
+                background = scheme.primary.withValues(alpha: 0.18);
+                textColor = isCurrentMonth
+                    ? scheme.onSurface
+                    : scheme.onSurface.withValues(alpha: 0.4);
+              } else if (isToday) {
+                background = scheme.secondaryContainer.withValues(alpha: 0.3);
+                textColor = scheme.onSurface;
+              } else {
+                background = Colors.transparent;
+                textColor = isCurrentMonth
+                    ? scheme.onSurface
+                    : scheme.onSurface.withValues(alpha: 0.4);
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(4),
+                child: Material(
+                  color: background,
+                  borderRadius: BorderRadius.circular(12),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => _selectDay(day.date),
+                    child: Center(
+                      child: Text(
+                        '${day.date.day}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: textColor,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -750,6 +813,7 @@ class _TaskListTile extends StatelessWidget {
     final dueDate = task.dueDate.toLocal();
     final isOverdue = dueDate.isBefore(DateTime.now());
     final theme = Theme.of(context);
+    final reminderAt = task.reminderAt?.toLocal();
     return ListTile(
       leading: _StatusIcon(status: task.status),
       title: Text(task.title),
@@ -767,6 +831,13 @@ class _TaskListTile extends StatelessWidget {
                   : theme.textTheme.bodySmall?.color,
             ),
           ),
+          if (reminderAt != null) ...[
+            const SizedBox(height: 4),
+            Text(() {
+              final parts = _formatDateTimeParts(context, reminderAt);
+              return loc.tasksReminderLabelValue(parts.date, parts.time);
+            }(), style: theme.textTheme.bodySmall),
+          ],
           if (task.tags.trim().isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 4),
@@ -819,6 +890,16 @@ class _TaskListTile extends StatelessWidget {
     final localeTag = Localizations.localeOf(context).toString();
     return DateFormat.yMMMMd(localeTag).format(date);
   }
+
+  ({String date, String time}) _formatDateTimeParts(
+    BuildContext context,
+    DateTime date,
+  ) {
+    final localeTag = Localizations.localeOf(context).toString();
+    final dateLabel = DateFormat.yMMMMd(localeTag).format(date);
+    final timeLabel = DateFormat.Hm(localeTag).format(date);
+    return (date: dateLabel, time: timeLabel);
+  }
 }
 
 class _CalendarTaskCard extends StatelessWidget {
@@ -837,6 +918,7 @@ class _CalendarTaskCard extends StatelessWidget {
     final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final dueDateText = _formatDate(context, task.dueDate.toLocal());
+    final reminderAt = task.reminderAt?.toLocal();
     return Card(
       child: ListTile(
         onTap: onTap,
@@ -847,6 +929,14 @@ class _CalendarTaskCard extends StatelessWidget {
             Text(
               '${_localizedStatus(loc, task.status)} • ${_localizedPriority(loc, task.priority)} • $dueDateText',
             ),
+            if (reminderAt != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(() {
+                  final parts = _formatDateTimeParts(context, reminderAt);
+                  return loc.tasksReminderLabelValue(parts.date, parts.time);
+                }(), style: theme.textTheme.bodySmall),
+              ),
             if (task.tags.trim().isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
@@ -911,6 +1001,16 @@ class _CalendarTaskCard extends StatelessWidget {
   String _formatDate(BuildContext context, DateTime date) {
     final localeTag = Localizations.localeOf(context).toString();
     return DateFormat.yMMMMd(localeTag).format(date);
+  }
+
+  ({String date, String time}) _formatDateTimeParts(
+    BuildContext context,
+    DateTime date,
+  ) {
+    final localeTag = Localizations.localeOf(context).toString();
+    final dateLabel = DateFormat.yMMMMd(localeTag).format(date);
+    final timeLabel = DateFormat.Hm(localeTag).format(date);
+    return (date: dateLabel, time: timeLabel);
   }
 }
 

@@ -25,6 +25,8 @@ class _TaskEditPageState extends State<TaskEditPage> {
   late TaskStatus _status;
   late TaskPriority _priority;
   late DateTime _dueDate;
+  bool _reminderEnabled = false;
+  DateTime? _reminderDateTime;
   NoteEntry? _linkedNote;
   bool _isSaving = false;
 
@@ -62,6 +64,9 @@ class _TaskEditPageState extends State<TaskEditPage> {
       initialDueDate.month,
       initialDueDate.day,
     );
+    final reminderAt = widget.task?.reminderAt?.toLocal();
+    _reminderEnabled = reminderAt != null;
+    _reminderDateTime = reminderAt;
     final noteId = widget.task?.noteId;
     if (noteId != null) {
       widget.database.getNoteEntryById(noteId).then((note) {
@@ -102,6 +107,64 @@ class _TaskEditPageState extends State<TaskEditPage> {
         _dueDate = DateTime(picked.year, picked.month, picked.day);
       });
     }
+  }
+
+  DateTime _defaultReminderBase() {
+    final now = DateTime.now();
+    return DateTime(
+      _dueDate.year,
+      _dueDate.month,
+      _dueDate.day,
+      now.hour,
+      now.minute,
+    );
+  }
+
+  Future<void> _selectReminderDate() async {
+    final current = _reminderDateTime ?? _defaultReminderBase();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: current,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked == null) {
+      return;
+    }
+    setState(() {
+      _reminderEnabled = true;
+      final base = _reminderDateTime ?? current;
+      _reminderDateTime = DateTime(
+        picked.year,
+        picked.month,
+        picked.day,
+        base.hour,
+        base.minute,
+      );
+    });
+  }
+
+  Future<void> _selectReminderTime() async {
+    final current = _reminderDateTime ?? _defaultReminderBase();
+    final initialTime = TimeOfDay(hour: current.hour, minute: current.minute);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+    if (picked == null) {
+      return;
+    }
+    setState(() {
+      _reminderEnabled = true;
+      final base = _reminderDateTime ?? current;
+      _reminderDateTime = DateTime(
+        base.year,
+        base.month,
+        base.day,
+        picked.hour,
+        picked.minute,
+      );
+    });
   }
 
   Future<void> _selectNote(AppLocalizations loc) async {
@@ -232,6 +295,29 @@ class _TaskEditPageState extends State<TaskEditPage> {
       _dueDate.month,
       _dueDate.day,
     );
+    DateTime? reminderUtc;
+    if (_reminderEnabled) {
+      if (_reminderDateTime == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(loc.tasksReminderValidationMissing)),
+        );
+        return;
+      }
+      final localReminder = _reminderDateTime!;
+      if (localReminder.isBefore(DateTime.now())) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(loc.tasksReminderValidationPast)),
+        );
+        return;
+      }
+      reminderUtc = DateTime.utc(
+        localReminder.year,
+        localReminder.month,
+        localReminder.day,
+        localReminder.hour,
+        localReminder.minute,
+      );
+    }
 
     setState(() {
       _isSaving = true;
@@ -246,6 +332,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
           dueDate: dueDateUtc,
           noteId: _linkedNote?.id,
           tags: tags,
+          reminderAt: reminderUtc,
         );
       } else {
         final updated = widget.task!.copyWith(
@@ -255,6 +342,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
           dueDate: dueDateUtc,
           noteId: Value(_linkedNote?.id),
           tags: tags,
+          reminderAt: Value(reminderUtc),
         );
         await widget.database.updateTaskEntry(updated);
       }
@@ -279,6 +367,12 @@ class _TaskEditPageState extends State<TaskEditPage> {
     final bool isCompact =
         mediaQuery.size.height < 600 || mediaQuery.size.width < 600;
     final double toolbarHeight = isCompact ? 48 : kToolbarHeight;
+    final reminderParts = _reminderDateTime == null
+        ? null
+        : _formatDateTimeParts(context, _reminderDateTime!);
+    final reminderLabel = reminderParts == null
+        ? loc.tasksReminderUnset
+        : loc.tasksReminderLabelValue(reminderParts.date, reminderParts.time);
 
     return Scaffold(
       appBar: AppBar(
@@ -386,6 +480,75 @@ class _TaskEditPageState extends State<TaskEditPage> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 16),
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: Text(loc.tasksReminderToggleLabel),
+              subtitle: Text(loc.tasksReminderToggleDescription),
+              value: _reminderEnabled,
+              onChanged: (value) {
+                setState(() {
+                  _reminderEnabled = value;
+                  if (value && _reminderDateTime == null) {
+                    _reminderDateTime = _defaultReminderBase();
+                  }
+                  if (!value) {
+                    _reminderDateTime = null;
+                  }
+                });
+              },
+            ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              switchInCurve: Curves.easeInOut,
+              switchOutCurve: Curves.easeInOut,
+              child: !_reminderEnabled
+                  ? const SizedBox.shrink()
+                  : Column(
+                      key: const ValueKey('reminder-controls'),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: loc.tasksReminderScheduleLabel,
+                            helperText: loc.tasksReminderScheduleHelper,
+                          ),
+                          child: Text(
+                            reminderLabel,
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 8,
+                          children: [
+                            OutlinedButton.icon(
+                              onPressed: _selectReminderDate,
+                              icon: const Icon(Icons.event_available),
+                              label: Text(loc.tasksReminderPickDateButton),
+                            ),
+                            OutlinedButton.icon(
+                              onPressed: _selectReminderTime,
+                              icon: const Icon(Icons.schedule),
+                              label: Text(loc.tasksReminderPickTimeButton),
+                            ),
+                            if (_reminderDateTime != null)
+                              TextButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    _reminderEnabled = false;
+                                    _reminderDateTime = null;
+                                  });
+                                },
+                                icon: const Icon(Icons.clear),
+                                label: Text(loc.tasksReminderClearButton),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -502,6 +665,16 @@ class _TaskEditPageState extends State<TaskEditPage> {
   String _formatDate(BuildContext context, DateTime date) {
     final localeTag = Localizations.localeOf(context).toLanguageTag();
     return DateFormat.yMMMMd(localeTag).format(date);
+  }
+
+  ({String date, String time}) _formatDateTimeParts(
+    BuildContext context,
+    DateTime date,
+  ) {
+    final localeTag = Localizations.localeOf(context).toLanguageTag();
+    final dateText = DateFormat.yMMMMd(localeTag).format(date);
+    final timeText = DateFormat.Hm(localeTag).format(date);
+    return (date: dateText, time: timeText);
   }
 
   String _localizedStatus(AppLocalizations loc, TaskStatus status) {

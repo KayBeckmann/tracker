@@ -185,10 +185,22 @@
   "tasksDueDateLabel": "Due date",
   "tasksDueDateHelper": "Tasks are shown in the calendar by their due date.",
   "tasksPickDateButton": "Select date",
+  "tasksReminderToggleLabel": "Enable reminder",
+  "tasksReminderToggleDescription": "Show a device notification at a custom time.",
+  "tasksReminderScheduleLabel": "Reminder time",
+  "tasksReminderScheduleHelper": "Choose when the device should notify you.",
+  "tasksReminderUnset": "No reminder selected yet.",
+  "tasksReminderPickDateButton": "Select reminder date",
+  "tasksReminderPickTimeButton": "Select reminder time",
+  "tasksReminderClearButton": "Remove reminder",
+  "tasksReminderValidationMissing": "Please choose a reminder date and time.",
+  "tasksReminderValidationPast": "Reminder time must be in the future.",
   "tasksTagsLabel": "Tags",
   "tasksTagsHint": "Tags separated by commas",
   "tasksTagSuggestionsLabel": "Suggestions",
   "tasksFiltersReset": "Reset",
+  "tasksShowFiltersTooltip": "Show filters",
+  "tasksHideFiltersTooltip": "Hide filters",
   "tasksSortLabel": "Sort by",
   "tasksSortDueDateAsc": "Due date ↑",
   "tasksSortDueDateDesc": "Due date ↓",
@@ -204,10 +216,33 @@
   "tasksNoNotesFound": "No notes available yet.",
   "tasksOpenLinkedNoteButton": "Open note",
   "tasksTrackedTimePlaceholder": "Tracked time will appear here once time tracking is connected.",
+  "tasksReminderNotificationGenericTitle": "Task reminder",
+  "tasksReminderNotificationBody": "Reminder scheduled for {date} at {time}.",
+  "@tasksReminderNotificationBody": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "tasksDueDateLabelValue": "Due: {date}",
   "@tasksDueDateLabelValue": {
     "placeholders": {
       "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksReminderLabelValue": "Reminder: {date} at {time}",
+  "@tasksReminderLabelValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
         "type": "String"
       }
     }

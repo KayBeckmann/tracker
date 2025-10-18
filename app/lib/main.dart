@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'l10n/generated/app_localizations.dart';
 import 'models/membership_status.dart';
 import 'notes/notes_page.dart';
 import 'tasks/tasks_page.dart';
+import 'tasks/task_reminder_service.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
@@ -34,6 +36,7 @@ Future<void> main() async {
   await Hive.initFlutter();
   await Hive.openBox(trackerBoxName);
   final database = AppDatabase();
+  await TaskReminderService.instance.initialize();
   runApp(TrackerApp(database: database));
 }
 
@@ -257,6 +260,7 @@ class _HomePageState extends State<HomePage> {
   String? _notesTagFilter;
   late List<_AppSection> _moduleOrder;
   late Set<_AppSection> _enabledModules;
+  StreamSubscription<List<TaskEntry>>? _taskReminderSubscription;
 
   @override
   void initState() {
@@ -279,6 +283,20 @@ class _HomePageState extends State<HomePage> {
         }
       });
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _taskReminderSubscription ??= _database.watchTaskEntries().listen((
+        tasks,
+      ) {
+        if (!mounted) {
+          return;
+        }
+        final loc = AppLocalizations.of(context);
+        unawaited(TaskReminderService.instance.syncReminders(tasks, loc));
+      });
+    });
   }
 
   @override
@@ -308,6 +326,7 @@ class _HomePageState extends State<HomePage> {
     _registerEmailController.dispose();
     _registerPasswordController.dispose();
     _registerDisplayNameController.dispose();
+    _taskReminderSubscription?.cancel();
     super.dispose();
   }
 
@@ -962,7 +981,9 @@ class _HomePageState extends State<HomePage> {
         .where(_enabledModules.contains)
         .toList();
 
-    if (modules.isEmpty) {
+    final bool showTasksSummary = _enabledModules.contains(_AppSection.tasks);
+
+    if (!showTasksSummary && modules.isEmpty) {
       return Center(
         child: Text(
           loc.settingsModulesDescription,
@@ -973,23 +994,26 @@ class _HomePageState extends State<HomePage> {
     }
 
     final children = <Widget>[];
-    if (_enabledModules.contains(_AppSection.tasks)) {
+    if (showTasksSummary) {
       children.add(_buildTasksSummaryCard(context, loc));
       children.add(const SizedBox(height: 16));
+      modules.remove(_AppSection.tasks);
     }
-    children.add(
-      Wrap(
-        spacing: 16,
-        runSpacing: 16,
-        children: modules
-            .map(
-              (section) => section == _AppSection.notes
-                  ? _buildNotesDashboardCard(context, loc)
-                  : _buildModuleCard(context, loc, section),
-            )
-            .toList(),
-      ),
-    );
+    if (modules.isNotEmpty) {
+      children.add(
+        Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          children: modules
+              .map(
+                (section) => section == _AppSection.notes
+                    ? _buildNotesDashboardCard(context, loc)
+                    : _buildModuleCard(context, loc, section),
+              )
+              .toList(),
+        ),
+      );
+    }
 
     return ListView(padding: const EdgeInsets.all(16), children: children);
   }

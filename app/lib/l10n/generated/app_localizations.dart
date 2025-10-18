@@ -730,6 +730,66 @@ abstract class AppLocalizations {
   /// **'Select date'**
   String get tasksPickDateButton;
 
+  /// No description provided for @tasksReminderToggleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable reminder'**
+  String get tasksReminderToggleLabel;
+
+  /// No description provided for @tasksReminderToggleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Show a device notification at a custom time.'**
+  String get tasksReminderToggleDescription;
+
+  /// No description provided for @tasksReminderScheduleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get tasksReminderScheduleLabel;
+
+  /// No description provided for @tasksReminderScheduleHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose when the device should notify you.'**
+  String get tasksReminderScheduleHelper;
+
+  /// No description provided for @tasksReminderUnset.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminder selected yet.'**
+  String get tasksReminderUnset;
+
+  /// No description provided for @tasksReminderPickDateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Select reminder date'**
+  String get tasksReminderPickDateButton;
+
+  /// No description provided for @tasksReminderPickTimeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Select reminder time'**
+  String get tasksReminderPickTimeButton;
+
+  /// No description provided for @tasksReminderClearButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove reminder'**
+  String get tasksReminderClearButton;
+
+  /// No description provided for @tasksReminderValidationMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a reminder date and time.'**
+  String get tasksReminderValidationMissing;
+
+  /// No description provided for @tasksReminderValidationPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time must be in the future.'**
+  String get tasksReminderValidationPast;
+
   /// No description provided for @tasksTagsLabel.
   ///
   /// In en, this message translates to:
@@ -753,6 +813,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset'**
   String get tasksFiltersReset;
+
+  /// No description provided for @tasksShowFiltersTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show filters'**
+  String get tasksShowFiltersTooltip;
+
+  /// No description provided for @tasksHideFiltersTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide filters'**
+  String get tasksHideFiltersTooltip;
 
   /// No description provided for @tasksSortLabel.
   ///
@@ -844,11 +916,29 @@ abstract class AppLocalizations {
   /// **'Tracked time will appear here once time tracking is connected.'**
   String get tasksTrackedTimePlaceholder;
 
+  /// No description provided for @tasksReminderNotificationGenericTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Task reminder'**
+  String get tasksReminderNotificationGenericTitle;
+
+  /// No description provided for @tasksReminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder scheduled for {date} at {time}.'**
+  String tasksReminderNotificationBody(String date, String time);
+
   /// No description provided for @tasksDueDateLabelValue.
   ///
   /// In en, this message translates to:
   /// **'Due: {date}'**
   String tasksDueDateLabelValue(String date);
+
+  /// No description provided for @tasksReminderLabelValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder: {date} at {time}'**
+  String tasksReminderLabelValue(String date, String time);
 
   /// No description provided for @tasksStatusTodo.
   ///

@@ -351,6 +351,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksPickDateButton => 'Select date';
 
   @override
+  String get tasksReminderToggleLabel => 'Enable reminder';
+
+  @override
+  String get tasksReminderToggleDescription =>
+      'Show a device notification at a custom time.';
+
+  @override
+  String get tasksReminderScheduleLabel => 'Reminder time';
+
+  @override
+  String get tasksReminderScheduleHelper =>
+      'Choose when the device should notify you.';
+
+  @override
+  String get tasksReminderUnset => 'No reminder selected yet.';
+
+  @override
+  String get tasksReminderPickDateButton => 'Select reminder date';
+
+  @override
+  String get tasksReminderPickTimeButton => 'Select reminder time';
+
+  @override
+  String get tasksReminderClearButton => 'Remove reminder';
+
+  @override
+  String get tasksReminderValidationMissing =>
+      'Please choose a reminder date and time.';
+
+  @override
+  String get tasksReminderValidationPast =>
+      'Reminder time must be in the future.';
+
+  @override
   String get tasksTagsLabel => 'Tags';
 
   @override
@@ -361,6 +395,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksFiltersReset => 'Reset';
+
+  @override
+  String get tasksShowFiltersTooltip => 'Show filters';
+
+  @override
+  String get tasksHideFiltersTooltip => 'Hide filters';
 
   @override
   String get tasksSortLabel => 'Sort by';
@@ -409,8 +449,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tracked time will appear here once time tracking is connected.';
 
   @override
+  String get tasksReminderNotificationGenericTitle => 'Task reminder';
+
+  @override
+  String tasksReminderNotificationBody(String date, String time) {
+    return 'Reminder scheduled for $date at $time.';
+  }
+
+  @override
   String tasksDueDateLabelValue(String date) {
     return 'Due: $date';
+  }
+
+  @override
+  String tasksReminderLabelValue(String date, String time) {
+    return 'Reminder: $date at $time';
   }
 
   @override

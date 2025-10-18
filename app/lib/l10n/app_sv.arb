@@ -150,10 +150,22 @@
   "tasksDueDateLabel": "Förfallodatum",
   "tasksDueDateHelper": "Uppgifter visas i kalendern baserat på förfallodatum.",
   "tasksPickDateButton": "Välj datum",
+  "tasksReminderToggleLabel": "Aktivera påminnelse",
+  "tasksReminderToggleDescription": "Visa en enhetspåminnelse vid en tid du väljer.",
+  "tasksReminderScheduleLabel": "Tid för påminnelse",
+  "tasksReminderScheduleHelper": "Välj när enheten ska påminna dig.",
+  "tasksReminderUnset": "Ingen påminnelse vald ännu.",
+  "tasksReminderPickDateButton": "Välj datum för påminnelse",
+  "tasksReminderPickTimeButton": "Välj tid för påminnelse",
+  "tasksReminderClearButton": "Ta bort påminnelsen",
+  "tasksReminderValidationMissing": "Välj datum och tid för påminnelsen.",
+  "tasksReminderValidationPast": "Påminnelsen måste ligga i framtiden.",
   "tasksTagsLabel": "Taggar",
   "tasksTagsHint": "Taggar separerade med kommatecken",
   "tasksTagSuggestionsLabel": "Förslag",
   "tasksFiltersReset": "Återställ",
+  "tasksShowFiltersTooltip": "Visa filter",
+  "tasksHideFiltersTooltip": "Dölj filter",
   "tasksSortLabel": "Sortera efter",
   "tasksSortDueDateAsc": "Förfallodatum ↑",
   "tasksSortDueDateDesc": "Förfallodatum ↓",
@@ -169,10 +181,33 @@
   "tasksNoNotesFound": "Inga anteckningar tillgängliga ännu.",
   "tasksOpenLinkedNoteButton": "Öppna anteckning",
   "tasksTrackedTimePlaceholder": "När tidrapporteringen kopplats visas registrerade tider här.",
+  "tasksReminderNotificationGenericTitle": "Uppgiftspåminnelse",
+  "tasksReminderNotificationBody": "Påminnelse för {date} kl. {time}.",
+  "@tasksReminderNotificationBody": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "tasksDueDateLabelValue": "Förfallodatum: {date}",
   "@tasksDueDateLabelValue": {
     "placeholders": {
       "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksReminderLabelValue": "Påminnelse: {date} kl. {time}",
+  "@tasksReminderLabelValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
         "type": "String"
       }
     }

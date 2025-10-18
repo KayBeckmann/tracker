@@ -351,6 +351,39 @@ class AppLocalizationsSv extends AppLocalizations {
   String get tasksPickDateButton => 'Välj datum';
 
   @override
+  String get tasksReminderToggleLabel => 'Aktivera påminnelse';
+
+  @override
+  String get tasksReminderToggleDescription =>
+      'Visa en enhetspåminnelse vid en tid du väljer.';
+
+  @override
+  String get tasksReminderScheduleLabel => 'Tid för påminnelse';
+
+  @override
+  String get tasksReminderScheduleHelper => 'Välj när enheten ska påminna dig.';
+
+  @override
+  String get tasksReminderUnset => 'Ingen påminnelse vald ännu.';
+
+  @override
+  String get tasksReminderPickDateButton => 'Välj datum för påminnelse';
+
+  @override
+  String get tasksReminderPickTimeButton => 'Välj tid för påminnelse';
+
+  @override
+  String get tasksReminderClearButton => 'Ta bort påminnelsen';
+
+  @override
+  String get tasksReminderValidationMissing =>
+      'Välj datum och tid för påminnelsen.';
+
+  @override
+  String get tasksReminderValidationPast =>
+      'Påminnelsen måste ligga i framtiden.';
+
+  @override
   String get tasksTagsLabel => 'Taggar';
 
   @override
@@ -361,6 +394,12 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get tasksFiltersReset => 'Återställ';
+
+  @override
+  String get tasksShowFiltersTooltip => 'Visa filter';
+
+  @override
+  String get tasksHideFiltersTooltip => 'Dölj filter';
 
   @override
   String get tasksSortLabel => 'Sortera efter';
@@ -409,8 +448,21 @@ class AppLocalizationsSv extends AppLocalizations {
       'När tidrapporteringen kopplats visas registrerade tider här.';
 
   @override
+  String get tasksReminderNotificationGenericTitle => 'Uppgiftspåminnelse';
+
+  @override
+  String tasksReminderNotificationBody(String date, String time) {
+    return 'Påminnelse för $date kl. $time.';
+  }
+
+  @override
   String tasksDueDateLabelValue(String date) {
     return 'Förfallodatum: $date';
+  }
+
+  @override
+  String tasksReminderLabelValue(String date, String time) {
+    return 'Påminnelse: $date kl. $time';
   }
 
   @override

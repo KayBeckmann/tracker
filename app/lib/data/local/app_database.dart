@@ -65,6 +65,8 @@ class TaskEntries extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get reminderAt => dateTime().nullable()();
 }
 
 @DriftDatabase(tables: [GreetingEntries, NoteEntries, TaskEntries])
@@ -79,7 +81,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -92,6 +94,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 3) {
         await m.createTable(taskEntries);
+      }
+      if (from < 4) {
+        await m.addColumn(taskEntries, taskEntries.reminderAt);
       }
     },
   );
@@ -249,17 +254,21 @@ class AppDatabase extends _$AppDatabase {
     required DateTime dueDate,
     int? noteId,
     String tags = '',
+    DateTime? reminderAt,
   }) {
     final now = DateTime.now().toUtc();
     final companion = TaskEntriesCompanion.insert(
-      title: Value(title),
+      title: title,
       status: Value(status),
       priority: Value(priority),
-      dueDate: Value(dueDate.toUtc()),
+      dueDate: dueDate.toUtc(),
       noteId: noteId == null ? const Value.absent() : Value(noteId),
       tags: Value(tags),
       createdAt: Value(now),
       updatedAt: Value(now),
+      reminderAt: reminderAt == null
+          ? const Value.absent()
+          : Value(reminderAt.toUtc()),
     );
     return into(taskEntries).insert(companion);
   }
