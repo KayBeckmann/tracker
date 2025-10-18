@@ -17,16 +17,16 @@
         - [x] Implement language switching functionality in settings.
     - [ ] Implement core features:
         - [ ] Dashboard Module:
-            - [ ] Design and implement overview UI.
+            - [x] Design and implement overview UI.
             - [ ] Integrate data from other modules.
         - [ ] Tasks/Appointments Module:
-            - [ ] Design and implement task/appointment creation and management UI.
-            - [ ] Implement local storage for tasks/appointments.
-            - [ ] Develop pop-up notification and reminder functionality.
+            - [x] Design and implement task/appointment creation and management UI.
+            - [x] Implement local storage for tasks/appointments.
+            - [x] Develop pop-up notification and reminder functionality.
             - [ ] Zeiterfassung mit Task.
             - [ ] Implement Calendar Overview:
                 - [ ] Display calendar view.
-                - [ ] Visually highlight days with appointments.
+                - [x] Visually highlight days with appointments.
             - [ ] Implement Appointment List:
                 - [ ] Display list of all appointments.
                 - [ ] Implement sorting by due date, priority, and category.
@@ -90,8 +90,8 @@
                 - [ ] UI for selecting German, English, or Swedish.
                 - [ ] Logic to apply selected language.
             - [ ] Implement Backend Login Integration:
-                - [ ] UI für backend login (email/password, Google, Apple ID).
-                - [ ] Integrate with backend authentication API.
+                - [x] UI für backend login (email/password, Google, Apple ID).
+                - [x] Integrate with backend authentication API.
             - [ ] Implement Backend Subscription Management:
                 - [ ] Dokumentiere das kostenpflichtige Sync-Angebot (1 € pro Monat / 10 € pro Jahr).
                 - [ ] UI for displaying subscription status.
@@ -109,7 +109,7 @@
         - [ ] Integrate Google authentication.
     - [ ] Implement Data Synchronization API:
         - [ ] Design and implement synchronization logic for all modules (Dashboard, Tasks, Notes, Habits, Household Book, Settings).
-        - [ ] Handle conflict resolution.
+        - [x] Handle conflict resolution for synchronized entities.
     - [ ] Implement Payment Gateway:
         - [ ] Integrate PayPal payment processing.
         - [ ] Integrate Bitcoin payment processing.
