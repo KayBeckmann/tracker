@@ -445,8 +445,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksOpenLinkedNoteButton => 'Open note';
 
   @override
-  String get tasksTrackedTimePlaceholder =>
-      'Tracked time will appear here once time tracking is connected.';
+  String get tasksTrackedTimeEmpty => 'No time entries linked yet.';
+
+  @override
+  String tasksTrackedTimeTotal(String duration) {
+    return 'Tracked work time: $duration';
+  }
+
+  @override
+  String tasksTrackedTimeMore(int count) {
+    return '$count more entries';
+  }
 
   @override
   String get tasksReminderNotificationGenericTitle => 'Task reminder';
@@ -488,8 +497,214 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksPreviewOpenEditor => 'Open in editor';
 
   @override
-  String get timeTrackingPlaceholder =>
-      'Track your work sessions here soon and link them directly to tasks with shared tags.';
+  String get timeTrackingSettingsTitle => 'Time tracking';
+
+  @override
+  String get timeTrackingSettingsRoundingLabel => 'Rounding interval';
+
+  @override
+  String get timeTrackingRoundingMinute => 'To the minute';
+
+  @override
+  String get timeTrackingRoundingFive => '5-minute steps';
+
+  @override
+  String get timeTrackingRoundingTen => '10-minute steps';
+
+  @override
+  String get timeTrackingRoundingQuarter => 'Quarter-hour steps';
+
+  @override
+  String get timeTrackingSettingsTargetLabel => 'Target hours';
+
+  @override
+  String get timeTrackingSettingsTargetNone => 'No target';
+
+  @override
+  String get timeTrackingSettingsTargetDaily => 'Daily target';
+
+  @override
+  String get timeTrackingSettingsTargetWeekly => 'Weekly target';
+
+  @override
+  String get timeTrackingSettingsDailyHoursLabel => 'Target per day (HH:MM)';
+
+  @override
+  String get timeTrackingSettingsWeeklyHoursLabel => 'Target per week (HH:MM)';
+
+  @override
+  String get timeTrackingSettingsDurationHint =>
+      'Use HH:MM format, for example 08:00 or 37:30.';
+
+  @override
+  String get timeTrackingSettingsInvalidDuration =>
+      'Please enter a valid duration in HH:MM.';
+
+  @override
+  String timeTrackingSummaryDay(String date, String duration) {
+    return 'Selected day: $date • Work: $duration';
+  }
+
+  @override
+  String timeTrackingSummaryAllEntries(String duration) {
+    return 'All entries: $duration';
+  }
+
+  @override
+  String timeTrackingSummaryWeek(String start, String end, String duration) {
+    return 'Week $start – $end: $duration';
+  }
+
+  @override
+  String timeTrackingSummaryDelta(String delta) {
+    return 'Delta: $delta';
+  }
+
+  @override
+  String get timeTrackingCalendarPrevious => 'Previous month';
+
+  @override
+  String get timeTrackingCalendarNext => 'Next month';
+
+  @override
+  String get timeTrackingStartNowButton => 'Clock in now';
+
+  @override
+  String get timeTrackingStopNowButton => 'Clock out now';
+
+  @override
+  String get timeTrackingAddManualButton => 'Add manual entry';
+
+  @override
+  String get timeTrackingNoEntriesForDay => 'No entries for the selected day.';
+
+  @override
+  String get timeTrackingManualEntrySaved => 'Time entry saved.';
+
+  @override
+  String get timeTrackingDeleteEntryTitle => 'Delete time entry';
+
+  @override
+  String get timeTrackingDeleteEntryMessage =>
+      'Do you want to delete this time entry?';
+
+  @override
+  String get timeTrackingDeleteEntryConfirm => 'Delete';
+
+  @override
+  String get timeTrackingEntryDeleted => 'Time entry deleted.';
+
+  @override
+  String get timeTrackingKindWork => 'Work';
+
+  @override
+  String get timeTrackingKindVacation => 'Vacation';
+
+  @override
+  String get timeTrackingKindDayOff => 'Day off';
+
+  @override
+  String get timeTrackingKindSick => 'Sick leave';
+
+  @override
+  String timeTrackingEntryInterval(String start, String end, String duration) {
+    return '$start – $end • $duration';
+  }
+
+  @override
+  String timeTrackingEntryRunning(String start, String duration) {
+    return '$start • Running ($duration)';
+  }
+
+  @override
+  String timeTrackingLinkedTask(String title) {
+    return 'Linked task: $title';
+  }
+
+  @override
+  String get timeTrackingEditEntryTooltip => 'Edit entry';
+
+  @override
+  String get timeTrackingDeleteEntryTooltip => 'Delete entry';
+
+  @override
+  String get timeTrackingFormTitle => 'Time entry';
+
+  @override
+  String get timeTrackingFormStartLabel => 'Start';
+
+  @override
+  String get timeTrackingFormEndLabel => 'End';
+
+  @override
+  String timeTrackingFormDurationLabel(String value) {
+    return 'Duration: $value';
+  }
+
+  @override
+  String get timeTrackingFormKindLabel => 'Type';
+
+  @override
+  String get timeTrackingFormTaskLabel => 'Linked task';
+
+  @override
+  String get timeTrackingFormNoTask => 'No task';
+
+  @override
+  String get timeTrackingFormNoteLabel => 'Note';
+
+  @override
+  String get timeTrackingFormCancel => 'Cancel';
+
+  @override
+  String get timeTrackingFormSave => 'Save';
+
+  @override
+  String get timeTrackingFormInvalidDuration =>
+      'Please choose an end after the start time.';
+
+  @override
+  String get timeTrackingDashboardTitle => 'Time tracking';
+
+  @override
+  String timeTrackingDashboardToday(String duration) {
+    return 'Today: $duration';
+  }
+
+  @override
+  String timeTrackingDashboardWeek(String start, String end, String duration) {
+    return 'Week $start – $end: $duration';
+  }
+
+  @override
+  String timeTrackingDashboardDeltaDaily(String value) {
+    return 'Daily delta: $value';
+  }
+
+  @override
+  String timeTrackingDashboardDeltaWeekly(String value) {
+    return 'Weekly delta: $value';
+  }
+
+  @override
+  String get timeTrackingDashboardNoTarget => 'No target configured.';
+
+  @override
+  String get timeTrackingDashboardOpenModule => 'Open time tracking';
+
+  @override
+  String get timeTrackingAlreadyRunning => 'A timer is already running.';
+
+  @override
+  String get timeTrackingClockInSuccess => 'Started tracking.';
+
+  @override
+  String get timeTrackingNoActiveEntry => 'No active timer.';
+
+  @override
+  String timeTrackingClockOutSuccess(String duration) {
+    return 'Stopped tracking ($duration).';
+  }
 
   @override
   String get journalPlaceholder =>

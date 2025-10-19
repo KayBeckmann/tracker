@@ -15,6 +15,9 @@ import 'sync/encryption_service.dart';
 import 'sync/sync_api_client.dart';
 import 'sync/sync_engine.dart';
 import 'tasks/task_reminder_service.dart';
+import 'time_tracking/time_tracking_page.dart';
+import 'time_tracking/time_tracking_summary.dart';
+import 'time_tracking/time_tracking_types.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
@@ -27,6 +30,12 @@ const String preferredThemeModeKey = 'preferred_theme_mode';
 const String preferredSeedColorKey = 'preferred_seed_color';
 const String enabledModulesKey = 'enabled_modules';
 const String moduleOrderKey = 'module_order';
+const String timeTrackingRoundingKey = 'time_tracking_rounding';
+const String timeTrackingTargetModeKey = 'time_tracking_target_mode';
+const String timeTrackingDailyTargetMinutesKey =
+    'time_tracking_daily_target_minutes';
+const String timeTrackingWeeklyTargetMinutesKey =
+    'time_tracking_weekly_target_minutes';
 
 const List<Locale> supportedAppLocales = <Locale>[
   Locale('en'),
@@ -246,12 +255,18 @@ class _HomePageState extends State<HomePage> {
       TextEditingController();
   final TextEditingController _registerDisplayNameController =
       TextEditingController();
+  late final TextEditingController _dailyTargetController;
+  late final TextEditingController _weeklyTargetController;
 
   late final AppDatabase _database;
   late final Box<dynamic> _trackerBox;
   Locale _pendingLocale = supportedAppLocales.first;
   ThemeMode _pendingThemeMode = ThemeMode.system;
   Color _pendingSeedColor = Colors.blue;
+  TimeTrackingRounding _timeTrackingRounding = TimeTrackingRounding.minute;
+  TimeTrackingTargetMode _timeTrackingTargetMode = TimeTrackingTargetMode.none;
+  int _timeTrackingDailyTargetMinutes = 0;
+  int _timeTrackingWeeklyTargetMinutes = 0;
 
   bool _isAuthInProgress = false;
   bool _loginPasswordVisible = false;
@@ -289,6 +304,12 @@ class _HomePageState extends State<HomePage> {
     _loadModuleSettings();
     _pendingThemeMode = widget.themeMode;
     _pendingSeedColor = widget.seedColor;
+    _dailyTargetController = TextEditingController(
+      text: formatDurationInput(_timeTrackingDailyTargetMinutes),
+    );
+    _weeklyTargetController = TextEditingController(
+      text: formatDurationInput(_timeTrackingWeeklyTargetMinutes),
+    );
 
     final Object? token = _trackerBox.get('auth_token');
     final AuthenticatedUser? user = _readCurrentUser(_trackerBox);
@@ -345,6 +366,8 @@ class _HomePageState extends State<HomePage> {
     _registerEmailController.dispose();
     _registerPasswordController.dispose();
     _registerDisplayNameController.dispose();
+    _dailyTargetController.dispose();
+    _weeklyTargetController.dispose();
     _taskReminderSubscription?.cancel();
     super.dispose();
   }
@@ -399,6 +422,29 @@ class _HomePageState extends State<HomePage> {
         _enabledModules = parsed;
       }
     }
+
+    final Object? storedRounding = _trackerBox.get(timeTrackingRoundingKey);
+    if (storedRounding is String) {
+      _timeTrackingRounding = TimeTrackingRoundingX.fromStorage(storedRounding);
+    }
+    final Object? storedTargetMode = _trackerBox.get(timeTrackingTargetModeKey);
+    if (storedTargetMode is String) {
+      _timeTrackingTargetMode = TimeTrackingTargetModeX.fromStorage(
+        storedTargetMode,
+      );
+    }
+    final Object? storedDaily = _trackerBox.get(
+      timeTrackingDailyTargetMinutesKey,
+    );
+    if (storedDaily is int && storedDaily >= 0) {
+      _timeTrackingDailyTargetMinutes = storedDaily;
+    }
+    final Object? storedWeekly = _trackerBox.get(
+      timeTrackingWeeklyTargetMinutesKey,
+    );
+    if (storedWeekly is int && storedWeekly >= 0) {
+      _timeTrackingWeeklyTargetMinutes = storedWeekly;
+    }
   }
 
   void _persistModuleSettings() {
@@ -410,6 +456,68 @@ class _HomePageState extends State<HomePage> {
         .map((section) => section.name)
         .toList();
     _trackerBox.put(enabledModulesKey, enabledNames);
+  }
+
+  void _updateTimeTrackingRounding(TimeTrackingRounding value) {
+    setState(() {
+      _timeTrackingRounding = value;
+    });
+    _trackerBox.put(timeTrackingRoundingKey, value.name);
+  }
+
+  void _updateTimeTrackingTargetMode(TimeTrackingTargetMode mode) {
+    setState(() {
+      _timeTrackingTargetMode = mode;
+    });
+    _trackerBox.put(timeTrackingTargetModeKey, mode.name);
+  }
+
+  void _updateTimeTrackingDailyTarget(int minutes) {
+    final sanitized = minutes.clamp(0, 24 * 60).toInt();
+    setState(() {
+      _timeTrackingDailyTargetMinutes = sanitized;
+      _dailyTargetController.text = formatDurationInput(sanitized);
+    });
+    _trackerBox.put(timeTrackingDailyTargetMinutesKey, sanitized);
+  }
+
+  void _updateTimeTrackingWeeklyTarget(int minutes) {
+    final sanitized = minutes.clamp(0, 7 * 24 * 60).toInt();
+    setState(() {
+      _timeTrackingWeeklyTargetMinutes = sanitized;
+      _weeklyTargetController.text = formatDurationInput(sanitized);
+    });
+    _trackerBox.put(timeTrackingWeeklyTargetMinutesKey, sanitized);
+  }
+
+  void _submitDailyTarget(BuildContext context, AppLocalizations loc) {
+    final parsed = parseDurationInput(_dailyTargetController.text);
+    if (parsed == null) {
+      _showDurationParseError(context, loc);
+      _dailyTargetController.text = formatDurationInput(
+        _timeTrackingDailyTargetMinutes,
+      );
+      return;
+    }
+    _updateTimeTrackingDailyTarget(parsed);
+  }
+
+  void _submitWeeklyTarget(BuildContext context, AppLocalizations loc) {
+    final parsed = parseDurationInput(_weeklyTargetController.text);
+    if (parsed == null) {
+      _showDurationParseError(context, loc);
+      _weeklyTargetController.text = formatDurationInput(
+        _timeTrackingWeeklyTargetMinutes,
+      );
+      return;
+    }
+    _updateTimeTrackingWeeklyTarget(parsed);
+  }
+
+  void _showDurationParseError(BuildContext context, AppLocalizations loc) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(loc.timeTrackingSettingsInvalidDuration)),
+    );
   }
 
   _AppSection? _parseSectionName(String name) {
@@ -426,6 +534,71 @@ class _HomePageState extends State<HomePage> {
         .toList();
     modules.add(_AppSection.settings);
     return modules;
+  }
+
+  Future<bool> _startTimeTrackingNow(BuildContext context) async {
+    final loc = AppLocalizations.of(context);
+    final active = await _database.getActiveTimeEntry();
+    if (active != null) {
+      if (!context.mounted) {
+        return false;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.timeTrackingAlreadyRunning)));
+      return false;
+    }
+    await _database.insertTimeEntry(
+      startedAt: DateTime.now(),
+      durationMinutes: 0,
+      kind: TimeEntryKind.work,
+      isManual: false,
+    );
+    if (!context.mounted) {
+      return true;
+    }
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(loc.timeTrackingClockInSuccess)));
+    return true;
+  }
+
+  Future<bool> _stopTimeTrackingNow(BuildContext context) async {
+    final loc = AppLocalizations.of(context);
+    final active = await _database.getActiveTimeEntry();
+    if (active == null) {
+      if (!context.mounted) {
+        return false;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.timeTrackingNoActiveEntry)));
+      return false;
+    }
+
+    final now = DateTime.now();
+    final startLocal = active.startedAt.toLocal();
+    var roundedMinutes = roundDurationMinutes(
+      now.difference(startLocal),
+      _timeTrackingRounding,
+    );
+    if (roundedMinutes <= 0) {
+      roundedMinutes = _timeTrackingRounding.stepMinutes;
+    }
+    await _database.completeTimeEntry(
+      id: active.id,
+      endedAt: now,
+      durationMinutes: roundedMinutes,
+      taskId: active.taskId,
+    );
+    if (!context.mounted) {
+      return true;
+    }
+    final formatted = formatTrackedMinutes(roundedMinutes);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(loc.timeTrackingClockOutSuccess(formatted))),
+    );
+    return true;
   }
 
   Future<void> _persistAuthResponse(
@@ -1207,6 +1380,9 @@ class _HomePageState extends State<HomePage> {
         .toList();
 
     final bool showTasksSummary = _enabledModules.contains(_AppSection.tasks);
+    final bool showTimeTracking = _enabledModules.contains(
+      _AppSection.timeTracking,
+    );
 
     if (!showTasksSummary && modules.isEmpty) {
       return Center(
@@ -1223,6 +1399,11 @@ class _HomePageState extends State<HomePage> {
       children.add(_buildTasksSummaryCard(context, loc));
       children.add(const SizedBox(height: 16));
       modules.remove(_AppSection.tasks);
+    }
+    if (showTimeTracking) {
+      children.add(_buildTimeTrackingDashboardCard(context, loc));
+      children.add(const SizedBox(height: 16));
+      modules.remove(_AppSection.timeTracking);
     }
     if (modules.isNotEmpty) {
       children.add(
@@ -1432,6 +1613,130 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildTimeTrackingDashboardCard(
+    BuildContext context,
+    AppLocalizations loc,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final today = DateTime.now();
+    final selectedDay = DateTime(today.year, today.month, today.day);
+    return StreamBuilder<List<TimeEntry>>(
+      stream: _database.watchAllTimeEntries(),
+      builder: (context, snapshot) {
+        final entries = snapshot.data ?? const <TimeEntry>[];
+        final summary = TimeTrackingSummary.fromEntries(
+          entries: entries,
+          selectedDay: selectedDay,
+          rounding: _timeTrackingRounding,
+          targetMode: _timeTrackingTargetMode,
+          dailyTargetMinutes: _timeTrackingDailyTargetMinutes,
+          weeklyTargetMinutes: _timeTrackingWeeklyTargetMinutes,
+        );
+        final hasActive = entries.any((entry) => entry.endedAt == null);
+        final dateFormat = DateFormat.yMMMMd(loc.localeName);
+        final todayLabel = loc.timeTrackingDashboardToday(
+          formatTrackedMinutes(summary.dailyWorkMinutes),
+        );
+        final weekLabel = loc.timeTrackingDashboardWeek(
+          dateFormat.format(summary.weekStart),
+          dateFormat.format(summary.weekEnd),
+          formatTrackedMinutes(summary.weeklyWorkMinutes),
+        );
+
+        String deltaLabel;
+        switch (_timeTrackingTargetMode) {
+          case TimeTrackingTargetMode.none:
+            deltaLabel = loc.timeTrackingDashboardNoTarget;
+            break;
+          case TimeTrackingTargetMode.daily:
+            deltaLabel = loc.timeTrackingDashboardDeltaDaily(
+              formatTrackedMinutes(
+                summary.deltaMinutes ?? 0,
+                includeSign: true,
+              ),
+            );
+            break;
+          case TimeTrackingTargetMode.weekly:
+            deltaLabel = loc.timeTrackingDashboardDeltaWeekly(
+              formatTrackedMinutes(
+                summary.deltaMinutes ?? 0,
+                includeSign: true,
+              ),
+            );
+            break;
+        }
+
+        return Align(
+          alignment: Alignment.topLeft,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 656),
+            child: Card(
+              clipBehavior: Clip.antiAlias,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          _sectionIcon(_AppSection.timeTracking),
+                          size: 32,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            loc.timeTrackingDashboardTitle,
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: loc.timeTrackingDashboardOpenModule,
+                          onPressed: () =>
+                              _onSelectSection(_AppSection.timeTracking),
+                          icon: const Icon(Icons.chevron_right),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(todayLabel, style: theme.textTheme.bodyMedium),
+                    const SizedBox(height: 8),
+                    Text(weekLabel, style: theme.textTheme.bodyMedium),
+                    const SizedBox(height: 8),
+                    Text(deltaLabel, style: theme.textTheme.bodyMedium),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: [
+                        FilledButton.icon(
+                          onPressed: hasActive
+                              ? null
+                              : () => _startTimeTrackingNow(context),
+                          icon: const Icon(Icons.play_arrow),
+                          label: Text(loc.timeTrackingStartNowButton),
+                        ),
+                        FilledButton.tonalIcon(
+                          onPressed: hasActive
+                              ? () => _stopTimeTrackingNow(context)
+                              : null,
+                          icon: const Icon(Icons.stop),
+                          label: Text(loc.timeTrackingStopNowButton),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildModuleCard(
     BuildContext context,
     AppLocalizations loc,
@@ -1485,17 +1790,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTasks(BuildContext context) {
-    return TasksPage(database: _database);
+    return TasksPage(
+      database: _database,
+      timeTrackingRounding: _timeTrackingRounding,
+    );
   }
 
   Widget _buildTimeTracking(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return Center(
-      child: Text(
-        loc.timeTrackingPlaceholder,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
+    return TimeTrackingPage(
+      database: _database,
+      rounding: _timeTrackingRounding,
+      targetMode: _timeTrackingTargetMode,
+      dailyTargetMinutes: _timeTrackingDailyTargetMinutes,
+      weeklyTargetMinutes: _timeTrackingWeeklyTargetMinutes,
+      onStartTracking: _startTimeTrackingNow,
+      onStopTracking: _stopTimeTrackingNow,
     );
   }
 
@@ -1556,6 +1865,8 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 24),
         _buildModulesCard(context, loc),
         const SizedBox(height: 24),
+        _buildTimeTrackingSettingsCard(context, loc),
+        const SizedBox(height: 24),
         _buildSyncInfoCard(context, loc),
         const SizedBox(height: 24),
         Text(loc.settingsSignInPrompt, style: theme.textTheme.titleMedium),
@@ -1577,6 +1888,8 @@ class _HomePageState extends State<HomePage> {
       _buildAppearanceCard(context, loc),
       const SizedBox(height: 24),
       _buildModulesCard(context, loc),
+      const SizedBox(height: 24),
+      _buildTimeTrackingSettingsCard(context, loc),
       const SizedBox(height: 24),
       _buildLanguageCard(context, loc),
     ];
@@ -1856,6 +2169,114 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildTimeTrackingSettingsCard(
+    BuildContext context,
+    AppLocalizations loc,
+  ) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.timeTrackingSettingsTitle,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              loc.timeTrackingSettingsRoundingLabel,
+              style: theme.textTheme.labelLarge,
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: TimeTrackingRounding.values
+                  .map(
+                    (mode) => ChoiceChip(
+                      label: Text(_roundingLabel(loc, mode)),
+                      selected: _timeTrackingRounding == mode,
+                      onSelected: (_) => _updateTimeTrackingRounding(mode),
+                    ),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              loc.timeTrackingSettingsTargetLabel,
+              style: theme.textTheme.labelLarge,
+            ),
+            const SizedBox(height: 8),
+            SegmentedButton<TimeTrackingTargetMode>(
+              segments: [
+                ButtonSegment(
+                  value: TimeTrackingTargetMode.none,
+                  label: Text(loc.timeTrackingSettingsTargetNone),
+                ),
+                ButtonSegment(
+                  value: TimeTrackingTargetMode.daily,
+                  label: Text(loc.timeTrackingSettingsTargetDaily),
+                ),
+                ButtonSegment(
+                  value: TimeTrackingTargetMode.weekly,
+                  label: Text(loc.timeTrackingSettingsTargetWeekly),
+                ),
+              ],
+              selected: <TimeTrackingTargetMode>{_timeTrackingTargetMode},
+              onSelectionChanged: (selection) {
+                if (selection.isNotEmpty) {
+                  _updateTimeTrackingTargetMode(selection.first);
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _dailyTargetController,
+              keyboardType: TextInputType.datetime,
+              textInputAction: TextInputAction.done,
+              decoration: InputDecoration(
+                labelText: loc.timeTrackingSettingsDailyHoursLabel,
+              ),
+              onSubmitted: (_) => _submitDailyTarget(context, loc),
+              onTapOutside: (_) => _submitDailyTarget(context, loc),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _weeklyTargetController,
+              keyboardType: TextInputType.datetime,
+              textInputAction: TextInputAction.done,
+              decoration: InputDecoration(
+                labelText: loc.timeTrackingSettingsWeeklyHoursLabel,
+              ),
+              onSubmitted: (_) => _submitWeeklyTarget(context, loc),
+              onTapOutside: (_) => _submitWeeklyTarget(context, loc),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.timeTrackingSettingsDurationHint,
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _roundingLabel(AppLocalizations loc, TimeTrackingRounding rounding) {
+    switch (rounding) {
+      case TimeTrackingRounding.minute:
+        return loc.timeTrackingRoundingMinute;
+      case TimeTrackingRounding.fiveMinutes:
+        return loc.timeTrackingRoundingFive;
+      case TimeTrackingRounding.tenMinutes:
+        return loc.timeTrackingRoundingTen;
+      case TimeTrackingRounding.quarterHour:
+        return loc.timeTrackingRoundingQuarter;
+    }
   }
 
   Widget _buildModulesCard(BuildContext context, AppLocalizations loc) {

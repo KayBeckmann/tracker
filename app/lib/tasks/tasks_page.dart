@@ -8,14 +8,21 @@ import '../data/local/app_database.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../notes/note_drawing_page.dart';
 import '../notes/note_edit_page.dart';
+import '../time_tracking/time_tracking_types.dart';
 import 'task_edit_page.dart';
+import 'task_time_section.dart';
 
 enum TaskSortMode { dueDateAsc, dueDateDesc, priority, status }
 
 class TasksPage extends StatefulWidget {
-  const TasksPage({super.key, required this.database});
+  const TasksPage({
+    super.key,
+    required this.database,
+    required this.timeTrackingRounding,
+  });
 
   final AppDatabase database;
+  final TimeTrackingRounding timeTrackingRounding;
 
   @override
   State<TasksPage> createState() => _TasksPageState();
@@ -50,8 +57,11 @@ class _TasksPageState extends State<TasksPage>
   Future<void> _openTaskForm({TaskEntry? task}) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>
-            TaskEditPage(database: widget.database, task: task),
+        builder: (context) => TaskEditPage(
+          database: widget.database,
+          task: task,
+          timeTrackingRounding: widget.timeTrackingRounding,
+        ),
       ),
     );
   }
@@ -270,7 +280,11 @@ class _TasksPageState extends State<TasksPage>
     );
   }
 
-  Widget _buildTaskListView(AppLocalizations loc, List<TaskEntry> tasks) {
+  Widget _buildTaskListView(
+    AppLocalizations loc,
+    List<TaskEntry> tasks,
+    Map<int, TaskTimeInfo> timeInfoByTask,
+  ) {
     return Column(
       children: [
         AnimatedCrossFade(
@@ -312,6 +326,7 @@ class _TasksPageState extends State<TasksPage>
                           _localizedStatus(loc, status),
                       priorityLabelBuilder: (priority) =>
                           _localizedPriority(loc, priority),
+                      timeInfo: timeInfoByTask[task.id],
                     );
                   },
                 ),
@@ -373,17 +388,28 @@ class _TasksPageState extends State<TasksPage>
           final highlightedDays = filteredTasks
               .map((task) => _normalizeDate(task.dueDate.toLocal()))
               .toSet();
-          return TabBarView(
-            controller: _tabController,
-            children: [
-              _buildTaskListView(loc, sortedTasks),
-              _buildCalendarView(
-                loc,
-                selectedDay,
-                calendarTasks,
-                highlightedDays,
-              ),
-            ],
+          return StreamBuilder<List<TimeEntry>>(
+            stream: widget.database.watchAllTimeEntries(),
+            builder: (context, timeSnapshot) {
+              final timeEntries = timeSnapshot.data ?? const <TimeEntry>[];
+              final timeInfoByTask = groupTimeEntriesByTask(
+                timeEntries,
+                widget.timeTrackingRounding,
+              );
+              return TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildTaskListView(loc, sortedTasks, timeInfoByTask),
+                  _buildCalendarView(
+                    loc,
+                    selectedDay,
+                    calendarTasks,
+                    highlightedDays,
+                    timeInfoByTask,
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
@@ -395,6 +421,7 @@ class _TasksPageState extends State<TasksPage>
     DateTime selectedDay,
     List<TaskEntry> selectedDayTasks,
     Set<DateTime> highlightedDays,
+    Map<int, TaskTimeInfo> timeInfoByTask,
   ) {
     final currentMonth = DateTime(_calendarMonth.year, _calendarMonth.month);
     return Column(
@@ -458,6 +485,7 @@ class _TasksPageState extends State<TasksPage>
                       onOpenNote: task.noteId == null
                           ? null
                           : () => _previewLinkedNote(task),
+                      timeInfo: timeInfoByTask[task.id],
                     );
                   },
                 ),
@@ -798,6 +826,7 @@ class _TaskListTile extends StatelessWidget {
     required this.onStatusChanged,
     required this.sortLabelBuilder,
     required this.priorityLabelBuilder,
+    this.timeInfo,
   });
 
   final TaskEntry task;
@@ -806,6 +835,7 @@ class _TaskListTile extends StatelessWidget {
   final ValueChanged<TaskStatus> onStatusChanged;
   final String Function(TaskStatus) sortLabelBuilder;
   final String Function(TaskPriority) priorityLabelBuilder;
+  final TaskTimeInfo? timeInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -857,6 +887,10 @@ class _TaskListTile extends StatelessWidget {
                     .toList(),
               ),
             ),
+          if (timeInfo != null && timeInfo!.entries.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            TaskTimeEntriesSection(timeInfo: timeInfo!),
+          ],
         ],
       ),
       trailing: Row(
@@ -907,11 +941,13 @@ class _CalendarTaskCard extends StatelessWidget {
     required this.task,
     required this.onTap,
     required this.onOpenNote,
+    this.timeInfo,
   });
 
   final TaskEntry task;
   final VoidCallback onTap;
   final VoidCallback? onOpenNote;
+  final TaskTimeInfo? timeInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -966,10 +1002,11 @@ class _CalendarTaskCard extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                 ),
               ),
-            Text(
-              loc.tasksTrackedTimePlaceholder,
-              style: theme.textTheme.bodySmall,
-            ),
+            if (timeInfo != null && timeInfo!.entries.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: TaskTimeEntriesSection(timeInfo: timeInfo!),
+              ),
           ],
         ),
       ),

@@ -215,7 +215,23 @@
   "tasksCreateDrawingNote": "Create drawing note",
   "tasksNoNotesFound": "No notes available yet.",
   "tasksOpenLinkedNoteButton": "Open note",
-  "tasksTrackedTimePlaceholder": "Tracked time will appear here once time tracking is connected.",
+  "tasksTrackedTimeEmpty": "No time entries linked yet.",
+  "tasksTrackedTimeTotal": "Tracked work time: {duration}",
+  "@tasksTrackedTimeTotal": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksTrackedTimeMore": "{count} more entries",
+  "@tasksTrackedTimeMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "tasksReminderNotificationGenericTitle": "Task reminder",
   "tasksReminderNotificationBody": "Reminder scheduled for {date} at {time}.",
   "@tasksReminderNotificationBody": {
@@ -254,7 +270,181 @@
   "tasksPriorityMedium": "Medium priority",
   "tasksPriorityHigh": "High priority",
   "tasksPreviewOpenEditor": "Open in editor",
-  "timeTrackingPlaceholder": "Track your work sessions here soon and link them directly to tasks with shared tags.",
+  "timeTrackingSettingsTitle": "Time tracking",
+  "timeTrackingSettingsRoundingLabel": "Rounding interval",
+  "timeTrackingRoundingMinute": "To the minute",
+  "timeTrackingRoundingFive": "5-minute steps",
+  "timeTrackingRoundingTen": "10-minute steps",
+  "timeTrackingRoundingQuarter": "Quarter-hour steps",
+  "timeTrackingSettingsTargetLabel": "Target hours",
+  "timeTrackingSettingsTargetNone": "No target",
+  "timeTrackingSettingsTargetDaily": "Daily target",
+  "timeTrackingSettingsTargetWeekly": "Weekly target",
+  "timeTrackingSettingsDailyHoursLabel": "Target per day (HH:MM)",
+  "timeTrackingSettingsWeeklyHoursLabel": "Target per week (HH:MM)",
+  "timeTrackingSettingsDurationHint": "Use HH:MM format, for example 08:00 or 37:30.",
+  "timeTrackingSettingsInvalidDuration": "Please enter a valid duration in HH:MM.",
+  "timeTrackingSummaryDay": "Selected day: {date} • Work: {duration}",
+  "@timeTrackingSummaryDay": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingSummaryAllEntries": "All entries: {duration}",
+  "@timeTrackingSummaryAllEntries": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingSummaryWeek": "Week {start} – {end}: {duration}",
+  "@timeTrackingSummaryWeek": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingSummaryDelta": "Delta: {delta}",
+  "@timeTrackingSummaryDelta": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingCalendarPrevious": "Previous month",
+  "timeTrackingCalendarNext": "Next month",
+  "timeTrackingStartNowButton": "Clock in now",
+  "timeTrackingStopNowButton": "Clock out now",
+  "timeTrackingAddManualButton": "Add manual entry",
+  "timeTrackingNoEntriesForDay": "No entries for the selected day.",
+  "timeTrackingManualEntrySaved": "Time entry saved.",
+  "timeTrackingDeleteEntryTitle": "Delete time entry",
+  "timeTrackingDeleteEntryMessage": "Do you want to delete this time entry?",
+  "timeTrackingDeleteEntryConfirm": "Delete",
+  "timeTrackingEntryDeleted": "Time entry deleted.",
+  "timeTrackingKindWork": "Work",
+  "timeTrackingKindVacation": "Vacation",
+  "timeTrackingKindDayOff": "Day off",
+  "timeTrackingKindSick": "Sick leave",
+  "timeTrackingEntryInterval": "{start} – {end} • {duration}",
+  "@timeTrackingEntryInterval": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingEntryRunning": "{start} • Running ({duration})",
+  "@timeTrackingEntryRunning": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingLinkedTask": "Linked task: {title}",
+  "@timeTrackingLinkedTask": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingEditEntryTooltip": "Edit entry",
+  "timeTrackingDeleteEntryTooltip": "Delete entry",
+  "timeTrackingFormTitle": "Time entry",
+  "timeTrackingFormStartLabel": "Start",
+  "timeTrackingFormEndLabel": "End",
+  "timeTrackingFormDurationLabel": "Duration: {value}",
+  "@timeTrackingFormDurationLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingFormKindLabel": "Type",
+  "timeTrackingFormTaskLabel": "Linked task",
+  "timeTrackingFormNoTask": "No task",
+  "timeTrackingFormNoteLabel": "Note",
+  "timeTrackingFormCancel": "Cancel",
+  "timeTrackingFormSave": "Save",
+  "timeTrackingFormInvalidDuration": "Please choose an end after the start time.",
+  "timeTrackingDashboardTitle": "Time tracking",
+  "timeTrackingDashboardToday": "Today: {duration}",
+  "@timeTrackingDashboardToday": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardWeek": "Week {start} – {end}: {duration}",
+  "@timeTrackingDashboardWeek": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardDeltaDaily": "Daily delta: {value}",
+  "@timeTrackingDashboardDeltaDaily": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardDeltaWeekly": "Weekly delta: {value}",
+  "@timeTrackingDashboardDeltaWeekly": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardNoTarget": "No target configured.",
+  "timeTrackingDashboardOpenModule": "Open time tracking",
+  "timeTrackingAlreadyRunning": "A timer is already running.",
+  "timeTrackingClockInSuccess": "Started tracking.",
+  "timeTrackingNoActiveEntry": "No active timer.",
+  "timeTrackingClockOutSuccess": "Stopped tracking ({duration}).",
+  "@timeTrackingClockOutSuccess": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
   "journalPlaceholder": "Capture your journal entries here and connect them with every module through shared tags.",
   "habitsPlaceholder": "Track your habits here.",
   "ledgerPlaceholder": "Manage your household budget here.",

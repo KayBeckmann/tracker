@@ -444,8 +444,17 @@ class AppLocalizationsSv extends AppLocalizations {
   String get tasksOpenLinkedNoteButton => 'Öppna anteckning';
 
   @override
-  String get tasksTrackedTimePlaceholder =>
-      'När tidrapporteringen kopplats visas registrerade tider här.';
+  String get tasksTrackedTimeEmpty => 'Inga tider kopplade ännu.';
+
+  @override
+  String tasksTrackedTimeTotal(String duration) {
+    return 'Registrerad arbetstid: $duration';
+  }
+
+  @override
+  String tasksTrackedTimeMore(int count) {
+    return '$count ytterligare poster';
+  }
 
   @override
   String get tasksReminderNotificationGenericTitle => 'Uppgiftspåminnelse';
@@ -487,8 +496,214 @@ class AppLocalizationsSv extends AppLocalizations {
   String get tasksPreviewOpenEditor => 'Öppna i redigerare';
 
   @override
-  String get timeTrackingPlaceholder =>
-      'Registrera dina arbetspass här snart och koppla ihop dem med uppgifter genom gemensamma taggar.';
+  String get timeTrackingSettingsTitle => 'Tidrapportering';
+
+  @override
+  String get timeTrackingSettingsRoundingLabel => 'Avrundningsintervall';
+
+  @override
+  String get timeTrackingRoundingMinute => 'På minuten';
+
+  @override
+  String get timeTrackingRoundingFive => '5-minuterssteg';
+
+  @override
+  String get timeTrackingRoundingTen => '10-minuterssteg';
+
+  @override
+  String get timeTrackingRoundingQuarter => 'Kvartsteg';
+
+  @override
+  String get timeTrackingSettingsTargetLabel => 'Måltimmar';
+
+  @override
+  String get timeTrackingSettingsTargetNone => 'Inget mål';
+
+  @override
+  String get timeTrackingSettingsTargetDaily => 'Dagligt mål';
+
+  @override
+  String get timeTrackingSettingsTargetWeekly => 'Veckomål';
+
+  @override
+  String get timeTrackingSettingsDailyHoursLabel => 'Mål per dag (HH:MM)';
+
+  @override
+  String get timeTrackingSettingsWeeklyHoursLabel => 'Mål per vecka (HH:MM)';
+
+  @override
+  String get timeTrackingSettingsDurationHint =>
+      'Ange i formatet HH:MM, till exempel 08:00 eller 37:30.';
+
+  @override
+  String get timeTrackingSettingsInvalidDuration =>
+      'Ange en giltig tid i formatet HH:MM.';
+
+  @override
+  String timeTrackingSummaryDay(String date, String duration) {
+    return 'Vald dag: $date • Arbete: $duration';
+  }
+
+  @override
+  String timeTrackingSummaryAllEntries(String duration) {
+    return 'Alla poster: $duration';
+  }
+
+  @override
+  String timeTrackingSummaryWeek(String start, String end, String duration) {
+    return 'Vecka $start – $end: $duration';
+  }
+
+  @override
+  String timeTrackingSummaryDelta(String delta) {
+    return 'Differens: $delta';
+  }
+
+  @override
+  String get timeTrackingCalendarPrevious => 'Föregående månad';
+
+  @override
+  String get timeTrackingCalendarNext => 'Nästa månad';
+
+  @override
+  String get timeTrackingStartNowButton => 'Starta nu';
+
+  @override
+  String get timeTrackingStopNowButton => 'Stoppa nu';
+
+  @override
+  String get timeTrackingAddManualButton => 'Lägg till manuellt';
+
+  @override
+  String get timeTrackingNoEntriesForDay => 'Inga poster för vald dag.';
+
+  @override
+  String get timeTrackingManualEntrySaved => 'Tid sparad.';
+
+  @override
+  String get timeTrackingDeleteEntryTitle => 'Ta bort tidspost';
+
+  @override
+  String get timeTrackingDeleteEntryMessage =>
+      'Vill du ta bort den här posten?';
+
+  @override
+  String get timeTrackingDeleteEntryConfirm => 'Ta bort';
+
+  @override
+  String get timeTrackingEntryDeleted => 'Tidsposten togs bort.';
+
+  @override
+  String get timeTrackingKindWork => 'Arbete';
+
+  @override
+  String get timeTrackingKindVacation => 'Semester';
+
+  @override
+  String get timeTrackingKindDayOff => 'Ledig dag';
+
+  @override
+  String get timeTrackingKindSick => 'Sjukfrånvaro';
+
+  @override
+  String timeTrackingEntryInterval(String start, String end, String duration) {
+    return '$start – $end • $duration';
+  }
+
+  @override
+  String timeTrackingEntryRunning(String start, String duration) {
+    return '$start • Pågår ($duration)';
+  }
+
+  @override
+  String timeTrackingLinkedTask(String title) {
+    return 'Kopplad uppgift: $title';
+  }
+
+  @override
+  String get timeTrackingEditEntryTooltip => 'Redigera post';
+
+  @override
+  String get timeTrackingDeleteEntryTooltip => 'Ta bort post';
+
+  @override
+  String get timeTrackingFormTitle => 'Tidspost';
+
+  @override
+  String get timeTrackingFormStartLabel => 'Start';
+
+  @override
+  String get timeTrackingFormEndLabel => 'Slut';
+
+  @override
+  String timeTrackingFormDurationLabel(String value) {
+    return 'Varaktighet: $value';
+  }
+
+  @override
+  String get timeTrackingFormKindLabel => 'Typ';
+
+  @override
+  String get timeTrackingFormTaskLabel => 'Kopplad uppgift';
+
+  @override
+  String get timeTrackingFormNoTask => 'Ingen uppgift';
+
+  @override
+  String get timeTrackingFormNoteLabel => 'Notering';
+
+  @override
+  String get timeTrackingFormCancel => 'Avbryt';
+
+  @override
+  String get timeTrackingFormSave => 'Spara';
+
+  @override
+  String get timeTrackingFormInvalidDuration =>
+      'Välj en sluttid efter starttiden.';
+
+  @override
+  String get timeTrackingDashboardTitle => 'Tidrapportering';
+
+  @override
+  String timeTrackingDashboardToday(String duration) {
+    return 'Idag: $duration';
+  }
+
+  @override
+  String timeTrackingDashboardWeek(String start, String end, String duration) {
+    return 'Vecka $start – $end: $duration';
+  }
+
+  @override
+  String timeTrackingDashboardDeltaDaily(String value) {
+    return 'Daglig differens: $value';
+  }
+
+  @override
+  String timeTrackingDashboardDeltaWeekly(String value) {
+    return 'Veckodifferens: $value';
+  }
+
+  @override
+  String get timeTrackingDashboardNoTarget => 'Inget mål angivet.';
+
+  @override
+  String get timeTrackingDashboardOpenModule => 'Öppna tidrapporteringen';
+
+  @override
+  String get timeTrackingAlreadyRunning => 'En registrering pågår redan.';
+
+  @override
+  String get timeTrackingClockInSuccess => 'Registrering startad.';
+
+  @override
+  String get timeTrackingNoActiveEntry => 'Ingen aktiv registrering.';
+
+  @override
+  String timeTrackingClockOutSuccess(String duration) {
+    return 'Registreringen stoppades ($duration).';
+  }
 
   @override
   String get journalPlaceholder =>

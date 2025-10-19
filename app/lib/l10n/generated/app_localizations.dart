@@ -910,11 +910,23 @@ abstract class AppLocalizations {
   /// **'Open note'**
   String get tasksOpenLinkedNoteButton;
 
-  /// No description provided for @tasksTrackedTimePlaceholder.
+  /// No description provided for @tasksTrackedTimeEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Tracked time will appear here once time tracking is connected.'**
-  String get tasksTrackedTimePlaceholder;
+  /// **'No time entries linked yet.'**
+  String get tasksTrackedTimeEmpty;
+
+  /// No description provided for @tasksTrackedTimeTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracked work time: {duration}'**
+  String tasksTrackedTimeTotal(String duration);
+
+  /// No description provided for @tasksTrackedTimeMore.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} more entries'**
+  String tasksTrackedTimeMore(int count);
 
   /// No description provided for @tasksReminderNotificationGenericTitle.
   ///
@@ -982,11 +994,365 @@ abstract class AppLocalizations {
   /// **'Open in editor'**
   String get tasksPreviewOpenEditor;
 
-  /// No description provided for @timeTrackingPlaceholder.
+  /// No description provided for @timeTrackingSettingsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Track your work sessions here soon and link them directly to tasks with shared tags.'**
-  String get timeTrackingPlaceholder;
+  /// **'Time tracking'**
+  String get timeTrackingSettingsTitle;
+
+  /// No description provided for @timeTrackingSettingsRoundingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rounding interval'**
+  String get timeTrackingSettingsRoundingLabel;
+
+  /// No description provided for @timeTrackingRoundingMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'To the minute'**
+  String get timeTrackingRoundingMinute;
+
+  /// No description provided for @timeTrackingRoundingFive.
+  ///
+  /// In en, this message translates to:
+  /// **'5-minute steps'**
+  String get timeTrackingRoundingFive;
+
+  /// No description provided for @timeTrackingRoundingTen.
+  ///
+  /// In en, this message translates to:
+  /// **'10-minute steps'**
+  String get timeTrackingRoundingTen;
+
+  /// No description provided for @timeTrackingRoundingQuarter.
+  ///
+  /// In en, this message translates to:
+  /// **'Quarter-hour steps'**
+  String get timeTrackingRoundingQuarter;
+
+  /// No description provided for @timeTrackingSettingsTargetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target hours'**
+  String get timeTrackingSettingsTargetLabel;
+
+  /// No description provided for @timeTrackingSettingsTargetNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No target'**
+  String get timeTrackingSettingsTargetNone;
+
+  /// No description provided for @timeTrackingSettingsTargetDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily target'**
+  String get timeTrackingSettingsTargetDaily;
+
+  /// No description provided for @timeTrackingSettingsTargetWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly target'**
+  String get timeTrackingSettingsTargetWeekly;
+
+  /// No description provided for @timeTrackingSettingsDailyHoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target per day (HH:MM)'**
+  String get timeTrackingSettingsDailyHoursLabel;
+
+  /// No description provided for @timeTrackingSettingsWeeklyHoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target per week (HH:MM)'**
+  String get timeTrackingSettingsWeeklyHoursLabel;
+
+  /// No description provided for @timeTrackingSettingsDurationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use HH:MM format, for example 08:00 or 37:30.'**
+  String get timeTrackingSettingsDurationHint;
+
+  /// No description provided for @timeTrackingSettingsInvalidDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid duration in HH:MM.'**
+  String get timeTrackingSettingsInvalidDuration;
+
+  /// No description provided for @timeTrackingSummaryDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected day: {date} • Work: {duration}'**
+  String timeTrackingSummaryDay(String date, String duration);
+
+  /// No description provided for @timeTrackingSummaryAllEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'All entries: {duration}'**
+  String timeTrackingSummaryAllEntries(String duration);
+
+  /// No description provided for @timeTrackingSummaryWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week {start} – {end}: {duration}'**
+  String timeTrackingSummaryWeek(String start, String end, String duration);
+
+  /// No description provided for @timeTrackingSummaryDelta.
+  ///
+  /// In en, this message translates to:
+  /// **'Delta: {delta}'**
+  String timeTrackingSummaryDelta(String delta);
+
+  /// No description provided for @timeTrackingCalendarPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get timeTrackingCalendarPrevious;
+
+  /// No description provided for @timeTrackingCalendarNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get timeTrackingCalendarNext;
+
+  /// No description provided for @timeTrackingStartNowButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Clock in now'**
+  String get timeTrackingStartNowButton;
+
+  /// No description provided for @timeTrackingStopNowButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Clock out now'**
+  String get timeTrackingStopNowButton;
+
+  /// No description provided for @timeTrackingAddManualButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add manual entry'**
+  String get timeTrackingAddManualButton;
+
+  /// No description provided for @timeTrackingNoEntriesForDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries for the selected day.'**
+  String get timeTrackingNoEntriesForDay;
+
+  /// No description provided for @timeTrackingManualEntrySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Time entry saved.'**
+  String get timeTrackingManualEntrySaved;
+
+  /// No description provided for @timeTrackingDeleteEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete time entry'**
+  String get timeTrackingDeleteEntryTitle;
+
+  /// No description provided for @timeTrackingDeleteEntryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to delete this time entry?'**
+  String get timeTrackingDeleteEntryMessage;
+
+  /// No description provided for @timeTrackingDeleteEntryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get timeTrackingDeleteEntryConfirm;
+
+  /// No description provided for @timeTrackingEntryDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Time entry deleted.'**
+  String get timeTrackingEntryDeleted;
+
+  /// No description provided for @timeTrackingKindWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get timeTrackingKindWork;
+
+  /// No description provided for @timeTrackingKindVacation.
+  ///
+  /// In en, this message translates to:
+  /// **'Vacation'**
+  String get timeTrackingKindVacation;
+
+  /// No description provided for @timeTrackingKindDayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Day off'**
+  String get timeTrackingKindDayOff;
+
+  /// No description provided for @timeTrackingKindSick.
+  ///
+  /// In en, this message translates to:
+  /// **'Sick leave'**
+  String get timeTrackingKindSick;
+
+  /// No description provided for @timeTrackingEntryInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'{start} – {end} • {duration}'**
+  String timeTrackingEntryInterval(String start, String end, String duration);
+
+  /// No description provided for @timeTrackingEntryRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'{start} • Running ({duration})'**
+  String timeTrackingEntryRunning(String start, String duration);
+
+  /// No description provided for @timeTrackingLinkedTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked task: {title}'**
+  String timeTrackingLinkedTask(String title);
+
+  /// No description provided for @timeTrackingEditEntryTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit entry'**
+  String get timeTrackingEditEntryTooltip;
+
+  /// No description provided for @timeTrackingDeleteEntryTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entry'**
+  String get timeTrackingDeleteEntryTooltip;
+
+  /// No description provided for @timeTrackingFormTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time entry'**
+  String get timeTrackingFormTitle;
+
+  /// No description provided for @timeTrackingFormStartLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get timeTrackingFormStartLabel;
+
+  /// No description provided for @timeTrackingFormEndLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get timeTrackingFormEndLabel;
+
+  /// No description provided for @timeTrackingFormDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration: {value}'**
+  String timeTrackingFormDurationLabel(String value);
+
+  /// No description provided for @timeTrackingFormKindLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get timeTrackingFormKindLabel;
+
+  /// No description provided for @timeTrackingFormTaskLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked task'**
+  String get timeTrackingFormTaskLabel;
+
+  /// No description provided for @timeTrackingFormNoTask.
+  ///
+  /// In en, this message translates to:
+  /// **'No task'**
+  String get timeTrackingFormNoTask;
+
+  /// No description provided for @timeTrackingFormNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get timeTrackingFormNoteLabel;
+
+  /// No description provided for @timeTrackingFormCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get timeTrackingFormCancel;
+
+  /// No description provided for @timeTrackingFormSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get timeTrackingFormSave;
+
+  /// No description provided for @timeTrackingFormInvalidDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose an end after the start time.'**
+  String get timeTrackingFormInvalidDuration;
+
+  /// No description provided for @timeTrackingDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time tracking'**
+  String get timeTrackingDashboardTitle;
+
+  /// No description provided for @timeTrackingDashboardToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today: {duration}'**
+  String timeTrackingDashboardToday(String duration);
+
+  /// No description provided for @timeTrackingDashboardWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week {start} – {end}: {duration}'**
+  String timeTrackingDashboardWeek(String start, String end, String duration);
+
+  /// No description provided for @timeTrackingDashboardDeltaDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily delta: {value}'**
+  String timeTrackingDashboardDeltaDaily(String value);
+
+  /// No description provided for @timeTrackingDashboardDeltaWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly delta: {value}'**
+  String timeTrackingDashboardDeltaWeekly(String value);
+
+  /// No description provided for @timeTrackingDashboardNoTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'No target configured.'**
+  String get timeTrackingDashboardNoTarget;
+
+  /// No description provided for @timeTrackingDashboardOpenModule.
+  ///
+  /// In en, this message translates to:
+  /// **'Open time tracking'**
+  String get timeTrackingDashboardOpenModule;
+
+  /// No description provided for @timeTrackingAlreadyRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'A timer is already running.'**
+  String get timeTrackingAlreadyRunning;
+
+  /// No description provided for @timeTrackingClockInSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Started tracking.'**
+  String get timeTrackingClockInSuccess;
+
+  /// No description provided for @timeTrackingNoActiveEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'No active timer.'**
+  String get timeTrackingNoActiveEntry;
+
+  /// No description provided for @timeTrackingClockOutSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped tracking ({duration}).'**
+  String timeTrackingClockOutSuccess(String duration);
 
   /// No description provided for @journalPlaceholder.
   ///

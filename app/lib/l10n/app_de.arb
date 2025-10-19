@@ -180,7 +180,23 @@
   "tasksCreateDrawingNote": "Zeichnungsnotiz erstellen",
   "tasksNoNotesFound": "Es sind noch keine Notizen vorhanden.",
   "tasksOpenLinkedNoteButton": "Notiz öffnen",
-  "tasksTrackedTimePlaceholder": "Sobald die Zeiterfassung verbunden ist, erscheinen hier die erfassten Zeiten.",
+  "tasksTrackedTimeEmpty": "Noch keine Zeiten verknüpft.",
+  "tasksTrackedTimeTotal": "Erfasste Arbeitszeit: {duration}",
+  "@tasksTrackedTimeTotal": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksTrackedTimeMore": "{count} weitere Buchungen",
+  "@tasksTrackedTimeMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "tasksReminderNotificationGenericTitle": "Aufgaben-Erinnerung",
   "tasksReminderNotificationBody": "Erinnerung für {date} um {time}.",
   "@tasksReminderNotificationBody": {
@@ -219,7 +235,181 @@
   "tasksPriorityMedium": "Mittlere Priorität",
   "tasksPriorityHigh": "Hohe Priorität",
   "tasksPreviewOpenEditor": "Im Editor öffnen",
-  "timeTrackingPlaceholder": "Erfasse deine Arbeitszeiten bald direkt hier und verknüpfe sie über gemeinsame Tags mit den Aufgaben.",
+  "timeTrackingSettingsTitle": "Zeiterfassung",
+  "timeTrackingSettingsRoundingLabel": "Rundungsintervall",
+  "timeTrackingRoundingMinute": "Minutengenau",
+  "timeTrackingRoundingFive": "5-Minuten-Schritte",
+  "timeTrackingRoundingTen": "10-Minuten-Schritte",
+  "timeTrackingRoundingQuarter": "Viertelstundenschritte",
+  "timeTrackingSettingsTargetLabel": "Sollstunden",
+  "timeTrackingSettingsTargetNone": "Kein Ziel",
+  "timeTrackingSettingsTargetDaily": "Tagesziel",
+  "timeTrackingSettingsTargetWeekly": "Wochenziel",
+  "timeTrackingSettingsDailyHoursLabel": "Soll pro Tag (HH:MM)",
+  "timeTrackingSettingsWeeklyHoursLabel": "Soll pro Woche (HH:MM)",
+  "timeTrackingSettingsDurationHint": "Verwende das Format HH:MM, z. B. 08:00 oder 37:30.",
+  "timeTrackingSettingsInvalidDuration": "Bitte gib eine gültige Dauer im Format HH:MM ein.",
+  "timeTrackingSummaryDay": "Ausgewählter Tag: {date} • Arbeit: {duration}",
+  "@timeTrackingSummaryDay": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingSummaryAllEntries": "Alle Einträge: {duration}",
+  "@timeTrackingSummaryAllEntries": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingSummaryWeek": "Woche {start} – {end}: {duration}",
+  "@timeTrackingSummaryWeek": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingSummaryDelta": "Delta: {delta}",
+  "@timeTrackingSummaryDelta": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingCalendarPrevious": "Vorheriger Monat",
+  "timeTrackingCalendarNext": "Nächster Monat",
+  "timeTrackingStartNowButton": "Jetzt einstempeln",
+  "timeTrackingStopNowButton": "Jetzt ausstempeln",
+  "timeTrackingAddManualButton": "Zeit nachtragen",
+  "timeTrackingNoEntriesForDay": "Keine Einträge für den ausgewählten Tag.",
+  "timeTrackingManualEntrySaved": "Zeiteintrag gespeichert.",
+  "timeTrackingDeleteEntryTitle": "Zeiteintrag löschen",
+  "timeTrackingDeleteEntryMessage": "Möchtest du diesen Zeiteintrag löschen?",
+  "timeTrackingDeleteEntryConfirm": "Löschen",
+  "timeTrackingEntryDeleted": "Zeiteintrag gelöscht.",
+  "timeTrackingKindWork": "Arbeit",
+  "timeTrackingKindVacation": "Urlaub",
+  "timeTrackingKindDayOff": "Freier Tag",
+  "timeTrackingKindSick": "Krankheit",
+  "timeTrackingEntryInterval": "{start} – {end} • {duration}",
+  "@timeTrackingEntryInterval": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingEntryRunning": "{start} • Laufend ({duration})",
+  "@timeTrackingEntryRunning": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingLinkedTask": "Verknüpfte Aufgabe: {title}",
+  "@timeTrackingLinkedTask": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingEditEntryTooltip": "Eintrag bearbeiten",
+  "timeTrackingDeleteEntryTooltip": "Eintrag löschen",
+  "timeTrackingFormTitle": "Zeiteintrag",
+  "timeTrackingFormStartLabel": "Start",
+  "timeTrackingFormEndLabel": "Ende",
+  "timeTrackingFormDurationLabel": "Dauer: {value}",
+  "@timeTrackingFormDurationLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingFormKindLabel": "Art",
+  "timeTrackingFormTaskLabel": "Verknüpfte Aufgabe",
+  "timeTrackingFormNoTask": "Keine Aufgabe",
+  "timeTrackingFormNoteLabel": "Notiz",
+  "timeTrackingFormCancel": "Abbrechen",
+  "timeTrackingFormSave": "Speichern",
+  "timeTrackingFormInvalidDuration": "Bitte ein Ende nach dem Start auswählen.",
+  "timeTrackingDashboardTitle": "Zeiterfassung",
+  "timeTrackingDashboardToday": "Heute: {duration}",
+  "@timeTrackingDashboardToday": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardWeek": "Woche {start} – {end}: {duration}",
+  "@timeTrackingDashboardWeek": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardDeltaDaily": "Tages-Delta: {value}",
+  "@timeTrackingDashboardDeltaDaily": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardDeltaWeekly": "Wochen-Delta: {value}",
+  "@timeTrackingDashboardDeltaWeekly": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardNoTarget": "Kein Ziel hinterlegt.",
+  "timeTrackingDashboardOpenModule": "Zeiterfassung öffnen",
+  "timeTrackingAlreadyRunning": "Eine Erfassung läuft bereits.",
+  "timeTrackingClockInSuccess": "Erfassung gestartet.",
+  "timeTrackingNoActiveEntry": "Keine laufende Erfassung.",
+  "timeTrackingClockOutSuccess": "Erfassung beendet ({duration}).",
+  "@timeTrackingClockOutSuccess": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
   "journalPlaceholder": "Halte deine Einträge hier fest und verbinde sie über Tags mit Notizen, Aufgaben und der Zeiterfassung.",
   "habitsPlaceholder": "Verfolge deine Gewohnheiten an dieser Stelle.",
   "ledgerPlaceholder": "Verwalte hier dein Haushaltsbudget.",

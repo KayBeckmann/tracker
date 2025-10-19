@@ -6,12 +6,20 @@ import '../data/local/app_database.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../notes/note_drawing_page.dart';
 import '../notes/note_edit_page.dart';
+import '../time_tracking/time_tracking_types.dart';
+import 'task_time_section.dart';
 
 class TaskEditPage extends StatefulWidget {
-  const TaskEditPage({super.key, required this.database, this.task});
+  const TaskEditPage({
+    super.key,
+    required this.database,
+    this.task,
+    required this.timeTrackingRounding,
+  });
 
   final AppDatabase database;
   final TaskEntry? task;
+  final TimeTrackingRounding timeTrackingRounding;
 
   bool get isEditing => task != null;
 
@@ -652,10 +660,28 @@ class _TaskEditPageState extends State<TaskEditPage> {
               ],
             ),
             const SizedBox(height: 24),
-            Text(
-              loc.tasksTrackedTimePlaceholder,
-              style: theme.textTheme.bodySmall,
-            ),
+            if (widget.task != null)
+              StreamBuilder<List<TimeEntry>>(
+                stream: widget.database.watchTimeEntriesForTask(
+                  widget.task!.id,
+                ),
+                builder: (context, snapshot) {
+                  final entries = snapshot.data ?? const <TimeEntry>[];
+                  if (entries.isEmpty) {
+                    return Text(
+                      loc.tasksTrackedTimeEmpty,
+                      style: theme.textTheme.bodySmall,
+                    );
+                  }
+                  final info = buildTaskTimeInfo(
+                    entries,
+                    widget.timeTrackingRounding,
+                  );
+                  return TaskTimeEntriesSection(timeInfo: info);
+                },
+              )
+            else
+              Text(loc.tasksTrackedTimeEmpty, style: theme.textTheme.bodySmall),
           ],
         ),
       ),

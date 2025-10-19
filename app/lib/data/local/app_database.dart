@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../time_tracking/time_tracking_types.dart';
 import 'connection/connection.dart';
 
 part 'app_database.g.dart';
@@ -89,7 +90,38 @@ class TaskEntries extends Table {
   DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
-@DriftDatabase(tables: [GreetingEntries, NoteEntries, TaskEntries])
+class TimeEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  DateTimeColumn get startedAt =>
+      dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get endedAt => dateTime().nullable()();
+
+  IntColumn get durationMinutes =>
+      integer().withDefault(const Constant(0))();
+
+  TextColumn get note => text().withDefault(const Constant(''))();
+
+  TextColumn get kind => textEnum<TimeEntryKind>()
+      .withDefault(Constant(TimeEntryKind.work.name))();
+
+  IntColumn get taskId => integer().nullable().references(
+        TaskEntries,
+        #id,
+        onDelete: KeyAction.setNull,
+      )();
+
+  BoolColumn get isManual => boolean().withDefault(const Constant(false))();
+
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt =>
+      dateTime().withDefault(currentDateAndTime)();
+}
+
+@DriftDatabase(tables: [GreetingEntries, NoteEntries, TaskEntries, TimeEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openConnection());
 
@@ -101,7 +133,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -127,6 +159,9 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(taskEntries, taskEntries.remoteVersion);
         await m.addColumn(taskEntries, taskEntries.needsSync);
         await m.addColumn(taskEntries, taskEntries.syncedAt);
+      }
+      if (from < 6) {
+        await m.createTable(timeEntries);
       }
     },
   );
@@ -430,5 +465,135 @@ class AppDatabase extends _$AppDatabase {
         ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
       return result;
     });
+  }
+
+  Stream<List<TimeEntry>> watchAllTimeEntries() {
+    return (select(timeEntries)..orderBy([
+          (tbl) => OrderingTerm.desc(tbl.startedAt),
+          (tbl) => OrderingTerm.desc(tbl.id),
+        ]))
+        .watch();
+  }
+
+  Stream<TimeEntry?> watchActiveTimeEntry() {
+    return (select(timeEntries)
+          ..where((tbl) => tbl.endedAt.isNull())
+          ..orderBy([
+            (tbl) => OrderingTerm.desc(tbl.startedAt),
+            (tbl) => OrderingTerm.desc(tbl.id),
+          ])
+          ..limit(1))
+        .watchSingleOrNull();
+  }
+
+  Stream<List<TimeEntry>> watchTimeEntriesForDay(DateTime day) {
+    final start = DateTime.utc(day.year, day.month, day.day);
+    final end = start.add(const Duration(days: 1));
+    return (select(timeEntries)
+          ..where(
+            (tbl) =>
+                tbl.startedAt.isBiggerOrEqualValue(start) &
+                tbl.startedAt.isSmallerThanValue(end),
+          )
+          ..orderBy([
+            (tbl) => OrderingTerm.asc(tbl.startedAt),
+            (tbl) => OrderingTerm.desc(tbl.id),
+          ]))
+        .watch();
+  }
+
+  Stream<List<TimeEntry>> watchTimeEntriesForTask(int taskId) {
+    return (select(timeEntries)
+          ..where((tbl) => tbl.taskId.equals(taskId))
+          ..orderBy([
+            (tbl) => OrderingTerm.desc(tbl.startedAt),
+            (tbl) => OrderingTerm.desc(tbl.id),
+          ]))
+        .watch();
+  }
+
+  Stream<List<TimeEntry>> watchTimeEntriesInRange(
+    DateTime start,
+    DateTime end,
+  ) {
+    final startUtc = start.toUtc();
+    final endUtc = end.toUtc();
+    return (select(timeEntries)
+          ..where(
+            (tbl) =>
+                tbl.startedAt.isBiggerOrEqualValue(startUtc) &
+                tbl.startedAt.isSmallerThanValue(endUtc),
+          )
+          ..orderBy([
+            (tbl) => OrderingTerm.asc(tbl.startedAt),
+            (tbl) => OrderingTerm.desc(tbl.id),
+          ]))
+        .watch();
+  }
+
+  Future<TimeEntry?> getActiveTimeEntry() {
+    return (select(timeEntries)
+          ..where((tbl) => tbl.endedAt.isNull())
+          ..orderBy([
+            (tbl) => OrderingTerm.desc(tbl.startedAt),
+            (tbl) => OrderingTerm.desc(tbl.id),
+          ])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  Future<int> insertTimeEntry({
+    required DateTime startedAt,
+    DateTime? endedAt,
+    required int durationMinutes,
+    required TimeEntryKind kind,
+    String note = '',
+    int? taskId,
+    bool isManual = false,
+  }) {
+    final now = DateTime.now().toUtc();
+    final companion = TimeEntriesCompanion.insert(
+      startedAt: Value(startedAt.toUtc()),
+      endedAt:
+          endedAt == null ? const Value.absent() : Value(endedAt.toUtc()),
+      durationMinutes: Value(durationMinutes),
+      note: Value(note),
+      kind: Value(kind),
+      taskId: taskId == null ? const Value.absent() : Value(taskId),
+      isManual: Value(isManual),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(timeEntries).insert(companion);
+  }
+
+  Future<void> updateTimeEntry(TimeEntry entry) async {
+    final updated = entry.copyWith(
+      updatedAt: DateTime.now().toUtc(),
+    );
+    await update(timeEntries).replace(updated);
+  }
+
+  Future<void> completeTimeEntry({
+    required int id,
+    required DateTime endedAt,
+    required int durationMinutes,
+    int? taskId,
+    String? note,
+  }) async {
+    final companion = TimeEntriesCompanion(
+      endedAt: Value(endedAt.toUtc()),
+      durationMinutes: Value(durationMinutes),
+      taskId: taskId == null ? const Value.absent() : Value(taskId),
+      note: note == null ? const Value.absent() : Value(note),
+      updatedAt: Value(DateTime.now().toUtc()),
+    );
+    await (update(timeEntries)..where((tbl) => tbl.id.equals(id))).write(
+      companion,
+    );
+  }
+
+  Future<int> deleteTimeEntry(int id) {
+    return (delete(timeEntries)..where((tbl) => tbl.id.equals(id))).go();
   }
 }

@@ -180,7 +180,23 @@
   "tasksCreateDrawingNote": "Skapa teckningsanteckning",
   "tasksNoNotesFound": "Inga anteckningar tillgängliga ännu.",
   "tasksOpenLinkedNoteButton": "Öppna anteckning",
-  "tasksTrackedTimePlaceholder": "När tidrapporteringen kopplats visas registrerade tider här.",
+  "tasksTrackedTimeEmpty": "Inga tider kopplade ännu.",
+  "tasksTrackedTimeTotal": "Registrerad arbetstid: {duration}",
+  "@tasksTrackedTimeTotal": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksTrackedTimeMore": "{count} ytterligare poster",
+  "@tasksTrackedTimeMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "tasksReminderNotificationGenericTitle": "Uppgiftspåminnelse",
   "tasksReminderNotificationBody": "Påminnelse för {date} kl. {time}.",
   "@tasksReminderNotificationBody": {
@@ -219,7 +235,181 @@
   "tasksPriorityMedium": "Medelhög prioritet",
   "tasksPriorityHigh": "Hög prioritet",
   "tasksPreviewOpenEditor": "Öppna i redigerare",
-  "timeTrackingPlaceholder": "Registrera dina arbetspass här snart och koppla ihop dem med uppgifter genom gemensamma taggar.",
+  "timeTrackingSettingsTitle": "Tidrapportering",
+  "timeTrackingSettingsRoundingLabel": "Avrundningsintervall",
+  "timeTrackingRoundingMinute": "På minuten",
+  "timeTrackingRoundingFive": "5-minuterssteg",
+  "timeTrackingRoundingTen": "10-minuterssteg",
+  "timeTrackingRoundingQuarter": "Kvartsteg",
+  "timeTrackingSettingsTargetLabel": "Måltimmar",
+  "timeTrackingSettingsTargetNone": "Inget mål",
+  "timeTrackingSettingsTargetDaily": "Dagligt mål",
+  "timeTrackingSettingsTargetWeekly": "Veckomål",
+  "timeTrackingSettingsDailyHoursLabel": "Mål per dag (HH:MM)",
+  "timeTrackingSettingsWeeklyHoursLabel": "Mål per vecka (HH:MM)",
+  "timeTrackingSettingsDurationHint": "Ange i formatet HH:MM, till exempel 08:00 eller 37:30.",
+  "timeTrackingSettingsInvalidDuration": "Ange en giltig tid i formatet HH:MM.",
+  "timeTrackingSummaryDay": "Vald dag: {date} • Arbete: {duration}",
+  "@timeTrackingSummaryDay": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingSummaryAllEntries": "Alla poster: {duration}",
+  "@timeTrackingSummaryAllEntries": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingSummaryWeek": "Vecka {start} – {end}: {duration}",
+  "@timeTrackingSummaryWeek": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingSummaryDelta": "Differens: {delta}",
+  "@timeTrackingSummaryDelta": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingCalendarPrevious": "Föregående månad",
+  "timeTrackingCalendarNext": "Nästa månad",
+  "timeTrackingStartNowButton": "Starta nu",
+  "timeTrackingStopNowButton": "Stoppa nu",
+  "timeTrackingAddManualButton": "Lägg till manuellt",
+  "timeTrackingNoEntriesForDay": "Inga poster för vald dag.",
+  "timeTrackingManualEntrySaved": "Tid sparad.",
+  "timeTrackingDeleteEntryTitle": "Ta bort tidspost",
+  "timeTrackingDeleteEntryMessage": "Vill du ta bort den här posten?",
+  "timeTrackingDeleteEntryConfirm": "Ta bort",
+  "timeTrackingEntryDeleted": "Tidsposten togs bort.",
+  "timeTrackingKindWork": "Arbete",
+  "timeTrackingKindVacation": "Semester",
+  "timeTrackingKindDayOff": "Ledig dag",
+  "timeTrackingKindSick": "Sjukfrånvaro",
+  "timeTrackingEntryInterval": "{start} – {end} • {duration}",
+  "@timeTrackingEntryInterval": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingEntryRunning": "{start} • Pågår ({duration})",
+  "@timeTrackingEntryRunning": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingLinkedTask": "Kopplad uppgift: {title}",
+  "@timeTrackingLinkedTask": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingEditEntryTooltip": "Redigera post",
+  "timeTrackingDeleteEntryTooltip": "Ta bort post",
+  "timeTrackingFormTitle": "Tidspost",
+  "timeTrackingFormStartLabel": "Start",
+  "timeTrackingFormEndLabel": "Slut",
+  "timeTrackingFormDurationLabel": "Varaktighet: {value}",
+  "@timeTrackingFormDurationLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingFormKindLabel": "Typ",
+  "timeTrackingFormTaskLabel": "Kopplad uppgift",
+  "timeTrackingFormNoTask": "Ingen uppgift",
+  "timeTrackingFormNoteLabel": "Notering",
+  "timeTrackingFormCancel": "Avbryt",
+  "timeTrackingFormSave": "Spara",
+  "timeTrackingFormInvalidDuration": "Välj en sluttid efter starttiden.",
+  "timeTrackingDashboardTitle": "Tidrapportering",
+  "timeTrackingDashboardToday": "Idag: {duration}",
+  "@timeTrackingDashboardToday": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardWeek": "Vecka {start} – {end}: {duration}",
+  "@timeTrackingDashboardWeek": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardDeltaDaily": "Daglig differens: {value}",
+  "@timeTrackingDashboardDeltaDaily": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardDeltaWeekly": "Veckodifferens: {value}",
+  "@timeTrackingDashboardDeltaWeekly": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "timeTrackingDashboardNoTarget": "Inget mål angivet.",
+  "timeTrackingDashboardOpenModule": "Öppna tidrapporteringen",
+  "timeTrackingAlreadyRunning": "En registrering pågår redan.",
+  "timeTrackingClockInSuccess": "Registrering startad.",
+  "timeTrackingNoActiveEntry": "Ingen aktiv registrering.",
+  "timeTrackingClockOutSuccess": "Registreringen stoppades ({duration}).",
+  "@timeTrackingClockOutSuccess": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
   "journalPlaceholder": "Samla dina journalanteckningar här och länka dem till alla moduler via delade taggar.",
   "habitsPlaceholder": "Följ dina vanor här.",
   "ledgerPlaceholder": "Hantera hushållsbudgeten här.",

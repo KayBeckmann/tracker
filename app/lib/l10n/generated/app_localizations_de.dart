@@ -449,8 +449,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksOpenLinkedNoteButton => 'Notiz öffnen';
 
   @override
-  String get tasksTrackedTimePlaceholder =>
-      'Sobald die Zeiterfassung verbunden ist, erscheinen hier die erfassten Zeiten.';
+  String get tasksTrackedTimeEmpty => 'Noch keine Zeiten verknüpft.';
+
+  @override
+  String tasksTrackedTimeTotal(String duration) {
+    return 'Erfasste Arbeitszeit: $duration';
+  }
+
+  @override
+  String tasksTrackedTimeMore(int count) {
+    return '$count weitere Buchungen';
+  }
 
   @override
   String get tasksReminderNotificationGenericTitle => 'Aufgaben-Erinnerung';
@@ -492,8 +501,215 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksPreviewOpenEditor => 'Im Editor öffnen';
 
   @override
-  String get timeTrackingPlaceholder =>
-      'Erfasse deine Arbeitszeiten bald direkt hier und verknüpfe sie über gemeinsame Tags mit den Aufgaben.';
+  String get timeTrackingSettingsTitle => 'Zeiterfassung';
+
+  @override
+  String get timeTrackingSettingsRoundingLabel => 'Rundungsintervall';
+
+  @override
+  String get timeTrackingRoundingMinute => 'Minutengenau';
+
+  @override
+  String get timeTrackingRoundingFive => '5-Minuten-Schritte';
+
+  @override
+  String get timeTrackingRoundingTen => '10-Minuten-Schritte';
+
+  @override
+  String get timeTrackingRoundingQuarter => 'Viertelstundenschritte';
+
+  @override
+  String get timeTrackingSettingsTargetLabel => 'Sollstunden';
+
+  @override
+  String get timeTrackingSettingsTargetNone => 'Kein Ziel';
+
+  @override
+  String get timeTrackingSettingsTargetDaily => 'Tagesziel';
+
+  @override
+  String get timeTrackingSettingsTargetWeekly => 'Wochenziel';
+
+  @override
+  String get timeTrackingSettingsDailyHoursLabel => 'Soll pro Tag (HH:MM)';
+
+  @override
+  String get timeTrackingSettingsWeeklyHoursLabel => 'Soll pro Woche (HH:MM)';
+
+  @override
+  String get timeTrackingSettingsDurationHint =>
+      'Verwende das Format HH:MM, z. B. 08:00 oder 37:30.';
+
+  @override
+  String get timeTrackingSettingsInvalidDuration =>
+      'Bitte gib eine gültige Dauer im Format HH:MM ein.';
+
+  @override
+  String timeTrackingSummaryDay(String date, String duration) {
+    return 'Ausgewählter Tag: $date • Arbeit: $duration';
+  }
+
+  @override
+  String timeTrackingSummaryAllEntries(String duration) {
+    return 'Alle Einträge: $duration';
+  }
+
+  @override
+  String timeTrackingSummaryWeek(String start, String end, String duration) {
+    return 'Woche $start – $end: $duration';
+  }
+
+  @override
+  String timeTrackingSummaryDelta(String delta) {
+    return 'Delta: $delta';
+  }
+
+  @override
+  String get timeTrackingCalendarPrevious => 'Vorheriger Monat';
+
+  @override
+  String get timeTrackingCalendarNext => 'Nächster Monat';
+
+  @override
+  String get timeTrackingStartNowButton => 'Jetzt einstempeln';
+
+  @override
+  String get timeTrackingStopNowButton => 'Jetzt ausstempeln';
+
+  @override
+  String get timeTrackingAddManualButton => 'Zeit nachtragen';
+
+  @override
+  String get timeTrackingNoEntriesForDay =>
+      'Keine Einträge für den ausgewählten Tag.';
+
+  @override
+  String get timeTrackingManualEntrySaved => 'Zeiteintrag gespeichert.';
+
+  @override
+  String get timeTrackingDeleteEntryTitle => 'Zeiteintrag löschen';
+
+  @override
+  String get timeTrackingDeleteEntryMessage =>
+      'Möchtest du diesen Zeiteintrag löschen?';
+
+  @override
+  String get timeTrackingDeleteEntryConfirm => 'Löschen';
+
+  @override
+  String get timeTrackingEntryDeleted => 'Zeiteintrag gelöscht.';
+
+  @override
+  String get timeTrackingKindWork => 'Arbeit';
+
+  @override
+  String get timeTrackingKindVacation => 'Urlaub';
+
+  @override
+  String get timeTrackingKindDayOff => 'Freier Tag';
+
+  @override
+  String get timeTrackingKindSick => 'Krankheit';
+
+  @override
+  String timeTrackingEntryInterval(String start, String end, String duration) {
+    return '$start – $end • $duration';
+  }
+
+  @override
+  String timeTrackingEntryRunning(String start, String duration) {
+    return '$start • Laufend ($duration)';
+  }
+
+  @override
+  String timeTrackingLinkedTask(String title) {
+    return 'Verknüpfte Aufgabe: $title';
+  }
+
+  @override
+  String get timeTrackingEditEntryTooltip => 'Eintrag bearbeiten';
+
+  @override
+  String get timeTrackingDeleteEntryTooltip => 'Eintrag löschen';
+
+  @override
+  String get timeTrackingFormTitle => 'Zeiteintrag';
+
+  @override
+  String get timeTrackingFormStartLabel => 'Start';
+
+  @override
+  String get timeTrackingFormEndLabel => 'Ende';
+
+  @override
+  String timeTrackingFormDurationLabel(String value) {
+    return 'Dauer: $value';
+  }
+
+  @override
+  String get timeTrackingFormKindLabel => 'Art';
+
+  @override
+  String get timeTrackingFormTaskLabel => 'Verknüpfte Aufgabe';
+
+  @override
+  String get timeTrackingFormNoTask => 'Keine Aufgabe';
+
+  @override
+  String get timeTrackingFormNoteLabel => 'Notiz';
+
+  @override
+  String get timeTrackingFormCancel => 'Abbrechen';
+
+  @override
+  String get timeTrackingFormSave => 'Speichern';
+
+  @override
+  String get timeTrackingFormInvalidDuration =>
+      'Bitte ein Ende nach dem Start auswählen.';
+
+  @override
+  String get timeTrackingDashboardTitle => 'Zeiterfassung';
+
+  @override
+  String timeTrackingDashboardToday(String duration) {
+    return 'Heute: $duration';
+  }
+
+  @override
+  String timeTrackingDashboardWeek(String start, String end, String duration) {
+    return 'Woche $start – $end: $duration';
+  }
+
+  @override
+  String timeTrackingDashboardDeltaDaily(String value) {
+    return 'Tages-Delta: $value';
+  }
+
+  @override
+  String timeTrackingDashboardDeltaWeekly(String value) {
+    return 'Wochen-Delta: $value';
+  }
+
+  @override
+  String get timeTrackingDashboardNoTarget => 'Kein Ziel hinterlegt.';
+
+  @override
+  String get timeTrackingDashboardOpenModule => 'Zeiterfassung öffnen';
+
+  @override
+  String get timeTrackingAlreadyRunning => 'Eine Erfassung läuft bereits.';
+
+  @override
+  String get timeTrackingClockInSuccess => 'Erfassung gestartet.';
+
+  @override
+  String get timeTrackingNoActiveEntry => 'Keine laufende Erfassung.';
+
+  @override
+  String timeTrackingClockOutSuccess(String duration) {
+    return 'Erfassung beendet ($duration).';
+  }
 
   @override
   String get journalPlaceholder =>
