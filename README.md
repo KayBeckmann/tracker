@@ -28,20 +28,22 @@ dart bin/main.dart --apply-migrations
 Weitere Hinweise (CLI-Wrapperskript, Migrationen, Konfiguration) findest du in
 `backend/README.md`.
 
-### Homepage & Web-App
+### Infrastruktur (Docker Compose)
 
-Die statische Produktseite + Wiki sowie die Flutter-Web-App lassen sich via Docker Compose starten:
+Alle Komponenten – Homepage, Wiki, Flutter-Web-App, Backend und Datenbank – lassen sich gemeinsam starten:
 
 ```bash
-docker compose -f docker-compose.homepage.yml up --build
+docker compose up --build -d
 ```
 
-Anschließend:
+Der Reverse-Proxy routet anhand der Hostnamen:
 
-- Homepage: <http://localhost:8080>
-- Web-App: <http://localhost:8081>
+- Homepage: `https://personal-tracker.life` (lokal via `http://localhost`)
+- Wiki: `https://personal-tracker.life/wiki/`
+- Web-App: `https://app.personal-tracker.life`
+- API: `https://api.personal-tracker.life`
 
-Weitere Details findest du in `homepage/README.md`.
+Für lokale Tests kannst du Einträge wie `127.0.0.1 app.personal-tracker.life` und `127.0.0.1 api.personal-tracker.life` in `/etc/hosts` ergänzen oder alternativ direkt den Reverse-Proxy unter `http://localhost` aufrufen.
 
 ## Weitere Unterlagen
 
