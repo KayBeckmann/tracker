@@ -1,31 +1,10 @@
 services:
-  reverse-proxy:
-    image: nginx:alpine
-    depends_on:
-      homepage:
-        condition: service_started
-      wiki:
-        condition: service_started
-      webapp:
-        condition: service_started
-      backend:
-        condition: service_started
-    ports:
-      - "80:80"
-    volumes:
-      - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
-    networks:
-      - proxy
-    restart: unless-stopped
-
   homepage:
     build:
       context: ./homepage
     image: tracker/homepage:latest
-    expose:
-      - "80"
-    networks:
-      - proxy
+    ports:
+      - "8080:80"
     restart: unless-stopped
 
   wiki:
@@ -33,10 +12,8 @@ services:
       context: ./homepage
       dockerfile: wiki/Dockerfile
     image: tracker/wiki:latest
-    expose:
-      - "80"
-    networks:
-      - proxy
+    ports:
+      - "8082:80"
     restart: unless-stopped
 
   webapp:
@@ -46,10 +23,8 @@ services:
       args:
         BACKEND_URL: https://api.personal-tracker.life
     image: tracker/webapp:latest
-    expose:
-      - "80"
-    networks:
-      - proxy
+    ports:
+      - "8081:80"
     restart: unless-stopped
 
   db:
@@ -76,18 +51,16 @@ services:
     environment:
       DATABASE_URL: postgres://tracker:tracker@db:5432/tracker
       AUTH_SECRET_KEY: change-this-secret
-      CORS_ALLOW_ORIGINS: "*"
+      CORS_ALLOW_ORIGINS: "https://app.personal-tracker.life,https://personal-tracker.life,https://www.personal-tracker.life"
     depends_on:
       db:
         condition: service_healthy
-    expose:
-      - "8080"
+    ports:
+      - "8083:8080"
     networks:
-      - proxy
       - internal
     restart: unless-stopped
 
 networks:
-  proxy:
   internal:
     internal: true

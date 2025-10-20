@@ -36,14 +36,16 @@ Alle Komponenten – Homepage, Wiki, Flutter-Web-App, Backend und Datenbank – 
 docker compose up --build -d
 ```
 
-Der Reverse-Proxy routet anhand der Hostnamen:
+Die Container veröffentlichen folgende Ports (Standard-Setup):
 
-- Homepage: `https://personal-tracker.life` (lokal via `http://localhost`)
-- Wiki: `https://personal-tracker.life/wiki/`
-- Web-App: `https://app.personal-tracker.life`
-- API: `https://api.personal-tracker.life`
+- Homepage: `http://localhost:8080`
+- Web-App: `http://localhost:8081`
+- Wiki: `http://localhost:8082`
+- API/Backend: `http://localhost:8083`
 
-Für lokale Tests kannst du Einträge wie `127.0.0.1 app.personal-tracker.life` und `127.0.0.1 api.personal-tracker.life` in `/etc/hosts` ergänzen oder alternativ direkt den Reverse-Proxy unter `http://localhost` aufrufen.
+Auf dem Server läuft der Reverse-Proxy separat und kann diese Ports den Domains `personal-tracker.life`, `app.personal-tracker.life` und `api.personal-tracker.life` zuordnen. Eine Beispielkonfiguration liegt unter `deploy/nginx/conf.d/personal-tracker.conf`.
+
+Für lokale Tests kannst du optional Hosts-Einträge wie `127.0.0.1 app.personal-tracker.life` und `127.0.0.1 api.personal-tracker.life` setzen oder direkt die oben genannten Ports aufrufen.
 
 ## Weitere Unterlagen
 
