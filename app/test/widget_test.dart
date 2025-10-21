@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:ui';
+
+import 'package:flutter/widgets.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
@@ -33,14 +36,20 @@ void main() {
   });
 
   testWidgets('renders initial tracker screen', (WidgetTester tester) async {
+    final binding = tester.binding;
+    binding.window.physicalSizeTestValue = const Size(1200, 800);
+    binding.window.devicePixelRatioTestValue = 1.0;
+    addTearDown(binding.window.clearPhysicalSizeTestValue);
+    addTearDown(binding.window.clearDevicePixelRatioTestValue);
+
     await tester.pumpWidget(TrackerApp(database: database));
     await tester.pumpAndSettle();
 
-    expect(find.text('Sign in'), findsOneWidget);
-    expect(
-      find.text('Sign in with your email address and password.'),
-      findsOneWidget,
-    );
-    expect(find.text('Register'), findsOneWidget);
+    expect(find.text('Dashboard'), findsWidgets);
+    expect(find.text('Journal'), findsWidgets);
+    expect(find.text('Settings'), findsWidgets);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
   });
 }

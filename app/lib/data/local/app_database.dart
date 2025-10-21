@@ -12,6 +12,8 @@ enum TaskStatus { todo, inProgress, done }
 
 enum TaskPriority { low, medium, high }
 
+enum JournalTrackerKind { checkbox, rating }
+
 const Uuid _uuid = Uuid();
 
 class GreetingEntries extends Table {
@@ -93,35 +95,92 @@ class TaskEntries extends Table {
 class TimeEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  DateTimeColumn get startedAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get startedAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get endedAt => dateTime().nullable()();
 
-  IntColumn get durationMinutes =>
-      integer().withDefault(const Constant(0))();
+  IntColumn get durationMinutes => integer().withDefault(const Constant(0))();
 
   TextColumn get note => text().withDefault(const Constant(''))();
 
-  TextColumn get kind => textEnum<TimeEntryKind>()
-      .withDefault(Constant(TimeEntryKind.work.name))();
+  TextColumn get kind => textEnum<TimeEntryKind>().withDefault(
+    Constant(TimeEntryKind.work.name),
+  )();
 
   IntColumn get taskId => integer().nullable().references(
-        TaskEntries,
-        #id,
-        onDelete: KeyAction.setNull,
-      )();
+    TaskEntries,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
 
   BoolColumn get isManual => boolean().withDefault(const Constant(false))();
 
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
-  DateTimeColumn get updatedAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-@DriftDatabase(tables: [GreetingEntries, NoteEntries, TaskEntries, TimeEntries])
+class JournalEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  DateTimeColumn get entryDate => dateTime().unique()();
+
+  TextColumn get content => text().withDefault(const Constant(''))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class JournalTrackers extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text()();
+
+  TextColumn get description => text().withDefault(const Constant(''))();
+
+  TextColumn get kind => textEnum<JournalTrackerKind>().withDefault(
+    Constant(JournalTrackerKind.checkbox.name),
+  )();
+
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class JournalTrackerValues extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  IntColumn get trackerId =>
+      integer().references(JournalTrackers, #id, onDelete: KeyAction.cascade)();
+
+  DateTimeColumn get entryDate => dateTime()();
+
+  IntColumn get value => integer().withDefault(const Constant(0))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  List<String> get customConstraints => const [
+    'UNIQUE(tracker_id, entry_date)',
+  ];
+}
+
+@DriftDatabase(
+  tables: [
+    GreetingEntries,
+    NoteEntries,
+    TaskEntries,
+    TimeEntries,
+    JournalEntries,
+    JournalTrackers,
+    JournalTrackerValues,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openConnection());
 
@@ -133,7 +192,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -162,6 +221,11 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 6) {
         await m.createTable(timeEntries);
+      }
+      if (from < 7) {
+        await m.createTable(journalEntries);
+        await m.createTable(journalTrackers);
+        await m.createTable(journalTrackerValues);
       }
     },
   );
@@ -554,8 +618,7 @@ class AppDatabase extends _$AppDatabase {
     final now = DateTime.now().toUtc();
     final companion = TimeEntriesCompanion.insert(
       startedAt: Value(startedAt.toUtc()),
-      endedAt:
-          endedAt == null ? const Value.absent() : Value(endedAt.toUtc()),
+      endedAt: endedAt == null ? const Value.absent() : Value(endedAt.toUtc()),
       durationMinutes: Value(durationMinutes),
       note: Value(note),
       kind: Value(kind),
@@ -568,9 +631,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> updateTimeEntry(TimeEntry entry) async {
-    final updated = entry.copyWith(
-      updatedAt: DateTime.now().toUtc(),
-    );
+    final updated = entry.copyWith(updatedAt: DateTime.now().toUtc());
     await update(timeEntries).replace(updated);
   }
 
@@ -588,12 +649,198 @@ class AppDatabase extends _$AppDatabase {
       note: note == null ? const Value.absent() : Value(note),
       updatedAt: Value(DateTime.now().toUtc()),
     );
-    await (update(timeEntries)..where((tbl) => tbl.id.equals(id))).write(
-      companion,
-    );
+    await (update(
+      timeEntries,
+    )..where((tbl) => tbl.id.equals(id))).write(companion);
   }
 
   Future<int> deleteTimeEntry(int id) {
     return (delete(timeEntries)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  DateTime _normalizeDate(DateTime date) =>
+      DateTime.utc(date.year, date.month, date.day);
+
+  Stream<List<JournalEntry>> watchJournalEntries() {
+    return (select(journalEntries)..orderBy([
+          (tbl) => OrderingTerm.desc(tbl.entryDate),
+          (tbl) => OrderingTerm.desc(tbl.id),
+        ]))
+        .watch();
+  }
+
+  Stream<JournalEntry?> watchJournalEntryForDate(DateTime date) {
+    final normalized = _normalizeDate(date);
+    return (select(journalEntries)
+          ..where((tbl) => tbl.entryDate.equals(normalized))
+          ..limit(1))
+        .watchSingleOrNull();
+  }
+
+  Future<JournalEntry?> getJournalEntryForDate(DateTime date) {
+    final normalized = _normalizeDate(date);
+    return (select(journalEntries)
+          ..where((tbl) => tbl.entryDate.equals(normalized))
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  Future<int> upsertJournalEntry({
+    required DateTime date,
+    required String content,
+  }) async {
+    final normalized = _normalizeDate(date);
+    final now = DateTime.now().toUtc();
+    final existing = await getJournalEntryForDate(normalized);
+    if (existing == null) {
+      final companion = JournalEntriesCompanion.insert(
+        entryDate: normalized,
+        content: Value(content),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+      return into(journalEntries).insert(companion);
+    }
+    final companion = JournalEntriesCompanion(
+      content: Value(content),
+      updatedAt: Value(now),
+    );
+    await (update(
+      journalEntries,
+    )..where((tbl) => tbl.entryDate.equals(normalized))).write(companion);
+    return existing.id;
+  }
+
+  Future<int> deleteJournalEntry(DateTime date) {
+    final normalized = _normalizeDate(date);
+    return (delete(
+      journalEntries,
+    )..where((tbl) => tbl.entryDate.equals(normalized))).go();
+  }
+
+  Stream<List<JournalTracker>> watchJournalTrackers() {
+    return (select(journalTrackers)..orderBy([
+          (tbl) => OrderingTerm.asc(tbl.sortOrder),
+          (tbl) => OrderingTerm.asc(tbl.createdAt),
+        ]))
+        .watch();
+  }
+
+  Future<int> insertJournalTracker({
+    required String name,
+    String description = '',
+    required JournalTrackerKind kind,
+  }) async {
+    final now = DateTime.now().toUtc();
+    final latest =
+        await (select(journalTrackers)
+              ..orderBy([(tbl) => OrderingTerm.desc(tbl.sortOrder)])
+              ..limit(1))
+            .getSingleOrNull();
+    final int maxSortOrder = latest?.sortOrder ?? -1;
+    final companion = JournalTrackersCompanion.insert(
+      name: name,
+      description: Value(description),
+      kind: Value(kind),
+      sortOrder: Value(maxSortOrder + 1),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(journalTrackers).insert(companion);
+  }
+
+  Future<void> updateJournalTracker(JournalTracker tracker) async {
+    final updated = tracker.copyWith(updatedAt: DateTime.now().toUtc());
+    await update(journalTrackers).replace(updated);
+  }
+
+  Future<int> deleteJournalTracker(int id) {
+    return (delete(journalTrackers)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<void> reorderJournalTrackers(List<int> orderedIds) async {
+    await transaction(() async {
+      final now = DateTime.now().toUtc();
+      for (var i = 0; i < orderedIds.length; i++) {
+        final id = orderedIds[i];
+        await (update(
+          journalTrackers,
+        )..where((tbl) => tbl.id.equals(id))).write(
+          JournalTrackersCompanion(sortOrder: Value(i), updatedAt: Value(now)),
+        );
+      }
+    });
+  }
+
+  Stream<List<JournalTrackerValue>> watchJournalTrackerValues() {
+    return (select(journalTrackerValues)..orderBy([
+          (tbl) => OrderingTerm.desc(tbl.entryDate),
+          (tbl) => OrderingTerm.asc(tbl.trackerId),
+        ]))
+        .watch();
+  }
+
+  Stream<List<JournalTrackerValue>> watchJournalTrackerValuesForDate(
+    DateTime date,
+  ) {
+    final normalized = _normalizeDate(date);
+    return (select(journalTrackerValues)
+          ..where((tbl) => tbl.entryDate.equals(normalized))
+          ..orderBy([
+            (tbl) => OrderingTerm.asc(tbl.trackerId),
+            (tbl) => OrderingTerm.desc(tbl.updatedAt),
+          ]))
+        .watch();
+  }
+
+  Future<void> setJournalTrackerValue({
+    required int trackerId,
+    required DateTime date,
+    required int value,
+  }) async {
+    final normalized = _normalizeDate(date);
+    final now = DateTime.now().toUtc();
+    final sanitized = value.clamp(0, 5);
+    final existing =
+        await (select(journalTrackerValues)
+              ..where(
+                (tbl) =>
+                    tbl.trackerId.equals(trackerId) &
+                    tbl.entryDate.equals(normalized),
+              )
+              ..limit(1))
+            .getSingleOrNull();
+    if (existing == null) {
+      final companion = JournalTrackerValuesCompanion.insert(
+        trackerId: trackerId,
+        entryDate: normalized,
+        value: Value(sanitized),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      );
+      await into(journalTrackerValues).insert(companion);
+      return;
+    }
+    await (update(
+      journalTrackerValues,
+    )..where((tbl) => tbl.id.equals(existing.id))).write(
+      JournalTrackerValuesCompanion(
+        value: Value(sanitized),
+        updatedAt: Value(now),
+      ),
+    );
+  }
+
+  Future<int> clearJournalTrackerValue({
+    required int trackerId,
+    required DateTime date,
+  }) {
+    final normalized = _normalizeDate(date);
+    return (delete(journalTrackerValues)..where(
+          (tbl) =>
+              tbl.trackerId.equals(trackerId) &
+              tbl.entryDate.equals(normalized),
+        ))
+        .go();
   }
 }

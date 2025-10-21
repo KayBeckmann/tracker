@@ -13,6 +13,11 @@
   "navigationUserTooltip": "Inloggad användare",
   "navLogout": "Logga ut",
   "navClearHistory": "Rensa lokal historik",
+  "commonCancel": "Avbryt",
+  "commonSave": "Spara",
+  "commonDelete": "Ta bort",
+  "commonCreate": "Skapa",
+  "commonEdit": "Redigera",
   "dashboardWelcome": "Välkommen till instrumentpanelen, {name}",
   "dashboardSignedInAs": "Inloggad som {email}. Följ din backend-kommunikation och starta åtgärder direkt härifrån.",
   "dashboardCardStoredResponses": "Sparade svar",
@@ -411,6 +416,126 @@
     }
   },
   "journalPlaceholder": "Samla dina journalanteckningar här och länka dem till alla moduler via delade taggar.",
+  "journalUnsavedChangesTitle": "Osparade ändringar",
+  "journalUnsavedChangesMessage": "Du har osparade ändringar för den här dagen. Hur vill du gå vidare?",
+  "journalDiscardChanges": "Ignorera",
+  "journalEntrySaved": "Dagboksinlägget sparades.",
+  "journalEntrySaveError": "Det gick inte att spara inlägget. Försök igen.",
+  "journalDeleteEntryTitle": "Ta bort inlägg",
+  "journalDeleteEntryMessage": "Vill du ta bort dagboksinlägget för den här dagen?",
+  "journalEntryDeleted": "Dagboksinlägget har tagits bort.",
+  "journalApplyTemplateTitle": "Använd dagmall",
+  "journalApplyTemplateMessage": "Vill du ersätta innehållet med din dagliga mall?",
+  "journalApplyTemplateButton": "Använd mall",
+  "journalNoEntryForDay": "Inget inlägg för den här dagen ännu.",
+  "journalLastUpdated": "Senast uppdaterad {timestamp}",
+  "@journalLastUpdated": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "journalTabEdit": "Redigera",
+  "journalTabPreview": "Förhandsvisa",
+  "journalEditorHint": "Skriv ditt inlägg med Markdown-format.",
+  "journalPreviewEmpty": "Inget att visa ännu.",
+  "journalTrendsTitle": "Senaste trender",
+  "journalTrendsDescription": "Tracker-värden för de senaste 30 dagarna.",
+  "journalTrendsEmpty": "Lägg till tracker för att se trender.",
+  "journalTrendDateRange": "{start} - {end}",
+  "@journalTrendDateRange": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "journalTrendNoData": "Inga inlägg ännu.",
+  "journalTrendLegendCheckbox": "0 = nej, 1 = ja",
+  "journalTrendLegendRating": "Intervall 0-5",
+  "journalTrackersSectionTitle": "Tracker",
+  "journalAddTrackerButton": "Lägg till tracker",
+  "journalTrackersEmpty": "Inga tracker ännu. Skapa en för att följa dina rutiner.",
+  "journalAddTrackerTitle": "Lägg till tracker",
+  "journalEditTrackerTitle": "Redigera tracker",
+  "journalDeleteTrackerTitle": "Ta bort tracker",
+  "journalDeleteTrackerMessage": "Vill du ta bort trackern \"{name}\" och alla sparade värden?",
+  "@journalDeleteTrackerMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "journalTrackerNameLabel": "Namn",
+  "journalTrackerNameError": "Ange ett namn.",
+  "journalTrackerKindLabel": "Trackertyp",
+  "journalTrackerKindCheckbox": "Ja / Nej",
+  "journalTrackerKindRating": "Betyg (0-5)",
+  "journalTrackerDescriptionLabel": "Beskrivning (valfritt)",
+  "journalTrackerRatingTooltip": "Sätt betyg till {rating} stjärnor",
+  "@journalTrackerRatingTooltip": {
+    "placeholders": {
+      "rating": {
+        "type": "int"
+      }
+    }
+  },
+  "journalTrackerClearTooltip": "Rensa värde",
+  "journalCalendarPrevious": "Föregående månad",
+  "journalCalendarNext": "Nästa månad",
+  "journalLockTooltip": "Lås journalen",
+  "journalLockedTitle": "Journalen är låst",
+  "journalLockedMessage": "Lås upp journalen med din PIN-kod eller biometrik för att visa inläggen.",
+  "journalPinLabel": "PIN-kod",
+  "journalUnlockWithPin": "Lås upp med PIN",
+  "journalUnlockWithBiometrics": "Använd biometrik",
+  "journalPinRequired": "Ange din PIN-kod.",
+  "journalUnlockSuccess": "Journalen är upplåst.",
+  "journalUnlockFailed": "Fel PIN-kod. Försök igen.",
+  "journalNoProtectionConfigured": "Journalen har inget skydd konfigurerat.",
+  "journalBiometricUnavailable": "Biometrisk autentisering är inte tillgänglig på den här enheten.",
+  "journalBiometricPrompt": "Autentisera dig för att låsa upp journalen.",
+  "journalBiometricError": "Biometrisk autentisering misslyckades.",
+  "journalTemplateSaved": "Daglig mall sparad.",
+  "journalTemplateCleared": "Daglig mall rensad.",
+  "journalChangePinDialogTitle": "Ändra PIN-kod",
+  "journalSetPinDialogTitle": "Ställ in PIN-kod",
+  "journalNewPinLabel": "Ny PIN-kod (4-12 siffror)",
+  "journalPinValidationError": "Ange 4-12 siffror.",
+  "journalConfirmPinLabel": "Bekräfta PIN-kod",
+  "journalPinMismatchError": "PIN-koderna matchar inte.",
+  "journalPinSetSuccess": "PIN-koden sparades.",
+  "journalRemovePinTitle": "Ta bort PIN-kod",
+  "journalRemovePinDescription": "Ange din nuvarande PIN-kod för att ta bort den.",
+  "journalCurrentPinLabel": "Nuvarande PIN-kod",
+  "journalRemovePinError": "PIN-koden är felaktig.",
+  "journalPinRemoved": "PIN-koden har tagits bort.",
+  "journalBiometricEnabledMessage": "Biometrisk upplåsning har aktiverats.",
+  "journalBiometricDisabledMessage": "Biometrisk upplåsning har inaktiverats.",
+  "journalSettingsTitle": "Journal",
+  "journalSettingsDescription": "Konfigurera daglig mall och säkerhet för din journal.",
+  "journalTemplateLabel": "Daglig mall",
+  "journalTemplateHint": "Malltext som fylls i för nya dagar.",
+  "journalTemplateClear": "Rensa mall",
+  "journalPinStatusSet": "PIN-skydd aktiverat",
+  "journalPinStatusUnset": "PIN-skydd inaktiverat",
+  "journalPinStatusDescription": "En PIN-kod krävs för att öppna journalen.",
+  "journalPinStatusDescriptionUnset": "Ställ in en PIN-kod för att skydda journalen.",
+  "journalChangePinButton": "Ändra PIN-kod",
+  "journalSetPinButton": "Ställ in PIN-kod",
+  "journalRemovePinButton": "Ta bort PIN-kod",
+  "journalBiometricToggleTitle": "Lås upp med biometrik",
+  "journalBiometricToggleSubtitle": "Tillåt fingeravtryck eller ansiktsigenkänning för att låsa upp journalen.",
+  "journalLockNowButton": "Lås journalen nu",
+  "journalLockedStatus": "Journalen är låst.",
+  "journalUnlockedStatus": "Journalen är upplåst.",
+  "journalProtectionDisabledHint": "Aktivera PIN-kod eller biometrik för att skydda journalen.",
+  "journalLockedNotice": "Journalen är låst. Lås upp den i modulen.",
   "habitsPlaceholder": "Följ dina vanor här.",
   "ledgerPlaceholder": "Hantera hushållsbudgeten här.",
   "historySubtitle": "Namn: {name}, Källa: {source}, Tid: {timestamp}",

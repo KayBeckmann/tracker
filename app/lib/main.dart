@@ -1,15 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:cryptography/cryptography.dart';
+import 'package:local_auth/local_auth.dart';
 
 import 'data/local/app_database.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'models/membership_status.dart';
 import 'notes/notes_page.dart';
+import 'journal/journal_lock_view.dart';
+import 'journal/journal_page.dart';
 import 'tasks/tasks_page.dart';
 import 'sync/encryption_service.dart';
 import 'sync/sync_api_client.dart';
@@ -36,6 +42,10 @@ const String timeTrackingDailyTargetMinutesKey =
     'time_tracking_daily_target_minutes';
 const String timeTrackingWeeklyTargetMinutesKey =
     'time_tracking_weekly_target_minutes';
+const String journalTemplateKey = 'journal_template';
+const String journalPinHashKey = 'journal_pin_hash';
+const String journalPinSaltKey = 'journal_pin_salt';
+const String journalBiometricEnabledKey = 'journal_biometric_enabled';
 
 const List<Locale> supportedAppLocales = <Locale>[
   Locale('en'),
@@ -255,6 +265,7 @@ class _HomePageState extends State<HomePage> {
       TextEditingController();
   final TextEditingController _registerDisplayNameController =
       TextEditingController();
+  late final TextEditingController _journalTemplateController;
   late final TextEditingController _dailyTargetController;
   late final TextEditingController _weeklyTargetController;
 
@@ -281,8 +292,23 @@ class _HomePageState extends State<HomePage> {
   late final SyncApiClient _syncClient;
   late final EncryptionService _encryptionService;
   late final SyncEngine _syncEngine;
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  String _journalTemplate = '';
+  String? _journalPinHash;
+  String? _journalPinSalt;
+  bool _journalBiometricEnabled = false;
+  bool _journalUnlocked = true;
   bool _isSyncInProgress = false;
   StreamSubscription<List<TaskEntry>>? _taskReminderSubscription;
+
+  bool get _hasJournalPin =>
+      _journalPinHash != null &&
+      _journalPinSalt != null &&
+      _journalPinHash!.isNotEmpty &&
+      _journalPinSalt!.isNotEmpty;
+
+  bool get _journalProtectionEnabled =>
+      _hasJournalPin || _journalBiometricEnabled;
 
   @override
   void initState() {
@@ -302,6 +328,13 @@ class _HomePageState extends State<HomePage> {
     _moduleOrder = List<_AppSection>.from(_defaultModuleOrder);
     _enabledModules = _defaultModuleOrder.toSet();
     _loadModuleSettings();
+    _journalTemplateController = TextEditingController(text: _journalTemplate);
+    _journalTemplateController.addListener(() {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    });
     _pendingThemeMode = widget.themeMode;
     _pendingSeedColor = widget.seedColor;
     _dailyTargetController = TextEditingController(
@@ -366,6 +399,7 @@ class _HomePageState extends State<HomePage> {
     _registerEmailController.dispose();
     _registerPasswordController.dispose();
     _registerDisplayNameController.dispose();
+    _journalTemplateController.dispose();
     _dailyTargetController.dispose();
     _weeklyTargetController.dispose();
     _taskReminderSubscription?.cancel();
@@ -445,6 +479,25 @@ class _HomePageState extends State<HomePage> {
     if (storedWeekly is int && storedWeekly >= 0) {
       _timeTrackingWeeklyTargetMinutes = storedWeekly;
     }
+    final Object? storedTemplate = _trackerBox.get(journalTemplateKey);
+    if (storedTemplate is String) {
+      _journalTemplate = storedTemplate;
+    } else {
+      _journalTemplate = '';
+    }
+    final Object? storedPinHash = _trackerBox.get(journalPinHashKey);
+    _journalPinHash = storedPinHash is String && storedPinHash.isNotEmpty
+        ? storedPinHash
+        : null;
+    final Object? storedPinSalt = _trackerBox.get(journalPinSaltKey);
+    _journalPinSalt = storedPinSalt is String && storedPinSalt.isNotEmpty
+        ? storedPinSalt
+        : null;
+    final Object? storedBiometric = _trackerBox.get(journalBiometricEnabledKey);
+    _journalBiometricEnabled = storedBiometric is bool
+        ? storedBiometric
+        : false;
+    _journalUnlocked = !_journalProtectionEnabled;
   }
 
   void _persistModuleSettings() {
@@ -1809,13 +1862,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildJournal(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return Center(
-      child: Text(
-        loc.journalPlaceholder,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
+    if (_journalProtectionEnabled && !_journalUnlocked) {
+      return JournalLockView(
+        hasPin: _hasJournalPin,
+        biometricEnabled: _journalBiometricEnabled,
+        onValidatePin: _verifyJournalPin,
+        onBiometricUnlock: _journalBiometricEnabled
+            ? (ctx) => _attemptJournalBiometricUnlock(ctx)
+            : null,
+        onUnlocked: () {
+          if (!_journalUnlocked) {
+            setState(() {
+              _journalUnlocked = true;
+            });
+          }
+        },
+      );
+    }
+    return JournalPage(
+      database: _database,
+      dailyTemplate: _journalTemplate,
+      showLockButton: _journalProtectionEnabled,
+      onLock: _journalProtectionEnabled ? _lockJournal : null,
     );
   }
 
@@ -1865,6 +1933,8 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 24),
         _buildModulesCard(context, loc),
         const SizedBox(height: 24),
+        _buildJournalSettingsCard(context, loc),
+        const SizedBox(height: 24),
         _buildTimeTrackingSettingsCard(context, loc),
         const SizedBox(height: 24),
         _buildSyncInfoCard(context, loc),
@@ -1888,6 +1958,8 @@ class _HomePageState extends State<HomePage> {
       _buildAppearanceCard(context, loc),
       const SizedBox(height: 24),
       _buildModulesCard(context, loc),
+      const SizedBox(height: 24),
+      _buildJournalSettingsCard(context, loc),
       const SizedBox(height: 24),
       _buildTimeTrackingSettingsCard(context, loc),
       const SizedBox(height: 24),
@@ -2357,6 +2429,365 @@ class _HomePageState extends State<HomePage> {
     _persistModuleSettings();
   }
 
+  Future<String> _hashJournalPin(String pin, String salt) async {
+    final algorithm = Sha256();
+    final data = utf8.encode('$salt:$pin');
+    final hash = await algorithm.hash(data);
+    return base64UrlEncode(hash.bytes);
+  }
+
+  String _generateJournalSalt() {
+    final random = Random.secure();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+    return base64UrlEncode(bytes);
+  }
+
+  Future<bool> _verifyJournalPin(String pin) async {
+    if (!_hasJournalPin || pin.isEmpty) {
+      return false;
+    }
+    final salt = _journalPinSalt!;
+    final expectedHash = _journalPinHash!;
+    final computed = await _hashJournalPin(pin, salt);
+    return computed == expectedHash;
+  }
+
+  void _lockJournal() {
+    if (!_journalProtectionEnabled) {
+      return;
+    }
+    setState(() {
+      _journalUnlocked = false;
+    });
+  }
+
+  Future<bool> _attemptJournalBiometricUnlock(BuildContext context) async {
+    final loc = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final bool canCheck = await _localAuth.canCheckBiometrics;
+      final bool supported = await _localAuth.isDeviceSupported();
+      if (!canCheck || !supported) {
+        if (!mounted) {
+          return false;
+        }
+        messenger.showSnackBar(
+          SnackBar(content: Text(loc.journalBiometricUnavailable)),
+        );
+        return false;
+      }
+      final bool authenticated = await _localAuth.authenticate(
+        localizedReason: loc.journalBiometricPrompt,
+        options: const AuthenticationOptions(biometricOnly: true),
+      );
+      if (authenticated && mounted) {
+        setState(() {
+          _journalUnlocked = true;
+        });
+        messenger.showSnackBar(
+          SnackBar(content: Text(loc.journalUnlockSuccess)),
+        );
+      }
+      return authenticated;
+    } on PlatformException {
+      if (!mounted) {
+        return false;
+      }
+      messenger.showSnackBar(
+        SnackBar(content: Text(loc.journalBiometricError)),
+      );
+      return false;
+    }
+  }
+
+  Future<void> _saveJournalTemplate(BuildContext context) async {
+    final template = _journalTemplateController.text;
+    final messenger = ScaffoldMessenger.of(context);
+    final loc = AppLocalizations.of(context);
+    await _trackerBox.put(journalTemplateKey, template);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _journalTemplate = template;
+    });
+    messenger.showSnackBar(SnackBar(content: Text(loc.journalTemplateSaved)));
+  }
+
+  Future<void> _clearJournalTemplate(BuildContext context) async {
+    _journalTemplateController.clear();
+    final messenger = ScaffoldMessenger.of(context);
+    final loc = AppLocalizations.of(context);
+    await _trackerBox.put(journalTemplateKey, '');
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _journalTemplate = '';
+    });
+    messenger.showSnackBar(SnackBar(content: Text(loc.journalTemplateCleared)));
+  }
+
+  Future<void> _promptSetJournalPin(BuildContext context) async {
+    final loc = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final formKey = GlobalKey<FormState>();
+    final pinController = TextEditingController();
+    final confirmController = TextEditingController();
+    bool pinVisible = false;
+    bool confirmVisible = false;
+    final confirmed =
+        await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(
+              builder: (context, setStateDialog) {
+                return AlertDialog(
+                  title: Text(
+                    _hasJournalPin
+                        ? loc.journalChangePinDialogTitle
+                        : loc.journalSetPinDialogTitle,
+                  ),
+                  content: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: pinController,
+                          keyboardType: TextInputType.number,
+                          obscureText: !pinVisible,
+                          decoration: InputDecoration(
+                            labelText: loc.journalNewPinLabel,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                pinVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setStateDialog(() {
+                                  pinVisible = !pinVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: (value) {
+                            final pin = value?.trim() ?? '';
+                            if (!RegExp(r'^\d{4,12}$').hasMatch(pin)) {
+                              return loc.journalPinValidationError;
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: confirmController,
+                          keyboardType: TextInputType.number,
+                          obscureText: !confirmVisible,
+                          decoration: InputDecoration(
+                            labelText: loc.journalConfirmPinLabel,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                confirmVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setStateDialog(() {
+                                  confirmVisible = !confirmVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value?.trim() != pinController.text.trim()) {
+                              return loc.journalPinMismatchError;
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: Text(loc.commonCancel),
+                    ),
+                    FilledButton(
+                      onPressed: () {
+                        if (!formKey.currentState!.validate()) {
+                          return;
+                        }
+                        Navigator.of(context).pop(true);
+                      },
+                      child: Text(loc.commonSave),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ) ??
+        false;
+    if (!confirmed) {
+      return;
+    }
+
+    final pin = pinController.text.trim();
+    final salt = _generateJournalSalt();
+    final hash = await _hashJournalPin(pin, salt);
+    await _trackerBox.put(journalPinSaltKey, salt);
+    await _trackerBox.put(journalPinHashKey, hash);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _journalPinSalt = salt;
+      _journalPinHash = hash;
+      _journalUnlocked = false;
+    });
+    messenger.showSnackBar(SnackBar(content: Text(loc.journalPinSetSuccess)));
+  }
+
+  Future<void> _promptRemoveJournalPin(BuildContext context) async {
+    if (!_hasJournalPin) {
+      return;
+    }
+    final loc = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final pinController = TextEditingController();
+    bool invalid = false;
+
+    final shouldRemove =
+        await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(
+              builder: (context, setStateDialog) {
+                return AlertDialog(
+                  title: Text(loc.journalRemovePinTitle),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(loc.journalRemovePinDescription),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: pinController,
+                        keyboardType: TextInputType.number,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: loc.journalCurrentPinLabel,
+                        ),
+                      ),
+                      if (invalid) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          loc.journalRemovePinError,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: Text(loc.commonCancel),
+                    ),
+                    FilledButton(
+                      onPressed: () async {
+                        final navigator = Navigator.of(context);
+                        final pin = pinController.text.trim();
+                        final valid = await _verifyJournalPin(pin);
+                        if (!valid) {
+                          setStateDialog(() {
+                            invalid = true;
+                          });
+                          return;
+                        }
+                        navigator.pop(true);
+                      },
+                      child: Text(loc.journalRemovePinButton),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ) ??
+        false;
+    if (!shouldRemove) {
+      return;
+    }
+    await _trackerBox.delete(journalPinHashKey);
+    await _trackerBox.delete(journalPinSaltKey);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _journalPinHash = null;
+      _journalPinSalt = null;
+      if (!_journalBiometricEnabled) {
+        _journalUnlocked = true;
+      }
+    });
+    messenger.showSnackBar(SnackBar(content: Text(loc.journalPinRemoved)));
+  }
+
+  Future<void> _toggleJournalBiometric(BuildContext context, bool value) async {
+    final loc = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    if (value) {
+      final supported = await _localAuth.isDeviceSupported();
+      final available = await _localAuth.canCheckBiometrics;
+      if (!supported || !available) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(loc.journalBiometricUnavailable)),
+        );
+        return;
+      }
+    }
+    await _trackerBox.put(journalBiometricEnabledKey, value);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _journalBiometricEnabled = value;
+      if (value) {
+        _journalUnlocked = false;
+      } else if (!_hasJournalPin) {
+        _journalUnlocked = true;
+      }
+    });
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          value
+              ? loc.journalBiometricEnabledMessage
+              : loc.journalBiometricDisabledMessage,
+        ),
+      ),
+    );
+  }
+
+  void _lockJournalNow(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    if (!_journalProtectionEnabled) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(loc.journalNoProtectionConfigured)),
+      );
+      return;
+    }
+    _lockJournal();
+    messenger.showSnackBar(SnackBar(content: Text(loc.journalLockedNotice)));
+  }
+
   Widget _buildSyncInfoCard(BuildContext context, AppLocalizations loc) {
     final theme = Theme.of(context);
     return Card(
@@ -2379,6 +2810,122 @@ class _HomePageState extends State<HomePage> {
               loc.settingsSyncMembershipInfo,
               style: theme.textTheme.bodyMedium,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildJournalSettingsCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    final templateEmpty = _journalTemplateController.text.trim().isEmpty;
+    final hasPin = _hasJournalPin;
+    final protectionEnabled = _journalProtectionEnabled;
+    final locked = protectionEnabled && !_journalUnlocked;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.journalSettingsTitle,
+              style: theme.textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.journalSettingsDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _journalTemplateController,
+              minLines: 4,
+              maxLines: 8,
+              decoration: InputDecoration(
+                labelText: loc.journalTemplateLabel,
+                hintText: loc.journalTemplateHint,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                FilledButton.icon(
+                  onPressed: () => _saveJournalTemplate(context),
+                  icon: const Icon(Icons.save),
+                  label: Text(loc.commonSave),
+                ),
+                OutlinedButton.icon(
+                  onPressed: templateEmpty
+                      ? null
+                      : () => _clearJournalTemplate(context),
+                  icon: const Icon(Icons.clear),
+                  label: Text(loc.journalTemplateClear),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                hasPin ? loc.journalPinStatusSet : loc.journalPinStatusUnset,
+                style: theme.textTheme.titleMedium,
+              ),
+              subtitle: Text(
+                hasPin
+                    ? loc.journalPinStatusDescription
+                    : loc.journalPinStatusDescriptionUnset,
+              ),
+              trailing: FilledButton(
+                onPressed: () => _promptSetJournalPin(context),
+                child: Text(
+                  hasPin ? loc.journalChangePinButton : loc.journalSetPinButton,
+                ),
+              ),
+            ),
+            if (hasPin)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(
+                  onPressed: () => _promptRemoveJournalPin(context),
+                  child: Text(loc.journalRemovePinButton),
+                ),
+              ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _journalBiometricEnabled,
+              onChanged: (value) => _toggleJournalBiometric(context, value),
+              title: Text(loc.journalBiometricToggleTitle),
+              subtitle: Text(loc.journalBiometricToggleSubtitle),
+              secondary: const Icon(Icons.fingerprint),
+            ),
+            const SizedBox(height: 12),
+            if (protectionEnabled)
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  FilledButton.tonalIcon(
+                    onPressed: locked ? null : () => _lockJournalNow(context),
+                    icon: const Icon(Icons.lock),
+                    label: Text(loc.journalLockNowButton),
+                  ),
+                  Text(
+                    locked
+                        ? loc.journalLockedStatus
+                        : loc.journalUnlockedStatus,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ],
+              )
+            else
+              Text(
+                loc.journalProtectionDisabledHint,
+                style: theme.textTheme.bodySmall,
+              ),
           ],
         ),
       ),

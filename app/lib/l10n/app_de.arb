@@ -13,6 +13,11 @@
   "navigationUserTooltip": "Angemeldeter Benutzer",
   "navLogout": "Abmelden",
   "navClearHistory": "Lokale Historie löschen",
+  "commonCancel": "Abbrechen",
+  "commonSave": "Speichern",
+  "commonDelete": "Löschen",
+  "commonCreate": "Erstellen",
+  "commonEdit": "Bearbeiten",
   "dashboardWelcome": "Willkommen im Dashboard, {name}",
   "dashboardSignedInAs": "Angemeldet als {email}. Behalte deine Backend-Kommunikation im Blick und starte Aktionen direkt von hier.",
   "dashboardCardStoredResponses": "Gespeicherte Antworten",
@@ -411,6 +416,126 @@
     }
   },
   "journalPlaceholder": "Halte deine Einträge hier fest und verbinde sie über Tags mit Notizen, Aufgaben und der Zeiterfassung.",
+  "journalUnsavedChangesTitle": "Ungespeicherte Änderungen",
+  "journalUnsavedChangesMessage": "Du hast ungespeicherte Änderungen für diesen Tag. Wie möchtest du fortfahren?",
+  "journalDiscardChanges": "Verwerfen",
+  "journalEntrySaved": "Tagebucheintrag gespeichert.",
+  "journalEntrySaveError": "Der Eintrag konnte nicht gespeichert werden. Bitte versuche es erneut.",
+  "journalDeleteEntryTitle": "Eintrag löschen",
+  "journalDeleteEntryMessage": "Den Tagebucheintrag für diesen Tag löschen?",
+  "journalEntryDeleted": "Tagebucheintrag gelöscht.",
+  "journalApplyTemplateTitle": "Tagesvorlage übernehmen",
+  "journalApplyTemplateMessage": "Den aktuellen Inhalt durch deine Tagesvorlage ersetzen?",
+  "journalApplyTemplateButton": "Vorlage anwenden",
+  "journalNoEntryForDay": "Für diesen Tag gibt es noch keinen Eintrag.",
+  "journalLastUpdated": "Zuletzt aktualisiert am {timestamp}",
+  "@journalLastUpdated": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "journalTabEdit": "Bearbeiten",
+  "journalTabPreview": "Vorschau",
+  "journalEditorHint": "Schreibe deinen Eintrag mit Markdown-Formatierung.",
+  "journalPreviewEmpty": "Noch nichts zum Anzeigen vorhanden.",
+  "journalTrendsTitle": "Aktuelle Verläufe",
+  "journalTrendsDescription": "Tracker-Werte der letzten 30 Tage.",
+  "journalTrendsEmpty": "Füge Tracker hinzu, um Verläufe zu sehen.",
+  "journalTrendDateRange": "{start} - {end}",
+  "@journalTrendDateRange": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "journalTrendNoData": "Noch keine Einträge.",
+  "journalTrendLegendCheckbox": "0 = nein, 1 = ja",
+  "journalTrendLegendRating": "Bereich 0-5",
+  "journalTrackersSectionTitle": "Tracker",
+  "journalAddTrackerButton": "Tracker hinzufügen",
+  "journalTrackersEmpty": "Es sind noch keine Tracker vorhanden. Lege einen an, um Routinen zu verfolgen.",
+  "journalAddTrackerTitle": "Tracker hinzufügen",
+  "journalEditTrackerTitle": "Tracker bearbeiten",
+  "journalDeleteTrackerTitle": "Tracker löschen",
+  "journalDeleteTrackerMessage": "Den Tracker \"{name}\" und alle Werte löschen?",
+  "@journalDeleteTrackerMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "journalTrackerNameLabel": "Name",
+  "journalTrackerNameError": "Bitte gib einen Namen ein.",
+  "journalTrackerKindLabel": "Trackertyp",
+  "journalTrackerKindCheckbox": "Ja / Nein",
+  "journalTrackerKindRating": "Bewertung (0-5)",
+  "journalTrackerDescriptionLabel": "Beschreibung (optional)",
+  "journalTrackerRatingTooltip": "Bewertung auf {rating} Sterne setzen",
+  "@journalTrackerRatingTooltip": {
+    "placeholders": {
+      "rating": {
+        "type": "int"
+      }
+    }
+  },
+  "journalTrackerClearTooltip": "Wert löschen",
+  "journalCalendarPrevious": "Vorheriger Monat",
+  "journalCalendarNext": "Nächster Monat",
+  "journalLockTooltip": "Journal sperren",
+  "journalLockedTitle": "Journal gesperrt",
+  "journalLockedMessage": "Entsperre das Journal mit deiner PIN oder Biometrie, um die Einträge zu sehen.",
+  "journalPinLabel": "PIN",
+  "journalUnlockWithPin": "Mit PIN entsperren",
+  "journalUnlockWithBiometrics": "Biometrie verwenden",
+  "journalPinRequired": "Bitte gib deine PIN ein.",
+  "journalUnlockSuccess": "Journal entsperrt.",
+  "journalUnlockFailed": "Falsche PIN. Bitte erneut versuchen.",
+  "journalNoProtectionConfigured": "Für das Journal ist kein Schutz konfiguriert.",
+  "journalBiometricUnavailable": "Biometrische Authentifizierung ist auf diesem Gerät nicht verfügbar.",
+  "journalBiometricPrompt": "Authentifiziere dich, um das Journal zu entsperren.",
+  "journalBiometricError": "Biometrische Authentifizierung fehlgeschlagen.",
+  "journalTemplateSaved": "Tagesvorlage gespeichert.",
+  "journalTemplateCleared": "Tagesvorlage gelöscht.",
+  "journalChangePinDialogTitle": "PIN ändern",
+  "journalSetPinDialogTitle": "PIN festlegen",
+  "journalNewPinLabel": "Neue PIN (4-12 Ziffern)",
+  "journalPinValidationError": "Bitte gib 4-12 Ziffern ein.",
+  "journalConfirmPinLabel": "PIN bestätigen",
+  "journalPinMismatchError": "Die PINs stimmen nicht überein.",
+  "journalPinSetSuccess": "PIN gespeichert.",
+  "journalRemovePinTitle": "PIN entfernen",
+  "journalRemovePinDescription": "Gib deine aktuelle PIN ein, um sie zu entfernen.",
+  "journalCurrentPinLabel": "Aktuelle PIN",
+  "journalRemovePinError": "Die PIN ist falsch.",
+  "journalPinRemoved": "PIN entfernt.",
+  "journalBiometricEnabledMessage": "Biometrische Entsperrung aktiviert.",
+  "journalBiometricDisabledMessage": "Biometrische Entsperrung deaktiviert.",
+  "journalSettingsTitle": "Journal",
+  "journalSettingsDescription": "Konfiguriere Tagesvorlage und Sicherheit deines Journals.",
+  "journalTemplateLabel": "Tagesvorlage",
+  "journalTemplateHint": "Vorlagentext, der für neue Tage vorausgefüllt wird.",
+  "journalTemplateClear": "Vorlage löschen",
+  "journalPinStatusSet": "PIN-Schutz aktiviert",
+  "journalPinStatusUnset": "PIN-Schutz deaktiviert",
+  "journalPinStatusDescription": "Zum Öffnen des Journals wird eine PIN benötigt.",
+  "journalPinStatusDescriptionUnset": "Lege eine PIN fest, um dein Journal zu schützen.",
+  "journalChangePinButton": "PIN ändern",
+  "journalSetPinButton": "PIN festlegen",
+  "journalRemovePinButton": "PIN entfernen",
+  "journalBiometricToggleTitle": "Mit Biometrie entsperren",
+  "journalBiometricToggleSubtitle": "Fingerabdruck oder Gesichtserkennung zum Entsperren verwenden.",
+  "journalLockNowButton": "Journal jetzt sperren",
+  "journalLockedStatus": "Journal ist gesperrt.",
+  "journalUnlockedStatus": "Journal ist entsperrt.",
+  "journalProtectionDisabledHint": "Aktiviere eine PIN oder Biometrie, um dein Journal zu schützen.",
+  "journalLockedNotice": "Journal gesperrt. Entsperre es im Modul.",
   "habitsPlaceholder": "Verfolge deine Gewohnheiten an dieser Stelle.",
   "ledgerPlaceholder": "Verwalte hier dein Haushaltsbudget.",
   "historySubtitle": "Name: {name}, Quelle: {source}, Zeit: {timestamp}",

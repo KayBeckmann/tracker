@@ -47,5 +47,7 @@
 	<true/>
 	<key>NSUserNotificationUsageDescription</key>
 	<string>This app uses notifications to remind you about tasks.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Allow the journal module to unlock with Face ID.</string>
 </dict>
 </plist>

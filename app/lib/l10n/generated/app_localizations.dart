@@ -178,6 +178,36 @@ abstract class AppLocalizations {
   /// **'Clear local history'**
   String get navClearHistory;
 
+  /// No description provided for @commonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
+
+  /// No description provided for @commonSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get commonSave;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get commonDelete;
+
+  /// No description provided for @commonCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get commonCreate;
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get commonEdit;
+
   /// No description provided for @dashboardWelcome.
   ///
   /// In en, this message translates to:
@@ -1359,6 +1389,540 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Capture your journal entries here and connect them with every module through shared tags.'**
   String get journalPlaceholder;
+
+  /// No description provided for @journalUnsavedChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved changes'**
+  String get journalUnsavedChangesTitle;
+
+  /// No description provided for @journalUnsavedChangesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes for this day. What would you like to do?'**
+  String get journalUnsavedChangesMessage;
+
+  /// No description provided for @journalDiscardChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get journalDiscardChanges;
+
+  /// No description provided for @journalEntrySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal entry saved.'**
+  String get journalEntrySaved;
+
+  /// No description provided for @journalEntrySaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the entry. Please try again.'**
+  String get journalEntrySaveError;
+
+  /// No description provided for @journalDeleteEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entry'**
+  String get journalDeleteEntryTitle;
+
+  /// No description provided for @journalDeleteEntryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the journal entry for this day?'**
+  String get journalDeleteEntryMessage;
+
+  /// No description provided for @journalEntryDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal entry deleted.'**
+  String get journalEntryDeleted;
+
+  /// No description provided for @journalApplyTemplateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply daily template'**
+  String get journalApplyTemplateTitle;
+
+  /// No description provided for @journalApplyTemplateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace the current content with your daily template?'**
+  String get journalApplyTemplateMessage;
+
+  /// No description provided for @journalApplyTemplateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply template'**
+  String get journalApplyTemplateButton;
+
+  /// No description provided for @journalNoEntryForDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No entry for this day yet.'**
+  String get journalNoEntryForDay;
+
+  /// No description provided for @journalLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated {timestamp}'**
+  String journalLastUpdated(String timestamp);
+
+  /// No description provided for @journalTabEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get journalTabEdit;
+
+  /// No description provided for @journalTabPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get journalTabPreview;
+
+  /// No description provided for @journalEditorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your journal entry using Markdown formatting.'**
+  String get journalEditorHint;
+
+  /// No description provided for @journalPreviewEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to preview yet.'**
+  String get journalPreviewEmpty;
+
+  /// No description provided for @journalTrendsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent trends'**
+  String get journalTrendsTitle;
+
+  /// No description provided for @journalTrendsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracker values for the last 30 days.'**
+  String get journalTrendsDescription;
+
+  /// No description provided for @journalTrendsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add trackers to see trend charts.'**
+  String get journalTrendsEmpty;
+
+  /// No description provided for @journalTrendDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{start} - {end}'**
+  String journalTrendDateRange(String start, String end);
+
+  /// No description provided for @journalTrendNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries yet.'**
+  String get journalTrendNoData;
+
+  /// No description provided for @journalTrendLegendCheckbox.
+  ///
+  /// In en, this message translates to:
+  /// **'0 = no, 1 = yes'**
+  String get journalTrendLegendCheckbox;
+
+  /// No description provided for @journalTrendLegendRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Range 0-5'**
+  String get journalTrendLegendRating;
+
+  /// No description provided for @journalTrackersSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trackers'**
+  String get journalTrackersSectionTitle;
+
+  /// No description provided for @journalAddTrackerButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tracker'**
+  String get journalAddTrackerButton;
+
+  /// No description provided for @journalTrackersEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No trackers yet. Create one to start tracking your routines.'**
+  String get journalTrackersEmpty;
+
+  /// No description provided for @journalAddTrackerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tracker'**
+  String get journalAddTrackerTitle;
+
+  /// No description provided for @journalEditTrackerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit tracker'**
+  String get journalEditTrackerTitle;
+
+  /// No description provided for @journalDeleteTrackerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete tracker'**
+  String get journalDeleteTrackerTitle;
+
+  /// No description provided for @journalDeleteTrackerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the tracker \"{name}\" and all recorded values?'**
+  String journalDeleteTrackerMessage(String name);
+
+  /// No description provided for @journalTrackerNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get journalTrackerNameLabel;
+
+  /// No description provided for @journalTrackerNameError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a tracker name.'**
+  String get journalTrackerNameError;
+
+  /// No description provided for @journalTrackerKindLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracker type'**
+  String get journalTrackerKindLabel;
+
+  /// No description provided for @journalTrackerKindCheckbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes / No'**
+  String get journalTrackerKindCheckbox;
+
+  /// No description provided for @journalTrackerKindRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating (0-5)'**
+  String get journalTrackerKindRating;
+
+  /// No description provided for @journalTrackerDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get journalTrackerDescriptionLabel;
+
+  /// No description provided for @journalTrackerRatingTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Set rating to {rating} stars'**
+  String journalTrackerRatingTooltip(int rating);
+
+  /// No description provided for @journalTrackerClearTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear value'**
+  String get journalTrackerClearTooltip;
+
+  /// No description provided for @journalCalendarPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get journalCalendarPrevious;
+
+  /// No description provided for @journalCalendarNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get journalCalendarNext;
+
+  /// No description provided for @journalLockTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock journal'**
+  String get journalLockTooltip;
+
+  /// No description provided for @journalLockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal locked'**
+  String get journalLockedTitle;
+
+  /// No description provided for @journalLockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the journal with your PIN or biometrics to view your entries.'**
+  String get journalLockedMessage;
+
+  /// No description provided for @journalPinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN'**
+  String get journalPinLabel;
+
+  /// No description provided for @journalUnlockWithPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with PIN'**
+  String get journalUnlockWithPin;
+
+  /// No description provided for @journalUnlockWithBiometrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Use biometrics'**
+  String get journalUnlockWithBiometrics;
+
+  /// No description provided for @journalPinRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your PIN.'**
+  String get journalPinRequired;
+
+  /// No description provided for @journalUnlockSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal unlocked.'**
+  String get journalUnlockSuccess;
+
+  /// No description provided for @journalUnlockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN. Try again.'**
+  String get journalUnlockFailed;
+
+  /// No description provided for @journalNoProtectionConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'No protection is configured for the journal.'**
+  String get journalNoProtectionConfigured;
+
+  /// No description provided for @journalBiometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is not available on this device.'**
+  String get journalBiometricUnavailable;
+
+  /// No description provided for @journalBiometricPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to unlock the journal.'**
+  String get journalBiometricPrompt;
+
+  /// No description provided for @journalBiometricError.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication failed.'**
+  String get journalBiometricError;
+
+  /// No description provided for @journalTemplateSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily template saved.'**
+  String get journalTemplateSaved;
+
+  /// No description provided for @journalTemplateCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily template cleared.'**
+  String get journalTemplateCleared;
+
+  /// No description provided for @journalChangePinDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN'**
+  String get journalChangePinDialogTitle;
+
+  /// No description provided for @journalSetPinDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set PIN'**
+  String get journalSetPinDialogTitle;
+
+  /// No description provided for @journalNewPinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New PIN (4-12 digits)'**
+  String get journalNewPinLabel;
+
+  /// No description provided for @journalPinValidationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 4-12 digits.'**
+  String get journalPinValidationError;
+
+  /// No description provided for @journalConfirmPinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm PIN'**
+  String get journalConfirmPinLabel;
+
+  /// No description provided for @journalPinMismatchError.
+  ///
+  /// In en, this message translates to:
+  /// **'PINs do not match.'**
+  String get journalPinMismatchError;
+
+  /// No description provided for @journalPinSetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN saved.'**
+  String get journalPinSetSuccess;
+
+  /// No description provided for @journalRemovePinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove PIN'**
+  String get journalRemovePinTitle;
+
+  /// No description provided for @journalRemovePinDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your current PIN to remove it from the journal.'**
+  String get journalRemovePinDescription;
+
+  /// No description provided for @journalCurrentPinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current PIN'**
+  String get journalCurrentPinLabel;
+
+  /// No description provided for @journalRemovePinError.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN is incorrect.'**
+  String get journalRemovePinError;
+
+  /// No description provided for @journalPinRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN removed.'**
+  String get journalPinRemoved;
+
+  /// No description provided for @journalBiometricEnabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock enabled.'**
+  String get journalBiometricEnabledMessage;
+
+  /// No description provided for @journalBiometricDisabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock disabled.'**
+  String get journalBiometricDisabledMessage;
+
+  /// No description provided for @journalSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal'**
+  String get journalSettingsTitle;
+
+  /// No description provided for @journalSettingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure the daily template and security options for your journal.'**
+  String get journalSettingsDescription;
+
+  /// No description provided for @journalTemplateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily template'**
+  String get journalTemplateLabel;
+
+  /// No description provided for @journalTemplateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Template text that will be pre-filled for new days.'**
+  String get journalTemplateHint;
+
+  /// No description provided for @journalTemplateClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear template'**
+  String get journalTemplateClear;
+
+  /// No description provided for @journalPinStatusSet.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN protection enabled'**
+  String get journalPinStatusSet;
+
+  /// No description provided for @journalPinStatusUnset.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN protection disabled'**
+  String get journalPinStatusUnset;
+
+  /// No description provided for @journalPinStatusDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A PIN is required to open the journal.'**
+  String get journalPinStatusDescription;
+
+  /// No description provided for @journalPinStatusDescriptionUnset.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a PIN to protect your journal entries.'**
+  String get journalPinStatusDescriptionUnset;
+
+  /// No description provided for @journalChangePinButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN'**
+  String get journalChangePinButton;
+
+  /// No description provided for @journalSetPinButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Set PIN'**
+  String get journalSetPinButton;
+
+  /// No description provided for @journalRemovePinButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove PIN'**
+  String get journalRemovePinButton;
+
+  /// No description provided for @journalBiometricToggleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with biometrics'**
+  String get journalBiometricToggleTitle;
+
+  /// No description provided for @journalBiometricToggleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow fingerprint or face recognition to unlock the journal.'**
+  String get journalBiometricToggleSubtitle;
+
+  /// No description provided for @journalLockNowButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock journal now'**
+  String get journalLockNowButton;
+
+  /// No description provided for @journalLockedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal is locked.'**
+  String get journalLockedStatus;
+
+  /// No description provided for @journalUnlockedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal is unlocked.'**
+  String get journalUnlockedStatus;
+
+  /// No description provided for @journalProtectionDisabledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable a PIN or biometrics to protect your journal.'**
+  String get journalProtectionDisabledHint;
+
+  /// No description provided for @journalLockedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal locked. Unlock it from the module.'**
+  String get journalLockedNotice;
 
   /// No description provided for @habitsPlaceholder.
   ///

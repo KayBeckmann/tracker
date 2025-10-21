@@ -13,6 +13,11 @@
   "navigationUserTooltip": "Logged-in user",
   "navLogout": "Sign out",
   "navClearHistory": "Clear local history",
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonDelete": "Delete",
+  "commonCreate": "Create",
+  "commonEdit": "Edit",
   "dashboardWelcome": "Welcome to the dashboard, {name}",
   "@dashboardWelcome": {
     "placeholders": {
@@ -446,6 +451,126 @@
     }
   },
   "journalPlaceholder": "Capture your journal entries here and connect them with every module through shared tags.",
+  "journalUnsavedChangesTitle": "Unsaved changes",
+  "journalUnsavedChangesMessage": "You have unsaved changes for this day. What would you like to do?",
+  "journalDiscardChanges": "Discard",
+  "journalEntrySaved": "Journal entry saved.",
+  "journalEntrySaveError": "Could not save the entry. Please try again.",
+  "journalDeleteEntryTitle": "Delete entry",
+  "journalDeleteEntryMessage": "Delete the journal entry for this day?",
+  "journalEntryDeleted": "Journal entry deleted.",
+  "journalApplyTemplateTitle": "Apply daily template",
+  "journalApplyTemplateMessage": "Replace the current content with your daily template?",
+  "journalApplyTemplateButton": "Apply template",
+  "journalNoEntryForDay": "No entry for this day yet.",
+  "journalLastUpdated": "Last updated {timestamp}",
+  "@journalLastUpdated": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "journalTabEdit": "Edit",
+  "journalTabPreview": "Preview",
+  "journalEditorHint": "Write your journal entry using Markdown formatting.",
+  "journalPreviewEmpty": "Nothing to preview yet.",
+  "journalTrendsTitle": "Recent trends",
+  "journalTrendsDescription": "Tracker values for the last 30 days.",
+  "journalTrendsEmpty": "Add trackers to see trend charts.",
+  "journalTrendDateRange": "{start} - {end}",
+  "@journalTrendDateRange": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "journalTrendNoData": "No entries yet.",
+  "journalTrendLegendCheckbox": "0 = no, 1 = yes",
+  "journalTrendLegendRating": "Range 0-5",
+  "journalTrackersSectionTitle": "Trackers",
+  "journalAddTrackerButton": "Add tracker",
+  "journalTrackersEmpty": "No trackers yet. Create one to start tracking your routines.",
+  "journalAddTrackerTitle": "Add tracker",
+  "journalEditTrackerTitle": "Edit tracker",
+  "journalDeleteTrackerTitle": "Delete tracker",
+  "journalDeleteTrackerMessage": "Delete the tracker \"{name}\" and all recorded values?",
+  "@journalDeleteTrackerMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "journalTrackerNameLabel": "Name",
+  "journalTrackerNameError": "Enter a tracker name.",
+  "journalTrackerKindLabel": "Tracker type",
+  "journalTrackerKindCheckbox": "Yes / No",
+  "journalTrackerKindRating": "Rating (0-5)",
+  "journalTrackerDescriptionLabel": "Description (optional)",
+  "journalTrackerRatingTooltip": "Set rating to {rating} stars",
+  "@journalTrackerRatingTooltip": {
+    "placeholders": {
+      "rating": {
+        "type": "int"
+      }
+    }
+  },
+  "journalTrackerClearTooltip": "Clear value",
+  "journalCalendarPrevious": "Previous month",
+  "journalCalendarNext": "Next month",
+  "journalLockTooltip": "Lock journal",
+  "journalLockedTitle": "Journal locked",
+  "journalLockedMessage": "Unlock the journal with your PIN or biometrics to view your entries.",
+  "journalPinLabel": "PIN",
+  "journalUnlockWithPin": "Unlock with PIN",
+  "journalUnlockWithBiometrics": "Use biometrics",
+  "journalPinRequired": "Enter your PIN.",
+  "journalUnlockSuccess": "Journal unlocked.",
+  "journalUnlockFailed": "Incorrect PIN. Try again.",
+  "journalNoProtectionConfigured": "No protection is configured for the journal.",
+  "journalBiometricUnavailable": "Biometric authentication is not available on this device.",
+  "journalBiometricPrompt": "Authenticate to unlock the journal.",
+  "journalBiometricError": "Biometric authentication failed.",
+  "journalTemplateSaved": "Daily template saved.",
+  "journalTemplateCleared": "Daily template cleared.",
+  "journalChangePinDialogTitle": "Change PIN",
+  "journalSetPinDialogTitle": "Set PIN",
+  "journalNewPinLabel": "New PIN (4-12 digits)",
+  "journalPinValidationError": "Enter 4-12 digits.",
+  "journalConfirmPinLabel": "Confirm PIN",
+  "journalPinMismatchError": "PINs do not match.",
+  "journalPinSetSuccess": "PIN saved.",
+  "journalRemovePinTitle": "Remove PIN",
+  "journalRemovePinDescription": "Enter your current PIN to remove it from the journal.",
+  "journalCurrentPinLabel": "Current PIN",
+  "journalRemovePinError": "PIN is incorrect.",
+  "journalPinRemoved": "PIN removed.",
+  "journalBiometricEnabledMessage": "Biometric unlock enabled.",
+  "journalBiometricDisabledMessage": "Biometric unlock disabled.",
+  "journalSettingsTitle": "Journal",
+  "journalSettingsDescription": "Configure the daily template and security options for your journal.",
+  "journalTemplateLabel": "Daily template",
+  "journalTemplateHint": "Template text that will be pre-filled for new days.",
+  "journalTemplateClear": "Clear template",
+  "journalPinStatusSet": "PIN protection enabled",
+  "journalPinStatusUnset": "PIN protection disabled",
+  "journalPinStatusDescription": "A PIN is required to open the journal.",
+  "journalPinStatusDescriptionUnset": "Set a PIN to protect your journal entries.",
+  "journalChangePinButton": "Change PIN",
+  "journalSetPinButton": "Set PIN",
+  "journalRemovePinButton": "Remove PIN",
+  "journalBiometricToggleTitle": "Unlock with biometrics",
+  "journalBiometricToggleSubtitle": "Allow fingerprint or face recognition to unlock the journal.",
+  "journalLockNowButton": "Lock journal now",
+  "journalLockedStatus": "Journal is locked.",
+  "journalUnlockedStatus": "Journal is unlocked.",
+  "journalProtectionDisabledHint": "Enable a PIN or biometrics to protect your journal.",
+  "journalLockedNotice": "Journal locked. Unlock it from the module.",
   "habitsPlaceholder": "Track your habits here.",
   "ledgerPlaceholder": "Manage your household budget here.",
   "historySubtitle": "Name: {name}, Source: {source}, Time: {timestamp}",

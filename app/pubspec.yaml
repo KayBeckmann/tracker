@@ -49,6 +49,7 @@ dependencies:
   timezone: ^0.9.4
   cryptography: ^2.5.0
   uuid: ^4.4.0
+  local_auth: ^2.3.0
 
 dev_dependencies:
   flutter_test:

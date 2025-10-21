@@ -48,6 +48,21 @@ class AppLocalizationsSv extends AppLocalizations {
   String get navClearHistory => 'Rensa lokal historik';
 
   @override
+  String get commonCancel => 'Avbryt';
+
+  @override
+  String get commonSave => 'Spara';
+
+  @override
+  String get commonDelete => 'Ta bort';
+
+  @override
+  String get commonCreate => 'Skapa';
+
+  @override
+  String get commonEdit => 'Redigera';
+
+  @override
   String dashboardWelcome(String name) {
     return 'Välkommen till instrumentpanelen, $name';
   }
@@ -708,6 +723,299 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get journalPlaceholder =>
       'Samla dina journalanteckningar här och länka dem till alla moduler via delade taggar.';
+
+  @override
+  String get journalUnsavedChangesTitle => 'Osparade ändringar';
+
+  @override
+  String get journalUnsavedChangesMessage =>
+      'Du har osparade ändringar för den här dagen. Hur vill du gå vidare?';
+
+  @override
+  String get journalDiscardChanges => 'Ignorera';
+
+  @override
+  String get journalEntrySaved => 'Dagboksinlägget sparades.';
+
+  @override
+  String get journalEntrySaveError =>
+      'Det gick inte att spara inlägget. Försök igen.';
+
+  @override
+  String get journalDeleteEntryTitle => 'Ta bort inlägg';
+
+  @override
+  String get journalDeleteEntryMessage =>
+      'Vill du ta bort dagboksinlägget för den här dagen?';
+
+  @override
+  String get journalEntryDeleted => 'Dagboksinlägget har tagits bort.';
+
+  @override
+  String get journalApplyTemplateTitle => 'Använd dagmall';
+
+  @override
+  String get journalApplyTemplateMessage =>
+      'Vill du ersätta innehållet med din dagliga mall?';
+
+  @override
+  String get journalApplyTemplateButton => 'Använd mall';
+
+  @override
+  String get journalNoEntryForDay => 'Inget inlägg för den här dagen ännu.';
+
+  @override
+  String journalLastUpdated(String timestamp) {
+    return 'Senast uppdaterad $timestamp';
+  }
+
+  @override
+  String get journalTabEdit => 'Redigera';
+
+  @override
+  String get journalTabPreview => 'Förhandsvisa';
+
+  @override
+  String get journalEditorHint => 'Skriv ditt inlägg med Markdown-format.';
+
+  @override
+  String get journalPreviewEmpty => 'Inget att visa ännu.';
+
+  @override
+  String get journalTrendsTitle => 'Senaste trender';
+
+  @override
+  String get journalTrendsDescription =>
+      'Tracker-värden för de senaste 30 dagarna.';
+
+  @override
+  String get journalTrendsEmpty => 'Lägg till tracker för att se trender.';
+
+  @override
+  String journalTrendDateRange(String start, String end) {
+    return '$start - $end';
+  }
+
+  @override
+  String get journalTrendNoData => 'Inga inlägg ännu.';
+
+  @override
+  String get journalTrendLegendCheckbox => '0 = nej, 1 = ja';
+
+  @override
+  String get journalTrendLegendRating => 'Intervall 0-5';
+
+  @override
+  String get journalTrackersSectionTitle => 'Tracker';
+
+  @override
+  String get journalAddTrackerButton => 'Lägg till tracker';
+
+  @override
+  String get journalTrackersEmpty =>
+      'Inga tracker ännu. Skapa en för att följa dina rutiner.';
+
+  @override
+  String get journalAddTrackerTitle => 'Lägg till tracker';
+
+  @override
+  String get journalEditTrackerTitle => 'Redigera tracker';
+
+  @override
+  String get journalDeleteTrackerTitle => 'Ta bort tracker';
+
+  @override
+  String journalDeleteTrackerMessage(String name) {
+    return 'Vill du ta bort trackern \"$name\" och alla sparade värden?';
+  }
+
+  @override
+  String get journalTrackerNameLabel => 'Namn';
+
+  @override
+  String get journalTrackerNameError => 'Ange ett namn.';
+
+  @override
+  String get journalTrackerKindLabel => 'Trackertyp';
+
+  @override
+  String get journalTrackerKindCheckbox => 'Ja / Nej';
+
+  @override
+  String get journalTrackerKindRating => 'Betyg (0-5)';
+
+  @override
+  String get journalTrackerDescriptionLabel => 'Beskrivning (valfritt)';
+
+  @override
+  String journalTrackerRatingTooltip(int rating) {
+    return 'Sätt betyg till $rating stjärnor';
+  }
+
+  @override
+  String get journalTrackerClearTooltip => 'Rensa värde';
+
+  @override
+  String get journalCalendarPrevious => 'Föregående månad';
+
+  @override
+  String get journalCalendarNext => 'Nästa månad';
+
+  @override
+  String get journalLockTooltip => 'Lås journalen';
+
+  @override
+  String get journalLockedTitle => 'Journalen är låst';
+
+  @override
+  String get journalLockedMessage =>
+      'Lås upp journalen med din PIN-kod eller biometrik för att visa inläggen.';
+
+  @override
+  String get journalPinLabel => 'PIN-kod';
+
+  @override
+  String get journalUnlockWithPin => 'Lås upp med PIN';
+
+  @override
+  String get journalUnlockWithBiometrics => 'Använd biometrik';
+
+  @override
+  String get journalPinRequired => 'Ange din PIN-kod.';
+
+  @override
+  String get journalUnlockSuccess => 'Journalen är upplåst.';
+
+  @override
+  String get journalUnlockFailed => 'Fel PIN-kod. Försök igen.';
+
+  @override
+  String get journalNoProtectionConfigured =>
+      'Journalen har inget skydd konfigurerat.';
+
+  @override
+  String get journalBiometricUnavailable =>
+      'Biometrisk autentisering är inte tillgänglig på den här enheten.';
+
+  @override
+  String get journalBiometricPrompt =>
+      'Autentisera dig för att låsa upp journalen.';
+
+  @override
+  String get journalBiometricError => 'Biometrisk autentisering misslyckades.';
+
+  @override
+  String get journalTemplateSaved => 'Daglig mall sparad.';
+
+  @override
+  String get journalTemplateCleared => 'Daglig mall rensad.';
+
+  @override
+  String get journalChangePinDialogTitle => 'Ändra PIN-kod';
+
+  @override
+  String get journalSetPinDialogTitle => 'Ställ in PIN-kod';
+
+  @override
+  String get journalNewPinLabel => 'Ny PIN-kod (4-12 siffror)';
+
+  @override
+  String get journalPinValidationError => 'Ange 4-12 siffror.';
+
+  @override
+  String get journalConfirmPinLabel => 'Bekräfta PIN-kod';
+
+  @override
+  String get journalPinMismatchError => 'PIN-koderna matchar inte.';
+
+  @override
+  String get journalPinSetSuccess => 'PIN-koden sparades.';
+
+  @override
+  String get journalRemovePinTitle => 'Ta bort PIN-kod';
+
+  @override
+  String get journalRemovePinDescription =>
+      'Ange din nuvarande PIN-kod för att ta bort den.';
+
+  @override
+  String get journalCurrentPinLabel => 'Nuvarande PIN-kod';
+
+  @override
+  String get journalRemovePinError => 'PIN-koden är felaktig.';
+
+  @override
+  String get journalPinRemoved => 'PIN-koden har tagits bort.';
+
+  @override
+  String get journalBiometricEnabledMessage =>
+      'Biometrisk upplåsning har aktiverats.';
+
+  @override
+  String get journalBiometricDisabledMessage =>
+      'Biometrisk upplåsning har inaktiverats.';
+
+  @override
+  String get journalSettingsTitle => 'Journal';
+
+  @override
+  String get journalSettingsDescription =>
+      'Konfigurera daglig mall och säkerhet för din journal.';
+
+  @override
+  String get journalTemplateLabel => 'Daglig mall';
+
+  @override
+  String get journalTemplateHint => 'Malltext som fylls i för nya dagar.';
+
+  @override
+  String get journalTemplateClear => 'Rensa mall';
+
+  @override
+  String get journalPinStatusSet => 'PIN-skydd aktiverat';
+
+  @override
+  String get journalPinStatusUnset => 'PIN-skydd inaktiverat';
+
+  @override
+  String get journalPinStatusDescription =>
+      'En PIN-kod krävs för att öppna journalen.';
+
+  @override
+  String get journalPinStatusDescriptionUnset =>
+      'Ställ in en PIN-kod för att skydda journalen.';
+
+  @override
+  String get journalChangePinButton => 'Ändra PIN-kod';
+
+  @override
+  String get journalSetPinButton => 'Ställ in PIN-kod';
+
+  @override
+  String get journalRemovePinButton => 'Ta bort PIN-kod';
+
+  @override
+  String get journalBiometricToggleTitle => 'Lås upp med biometrik';
+
+  @override
+  String get journalBiometricToggleSubtitle =>
+      'Tillåt fingeravtryck eller ansiktsigenkänning för att låsa upp journalen.';
+
+  @override
+  String get journalLockNowButton => 'Lås journalen nu';
+
+  @override
+  String get journalLockedStatus => 'Journalen är låst.';
+
+  @override
+  String get journalUnlockedStatus => 'Journalen är upplåst.';
+
+  @override
+  String get journalProtectionDisabledHint =>
+      'Aktivera PIN-kod eller biometrik för att skydda journalen.';
+
+  @override
+  String get journalLockedNotice => 'Journalen är låst. Lås upp den i modulen.';
 
   @override
   String get habitsPlaceholder => 'Följ dina vanor här.';

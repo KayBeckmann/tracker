@@ -48,6 +48,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navClearHistory => 'Lokale Historie löschen';
 
   @override
+  String get commonCancel => 'Abbrechen';
+
+  @override
+  String get commonSave => 'Speichern';
+
+  @override
+  String get commonDelete => 'Löschen';
+
+  @override
+  String get commonCreate => 'Erstellen';
+
+  @override
+  String get commonEdit => 'Bearbeiten';
+
+  @override
   String dashboardWelcome(String name) {
     return 'Willkommen im Dashboard, $name';
   }
@@ -714,6 +729,302 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get journalPlaceholder =>
       'Halte deine Einträge hier fest und verbinde sie über Tags mit Notizen, Aufgaben und der Zeiterfassung.';
+
+  @override
+  String get journalUnsavedChangesTitle => 'Ungespeicherte Änderungen';
+
+  @override
+  String get journalUnsavedChangesMessage =>
+      'Du hast ungespeicherte Änderungen für diesen Tag. Wie möchtest du fortfahren?';
+
+  @override
+  String get journalDiscardChanges => 'Verwerfen';
+
+  @override
+  String get journalEntrySaved => 'Tagebucheintrag gespeichert.';
+
+  @override
+  String get journalEntrySaveError =>
+      'Der Eintrag konnte nicht gespeichert werden. Bitte versuche es erneut.';
+
+  @override
+  String get journalDeleteEntryTitle => 'Eintrag löschen';
+
+  @override
+  String get journalDeleteEntryMessage =>
+      'Den Tagebucheintrag für diesen Tag löschen?';
+
+  @override
+  String get journalEntryDeleted => 'Tagebucheintrag gelöscht.';
+
+  @override
+  String get journalApplyTemplateTitle => 'Tagesvorlage übernehmen';
+
+  @override
+  String get journalApplyTemplateMessage =>
+      'Den aktuellen Inhalt durch deine Tagesvorlage ersetzen?';
+
+  @override
+  String get journalApplyTemplateButton => 'Vorlage anwenden';
+
+  @override
+  String get journalNoEntryForDay =>
+      'Für diesen Tag gibt es noch keinen Eintrag.';
+
+  @override
+  String journalLastUpdated(String timestamp) {
+    return 'Zuletzt aktualisiert am $timestamp';
+  }
+
+  @override
+  String get journalTabEdit => 'Bearbeiten';
+
+  @override
+  String get journalTabPreview => 'Vorschau';
+
+  @override
+  String get journalEditorHint =>
+      'Schreibe deinen Eintrag mit Markdown-Formatierung.';
+
+  @override
+  String get journalPreviewEmpty => 'Noch nichts zum Anzeigen vorhanden.';
+
+  @override
+  String get journalTrendsTitle => 'Aktuelle Verläufe';
+
+  @override
+  String get journalTrendsDescription => 'Tracker-Werte der letzten 30 Tage.';
+
+  @override
+  String get journalTrendsEmpty => 'Füge Tracker hinzu, um Verläufe zu sehen.';
+
+  @override
+  String journalTrendDateRange(String start, String end) {
+    return '$start - $end';
+  }
+
+  @override
+  String get journalTrendNoData => 'Noch keine Einträge.';
+
+  @override
+  String get journalTrendLegendCheckbox => '0 = nein, 1 = ja';
+
+  @override
+  String get journalTrendLegendRating => 'Bereich 0-5';
+
+  @override
+  String get journalTrackersSectionTitle => 'Tracker';
+
+  @override
+  String get journalAddTrackerButton => 'Tracker hinzufügen';
+
+  @override
+  String get journalTrackersEmpty =>
+      'Es sind noch keine Tracker vorhanden. Lege einen an, um Routinen zu verfolgen.';
+
+  @override
+  String get journalAddTrackerTitle => 'Tracker hinzufügen';
+
+  @override
+  String get journalEditTrackerTitle => 'Tracker bearbeiten';
+
+  @override
+  String get journalDeleteTrackerTitle => 'Tracker löschen';
+
+  @override
+  String journalDeleteTrackerMessage(String name) {
+    return 'Den Tracker \"$name\" und alle Werte löschen?';
+  }
+
+  @override
+  String get journalTrackerNameLabel => 'Name';
+
+  @override
+  String get journalTrackerNameError => 'Bitte gib einen Namen ein.';
+
+  @override
+  String get journalTrackerKindLabel => 'Trackertyp';
+
+  @override
+  String get journalTrackerKindCheckbox => 'Ja / Nein';
+
+  @override
+  String get journalTrackerKindRating => 'Bewertung (0-5)';
+
+  @override
+  String get journalTrackerDescriptionLabel => 'Beschreibung (optional)';
+
+  @override
+  String journalTrackerRatingTooltip(int rating) {
+    return 'Bewertung auf $rating Sterne setzen';
+  }
+
+  @override
+  String get journalTrackerClearTooltip => 'Wert löschen';
+
+  @override
+  String get journalCalendarPrevious => 'Vorheriger Monat';
+
+  @override
+  String get journalCalendarNext => 'Nächster Monat';
+
+  @override
+  String get journalLockTooltip => 'Journal sperren';
+
+  @override
+  String get journalLockedTitle => 'Journal gesperrt';
+
+  @override
+  String get journalLockedMessage =>
+      'Entsperre das Journal mit deiner PIN oder Biometrie, um die Einträge zu sehen.';
+
+  @override
+  String get journalPinLabel => 'PIN';
+
+  @override
+  String get journalUnlockWithPin => 'Mit PIN entsperren';
+
+  @override
+  String get journalUnlockWithBiometrics => 'Biometrie verwenden';
+
+  @override
+  String get journalPinRequired => 'Bitte gib deine PIN ein.';
+
+  @override
+  String get journalUnlockSuccess => 'Journal entsperrt.';
+
+  @override
+  String get journalUnlockFailed => 'Falsche PIN. Bitte erneut versuchen.';
+
+  @override
+  String get journalNoProtectionConfigured =>
+      'Für das Journal ist kein Schutz konfiguriert.';
+
+  @override
+  String get journalBiometricUnavailable =>
+      'Biometrische Authentifizierung ist auf diesem Gerät nicht verfügbar.';
+
+  @override
+  String get journalBiometricPrompt =>
+      'Authentifiziere dich, um das Journal zu entsperren.';
+
+  @override
+  String get journalBiometricError =>
+      'Biometrische Authentifizierung fehlgeschlagen.';
+
+  @override
+  String get journalTemplateSaved => 'Tagesvorlage gespeichert.';
+
+  @override
+  String get journalTemplateCleared => 'Tagesvorlage gelöscht.';
+
+  @override
+  String get journalChangePinDialogTitle => 'PIN ändern';
+
+  @override
+  String get journalSetPinDialogTitle => 'PIN festlegen';
+
+  @override
+  String get journalNewPinLabel => 'Neue PIN (4-12 Ziffern)';
+
+  @override
+  String get journalPinValidationError => 'Bitte gib 4-12 Ziffern ein.';
+
+  @override
+  String get journalConfirmPinLabel => 'PIN bestätigen';
+
+  @override
+  String get journalPinMismatchError => 'Die PINs stimmen nicht überein.';
+
+  @override
+  String get journalPinSetSuccess => 'PIN gespeichert.';
+
+  @override
+  String get journalRemovePinTitle => 'PIN entfernen';
+
+  @override
+  String get journalRemovePinDescription =>
+      'Gib deine aktuelle PIN ein, um sie zu entfernen.';
+
+  @override
+  String get journalCurrentPinLabel => 'Aktuelle PIN';
+
+  @override
+  String get journalRemovePinError => 'Die PIN ist falsch.';
+
+  @override
+  String get journalPinRemoved => 'PIN entfernt.';
+
+  @override
+  String get journalBiometricEnabledMessage =>
+      'Biometrische Entsperrung aktiviert.';
+
+  @override
+  String get journalBiometricDisabledMessage =>
+      'Biometrische Entsperrung deaktiviert.';
+
+  @override
+  String get journalSettingsTitle => 'Journal';
+
+  @override
+  String get journalSettingsDescription =>
+      'Konfiguriere Tagesvorlage und Sicherheit deines Journals.';
+
+  @override
+  String get journalTemplateLabel => 'Tagesvorlage';
+
+  @override
+  String get journalTemplateHint =>
+      'Vorlagentext, der für neue Tage vorausgefüllt wird.';
+
+  @override
+  String get journalTemplateClear => 'Vorlage löschen';
+
+  @override
+  String get journalPinStatusSet => 'PIN-Schutz aktiviert';
+
+  @override
+  String get journalPinStatusUnset => 'PIN-Schutz deaktiviert';
+
+  @override
+  String get journalPinStatusDescription =>
+      'Zum Öffnen des Journals wird eine PIN benötigt.';
+
+  @override
+  String get journalPinStatusDescriptionUnset =>
+      'Lege eine PIN fest, um dein Journal zu schützen.';
+
+  @override
+  String get journalChangePinButton => 'PIN ändern';
+
+  @override
+  String get journalSetPinButton => 'PIN festlegen';
+
+  @override
+  String get journalRemovePinButton => 'PIN entfernen';
+
+  @override
+  String get journalBiometricToggleTitle => 'Mit Biometrie entsperren';
+
+  @override
+  String get journalBiometricToggleSubtitle =>
+      'Fingerabdruck oder Gesichtserkennung zum Entsperren verwenden.';
+
+  @override
+  String get journalLockNowButton => 'Journal jetzt sperren';
+
+  @override
+  String get journalLockedStatus => 'Journal ist gesperrt.';
+
+  @override
+  String get journalUnlockedStatus => 'Journal ist entsperrt.';
+
+  @override
+  String get journalProtectionDisabledHint =>
+      'Aktiviere eine PIN oder Biometrie, um dein Journal zu schützen.';
+
+  @override
+  String get journalLockedNotice => 'Journal gesperrt. Entsperre es im Modul.';
 
   @override
   String get habitsPlaceholder =>
