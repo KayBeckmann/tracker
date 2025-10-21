@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -1157,11 +1158,12 @@ class _TrendChartPainter extends CustomPainter {
       return;
     }
 
+    if (size.width <= 0 || size.height <= 0) {
+      return;
+    }
+
     const double labelSpace = 20;
-    final double chartHeight = (size.height - labelSpace).clamp(
-      0.0,
-      size.height,
-    );
+    final double chartHeight = math.max(0.0, size.height - labelSpace);
     if (chartHeight <= 0) {
       return;
     }
@@ -1221,10 +1223,9 @@ class _TrendChartPainter extends CustomPainter {
         ),
         textDirection: ui.TextDirection.ltr,
       )..layout();
-      final double labelX = (x - textPainter.width / 2).clamp(
-        0.0,
-        size.width - textPainter.width,
-      );
+      final double maxLabelX = math.max(0.0, size.width - textPainter.width);
+      final double desired = x - textPainter.width / 2;
+      final double labelX = math.max(0.0, math.min(maxLabelX, desired));
       textPainter.paint(canvas, Offset(labelX, chartHeight + 6));
     }
 

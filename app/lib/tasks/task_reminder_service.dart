@@ -92,7 +92,12 @@ class TaskReminderService {
     AppLocalizations loc,
   ) async {
     await initialize();
-    final pending = await _plugin.pendingNotificationRequests();
+    List<PendingNotificationRequest> pending;
+    try {
+      pending = await _plugin.pendingNotificationRequests();
+    } on UnimplementedError {
+      return;
+    }
     final now = DateTime.now();
     final activeIds = <int>{};
 
