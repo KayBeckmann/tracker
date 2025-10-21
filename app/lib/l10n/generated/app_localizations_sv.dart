@@ -806,6 +806,20 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalTrendLegendRating => 'Intervall 0-5';
 
   @override
+  String get journalDashboardEntryDone => 'Dagens inlägg är klart.';
+
+  @override
+  String get journalDashboardEntryMissing =>
+      'Du har inte skrivit något i dag ännu.';
+
+  @override
+  String get journalDashboardLocked =>
+      'Lås upp journalen för att se dagens status.';
+
+  @override
+  String get journalDashboardOpenButton => 'Öppna journal';
+
+  @override
   String get journalTrackersSectionTitle => 'Tracker';
 
   @override

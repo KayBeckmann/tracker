@@ -813,6 +813,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalTrendLegendRating => 'Bereich 0-5';
 
   @override
+  String get journalDashboardEntryDone =>
+      'Für heute ist bereits ein Eintrag vorhanden.';
+
+  @override
+  String get journalDashboardEntryMissing =>
+      'Heute wurde noch nichts eingetragen.';
+
+  @override
+  String get journalDashboardLocked =>
+      'Entsperre das Journal, um den heutigen Status zu sehen.';
+
+  @override
+  String get journalDashboardOpenButton => 'Journal öffnen';
+
+  @override
   String get journalTrackersSectionTitle => 'Tracker';
 
   @override

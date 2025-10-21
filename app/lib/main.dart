@@ -1467,6 +1467,8 @@ class _HomePageState extends State<HomePage> {
               .map(
                 (section) => section == _AppSection.notes
                     ? _buildNotesDashboardCard(context, loc)
+                    : section == _AppSection.journal
+                    ? _buildJournalDashboardCard(context, loc)
                     : _buildModuleCard(context, loc, section),
               )
               .toList(),
@@ -1560,6 +1562,127 @@ class _HomePageState extends State<HomePage> {
                             )
                             .toList(),
                       ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildJournalDashboardCard(
+    BuildContext context,
+    AppLocalizations loc,
+  ) {
+    final theme = Theme.of(context);
+    final today = DateTime.now();
+    final bool isLocked = _journalProtectionEnabled && !_journalUnlocked;
+
+    Widget buildLockedCard() {
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 220, maxWidth: 320),
+        child: Card(
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.lock_outline,
+                      size: 32,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        loc.navJournal,
+                        style: theme.textTheme.titleMedium,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  loc.journalDashboardLocked,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: () => _onSelectSection(_AppSection.journal),
+                  child: Text(loc.journalDashboardOpenButton),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (isLocked) {
+      return buildLockedCard();
+    }
+
+    return StreamBuilder<JournalEntry?>(
+      stream: _database.watchJournalEntryForDate(today),
+      builder: (context, snapshot) {
+        final entry = snapshot.data;
+        final String? content = entry?.content;
+        final bool hasEntry = content != null && content.trim().isNotEmpty;
+        final icon = hasEntry ? Icons.check_circle : Icons.edit_note;
+        final Color iconColor = hasEntry
+            ? theme.colorScheme.primary
+            : theme.colorScheme.secondary;
+        final String statusText = hasEntry
+            ? loc.journalDashboardEntryDone
+            : loc.journalDashboardEntryMissing;
+
+        String? updatedText;
+        if (hasEntry && entry?.updatedAt != null) {
+          updatedText = loc.journalLastUpdated(
+            _formatDateTime(context, entry!.updatedAt),
+          );
+        }
+
+        return ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 220, maxWidth: 320),
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => _onSelectSection(_AppSection.journal),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(icon, size: 32, color: iconColor),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            loc.navJournal,
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(statusText, style: theme.textTheme.bodyMedium),
+                    if (updatedText != null) ...[
+                      const SizedBox(height: 4),
+                      Text(updatedText, style: theme.textTheme.bodySmall),
+                    ],
+                    const SizedBox(height: 16),
+                    FilledButton.tonal(
+                      onPressed: () => _onSelectSection(_AppSection.journal),
+                      child: Text(loc.journalDashboardOpenButton),
+                    ),
                   ],
                 ),
               ),

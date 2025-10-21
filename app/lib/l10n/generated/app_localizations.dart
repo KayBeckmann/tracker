@@ -1534,6 +1534,30 @@ abstract class AppLocalizations {
   /// **'Range 0-5'**
   String get journalTrendLegendRating;
 
+  /// No description provided for @journalDashboardEntryDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s entry is complete.'**
+  String get journalDashboardEntryDone;
+
+  /// No description provided for @journalDashboardEntryMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t written anything today yet.'**
+  String get journalDashboardEntryMissing;
+
+  /// No description provided for @journalDashboardLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the journal to view today\'s status.'**
+  String get journalDashboardLocked;
+
+  /// No description provided for @journalDashboardOpenButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Open journal'**
+  String get journalDashboardOpenButton;
+
   /// No description provided for @journalTrackersSectionTitle.
   ///
   /// In en, this message translates to:

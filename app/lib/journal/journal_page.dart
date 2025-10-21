@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -757,6 +758,7 @@ class _JournalPageState extends State<JournalPage>
                   ? _TrackerTrendChart(
                       samples: samples,
                       maxValue: _maxValueForTracker(tracker),
+                      dateFormat: shortFormat,
                     )
                   : Center(
                       child: Text(
@@ -1104,10 +1106,15 @@ class _TrendSample {
 }
 
 class _TrackerTrendChart extends StatelessWidget {
-  const _TrackerTrendChart({required this.samples, required this.maxValue});
+  const _TrackerTrendChart({
+    required this.samples,
+    required this.maxValue,
+    required this.dateFormat,
+  });
 
   final List<_TrendSample> samples;
   final double maxValue;
+  final DateFormat dateFormat;
 
   @override
   Widget build(BuildContext context) {
@@ -1118,6 +1125,10 @@ class _TrackerTrendChart extends StatelessWidget {
         maxValue: maxValue,
         lineColor: colorScheme.primary,
         gridColor: colorScheme.outlineVariant,
+        labelColor: colorScheme.onSurface.withValues(
+          alpha: colorScheme.onSurface.a * 0.7,
+        ),
+        dateFormat: dateFormat,
       ),
     );
   }
@@ -1129,20 +1140,41 @@ class _TrendChartPainter extends CustomPainter {
     required this.maxValue,
     required this.lineColor,
     required this.gridColor,
+    required this.labelColor,
+    required this.dateFormat,
   });
 
   final List<_TrendSample> samples;
   final double maxValue;
   final Color lineColor;
   final Color gridColor;
+  final Color labelColor;
+  final DateFormat dateFormat;
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (samples.isEmpty || maxValue <= 0) {
+      return;
+    }
+
+    const double labelSpace = 20;
+    final double chartHeight = (size.height - labelSpace).clamp(
+      0.0,
+      size.height,
+    );
+    if (chartHeight <= 0) {
+      return;
+    }
+
     final gridPaint = Paint()
       ..color = gridColor
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
     final baselinePaint = Paint()
+      ..color = gridColor
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    final axisPaint = Paint()
       ..color = gridColor
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
@@ -1157,14 +1189,44 @@ class _TrendChartPainter extends CustomPainter {
 
     final subdivisions = maxValue == 1 ? 1 : 5;
     for (var i = 0; i <= subdivisions; i++) {
-      final y = size.height - (i / subdivisions) * size.height;
+      final y = chartHeight - (i / subdivisions) * chartHeight;
       canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
     }
     canvas.drawLine(
-      Offset(0, size.height),
-      Offset(size.width, size.height),
+      Offset(0, chartHeight),
+      Offset(size.width, chartHeight),
       baselinePaint,
     );
+
+    final int tickCount = samples.length <= 1 ? 1 : 4;
+    for (var i = 0; i <= tickCount; i++) {
+      final double fraction = tickCount == 0 ? 0 : i / tickCount;
+      final double x = size.width * fraction;
+      canvas.drawLine(
+        Offset(x, chartHeight),
+        Offset(x, chartHeight + 4),
+        axisPaint,
+      );
+      final int index = samples.length <= 1
+          ? 0
+          : (fraction * (samples.length - 1)).round().clamp(
+              0,
+              samples.length - 1,
+            );
+      final String label = dateFormat.format(samples[index].date);
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: label,
+          style: TextStyle(color: labelColor, fontSize: 10),
+        ),
+        textDirection: ui.TextDirection.ltr,
+      )..layout();
+      final double labelX = (x - textPainter.width / 2).clamp(
+        0.0,
+        size.width - textPainter.width,
+      );
+      textPainter.paint(canvas, Offset(labelX, chartHeight + 6));
+    }
 
     final denominator = samples.length <= 1
         ? 1.0
@@ -1182,7 +1244,7 @@ class _TrendChartPainter extends CustomPainter {
       final x = samples.length <= 1
           ? size.width / 2
           : (i / denominator) * size.width;
-      final y = size.height - (clamped / maxValue) * size.height;
+      final y = chartHeight - (clamped / maxValue) * chartHeight;
       if (!hasSegment) {
         path.moveTo(x, y);
         hasSegment = true;
@@ -1201,7 +1263,7 @@ class _TrendChartPainter extends CustomPainter {
       final x = samples.length <= 1
           ? size.width / 2
           : (i / denominator) * size.width;
-      final y = size.height - (clamped / maxValue) * size.height;
+      final y = chartHeight - (clamped / maxValue) * chartHeight;
       canvas.drawCircle(Offset(x, y), 3, pointPaint);
     }
   }

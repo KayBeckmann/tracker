@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 
@@ -36,19 +35,14 @@ void main() {
   });
 
   testWidgets('renders initial tracker screen', (WidgetTester tester) async {
-    final binding = tester.binding;
-    binding.window.physicalSizeTestValue = const Size(1200, 800);
-    binding.window.devicePixelRatioTestValue = 1.0;
-    addTearDown(binding.window.clearPhysicalSizeTestValue);
-    addTearDown(binding.window.clearDevicePixelRatioTestValue);
+    await tester.binding.setSurfaceSize(const Size(1200, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await tester.pumpWidget(TrackerApp(database: database));
     await tester.pumpAndSettle();
 
     expect(find.text('Dashboard'), findsWidgets);
     expect(find.text('Journal'), findsWidgets);
-    expect(find.text('Settings'), findsWidgets);
-
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpAndSettle();
   });

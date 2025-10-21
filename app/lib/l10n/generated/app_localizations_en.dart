@@ -807,6 +807,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalTrendLegendRating => 'Range 0-5';
 
   @override
+  String get journalDashboardEntryDone => 'Today\'s entry is complete.';
+
+  @override
+  String get journalDashboardEntryMissing =>
+      'You haven\'t written anything today yet.';
+
+  @override
+  String get journalDashboardLocked =>
+      'Unlock the journal to view today\'s status.';
+
+  @override
+  String get journalDashboardOpenButton => 'Open journal';
+
+  @override
   String get journalTrackersSectionTitle => 'Trackers';
 
   @override
