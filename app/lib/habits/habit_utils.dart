@@ -1,4 +1,7 @@
+import 'package:intl/intl.dart';
+
 import '../data/local/app_database.dart';
+import '../l10n/generated/app_localizations.dart';
 
 enum HabitPeriodUnit { day, week }
 
@@ -102,4 +105,32 @@ double? habitTargetValue(HabitDefinition habit) {
       }
       return value;
   }
+}
+
+String habitProgressLabel({
+  required AppLocalizations loc,
+  required HabitDefinition habit,
+  required List<HabitLog> periodLogs,
+  double? numericTotal,
+}) {
+  final periodLabel = periodUnitForHabit(habit) == HabitPeriodUnit.day
+      ? loc.habitsPeriodDay
+      : loc.habitsPeriodWeek;
+
+  if (habit.measurementKind == HabitValueKind.boolean) {
+    final count = periodLogs.length;
+    final target = habit.targetOccurrences;
+    return loc.habitsProgressCompleted(count, target, periodLabel);
+  }
+
+  final total = numericTotal ??
+      periodLogs.fold<double>(0, (prev, log) => prev + log.value);
+  final numberFormat = NumberFormat.decimalPattern(loc.localeName);
+  final totalLabel = numberFormat.format(total);
+  final targetValue = habitTargetValue(habit);
+  if (targetValue == null || targetValue <= 0) {
+    return loc.habitsProgressValueNoTarget(totalLabel, periodLabel);
+  }
+  final targetLabel = numberFormat.format(targetValue);
+  return loc.habitsProgressValue(totalLabel, targetLabel, periodLabel);
 }

@@ -15,6 +15,8 @@ import 'l10n/generated/app_localizations.dart';
 import 'models/membership_status.dart';
 import 'notes/notes_page.dart';
 import 'habits/habits_page.dart';
+import 'habits/habit_form.dart';
+import 'habits/habit_utils.dart';
 import 'journal/journal_lock_view.dart';
 import 'journal/journal_page.dart';
 import 'tasks/tasks_page.dart';
@@ -300,6 +302,7 @@ class _HomePageState extends State<HomePage> {
   bool _journalBiometricEnabled = false;
   bool _journalUnlocked = true;
   bool _isSyncInProgress = false;
+  bool _isHabitCreationInProgress = false;
   StreamSubscription<List<TaskEntry>>? _taskReminderSubscription;
 
   bool get _hasJournalPin =>
@@ -1465,19 +1468,62 @@ class _HomePageState extends State<HomePage> {
           spacing: 16,
           runSpacing: 16,
           children: modules
-              .map(
-                (section) => section == _AppSection.notes
-                    ? _buildNotesDashboardCard(context, loc)
-                    : section == _AppSection.journal
-                    ? _buildJournalDashboardCard(context, loc)
-                    : _buildModuleCard(context, loc, section),
-              )
+              .map((section) {
+                switch (section) {
+                  case _AppSection.notes:
+                    return _buildNotesDashboardCard(context, loc);
+                  case _AppSection.journal:
+                    return _buildJournalDashboardCard(context, loc);
+                  case _AppSection.habits:
+                    return _buildHabitsDashboardCard(context, loc);
+                  default:
+                    return _buildModuleCard(context, loc, section);
+                }
+              })
               .toList(),
         ),
       );
     }
 
     return ListView(padding: const EdgeInsets.all(16), children: children);
+  }
+
+  Future<void> _promptCreateHabit(BuildContext context) async {
+    if (_isHabitCreationInProgress) {
+      return;
+    }
+    final result = await showHabitFormDialog(context: context);
+    if (result == null) {
+      return;
+    }
+    setState(() {
+      _isHabitCreationInProgress = true;
+    });
+    try {
+      await _database.createHabit(
+        name: result.name,
+        description: result.description,
+        interval: result.interval,
+        measurementKind: result.measurementKind,
+        targetOccurrences: result.targetOccurrences,
+        targetValue: result.targetValue,
+      );
+      if (!context.mounted) {
+        return;
+      }
+      final loc = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.habitsCreateSuccess(result.name))),
+      );
+    } finally {
+      if (context.mounted) {
+        setState(() {
+          _isHabitCreationInProgress = false;
+        });
+      } else {
+        _isHabitCreationInProgress = false;
+      }
+    }
   }
 
   Widget _buildNotesDashboardCard(BuildContext context, AppLocalizations loc) {
@@ -1787,6 +1833,262 @@ class _HomePageState extends State<HomePage> {
         constraints: const BoxConstraints(maxWidth: 656),
         child: card,
       ),
+    );
+  }
+
+  Widget _buildHabitsDashboardCard(
+    BuildContext context,
+    AppLocalizations loc,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    Widget buildCard(List<Widget> content) {
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 220, maxWidth: 360),
+        child: Card(
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      _sectionIcon(_AppSection.habits),
+                      size: 32,
+                      color: colorScheme.primary,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        _localizedSectionTitle(loc, _AppSection.habits),
+                        style: theme.textTheme.titleMedium,
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: loc.navHabits,
+                      onPressed: () => _onSelectSection(_AppSection.habits),
+                      icon: const Icon(Icons.chevron_right),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ...content,
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: [
+                    FilledButton.tonalIcon(
+                      onPressed: () => _onSelectSection(_AppSection.habits),
+                      icon: const Icon(Icons.auto_graph),
+                      label: Text(loc.navHabits),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: _isHabitCreationInProgress
+                          ? null
+                          : () => _promptCreateHabit(context),
+                      icon: _isHabitCreationInProgress
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.add),
+                      label: Text(loc.habitsAddHabitButton),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return StreamBuilder<List<HabitDefinition>>(
+      stream: _database.watchHabits(),
+      builder: (context, habitsSnapshot) {
+        final habits = habitsSnapshot.data ?? const <HabitDefinition>[];
+        final bool loadingHabits =
+            habitsSnapshot.connectionState == ConnectionState.waiting &&
+            habits.isEmpty;
+
+        if (habits.isEmpty) {
+          final body = <Widget>[
+            if (loadingHabits)
+              const Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              )
+            else
+              Text(
+                loc.dashboardHabitsEmpty,
+                style: theme.textTheme.bodyMedium,
+              ),
+          ];
+          return buildCard(body);
+        }
+
+        return StreamBuilder<List<HabitLog>>(
+          stream: _database.watchAllHabitLogs(),
+          builder: (context, logsSnapshot) {
+            final logs = logsSnapshot.data ?? const <HabitLog>[];
+            final now = DateTime.now();
+            final entries = habits.map((habit) {
+              final habitLogs =
+                  logs.where((log) => log.habitId == habit.id).toList();
+              final period = periodForHabit(habit, now);
+              final periodLogs = habitLogs
+                  .where((log) => period.contains(log.occurredAt))
+                  .toList();
+              final total = sumLogsForPeriod(habitLogs, period);
+              double? targetValue = habitTargetValue(habit);
+              final bool hasTarget = targetValue != null && targetValue > 0;
+              double ratio;
+              if (hasTarget) {
+                final double effectiveTarget = targetValue;
+                ratio = total / effectiveTarget;
+              } else {
+                ratio = periodLogs.isNotEmpty ? 1.0 : 0.0;
+              }
+              if (!ratio.isFinite) {
+                ratio = 0;
+              }
+              final double progress = ratio.clamp(0.0, 1.0).toDouble();
+              final bool onTrack =
+                  hasTarget ? ratio >= 1.0 - 1e-6 : periodLogs.isNotEmpty;
+              final label = habitProgressLabel(
+                loc: loc,
+                habit: habit,
+                periodLogs: periodLogs,
+                numericTotal: total,
+              );
+              return (
+                habit: habit,
+                progress: progress,
+                ratio: ratio,
+                onTrack: onTrack,
+                label: label,
+              );
+            }).toList();
+
+            if (entries.isEmpty) {
+              final body = <Widget>[
+                Text(
+                  loc.dashboardHabitsEmpty,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ];
+              return buildCard(body);
+            }
+
+            entries.sort((a, b) => a.ratio.compareTo(b.ratio));
+            final topEntries = entries.take(3).toList();
+            final onTrackCount =
+                entries.where((entry) => entry.onTrack).length;
+            final summaryStyle = onTrackCount == habits.length
+                ? theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.primary,
+                  )
+                : theme.textTheme.bodyMedium;
+
+            final content = <Widget>[
+              Text(
+                loc.dashboardHabitsOnTrack(onTrackCount, habits.length),
+                style: summaryStyle,
+              ),
+            ];
+
+            if (topEntries.isNotEmpty) {
+              content.add(const SizedBox(height: 12));
+              for (var i = 0; i < topEntries.length; i++) {
+                final entry = topEntries[i];
+                content.add(
+                  _buildHabitDashboardRow(
+                    context: context,
+                    habit: entry.habit,
+                    label: entry.label,
+                    progress: entry.progress,
+                    onTrack: entry.onTrack,
+                  ),
+                );
+                if (i != topEntries.length - 1) {
+                  content.add(const SizedBox(height: 12));
+                }
+              }
+            }
+
+            if (entries.length > topEntries.length) {
+              content.add(const SizedBox(height: 12));
+              content.add(
+                Text(
+                  loc.habitsOpenDetails,
+                  style: theme.textTheme.bodySmall,
+                ),
+              );
+            }
+
+            return buildCard(content);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildHabitDashboardRow({
+    required BuildContext context,
+    required HabitDefinition habit,
+    required String label,
+    required double progress,
+    required bool onTrack,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final Color progressColor =
+        onTrack ? colorScheme.primary : colorScheme.tertiary;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                habit.name,
+                style: theme.textTheme.titleSmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Icon(
+              onTrack ? Icons.check_circle : Icons.flag_outlined,
+              size: 18,
+              color: progressColor,
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+          child: LinearProgressIndicator(
+            value: progress.clamp(0.0, 1.0).toDouble(),
+            minHeight: 6,
+            color: progressColor,
+            backgroundColor:
+                colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall,
+        ),
+      ],
     );
   }
 

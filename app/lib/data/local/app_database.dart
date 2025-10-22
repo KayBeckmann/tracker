@@ -954,6 +954,15 @@ class AppDatabase extends _$AppDatabase {
     await (delete(habitDefinitions)..where((tbl) => tbl.id.equals(id))).go();
   }
 
+  Stream<List<HabitLog>> watchAllHabitLogs() {
+    return (select(habitLogs)
+          ..orderBy([
+            (tbl) => OrderingTerm.desc(tbl.occurredAt),
+            (tbl) => OrderingTerm.desc(tbl.id),
+          ]))
+        .watch();
+  }
+
   Stream<List<HabitLog>> watchHabitLogs(int habitId) {
     return (select(habitLogs)
           ..where((tbl) => tbl.habitId.equals(habitId))

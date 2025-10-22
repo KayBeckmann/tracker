@@ -2258,6 +2258,18 @@ abstract class AppLocalizations {
   /// **'Delete entry'**
   String get habitsDeleteEntryTooltip;
 
+  /// No description provided for @dashboardHabitsOnTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} habits on track.'**
+  String dashboardHabitsOnTrack(int completed, int total);
+
+  /// No description provided for @dashboardHabitsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first habit to start tracking progress here.'**
+  String get dashboardHabitsEmpty;
+
   /// No description provided for @ledgerPlaceholder.
   ///
   /// In en, this message translates to:

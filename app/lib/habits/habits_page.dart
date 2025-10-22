@@ -236,11 +236,11 @@ class _HabitCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _progressLabel(
-                    loc,
-                    habit,
-                    total: total,
+                  habitProgressLabel(
+                    loc: loc,
+                    habit: habit,
                     periodLogs: periodLogs,
+                    numericTotal: total,
                   ),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
@@ -409,34 +409,4 @@ class _HabitCard extends StatelessWidget {
     );
   }
 
-  String _progressLabel(
-    AppLocalizations loc,
-    HabitDefinition habit, {
-    required double total,
-    required List<HabitLog> periodLogs,
-  }) {
-    final periodLabel = () {
-      switch (periodUnitForHabit(habit)) {
-        case HabitPeriodUnit.day:
-          return loc.habitsPeriodDay;
-        case HabitPeriodUnit.week:
-          return loc.habitsPeriodWeek;
-      }
-    }();
-
-    if (habit.measurementKind == HabitValueKind.boolean) {
-      final count = periodLogs.length;
-      final target = habit.targetOccurrences;
-      return loc.habitsProgressCompleted(count, target, periodLabel);
-    }
-
-    final numberFormat = NumberFormat.decimalPattern(loc.localeName);
-    final totalLabel = numberFormat.format(total);
-    final target = habit.targetValue;
-    if (target == null || target <= 0) {
-      return loc.habitsProgressValueNoTarget(totalLabel, periodLabel);
-    }
-    final targetLabel = numberFormat.format(target);
-    return loc.habitsProgressValue(totalLabel, targetLabel, periodLabel);
-  }
 }

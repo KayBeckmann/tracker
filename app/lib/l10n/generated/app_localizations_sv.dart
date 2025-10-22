@@ -1215,6 +1215,15 @@ class AppLocalizationsSv extends AppLocalizations {
   String get habitsDeleteEntryTooltip => 'Ta bort post';
 
   @override
+  String dashboardHabitsOnTrack(int completed, int total) {
+    return '$completed av $total vanor följer planen.';
+  }
+
+  @override
+  String get dashboardHabitsEmpty =>
+      'Skapa din första vana för att se utveckling här.';
+
+  @override
   String get ledgerPlaceholder => 'Hantera hushållsbudgeten här.';
 
   @override

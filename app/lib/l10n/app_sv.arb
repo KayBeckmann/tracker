@@ -702,6 +702,18 @@
   "habitsChartEmpty": "Lägg till några dagar för att se utvecklingskurvan.",
   "habitsLogBooleanValue": "Genomfört",
   "habitsDeleteEntryTooltip": "Ta bort post",
+  "dashboardHabitsOnTrack": "{completed} av {total} vanor följer planen.",
+  "@dashboardHabitsOnTrack": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardHabitsEmpty": "Skapa din första vana för att se utveckling här.",
   "ledgerPlaceholder": "Hantera hushållsbudgeten här.",
   "historySubtitle": "Namn: {name}, Källa: {source}, Tid: {timestamp}",
   "historyEmpty": "Inga sparade svar ännu.",

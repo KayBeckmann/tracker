@@ -737,6 +737,18 @@
   "habitsChartEmpty": "Add a few days of data to see your progress curve.",
   "habitsLogBooleanValue": "Completed",
   "habitsDeleteEntryTooltip": "Delete entry",
+  "dashboardHabitsOnTrack": "{completed} of {total} habits on track.",
+  "@dashboardHabitsOnTrack": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardHabitsEmpty": "Create your first habit to start tracking progress here.",
   "ledgerPlaceholder": "Manage your household budget here.",
   "historySubtitle": "Name: {name}, Source: {source}, Time: {timestamp}",
   "@historySubtitle": {

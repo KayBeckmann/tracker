@@ -339,31 +339,12 @@ class _HabitDetailBody extends StatelessWidget {
         )
         .toList();
     final total = periodLogs.fold<double>(0, (prev, log) => prev + log.value);
-    final target = habitTargetValue(habit);
-    final numberFormat = NumberFormat.decimalPattern(loc.localeName);
-
-    String summary;
-    if (isBooleanHabit(habit)) {
-      summary = loc.habitsProgressCompleted(
-        periodLogs.length,
-        habit.targetOccurrences,
-        _periodLabel(loc, habit),
-      );
-    } else {
-      final totalLabel = numberFormat.format(total);
-      if (target == null || target <= 0) {
-        summary = loc.habitsProgressValueNoTarget(
-          totalLabel,
-          _periodLabel(loc, habit),
-        );
-      } else {
-        summary = loc.habitsProgressValue(
-          totalLabel,
-          numberFormat.format(target),
-          _periodLabel(loc, habit),
-        );
-      }
-    }
+    final summary = habitProgressLabel(
+      loc: loc,
+      habit: habit,
+      periodLogs: periodLogs,
+      numericTotal: total,
+    );
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -409,14 +390,6 @@ class _HabitDetailBody extends StatelessWidget {
     );
   }
 
-  String _periodLabel(AppLocalizations loc, HabitDefinition habit) {
-    switch (periodUnitForHabit(habit)) {
-      case HabitPeriodUnit.day:
-        return loc.habitsPeriodDay;
-      case HabitPeriodUnit.week:
-        return loc.habitsPeriodWeek;
-    }
-  }
 }
 
 class HabitProgressChart extends StatelessWidget {

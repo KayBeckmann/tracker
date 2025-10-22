@@ -1225,6 +1225,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get habitsDeleteEntryTooltip => 'Eintrag löschen';
 
   @override
+  String dashboardHabitsOnTrack(int completed, int total) {
+    return '$completed von $total Gewohnheiten im Plan.';
+  }
+
+  @override
+  String get dashboardHabitsEmpty =>
+      'Lege deine erste Gewohnheit an, um hier Fortschritte zu sehen.';
+
+  @override
   String get ledgerPlaceholder => 'Verwalte hier dein Haushaltsbudget.';
 
   @override

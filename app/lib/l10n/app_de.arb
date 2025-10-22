@@ -702,6 +702,18 @@
   "habitsChartEmpty": "Füge einige Tage hinzu, um den Verlauf zu sehen.",
   "habitsLogBooleanValue": "Erledigt",
   "habitsDeleteEntryTooltip": "Eintrag löschen",
+  "dashboardHabitsOnTrack": "{completed} von {total} Gewohnheiten im Plan.",
+  "@dashboardHabitsOnTrack": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardHabitsEmpty": "Lege deine erste Gewohnheit an, um hier Fortschritte zu sehen.",
   "ledgerPlaceholder": "Verwalte hier dein Haushaltsbudget.",
   "historySubtitle": "Name: {name}, Quelle: {source}, Zeit: {timestamp}",
   "historyEmpty": "Es sind noch keine gespeicherten Antworten vorhanden.",
