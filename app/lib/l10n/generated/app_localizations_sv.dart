@@ -1032,7 +1032,187 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalLockedNotice => 'Journalen är låst. Lås upp den i modulen.';
 
   @override
-  String get habitsPlaceholder => 'Följ dina vanor här.';
+  String get habitsAddHabitButton => 'Lägg till vana';
+
+  @override
+  String get habitsCreateTitle => 'Ny vana';
+
+  @override
+  String get habitsEditTitle => 'Redigera vana';
+
+  @override
+  String get habitsNameLabel => 'Namn';
+
+  @override
+  String get habitsDescriptionLabel => 'Beskrivning';
+
+  @override
+  String get habitsNameRequired => 'Ange ett namn.';
+
+  @override
+  String get habitsIntervalLabel => 'Intervall';
+
+  @override
+  String get habitsMeasurementLabel => 'Värdetyp';
+
+  @override
+  String get habitsTargetOccurrences => 'Antal per intervall';
+
+  @override
+  String get habitsInvalidNumber => 'Ange ett giltigt tal.';
+
+  @override
+  String get habitsTargetValueLabel => 'Målvärde per intervall';
+
+  @override
+  String get habitsCancelButton => 'Avbryt';
+
+  @override
+  String get habitsSaveButton => 'Spara';
+
+  @override
+  String get habitsIntervalDaily => 'Dagligen';
+
+  @override
+  String get habitsIntervalMultiplePerDay => 'Flera gånger per dag';
+
+  @override
+  String get habitsIntervalWeekly => 'Varje vecka';
+
+  @override
+  String get habitsIntervalMultiplePerWeek => 'Flera gånger per vecka';
+
+  @override
+  String get habitsMeasurementBoolean => 'Genomfört / ej genomfört';
+
+  @override
+  String get habitsMeasurementInteger => 'Heltalsvärde';
+
+  @override
+  String get habitsMeasurementDecimal => 'Decimalt värde';
+
+  @override
+  String habitsCreateSuccess(String name) {
+    return '\"$name\" har skapats.';
+  }
+
+  @override
+  String habitsUpdateSuccess(String name) {
+    return '\"$name\" har uppdaterats.';
+  }
+
+  @override
+  String get habitsDeleteHabit => 'Ta bort vana';
+
+  @override
+  String habitsDeleteHabitConfirm(String name) {
+    return 'Ta bort \"$name\" och alla poster?';
+  }
+
+  @override
+  String get habitsDeleteHabitAction => 'Ta bort';
+
+  @override
+  String habitsDeleteHabitSuccess(String name) {
+    return '\"$name\" har tagits bort.';
+  }
+
+  @override
+  String get habitsEmptyTitle => 'Följ dina vanor';
+
+  @override
+  String get habitsEmptyDescription =>
+      'Skapa din första vana för att följa rutiner och se dina framsteg.';
+
+  @override
+  String get habitsOpenDetails => 'Visa detaljer';
+
+  @override
+  String habitsSubtitleBooleanSingle(String interval) {
+    return '$interval · Genomfört';
+  }
+
+  @override
+  String habitsSubtitleBooleanMultiple(String interval, int count) {
+    return '$interval · $count× per intervall';
+  }
+
+  @override
+  String habitsSubtitleNumeric(String interval, String measurement) {
+    return '$interval · $measurement';
+  }
+
+  @override
+  String habitsSubtitleNumericTarget(
+    String interval,
+    String measurement,
+    String target,
+  ) {
+    return '$interval · $measurement · Mål $target';
+  }
+
+  @override
+  String get habitsMarkDoneButton => 'Markera som klar';
+
+  @override
+  String get habitsUndoTodayButton => 'Ångra markering';
+
+  @override
+  String get habitsAddCompletion => 'Lägg till genomförande';
+
+  @override
+  String get habitsAddMeasurement => 'Lägg till värde';
+
+  @override
+  String habitsLogValueTitle(String name) {
+    return 'Registrera värde för \"$name\"';
+  }
+
+  @override
+  String get habitsValueHint => 'Ange ett värde';
+
+  @override
+  String habitsProgressCompleted(int count, int target, String period) {
+    return '$count av $target genomföranden $period';
+  }
+
+  @override
+  String habitsProgressValue(String total, String target, String period) {
+    return '$total av $target $period';
+  }
+
+  @override
+  String habitsProgressValueNoTarget(String total, String period) {
+    return '$total registrerat $period';
+  }
+
+  @override
+  String get habitsPeriodDay => 'i dag';
+
+  @override
+  String get habitsPeriodWeek => 'denna vecka';
+
+  @override
+  String get habitsCurrentProgress => 'Aktuell utveckling';
+
+  @override
+  String get habitsHistorySectionTitle => 'Historik';
+
+  @override
+  String get habitsNoEntriesYet => 'Inga poster ännu.';
+
+  @override
+  String get habitsChartTitle => 'Utveckling över tid';
+
+  @override
+  String get habitsChartEmpty =>
+      'Lägg till några dagar för att se utvecklingskurvan.';
+
+  @override
+  String get habitsLogBooleanValue => 'Genomfört';
+
+  @override
+  String get habitsDeleteEntryTooltip => 'Ta bort post';
 
   @override
   String get ledgerPlaceholder => 'Hantera hushållsbudgeten här.';

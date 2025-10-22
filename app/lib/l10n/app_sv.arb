@@ -540,7 +540,168 @@
   "journalUnlockedStatus": "Journalen är upplåst.",
   "journalProtectionDisabledHint": "Aktivera PIN-kod eller biometrik för att skydda journalen.",
   "journalLockedNotice": "Journalen är låst. Lås upp den i modulen.",
-  "habitsPlaceholder": "Följ dina vanor här.",
+  "habitsAddHabitButton": "Lägg till vana",
+  "habitsCreateTitle": "Ny vana",
+  "habitsEditTitle": "Redigera vana",
+  "habitsNameLabel": "Namn",
+  "habitsDescriptionLabel": "Beskrivning",
+  "habitsNameRequired": "Ange ett namn.",
+  "habitsIntervalLabel": "Intervall",
+  "habitsMeasurementLabel": "Värdetyp",
+  "habitsTargetOccurrences": "Antal per intervall",
+  "habitsInvalidNumber": "Ange ett giltigt tal.",
+  "habitsTargetValueLabel": "Målvärde per intervall",
+  "habitsCancelButton": "Avbryt",
+  "habitsSaveButton": "Spara",
+  "habitsIntervalDaily": "Dagligen",
+  "habitsIntervalMultiplePerDay": "Flera gånger per dag",
+  "habitsIntervalWeekly": "Varje vecka",
+  "habitsIntervalMultiplePerWeek": "Flera gånger per vecka",
+  "habitsMeasurementBoolean": "Genomfört / ej genomfört",
+  "habitsMeasurementInteger": "Heltalsvärde",
+  "habitsMeasurementDecimal": "Decimalt värde",
+  "habitsCreateSuccess": "\"{name}\" har skapats.",
+  "@habitsCreateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsUpdateSuccess": "\"{name}\" har uppdaterats.",
+  "@habitsUpdateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsDeleteHabit": "Ta bort vana",
+  "habitsDeleteHabitConfirm": "Ta bort \"{name}\" och alla poster?",
+  "@habitsDeleteHabitConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsDeleteHabitAction": "Ta bort",
+  "habitsDeleteHabitSuccess": "\"{name}\" har tagits bort.",
+  "@habitsDeleteHabitSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsEmptyTitle": "Följ dina vanor",
+  "habitsEmptyDescription": "Skapa din första vana för att följa rutiner och se dina framsteg.",
+  "habitsOpenDetails": "Visa detaljer",
+  "habitsSubtitleBooleanSingle": "{interval} · Genomfört",
+  "@habitsSubtitleBooleanSingle": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsSubtitleBooleanMultiple": "{interval} · {count}× per intervall",
+  "@habitsSubtitleBooleanMultiple": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "habitsSubtitleNumeric": "{interval} · {measurement}",
+  "@habitsSubtitleNumeric": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      },
+      "measurement": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsSubtitleNumericTarget": "{interval} · {measurement} · Mål {target}",
+  "@habitsSubtitleNumericTarget": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      },
+      "measurement": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsMarkDoneButton": "Markera som klar",
+  "habitsUndoTodayButton": "Ångra markering",
+  "habitsAddCompletion": "Lägg till genomförande",
+  "habitsAddMeasurement": "Lägg till värde",
+  "habitsLogValueTitle": "Registrera värde för \"{name}\"",
+  "@habitsLogValueTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsValueHint": "Ange ett värde",
+  "habitsProgressCompleted": "{count} av {target} genomföranden {period}",
+  "@habitsProgressCompleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsProgressValue": "{total} av {target} {period}",
+  "@habitsProgressValue": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsProgressValueNoTarget": "{total} registrerat {period}",
+  "@habitsProgressValueNoTarget": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsPeriodDay": "i dag",
+  "habitsPeriodWeek": "denna vecka",
+  "habitsCurrentProgress": "Aktuell utveckling",
+  "habitsHistorySectionTitle": "Historik",
+  "habitsNoEntriesYet": "Inga poster ännu.",
+  "habitsChartTitle": "Utveckling över tid",
+  "habitsChartEmpty": "Lägg till några dagar för att se utvecklingskurvan.",
+  "habitsLogBooleanValue": "Genomfört",
+  "habitsDeleteEntryTooltip": "Ta bort post",
   "ledgerPlaceholder": "Hantera hushållsbudgeten här.",
   "historySubtitle": "Namn: {name}, Källa: {source}, Tid: {timestamp}",
   "historyEmpty": "Inga sparade svar ännu.",

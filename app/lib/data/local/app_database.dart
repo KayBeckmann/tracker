@@ -14,6 +14,10 @@ enum TaskPriority { low, medium, high }
 
 enum JournalTrackerKind { checkbox, rating }
 
+enum HabitIntervalKind { daily, multiplePerDay, weekly, multiplePerWeek }
+
+enum HabitValueKind { boolean, integer, decimal }
+
 const Uuid _uuid = Uuid();
 
 class GreetingEntries extends Table {
@@ -170,6 +174,50 @@ class JournalTrackerValues extends Table {
   ];
 }
 
+class HabitDefinitions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text()();
+
+  TextColumn get description => text().withDefault(const Constant(''))();
+
+  TextColumn get interval => textEnum<HabitIntervalKind>().withDefault(
+        Constant(HabitIntervalKind.daily.name),
+      )();
+
+  IntColumn get targetOccurrences => integer().withDefault(const Constant(1))();
+
+  TextColumn get measurementKind => textEnum<HabitValueKind>().withDefault(
+        Constant(HabitValueKind.boolean.name),
+      )();
+
+  RealColumn get targetValue => real().nullable()();
+
+  BoolColumn get archived => boolean().withDefault(const Constant(false))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class HabitLogs extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  IntColumn get habitId => integer().references(
+        HabitDefinitions,
+        #id,
+        onDelete: KeyAction.cascade,
+      )();
+
+  DateTimeColumn get occurredAt => dateTime()();
+
+  RealColumn get value => real().withDefault(const Constant(0))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
 @DriftDatabase(
   tables: [
     GreetingEntries,
@@ -179,6 +227,8 @@ class JournalTrackerValues extends Table {
     JournalEntries,
     JournalTrackers,
     JournalTrackerValues,
+    HabitDefinitions,
+    HabitLogs,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -192,7 +242,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -226,6 +276,10 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(journalEntries);
         await m.createTable(journalTrackers);
         await m.createTable(journalTrackerValues);
+      }
+      if (from < 8) {
+        await m.createTable(habitDefinitions);
+        await m.createTable(habitLogs);
       }
     },
   );
@@ -842,5 +896,133 @@ class AppDatabase extends _$AppDatabase {
               tbl.entryDate.equals(normalized),
         ))
         .go();
+  }
+
+  Stream<List<HabitDefinition>> watchHabits({bool includeArchived = false}) {
+    final query = select(habitDefinitions)
+      ..orderBy([(tbl) => OrderingTerm.asc(tbl.name)]);
+    if (!includeArchived) {
+      query.where((tbl) => tbl.archived.equals(false));
+    }
+    return query.watch();
+  }
+
+  Future<int> createHabit({
+    required String name,
+    String description = '',
+    HabitIntervalKind interval = HabitIntervalKind.daily,
+    int targetOccurrences = 1,
+    HabitValueKind measurementKind = HabitValueKind.boolean,
+    double? targetValue,
+  }) async {
+    final now = DateTime.now().toUtc();
+    final Value<double?> resolvedTargetValue = targetValue == null
+        ? const Value.absent()
+        : Value(targetValue);
+    final companion = HabitDefinitionsCompanion.insert(
+      name: name,
+      description: Value(description),
+      interval: Value(interval),
+      targetOccurrences: Value(targetOccurrences),
+      measurementKind: Value(measurementKind),
+      targetValue: resolvedTargetValue,
+      archived: const Value(false),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(habitDefinitions).insert(companion);
+  }
+
+  Future<void> updateHabit(HabitDefinition habit) async {
+    final updated = habit.copyWith(updatedAt: DateTime.now().toUtc());
+    await update(habitDefinitions).replace(updated);
+  }
+
+  Future<void> setHabitArchived({
+    required int id,
+    required bool archived,
+  }) async {
+    await (update(habitDefinitions)..where((tbl) => tbl.id.equals(id))).write(
+      HabitDefinitionsCompanion(
+        archived: Value(archived),
+        updatedAt: Value(DateTime.now().toUtc()),
+      ),
+    );
+  }
+
+  Future<void> deleteHabit(int id) async {
+    await (delete(habitDefinitions)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Stream<List<HabitLog>> watchHabitLogs(int habitId) {
+    return (select(habitLogs)
+          ..where((tbl) => tbl.habitId.equals(habitId))
+          ..orderBy([
+            (tbl) => OrderingTerm.asc(tbl.occurredAt),
+            (tbl) => OrderingTerm.asc(tbl.id),
+          ]))
+        .watch();
+  }
+
+  Future<int> insertHabitLog({
+    required int habitId,
+    required double value,
+    DateTime? occurredAt,
+  }) async {
+    final now = DateTime.now().toUtc();
+    final timestamp = (occurredAt ?? DateTime.now()).toUtc();
+    final companion = HabitLogsCompanion.insert(
+      habitId: habitId,
+      occurredAt: timestamp,
+      value: Value(value),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    final id = await into(habitLogs).insert(companion);
+    await (update(habitDefinitions)..where((tbl) => tbl.id.equals(habitId))).write(
+      HabitDefinitionsCompanion(updatedAt: Value(now)),
+    );
+    return id;
+  }
+
+  Future<void> updateHabitLog(HabitLog log) async {
+    final updated = log.copyWith(updatedAt: DateTime.now().toUtc());
+    await update(habitLogs).replace(updated);
+  }
+
+  Future<void> deleteHabitLog(int id) async {
+    await (delete(habitLogs)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<void> deleteHabitLogsForRange({
+    required int habitId,
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    final utcStart = start.toUtc();
+    final utcEnd = end.toUtc();
+    await (delete(habitLogs)
+          ..where((tbl) => tbl.habitId.equals(habitId))
+          ..where((tbl) => tbl.occurredAt.isBiggerOrEqualValue(utcStart))
+          ..where((tbl) => tbl.occurredAt.isSmallerThanValue(utcEnd)))
+        .go();
+  }
+
+  Future<List<HabitLog>> getHabitLogsForRange({
+    required int habitId,
+    required DateTime start,
+    required DateTime end,
+  }) {
+    final utcStart = start.toUtc();
+    final utcEnd = end.toUtc();
+    return (select(habitLogs)
+          ..where((tbl) => tbl.habitId.equals(habitId))
+          ..where((tbl) => tbl.occurredAt.isBiggerOrEqualValue(utcStart))
+          ..where((tbl) => tbl.occurredAt.isSmallerThanValue(utcEnd))
+          ..orderBy([
+            (tbl) => OrderingTerm.asc(tbl.occurredAt),
+            (tbl) => OrderingTerm.asc(tbl.id),
+          ]))
+        .get();
   }
 }

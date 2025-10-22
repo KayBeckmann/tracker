@@ -69,11 +69,11 @@
                 - [ ] Logic for synchronizing images with backend (conditional on paid subscription).
         - [ ] Journal/Tagebuch Modul:
             - [ ] Journal/Tagebuch mit Mood-Tracker.
-        - [ ] Habits Module:
-            - [ ] Design and implement habit tracking UI.
-            - [ ] Implement local storage for habits data.
-            - [ ] Develop daily count/time tracking.
-            - [ ] Implement historical comparison views.
+        - [x] Habits Module:
+            - [x] Design and implement habit tracking UI.
+            - [x] Implement local storage for habits data.
+            - [x] Develop daily count/time tracking.
+            - [x] Implement historical comparison views.
         - [ ] Household Book Module:
             - [ ] Design and implement financial entry UI.
             - [ ] Implement local storage for financial data.

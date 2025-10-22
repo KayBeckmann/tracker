@@ -540,7 +540,168 @@
   "journalUnlockedStatus": "Journal ist entsperrt.",
   "journalProtectionDisabledHint": "Aktiviere eine PIN oder Biometrie, um dein Journal zu schützen.",
   "journalLockedNotice": "Journal gesperrt. Entsperre es im Modul.",
-  "habitsPlaceholder": "Verfolge deine Gewohnheiten an dieser Stelle.",
+  "habitsAddHabitButton": "Gewohnheit hinzufügen",
+  "habitsCreateTitle": "Neue Gewohnheit",
+  "habitsEditTitle": "Gewohnheit bearbeiten",
+  "habitsNameLabel": "Name",
+  "habitsDescriptionLabel": "Beschreibung",
+  "habitsNameRequired": "Bitte gib einen Namen ein.",
+  "habitsIntervalLabel": "Intervall",
+  "habitsMeasurementLabel": "Wertetyp",
+  "habitsTargetOccurrences": "Anzahl pro Intervall",
+  "habitsInvalidNumber": "Bitte gib eine gültige Zahl ein.",
+  "habitsTargetValueLabel": "Zielwert pro Intervall",
+  "habitsCancelButton": "Abbrechen",
+  "habitsSaveButton": "Speichern",
+  "habitsIntervalDaily": "Täglich",
+  "habitsIntervalMultiplePerDay": "Mehrmals pro Tag",
+  "habitsIntervalWeekly": "Wöchentlich",
+  "habitsIntervalMultiplePerWeek": "Mehrmals pro Woche",
+  "habitsMeasurementBoolean": "Erledigt / nicht erledigt",
+  "habitsMeasurementInteger": "Ganzzahliger Wert",
+  "habitsMeasurementDecimal": "Dezimalwert",
+  "habitsCreateSuccess": "„{name}“ wurde erstellt.",
+  "@habitsCreateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsUpdateSuccess": "„{name}“ wurde aktualisiert.",
+  "@habitsUpdateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsDeleteHabit": "Gewohnheit löschen",
+  "habitsDeleteHabitConfirm": "„{name}“ und alle Einträge löschen?",
+  "@habitsDeleteHabitConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsDeleteHabitAction": "Löschen",
+  "habitsDeleteHabitSuccess": "„{name}“ wurde gelöscht.",
+  "@habitsDeleteHabitSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsEmptyTitle": "Verfolge deine Gewohnheiten",
+  "habitsEmptyDescription": "Lege deine erste Gewohnheit an, um Routinen zu verfolgen und Fortschritte zu sehen.",
+  "habitsOpenDetails": "Details anzeigen",
+  "habitsSubtitleBooleanSingle": "{interval} · Erledigt",
+  "@habitsSubtitleBooleanSingle": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsSubtitleBooleanMultiple": "{interval} · {count}× pro Intervall",
+  "@habitsSubtitleBooleanMultiple": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "habitsSubtitleNumeric": "{interval} · {measurement}",
+  "@habitsSubtitleNumeric": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      },
+      "measurement": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsSubtitleNumericTarget": "{interval} · {measurement} · Ziel {target}",
+  "@habitsSubtitleNumericTarget": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      },
+      "measurement": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsMarkDoneButton": "Als erledigt markieren",
+  "habitsUndoTodayButton": "Erledigung zurücknehmen",
+  "habitsAddCompletion": "Erledigung hinzufügen",
+  "habitsAddMeasurement": "Messwert hinzufügen",
+  "habitsLogValueTitle": "Wert für „{name}“ erfassen",
+  "@habitsLogValueTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsValueHint": "Wert eingeben",
+  "habitsProgressCompleted": "{count} von {target} Erledigungen {period}",
+  "@habitsProgressCompleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsProgressValue": "{total} von {target} {period}",
+  "@habitsProgressValue": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsProgressValueNoTarget": "{total} erfasst {period}",
+  "@habitsProgressValueNoTarget": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsPeriodDay": "heute",
+  "habitsPeriodWeek": "in dieser Woche",
+  "habitsCurrentProgress": "Aktueller Fortschritt",
+  "habitsHistorySectionTitle": "Historie",
+  "habitsNoEntriesYet": "Noch keine Einträge.",
+  "habitsChartTitle": "Verlauf",
+  "habitsChartEmpty": "Füge einige Tage hinzu, um den Verlauf zu sehen.",
+  "habitsLogBooleanValue": "Erledigt",
+  "habitsDeleteEntryTooltip": "Eintrag löschen",
   "ledgerPlaceholder": "Verwalte hier dein Haushaltsbudget.",
   "historySubtitle": "Name: {name}, Quelle: {source}, Zeit: {timestamp}",
   "historyEmpty": "Es sind noch keine gespeicherten Antworten vorhanden.",

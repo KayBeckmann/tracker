@@ -1948,11 +1948,315 @@ abstract class AppLocalizations {
   /// **'Journal locked. Unlock it from the module.'**
   String get journalLockedNotice;
 
-  /// No description provided for @habitsPlaceholder.
+  /// No description provided for @habitsAddHabitButton.
   ///
   /// In en, this message translates to:
-  /// **'Track your habits here.'**
-  String get habitsPlaceholder;
+  /// **'Add habit'**
+  String get habitsAddHabitButton;
+
+  /// No description provided for @habitsCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New habit'**
+  String get habitsCreateTitle;
+
+  /// No description provided for @habitsEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit habit'**
+  String get habitsEditTitle;
+
+  /// No description provided for @habitsNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get habitsNameLabel;
+
+  /// No description provided for @habitsDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get habitsDescriptionLabel;
+
+  /// No description provided for @habitsNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a name.'**
+  String get habitsNameRequired;
+
+  /// No description provided for @habitsIntervalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval'**
+  String get habitsIntervalLabel;
+
+  /// No description provided for @habitsMeasurementLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Value type'**
+  String get habitsMeasurementLabel;
+
+  /// No description provided for @habitsTargetOccurrences.
+  ///
+  /// In en, this message translates to:
+  /// **'Times per interval'**
+  String get habitsTargetOccurrences;
+
+  /// No description provided for @habitsInvalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid number.'**
+  String get habitsInvalidNumber;
+
+  /// No description provided for @habitsTargetValueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target value per interval'**
+  String get habitsTargetValueLabel;
+
+  /// No description provided for @habitsCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get habitsCancelButton;
+
+  /// No description provided for @habitsSaveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get habitsSaveButton;
+
+  /// No description provided for @habitsIntervalDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get habitsIntervalDaily;
+
+  /// No description provided for @habitsIntervalMultiplePerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple times per day'**
+  String get habitsIntervalMultiplePerDay;
+
+  /// No description provided for @habitsIntervalWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get habitsIntervalWeekly;
+
+  /// No description provided for @habitsIntervalMultiplePerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple times per week'**
+  String get habitsIntervalMultiplePerWeek;
+
+  /// No description provided for @habitsMeasurementBoolean.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed / not completed'**
+  String get habitsMeasurementBoolean;
+
+  /// No description provided for @habitsMeasurementInteger.
+  ///
+  /// In en, this message translates to:
+  /// **'Integer value'**
+  String get habitsMeasurementInteger;
+
+  /// No description provided for @habitsMeasurementDecimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Decimal value'**
+  String get habitsMeasurementDecimal;
+
+  /// No description provided for @habitsCreateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Created \"{name}\".'**
+  String habitsCreateSuccess(String name);
+
+  /// No description provided for @habitsUpdateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated \"{name}\".'**
+  String habitsUpdateSuccess(String name);
+
+  /// No description provided for @habitsDeleteHabit.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete habit'**
+  String get habitsDeleteHabit;
+
+  /// No description provided for @habitsDeleteHabitConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\" and all its entries?'**
+  String habitsDeleteHabitConfirm(String name);
+
+  /// No description provided for @habitsDeleteHabitAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get habitsDeleteHabitAction;
+
+  /// No description provided for @habitsDeleteHabitSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted \"{name}\".'**
+  String habitsDeleteHabitSuccess(String name);
+
+  /// No description provided for @habitsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your habits'**
+  String get habitsEmptyTitle;
+
+  /// No description provided for @habitsEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first habit to follow your routines and see your progress.'**
+  String get habitsEmptyDescription;
+
+  /// No description provided for @habitsOpenDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get habitsOpenDetails;
+
+  /// No description provided for @habitsSubtitleBooleanSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'{interval} · Completed'**
+  String habitsSubtitleBooleanSingle(String interval);
+
+  /// No description provided for @habitsSubtitleBooleanMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'{interval} · {count}× per interval'**
+  String habitsSubtitleBooleanMultiple(String interval, int count);
+
+  /// No description provided for @habitsSubtitleNumeric.
+  ///
+  /// In en, this message translates to:
+  /// **'{interval} · {measurement}'**
+  String habitsSubtitleNumeric(String interval, String measurement);
+
+  /// No description provided for @habitsSubtitleNumericTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'{interval} · {measurement} · Target {target}'**
+  String habitsSubtitleNumericTarget(
+    String interval,
+    String measurement,
+    String target,
+  );
+
+  /// No description provided for @habitsMarkDoneButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as done'**
+  String get habitsMarkDoneButton;
+
+  /// No description provided for @habitsUndoTodayButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo completion'**
+  String get habitsUndoTodayButton;
+
+  /// No description provided for @habitsAddCompletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Add completion'**
+  String get habitsAddCompletion;
+
+  /// No description provided for @habitsAddMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'Add measurement'**
+  String get habitsAddMeasurement;
+
+  /// No description provided for @habitsLogValueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log value for \"{name}\"'**
+  String habitsLogValueTitle(String name);
+
+  /// No description provided for @habitsValueHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a value'**
+  String get habitsValueHint;
+
+  /// No description provided for @habitsProgressCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {target} completions {period}'**
+  String habitsProgressCompleted(int count, int target, String period);
+
+  /// No description provided for @habitsProgressValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{total} of {target} {period}'**
+  String habitsProgressValue(String total, String target, String period);
+
+  /// No description provided for @habitsProgressValueNoTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'{total} logged {period}'**
+  String habitsProgressValueNoTarget(String total, String period);
+
+  /// No description provided for @habitsPeriodDay.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get habitsPeriodDay;
+
+  /// No description provided for @habitsPeriodWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'this week'**
+  String get habitsPeriodWeek;
+
+  /// No description provided for @habitsCurrentProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Current progress'**
+  String get habitsCurrentProgress;
+
+  /// No description provided for @habitsHistorySectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get habitsHistorySectionTitle;
+
+  /// No description provided for @habitsNoEntriesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries yet.'**
+  String get habitsNoEntriesYet;
+
+  /// No description provided for @habitsChartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress over time'**
+  String get habitsChartTitle;
+
+  /// No description provided for @habitsChartEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a few days of data to see your progress curve.'**
+  String get habitsChartEmpty;
+
+  /// No description provided for @habitsLogBooleanValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get habitsLogBooleanValue;
+
+  /// No description provided for @habitsDeleteEntryTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entry'**
+  String get habitsDeleteEntryTooltip;
 
   /// No description provided for @ledgerPlaceholder.
   ///

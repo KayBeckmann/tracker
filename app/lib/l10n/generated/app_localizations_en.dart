@@ -1032,7 +1032,187 @@ class AppLocalizationsEn extends AppLocalizations {
       'Journal locked. Unlock it from the module.';
 
   @override
-  String get habitsPlaceholder => 'Track your habits here.';
+  String get habitsAddHabitButton => 'Add habit';
+
+  @override
+  String get habitsCreateTitle => 'New habit';
+
+  @override
+  String get habitsEditTitle => 'Edit habit';
+
+  @override
+  String get habitsNameLabel => 'Name';
+
+  @override
+  String get habitsDescriptionLabel => 'Description';
+
+  @override
+  String get habitsNameRequired => 'Please enter a name.';
+
+  @override
+  String get habitsIntervalLabel => 'Interval';
+
+  @override
+  String get habitsMeasurementLabel => 'Value type';
+
+  @override
+  String get habitsTargetOccurrences => 'Times per interval';
+
+  @override
+  String get habitsInvalidNumber => 'Please enter a valid number.';
+
+  @override
+  String get habitsTargetValueLabel => 'Target value per interval';
+
+  @override
+  String get habitsCancelButton => 'Cancel';
+
+  @override
+  String get habitsSaveButton => 'Save';
+
+  @override
+  String get habitsIntervalDaily => 'Daily';
+
+  @override
+  String get habitsIntervalMultiplePerDay => 'Multiple times per day';
+
+  @override
+  String get habitsIntervalWeekly => 'Weekly';
+
+  @override
+  String get habitsIntervalMultiplePerWeek => 'Multiple times per week';
+
+  @override
+  String get habitsMeasurementBoolean => 'Completed / not completed';
+
+  @override
+  String get habitsMeasurementInteger => 'Integer value';
+
+  @override
+  String get habitsMeasurementDecimal => 'Decimal value';
+
+  @override
+  String habitsCreateSuccess(String name) {
+    return 'Created \"$name\".';
+  }
+
+  @override
+  String habitsUpdateSuccess(String name) {
+    return 'Updated \"$name\".';
+  }
+
+  @override
+  String get habitsDeleteHabit => 'Delete habit';
+
+  @override
+  String habitsDeleteHabitConfirm(String name) {
+    return 'Delete \"$name\" and all its entries?';
+  }
+
+  @override
+  String get habitsDeleteHabitAction => 'Delete';
+
+  @override
+  String habitsDeleteHabitSuccess(String name) {
+    return 'Deleted \"$name\".';
+  }
+
+  @override
+  String get habitsEmptyTitle => 'Track your habits';
+
+  @override
+  String get habitsEmptyDescription =>
+      'Create your first habit to follow your routines and see your progress.';
+
+  @override
+  String get habitsOpenDetails => 'View details';
+
+  @override
+  String habitsSubtitleBooleanSingle(String interval) {
+    return '$interval · Completed';
+  }
+
+  @override
+  String habitsSubtitleBooleanMultiple(String interval, int count) {
+    return '$interval · $count× per interval';
+  }
+
+  @override
+  String habitsSubtitleNumeric(String interval, String measurement) {
+    return '$interval · $measurement';
+  }
+
+  @override
+  String habitsSubtitleNumericTarget(
+    String interval,
+    String measurement,
+    String target,
+  ) {
+    return '$interval · $measurement · Target $target';
+  }
+
+  @override
+  String get habitsMarkDoneButton => 'Mark as done';
+
+  @override
+  String get habitsUndoTodayButton => 'Undo completion';
+
+  @override
+  String get habitsAddCompletion => 'Add completion';
+
+  @override
+  String get habitsAddMeasurement => 'Add measurement';
+
+  @override
+  String habitsLogValueTitle(String name) {
+    return 'Log value for \"$name\"';
+  }
+
+  @override
+  String get habitsValueHint => 'Enter a value';
+
+  @override
+  String habitsProgressCompleted(int count, int target, String period) {
+    return '$count of $target completions $period';
+  }
+
+  @override
+  String habitsProgressValue(String total, String target, String period) {
+    return '$total of $target $period';
+  }
+
+  @override
+  String habitsProgressValueNoTarget(String total, String period) {
+    return '$total logged $period';
+  }
+
+  @override
+  String get habitsPeriodDay => 'today';
+
+  @override
+  String get habitsPeriodWeek => 'this week';
+
+  @override
+  String get habitsCurrentProgress => 'Current progress';
+
+  @override
+  String get habitsHistorySectionTitle => 'History';
+
+  @override
+  String get habitsNoEntriesYet => 'No entries yet.';
+
+  @override
+  String get habitsChartTitle => 'Progress over time';
+
+  @override
+  String get habitsChartEmpty =>
+      'Add a few days of data to see your progress curve.';
+
+  @override
+  String get habitsLogBooleanValue => 'Completed';
+
+  @override
+  String get habitsDeleteEntryTooltip => 'Delete entry';
 
   @override
   String get ledgerPlaceholder => 'Manage your household budget here.';

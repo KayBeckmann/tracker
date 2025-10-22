@@ -575,7 +575,168 @@
   "journalUnlockedStatus": "Journal is unlocked.",
   "journalProtectionDisabledHint": "Enable a PIN or biometrics to protect your journal.",
   "journalLockedNotice": "Journal locked. Unlock it from the module.",
-  "habitsPlaceholder": "Track your habits here.",
+  "habitsAddHabitButton": "Add habit",
+  "habitsCreateTitle": "New habit",
+  "habitsEditTitle": "Edit habit",
+  "habitsNameLabel": "Name",
+  "habitsDescriptionLabel": "Description",
+  "habitsNameRequired": "Please enter a name.",
+  "habitsIntervalLabel": "Interval",
+  "habitsMeasurementLabel": "Value type",
+  "habitsTargetOccurrences": "Times per interval",
+  "habitsInvalidNumber": "Please enter a valid number.",
+  "habitsTargetValueLabel": "Target value per interval",
+  "habitsCancelButton": "Cancel",
+  "habitsSaveButton": "Save",
+  "habitsIntervalDaily": "Daily",
+  "habitsIntervalMultiplePerDay": "Multiple times per day",
+  "habitsIntervalWeekly": "Weekly",
+  "habitsIntervalMultiplePerWeek": "Multiple times per week",
+  "habitsMeasurementBoolean": "Completed / not completed",
+  "habitsMeasurementInteger": "Integer value",
+  "habitsMeasurementDecimal": "Decimal value",
+  "habitsCreateSuccess": "Created \"{name}\".",
+  "@habitsCreateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsUpdateSuccess": "Updated \"{name}\".",
+  "@habitsUpdateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsDeleteHabit": "Delete habit",
+  "habitsDeleteHabitConfirm": "Delete \"{name}\" and all its entries?",
+  "@habitsDeleteHabitConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsDeleteHabitAction": "Delete",
+  "habitsDeleteHabitSuccess": "Deleted \"{name}\".",
+  "@habitsDeleteHabitSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsEmptyTitle": "Track your habits",
+  "habitsEmptyDescription": "Create your first habit to follow your routines and see your progress.",
+  "habitsOpenDetails": "View details",
+  "habitsSubtitleBooleanSingle": "{interval} · Completed",
+  "@habitsSubtitleBooleanSingle": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsSubtitleBooleanMultiple": "{interval} · {count}× per interval",
+  "@habitsSubtitleBooleanMultiple": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "habitsSubtitleNumeric": "{interval} · {measurement}",
+  "@habitsSubtitleNumeric": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      },
+      "measurement": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsSubtitleNumericTarget": "{interval} · {measurement} · Target {target}",
+  "@habitsSubtitleNumericTarget": {
+    "placeholders": {
+      "interval": {
+        "type": "String"
+      },
+      "measurement": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsMarkDoneButton": "Mark as done",
+  "habitsUndoTodayButton": "Undo completion",
+  "habitsAddCompletion": "Add completion",
+  "habitsAddMeasurement": "Add measurement",
+  "habitsLogValueTitle": "Log value for \"{name}\"",
+  "@habitsLogValueTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsValueHint": "Enter a value",
+  "habitsProgressCompleted": "{count} of {target} completions {period}",
+  "@habitsProgressCompleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsProgressValue": "{total} of {target} {period}",
+  "@habitsProgressValue": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsProgressValueNoTarget": "{total} logged {period}",
+  "@habitsProgressValueNoTarget": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "period": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsPeriodDay": "today",
+  "habitsPeriodWeek": "this week",
+  "habitsCurrentProgress": "Current progress",
+  "habitsHistorySectionTitle": "History",
+  "habitsNoEntriesYet": "No entries yet.",
+  "habitsChartTitle": "Progress over time",
+  "habitsChartEmpty": "Add a few days of data to see your progress curve.",
+  "habitsLogBooleanValue": "Completed",
+  "habitsDeleteEntryTooltip": "Delete entry",
   "ledgerPlaceholder": "Manage your household budget here.",
   "historySubtitle": "Name: {name}, Source: {source}, Time: {timestamp}",
   "@historySubtitle": {

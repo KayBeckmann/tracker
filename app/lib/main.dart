@@ -14,6 +14,7 @@ import 'data/local/app_database.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'models/membership_status.dart';
 import 'notes/notes_page.dart';
+import 'habits/habits_page.dart';
 import 'journal/journal_lock_view.dart';
 import 'journal/journal_page.dart';
 import 'tasks/tasks_page.dart';
@@ -2011,14 +2012,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildHabits(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return Center(
-      child: Text(
-        loc.habitsPlaceholder,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-    );
+    return HabitsPage(database: _database);
   }
 
   Widget _buildLedger(BuildContext context) {
