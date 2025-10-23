@@ -75,9 +75,11 @@
             - [x] Develop daily count/time tracking.
             - [x] Implement historical comparison views.
         - [ ] Household Book Module:
-            - [ ] Design and implement financial entry UI.
-            - [ ] Implement local storage for financial data.
-            - [ ] Develop reporting and categorization features.
+            - [x] Design and implement financial entry UI.
+            - [x] Implement local storage for financial data.
+            - [x] Develop reporting and categorization features.
+            - [ ] Integrate ledger data synchronisation with backend.
+            - [ ] Add charts/insights for budget vs. actual comparisons.
         - [ ] Settings Module:
             - [ ] Design and implement user settings UI.
             - [ ] Implement local storage for user preferences.
