@@ -33,7 +33,7 @@ import 'ledger/ledger_utils.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
-  defaultValue: 'http://127.0.0.1:8080',
+  defaultValue: 'https://api.personal-tracker.life',
 );
 
 const String trackerBoxName = 'tracker_box';
