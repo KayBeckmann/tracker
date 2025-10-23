@@ -1536,4 +1536,485 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get syncConflictServerLabel => 'Server';
+
+  @override
+  String get validationRequiredField => 'Bitte fülle dieses Feld aus.';
+
+  @override
+  String get validationNumberField => 'Bitte gib eine gültige Zahl ein.';
+
+  @override
+  String get ledgerAccountCreateTitle => 'Konto erstellen';
+
+  @override
+  String get ledgerAccountEditTitle => 'Konto bearbeiten';
+
+  @override
+  String get ledgerAccountNameLabel => 'Kontoname';
+
+  @override
+  String get ledgerAccountKindLabel => 'Kontotyp';
+
+  @override
+  String get ledgerAccountCurrencyLabel => 'Währung';
+
+  @override
+  String get ledgerValidationCurrencyCode =>
+      'Bitte gib einen dreistelligen Währungscode ein.';
+
+  @override
+  String get ledgerAccountInitialBalanceLabel => 'Anfangssaldo';
+
+  @override
+  String get ledgerAccountIncludeInNetWorthLabel =>
+      'In Gesamtsumme berücksichtigen';
+
+  @override
+  String get ledgerAccountCreateButton => 'Konto hinzufügen';
+
+  @override
+  String ledgerAccountCreateSuccess(String name) {
+    return 'Konto \"$name\" erstellt.';
+  }
+
+  @override
+  String ledgerAccountUpdateSuccess(String name) {
+    return 'Konto \"$name\" aktualisiert.';
+  }
+
+  @override
+  String get ledgerAccountDeleteTitle => 'Konto löschen?';
+
+  @override
+  String ledgerAccountDeleteMessage(String name) {
+    return 'Soll das Konto \"$name\" gelöscht werden? Zugehörige Buchungen bleiben auf diesem Gerät.';
+  }
+
+  @override
+  String ledgerAccountDeleteSuccess(String name) {
+    return 'Konto \"$name\" gelöscht.';
+  }
+
+  @override
+  String ledgerAccountActualBalance(String amount, String currency) {
+    return 'Saldo: $amount $currency';
+  }
+
+  @override
+  String ledgerAccountPlannedIncome(String amount, String currency) {
+    return 'Geplante Einnahmen: $amount $currency';
+  }
+
+  @override
+  String ledgerAccountPlannedExpense(String amount, String currency) {
+    return 'Geplante Ausgaben: $amount $currency';
+  }
+
+  @override
+  String get ledgerAccountEmptyTitle => 'Lege dein erstes Konto an';
+
+  @override
+  String get ledgerAccountEmptyDescription =>
+      'Verwalte Bargeld, Bankkonten, Depots, Anlagewerte oder Kryptos.';
+
+  @override
+  String get ledgerAccountKindCash => 'Bargeld';
+
+  @override
+  String get ledgerAccountKindBank => 'Bankkonto';
+
+  @override
+  String get ledgerAccountKindDepot => 'Depot';
+
+  @override
+  String get ledgerAccountKindAsset => 'Anlagewert';
+
+  @override
+  String get ledgerAccountKindCrypto => 'Kryptowallet';
+
+  @override
+  String get ledgerTransactionCreateTitle => 'Neue Buchung';
+
+  @override
+  String get ledgerTransactionEditTitle => 'Buchung bearbeiten';
+
+  @override
+  String get ledgerTransactionKindLabel => 'Buchungstyp';
+
+  @override
+  String get ledgerTransactionAccountLabel => 'Konto';
+
+  @override
+  String get ledgerTransactionSourceAccountLabel => 'Quellkonto';
+
+  @override
+  String get ledgerTransactionTargetAccountLabel => 'Zielkonto';
+
+  @override
+  String get ledgerValidationDifferentAccounts =>
+      'Wähle zwei unterschiedliche Konten.';
+
+  @override
+  String get ledgerTransactionCategoryLabel => 'Kategorie';
+
+  @override
+  String get ledgerTransactionSubcategoryLabel => 'Unterkategorie';
+
+  @override
+  String get ledgerTransactionNoSubcategory => 'Keine Unterkategorie';
+
+  @override
+  String get ledgerTransactionAmountLabel => 'Betrag';
+
+  @override
+  String get ledgerTransactionCurrencyLabel => 'Währung';
+
+  @override
+  String ledgerTransactionDateLabel(String date) {
+    return 'Buchungsdatum: $date';
+  }
+
+  @override
+  String get ledgerTransactionDescriptionLabel => 'Beschreibung';
+
+  @override
+  String get ledgerTransactionCryptoSymbolLabel => 'Kryptosymbol';
+
+  @override
+  String get ledgerTransactionCryptoQuantityLabel => 'Kryptomenge';
+
+  @override
+  String get ledgerTransactionCryptoPriceLabel => 'Preis je Einheit';
+
+  @override
+  String get ledgerTransactionPlannedLabel => 'Geplante Buchung';
+
+  @override
+  String get ledgerTransactionCreateButton => 'Buchung hinzufügen';
+
+  @override
+  String get ledgerTransactionNoAccountsWarning =>
+      'Lege zuerst ein Konto an, bevor du Buchungen erfasst.';
+
+  @override
+  String get ledgerTransactionDeleteTitle => 'Buchung löschen?';
+
+  @override
+  String get ledgerTransactionDeleteMessage =>
+      'Soll diese Buchung von diesem Gerät entfernt werden?';
+
+  @override
+  String get ledgerTransactionMarkExecuted => 'Als ausgeführt markieren';
+
+  @override
+  String get ledgerTransactionFilterType => 'Typ';
+
+  @override
+  String get ledgerTransactionFilterAll => 'Alle Typen';
+
+  @override
+  String get ledgerTransactionFilterStatus => 'Status';
+
+  @override
+  String get ledgerTransactionFilterAllStatuses => 'Alle Status';
+
+  @override
+  String get ledgerTransactionFilterExecuted => 'Ausgeführt';
+
+  @override
+  String get ledgerTransactionFilterPlanned => 'Geplant';
+
+  @override
+  String get ledgerTransactionStatusPlanned => 'Geplant';
+
+  @override
+  String get ledgerTransactionEmptyTitle => 'Noch keine Buchungen';
+
+  @override
+  String get ledgerTransactionEmptyDescription =>
+      'Erfasse Einnahmen, Ausgaben oder Umbuchungen, um deine Finanzen zu verfolgen.';
+
+  @override
+  String get ledgerTransactionKindIncome => 'Einnahme';
+
+  @override
+  String get ledgerTransactionKindExpense => 'Ausgabe';
+
+  @override
+  String get ledgerTransactionKindTransfer => 'Umbuchung';
+
+  @override
+  String get ledgerTransactionKindCryptoPurchase => 'Kryptokauf';
+
+  @override
+  String ledgerCryptoCurrentPriceLoading(String symbol) {
+    return 'Aktuellen Kurs für $symbol laden …';
+  }
+
+  @override
+  String ledgerCryptoProfit(String amount, String currency) {
+    return 'Gewinn $amount $currency';
+  }
+
+  @override
+  String ledgerCryptoLoss(String amount, String currency) {
+    return 'Verlust $amount $currency';
+  }
+
+  @override
+  String ledgerCryptoCurrentPriceLabel(
+    String price,
+    String currency,
+    String symbol,
+  ) {
+    return 'Aktueller Kurs $price $currency ($symbol)';
+  }
+
+  @override
+  String get ledgerBudgetCreateTitle => 'Neues Budget';
+
+  @override
+  String get ledgerBudgetEditTitle => 'Budget bearbeiten';
+
+  @override
+  String get ledgerBudgetCategoryLabel => 'Kategorie oder Unterkategorie';
+
+  @override
+  String get ledgerBudgetPeriodLabel => 'Zeitraum';
+
+  @override
+  String get ledgerBudgetYearLabel => 'Jahr';
+
+  @override
+  String get ledgerBudgetMonthLabel => 'Monat';
+
+  @override
+  String get ledgerBudgetQuarterLabel => 'Quartal';
+
+  @override
+  String get ledgerBudgetAmountLabel => 'Betrag';
+
+  @override
+  String get ledgerBudgetCurrencyLabel => 'Währung';
+
+  @override
+  String get ledgerBudgetCreateButton => 'Budget hinzufügen';
+
+  @override
+  String get ledgerBudgetDeleteTitle => 'Budget löschen?';
+
+  @override
+  String get ledgerBudgetDeleteMessage =>
+      'Soll dieses Budget von diesem Gerät entfernt werden?';
+
+  @override
+  String get ledgerBudgetUnknownCategory => 'Unbekannte Kategorie';
+
+  @override
+  String ledgerBudgetUsageSummary(
+    String actual,
+    String total,
+    String currency,
+  ) {
+    return '$actual von $total $currency ausgegeben';
+  }
+
+  @override
+  String ledgerBudgetPlannedAmount(String amount, String currency) {
+    return 'Geplant: $amount $currency';
+  }
+
+  @override
+  String get ledgerBudgetEmptyTitle => 'Keine Budgets vorhanden';
+
+  @override
+  String get ledgerBudgetEmptyDescription =>
+      'Lege Budgets für Kategorien und Unterkategorien fest, um deine Ausgaben im Blick zu behalten.';
+
+  @override
+  String get ledgerBudgetPeriodMonthly => 'Monatlich';
+
+  @override
+  String get ledgerBudgetPeriodQuarterly => 'Vierteljährlich';
+
+  @override
+  String get ledgerBudgetPeriodYearly => 'Jährlich';
+
+  @override
+  String ledgerBudgetQuarterName(int quarter, int year) {
+    return 'Quartal $quarter $year';
+  }
+
+  @override
+  String ledgerBudgetYearName(int year) {
+    return '$year';
+  }
+
+  @override
+  String get ledgerCategoryCreateTitle => 'Neue Kategorie';
+
+  @override
+  String get ledgerCategoryEditTitle => 'Kategorie bearbeiten';
+
+  @override
+  String get ledgerCategoryNameLabel => 'Name';
+
+  @override
+  String get ledgerCategoryParentLabel => 'Überkategorie';
+
+  @override
+  String get ledgerCategoryNoParent => 'Keine Überkategorie';
+
+  @override
+  String get ledgerCategoryKindLabel => 'Typ';
+
+  @override
+  String get ledgerCategoryArchiveLabel => 'Kategorie archivieren';
+
+  @override
+  String get ledgerCategoryCreateButton => 'Kategorie hinzufügen';
+
+  @override
+  String get ledgerCategoryCreateSubButton => 'Unterkategorie hinzufügen';
+
+  @override
+  String get ledgerCategoryIncomeSection => 'Einnahmekategorien';
+
+  @override
+  String get ledgerCategoryExpenseSection => 'Ausgabekategorien';
+
+  @override
+  String get ledgerCategoryEmptySection => 'Noch keine Kategorien.';
+
+  @override
+  String get ledgerCategoryActiveLabel => 'Aktiv';
+
+  @override
+  String get ledgerCategoryArchivedLabel => 'Archiviert';
+
+  @override
+  String get ledgerCategoryNoSubcategories => 'Keine Unterkategorien.';
+
+  @override
+  String get ledgerCategoryDeleteTitle => 'Kategorie löschen?';
+
+  @override
+  String ledgerCategoryDeleteMessage(String name) {
+    return 'Soll die Kategorie \"$name\" gelöscht werden?';
+  }
+
+  @override
+  String get ledgerCategoryKindIncome => 'Einnahme';
+
+  @override
+  String get ledgerCategoryKindExpense => 'Ausgabe';
+
+  @override
+  String get ledgerRecurringCreateTitle => 'Neuer Dauerauftrag';
+
+  @override
+  String get ledgerRecurringEditTitle => 'Dauerauftrag bearbeiten';
+
+  @override
+  String get ledgerRecurringNameLabel => 'Name';
+
+  @override
+  String get ledgerRecurringAmountLabel => 'Betrag';
+
+  @override
+  String get ledgerRecurringCurrencyLabel => 'Währung';
+
+  @override
+  String get ledgerRecurringIntervalLabel => 'Intervall';
+
+  @override
+  String get ledgerRecurringIntervalCountLabel => 'Intervallanzahl';
+
+  @override
+  String ledgerRecurringNextOccurrenceLabel(String date) {
+    return 'Nächste Ausführung: $date';
+  }
+
+  @override
+  String get ledgerRecurringAutoApplyLabel => 'Buchungen automatisch erzeugen';
+
+  @override
+  String get ledgerRecurringMetadataLabel => 'Notizen';
+
+  @override
+  String get ledgerRecurringCreateButton => 'Dauerauftrag hinzufügen';
+
+  @override
+  String get ledgerRecurringDeleteTitle => 'Dauerauftrag löschen?';
+
+  @override
+  String get ledgerRecurringDeleteMessage =>
+      'Soll dieser Dauerauftrag entfernt werden?';
+
+  @override
+  String get ledgerRecurringApplyNow => 'Buchung jetzt erstellen';
+
+  @override
+  String get ledgerRecurringEmptyTitle => 'Noch keine Daueraufträge';
+
+  @override
+  String get ledgerRecurringEmptyDescription =>
+      'Erstelle Vorlagen für wiederkehrende Einnahmen, Ausgaben oder Umbuchungen.';
+
+  @override
+  String get ledgerRecurringIntervalDaily => 'Täglich';
+
+  @override
+  String get ledgerRecurringIntervalWeekly => 'Wöchentlich';
+
+  @override
+  String get ledgerRecurringIntervalMonthly => 'Monatlich';
+
+  @override
+  String get ledgerRecurringIntervalQuarterly => 'Vierteljährlich';
+
+  @override
+  String get ledgerRecurringIntervalYearly => 'Jährlich';
+
+  @override
+  String get ledgerRecurringIntervalCustom => 'Benutzerdefiniert';
+
+  @override
+  String get ledgerTabAccounts => 'Konten';
+
+  @override
+  String get ledgerTabTransactions => 'Buchungen';
+
+  @override
+  String get ledgerTabBudgets => 'Budgets';
+
+  @override
+  String get ledgerTabRecurring => 'Daueraufträge';
+
+  @override
+  String get ledgerTabCategories => 'Kategorien';
+
+  @override
+  String get ledgerDashboardNoAccounts =>
+      'Lege ein Konto an, um deine Finanzen hier zu sehen.';
+
+  @override
+  String get ledgerDashboardNoNetWorth => 'Noch keine Salden vorhanden.';
+
+  @override
+  String ledgerDashboardPlannedIncomeChip(String currency, String amount) {
+    return '$currency Einnahmen $amount';
+  }
+
+  @override
+  String ledgerDashboardPlannedExpenseChip(String currency, String amount) {
+    return '$currency Ausgaben $amount';
+  }
+
+  @override
+  String get ledgerDashboardBudgetsTitle => 'Budgetübersicht';
+
+  @override
+  String get ledgerDashboardNoBudgets =>
+      'Keine Budgets für den aktuellen Zeitraum.';
 }

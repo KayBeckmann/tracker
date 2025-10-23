@@ -802,5 +802,324 @@
   "syncConflictKeepServer": "Behåll serverversionen",
   "syncConflictResolved": "Konflikter lösta.",
   "syncConflictDeviceLabel": "Enhet",
-  "syncConflictServerLabel": "Server"
+  "syncConflictServerLabel": "Server",
+  "validationRequiredField": "Fyll i det här fältet.",
+  "validationNumberField": "Ange ett giltigt tal.",
+  "ledgerAccountCreateTitle": "Skapa konto",
+  "ledgerAccountEditTitle": "Redigera konto",
+  "ledgerAccountNameLabel": "Kontonamn",
+  "ledgerAccountKindLabel": "Kontotyp",
+  "ledgerAccountCurrencyLabel": "Valuta",
+  "ledgerValidationCurrencyCode": "Ange en tresiffrig valutakod.",
+  "ledgerAccountInitialBalanceLabel": "Startsaldo",
+  "ledgerAccountIncludeInNetWorthLabel": "Ta med i totalsaldo",
+  "ledgerAccountCreateButton": "Lägg till konto",
+  "ledgerAccountCreateSuccess": "Konto \"{name}\" har skapats.",
+  "@ledgerAccountCreateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountUpdateSuccess": "Konto \"{name}\" har uppdaterats.",
+  "@ledgerAccountUpdateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountDeleteTitle": "Ta bort konto?",
+  "ledgerAccountDeleteMessage": "Ta bort kontot \"{name}\"? Tillhörande transaktioner finns kvar på enheten.",
+  "@ledgerAccountDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountDeleteSuccess": "Konto \"{name}\" har tagits bort.",
+  "@ledgerAccountDeleteSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountActualBalance": "Saldo: {amount} {currency}",
+  "@ledgerAccountActualBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountPlannedIncome": "Planerade inkomster: {amount} {currency}",
+  "@ledgerAccountPlannedIncome": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountPlannedExpense": "Planerade utgifter: {amount} {currency}",
+  "@ledgerAccountPlannedExpense": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountEmptyTitle": "Skapa ditt första konto",
+  "ledgerAccountEmptyDescription": "Hantera kontanter, bankkonton, depåer, tillgångar eller kryptoplånböcker.",
+  "ledgerAccountKindCash": "Kontanter",
+  "ledgerAccountKindBank": "Bankkonto",
+  "ledgerAccountKindDepot": "Depå",
+  "ledgerAccountKindAsset": "Tillgång",
+  "ledgerAccountKindCrypto": "Kryptoplånbok",
+  "ledgerTransactionCreateTitle": "Ny transaktion",
+  "ledgerTransactionEditTitle": "Redigera transaktion",
+  "ledgerTransactionKindLabel": "Transaktionstyp",
+  "ledgerTransactionAccountLabel": "Konto",
+  "ledgerTransactionSourceAccountLabel": "Från konto",
+  "ledgerTransactionTargetAccountLabel": "Till konto",
+  "ledgerValidationDifferentAccounts": "Välj två olika konton.",
+  "ledgerTransactionCategoryLabel": "Kategori",
+  "ledgerTransactionSubcategoryLabel": "Underkategori",
+  "ledgerTransactionNoSubcategory": "Ingen underkategori",
+  "ledgerTransactionAmountLabel": "Belopp",
+  "ledgerTransactionCurrencyLabel": "Valuta",
+  "ledgerTransactionDateLabel": "Bokföringsdatum: {date}",
+  "@ledgerTransactionDateLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerTransactionDescriptionLabel": "Beskrivning",
+  "ledgerTransactionCryptoSymbolLabel": "Kryptosymbol",
+  "ledgerTransactionCryptoQuantityLabel": "Kryptomängd",
+  "ledgerTransactionCryptoPriceLabel": "Pris per enhet",
+  "ledgerTransactionPlannedLabel": "Planerad transaktion",
+  "ledgerTransactionCreateButton": "Lägg till transaktion",
+  "ledgerTransactionNoAccountsWarning": "Skapa ett konto innan du registrerar transaktioner.",
+  "ledgerTransactionDeleteTitle": "Ta bort transaktion?",
+  "ledgerTransactionDeleteMessage": "Vill du ta bort den här transaktionen från enheten?",
+  "ledgerTransactionMarkExecuted": "Markera som utförd",
+  "ledgerTransactionFilterType": "Typ",
+  "ledgerTransactionFilterAll": "Alla typer",
+  "ledgerTransactionFilterStatus": "Status",
+  "ledgerTransactionFilterAllStatuses": "Alla statusar",
+  "ledgerTransactionFilterExecuted": "Utförd",
+  "ledgerTransactionFilterPlanned": "Planerad",
+  "ledgerTransactionStatusPlanned": "Planerad",
+  "ledgerTransactionEmptyTitle": "Inga transaktioner ännu",
+  "ledgerTransactionEmptyDescription": "Lägg till inkomster, utgifter eller överföringar för att börja följa din ekonomi.",
+  "ledgerTransactionKindIncome": "Inkomst",
+  "ledgerTransactionKindExpense": "Utgift",
+  "ledgerTransactionKindTransfer": "Överföring",
+  "ledgerTransactionKindCryptoPurchase": "Kryptoköp",
+  "ledgerCryptoCurrentPriceLoading": "Hämtar aktuellt pris för {symbol} …",
+  "@ledgerCryptoCurrentPriceLoading": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerCryptoProfit": "Vinst {amount} {currency}",
+  "@ledgerCryptoProfit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerCryptoLoss": "Förlust {amount} {currency}",
+  "@ledgerCryptoLoss": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerCryptoCurrentPriceLabel": "Aktuellt pris {price} {currency} ({symbol})",
+  "@ledgerCryptoCurrentPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      },
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerBudgetCreateTitle": "Ny budget",
+  "ledgerBudgetEditTitle": "Redigera budget",
+  "ledgerBudgetCategoryLabel": "Kategori eller underkategori",
+  "ledgerBudgetPeriodLabel": "Period",
+  "ledgerBudgetYearLabel": "År",
+  "ledgerBudgetMonthLabel": "Månad",
+  "ledgerBudgetQuarterLabel": "Kvartal",
+  "ledgerBudgetAmountLabel": "Belopp",
+  "ledgerBudgetCurrencyLabel": "Valuta",
+  "ledgerBudgetCreateButton": "Lägg till budget",
+  "ledgerBudgetDeleteTitle": "Ta bort budget?",
+  "ledgerBudgetDeleteMessage": "Vill du ta bort den här budgeten från enheten?",
+  "ledgerBudgetUnknownCategory": "Okänd kategori",
+  "ledgerBudgetUsageSummary": "{actual} av {total} {currency} har använts",
+  "@ledgerBudgetUsageSummary": {
+    "placeholders": {
+      "actual": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerBudgetPlannedAmount": "Planerat: {amount} {currency}",
+  "@ledgerBudgetPlannedAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerBudgetEmptyTitle": "Inga budgetar",
+  "ledgerBudgetEmptyDescription": "Skapa budgetar för kategorier och underkategorier för att hålla koll på utgifterna.",
+  "ledgerBudgetPeriodMonthly": "Månadsvis",
+  "ledgerBudgetPeriodQuarterly": "Kvartalsvis",
+  "ledgerBudgetPeriodYearly": "Årsvis",
+  "ledgerBudgetQuarterName": "Kvartal {quarter} {year}",
+  "@ledgerBudgetQuarterName": {
+    "placeholders": {
+      "quarter": {
+        "type": "int"
+      },
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "ledgerBudgetYearName": "{year}",
+  "@ledgerBudgetYearName": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "ledgerCategoryCreateTitle": "Ny kategori",
+  "ledgerCategoryEditTitle": "Redigera kategori",
+  "ledgerCategoryNameLabel": "Namn",
+  "ledgerCategoryParentLabel": "Överordnad kategori",
+  "ledgerCategoryNoParent": "Ingen överordnad",
+  "ledgerCategoryKindLabel": "Typ",
+  "ledgerCategoryArchiveLabel": "Arkivera kategori",
+  "ledgerCategoryCreateButton": "Lägg till kategori",
+  "ledgerCategoryCreateSubButton": "Lägg till underkategori",
+  "ledgerCategoryIncomeSection": "Inkomstkategorier",
+  "ledgerCategoryExpenseSection": "Utgiftskategorier",
+  "ledgerCategoryEmptySection": "Inga kategorier ännu.",
+  "ledgerCategoryActiveLabel": "Aktiv",
+  "ledgerCategoryArchivedLabel": "Arkiverad",
+  "ledgerCategoryNoSubcategories": "Inga underkategorier.",
+  "ledgerCategoryDeleteTitle": "Ta bort kategori?",
+  "ledgerCategoryDeleteMessage": "Vill du ta bort kategorin \"{name}\"?",
+  "@ledgerCategoryDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerCategoryKindIncome": "Inkomst",
+  "ledgerCategoryKindExpense": "Utgift",
+  "ledgerRecurringCreateTitle": "Ny stående transaktion",
+  "ledgerRecurringEditTitle": "Redigera stående transaktion",
+  "ledgerRecurringNameLabel": "Namn",
+  "ledgerRecurringAmountLabel": "Belopp",
+  "ledgerRecurringCurrencyLabel": "Valuta",
+  "ledgerRecurringIntervalLabel": "Intervall",
+  "ledgerRecurringIntervalCountLabel": "Antal intervall",
+  "ledgerRecurringNextOccurrenceLabel": "Nästa tillfälle: {date}",
+  "@ledgerRecurringNextOccurrenceLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerRecurringAutoApplyLabel": "Skapa transaktioner automatiskt",
+  "ledgerRecurringMetadataLabel": "Noteringar",
+  "ledgerRecurringCreateButton": "Lägg till stående transaktion",
+  "ledgerRecurringDeleteTitle": "Ta bort stående transaktion?",
+  "ledgerRecurringDeleteMessage": "Vill du ta bort den här stående transaktionen?",
+  "ledgerRecurringApplyNow": "Skapa transaktion nu",
+  "ledgerRecurringEmptyTitle": "Inga stående transaktioner ännu",
+  "ledgerRecurringEmptyDescription": "Skapa mallar för återkommande inkomster, utgifter eller överföringar.",
+  "ledgerRecurringIntervalDaily": "Dagligen",
+  "ledgerRecurringIntervalWeekly": "Veckovis",
+  "ledgerRecurringIntervalMonthly": "Månadsvis",
+  "ledgerRecurringIntervalQuarterly": "Kvartalsvis",
+  "ledgerRecurringIntervalYearly": "Årsvis",
+  "ledgerRecurringIntervalCustom": "Anpassat",
+  "ledgerTabAccounts": "Konton",
+  "ledgerTabTransactions": "Transaktioner",
+  "ledgerTabBudgets": "Budgetar",
+  "ledgerTabRecurring": "Stående transaktioner",
+  "ledgerTabCategories": "Kategorier",
+  "ledgerDashboardNoAccounts": "Skapa ett konto för att se din ekonomi här.",
+  "ledgerDashboardNoNetWorth": "Inga saldon ännu.",
+  "ledgerDashboardPlannedIncomeChip": "{currency} inkomster {amount}",
+  "@ledgerDashboardPlannedIncomeChip": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerDashboardPlannedExpenseChip": "{currency} utgifter {amount}",
+  "@ledgerDashboardPlannedExpenseChip": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerDashboardBudgetsTitle": "Budgetöversikt",
+  "ledgerDashboardNoBudgets": "Inga budgetar för den aktuella perioden."
 }

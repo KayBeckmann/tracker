@@ -1521,4 +1521,482 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get syncConflictServerLabel => 'Server';
+
+  @override
+  String get validationRequiredField => 'Fyll i det här fältet.';
+
+  @override
+  String get validationNumberField => 'Ange ett giltigt tal.';
+
+  @override
+  String get ledgerAccountCreateTitle => 'Skapa konto';
+
+  @override
+  String get ledgerAccountEditTitle => 'Redigera konto';
+
+  @override
+  String get ledgerAccountNameLabel => 'Kontonamn';
+
+  @override
+  String get ledgerAccountKindLabel => 'Kontotyp';
+
+  @override
+  String get ledgerAccountCurrencyLabel => 'Valuta';
+
+  @override
+  String get ledgerValidationCurrencyCode => 'Ange en tresiffrig valutakod.';
+
+  @override
+  String get ledgerAccountInitialBalanceLabel => 'Startsaldo';
+
+  @override
+  String get ledgerAccountIncludeInNetWorthLabel => 'Ta med i totalsaldo';
+
+  @override
+  String get ledgerAccountCreateButton => 'Lägg till konto';
+
+  @override
+  String ledgerAccountCreateSuccess(String name) {
+    return 'Konto \"$name\" har skapats.';
+  }
+
+  @override
+  String ledgerAccountUpdateSuccess(String name) {
+    return 'Konto \"$name\" har uppdaterats.';
+  }
+
+  @override
+  String get ledgerAccountDeleteTitle => 'Ta bort konto?';
+
+  @override
+  String ledgerAccountDeleteMessage(String name) {
+    return 'Ta bort kontot \"$name\"? Tillhörande transaktioner finns kvar på enheten.';
+  }
+
+  @override
+  String ledgerAccountDeleteSuccess(String name) {
+    return 'Konto \"$name\" har tagits bort.';
+  }
+
+  @override
+  String ledgerAccountActualBalance(String amount, String currency) {
+    return 'Saldo: $amount $currency';
+  }
+
+  @override
+  String ledgerAccountPlannedIncome(String amount, String currency) {
+    return 'Planerade inkomster: $amount $currency';
+  }
+
+  @override
+  String ledgerAccountPlannedExpense(String amount, String currency) {
+    return 'Planerade utgifter: $amount $currency';
+  }
+
+  @override
+  String get ledgerAccountEmptyTitle => 'Skapa ditt första konto';
+
+  @override
+  String get ledgerAccountEmptyDescription =>
+      'Hantera kontanter, bankkonton, depåer, tillgångar eller kryptoplånböcker.';
+
+  @override
+  String get ledgerAccountKindCash => 'Kontanter';
+
+  @override
+  String get ledgerAccountKindBank => 'Bankkonto';
+
+  @override
+  String get ledgerAccountKindDepot => 'Depå';
+
+  @override
+  String get ledgerAccountKindAsset => 'Tillgång';
+
+  @override
+  String get ledgerAccountKindCrypto => 'Kryptoplånbok';
+
+  @override
+  String get ledgerTransactionCreateTitle => 'Ny transaktion';
+
+  @override
+  String get ledgerTransactionEditTitle => 'Redigera transaktion';
+
+  @override
+  String get ledgerTransactionKindLabel => 'Transaktionstyp';
+
+  @override
+  String get ledgerTransactionAccountLabel => 'Konto';
+
+  @override
+  String get ledgerTransactionSourceAccountLabel => 'Från konto';
+
+  @override
+  String get ledgerTransactionTargetAccountLabel => 'Till konto';
+
+  @override
+  String get ledgerValidationDifferentAccounts => 'Välj två olika konton.';
+
+  @override
+  String get ledgerTransactionCategoryLabel => 'Kategori';
+
+  @override
+  String get ledgerTransactionSubcategoryLabel => 'Underkategori';
+
+  @override
+  String get ledgerTransactionNoSubcategory => 'Ingen underkategori';
+
+  @override
+  String get ledgerTransactionAmountLabel => 'Belopp';
+
+  @override
+  String get ledgerTransactionCurrencyLabel => 'Valuta';
+
+  @override
+  String ledgerTransactionDateLabel(String date) {
+    return 'Bokföringsdatum: $date';
+  }
+
+  @override
+  String get ledgerTransactionDescriptionLabel => 'Beskrivning';
+
+  @override
+  String get ledgerTransactionCryptoSymbolLabel => 'Kryptosymbol';
+
+  @override
+  String get ledgerTransactionCryptoQuantityLabel => 'Kryptomängd';
+
+  @override
+  String get ledgerTransactionCryptoPriceLabel => 'Pris per enhet';
+
+  @override
+  String get ledgerTransactionPlannedLabel => 'Planerad transaktion';
+
+  @override
+  String get ledgerTransactionCreateButton => 'Lägg till transaktion';
+
+  @override
+  String get ledgerTransactionNoAccountsWarning =>
+      'Skapa ett konto innan du registrerar transaktioner.';
+
+  @override
+  String get ledgerTransactionDeleteTitle => 'Ta bort transaktion?';
+
+  @override
+  String get ledgerTransactionDeleteMessage =>
+      'Vill du ta bort den här transaktionen från enheten?';
+
+  @override
+  String get ledgerTransactionMarkExecuted => 'Markera som utförd';
+
+  @override
+  String get ledgerTransactionFilterType => 'Typ';
+
+  @override
+  String get ledgerTransactionFilterAll => 'Alla typer';
+
+  @override
+  String get ledgerTransactionFilterStatus => 'Status';
+
+  @override
+  String get ledgerTransactionFilterAllStatuses => 'Alla statusar';
+
+  @override
+  String get ledgerTransactionFilterExecuted => 'Utförd';
+
+  @override
+  String get ledgerTransactionFilterPlanned => 'Planerad';
+
+  @override
+  String get ledgerTransactionStatusPlanned => 'Planerad';
+
+  @override
+  String get ledgerTransactionEmptyTitle => 'Inga transaktioner ännu';
+
+  @override
+  String get ledgerTransactionEmptyDescription =>
+      'Lägg till inkomster, utgifter eller överföringar för att börja följa din ekonomi.';
+
+  @override
+  String get ledgerTransactionKindIncome => 'Inkomst';
+
+  @override
+  String get ledgerTransactionKindExpense => 'Utgift';
+
+  @override
+  String get ledgerTransactionKindTransfer => 'Överföring';
+
+  @override
+  String get ledgerTransactionKindCryptoPurchase => 'Kryptoköp';
+
+  @override
+  String ledgerCryptoCurrentPriceLoading(String symbol) {
+    return 'Hämtar aktuellt pris för $symbol …';
+  }
+
+  @override
+  String ledgerCryptoProfit(String amount, String currency) {
+    return 'Vinst $amount $currency';
+  }
+
+  @override
+  String ledgerCryptoLoss(String amount, String currency) {
+    return 'Förlust $amount $currency';
+  }
+
+  @override
+  String ledgerCryptoCurrentPriceLabel(
+    String price,
+    String currency,
+    String symbol,
+  ) {
+    return 'Aktuellt pris $price $currency ($symbol)';
+  }
+
+  @override
+  String get ledgerBudgetCreateTitle => 'Ny budget';
+
+  @override
+  String get ledgerBudgetEditTitle => 'Redigera budget';
+
+  @override
+  String get ledgerBudgetCategoryLabel => 'Kategori eller underkategori';
+
+  @override
+  String get ledgerBudgetPeriodLabel => 'Period';
+
+  @override
+  String get ledgerBudgetYearLabel => 'År';
+
+  @override
+  String get ledgerBudgetMonthLabel => 'Månad';
+
+  @override
+  String get ledgerBudgetQuarterLabel => 'Kvartal';
+
+  @override
+  String get ledgerBudgetAmountLabel => 'Belopp';
+
+  @override
+  String get ledgerBudgetCurrencyLabel => 'Valuta';
+
+  @override
+  String get ledgerBudgetCreateButton => 'Lägg till budget';
+
+  @override
+  String get ledgerBudgetDeleteTitle => 'Ta bort budget?';
+
+  @override
+  String get ledgerBudgetDeleteMessage =>
+      'Vill du ta bort den här budgeten från enheten?';
+
+  @override
+  String get ledgerBudgetUnknownCategory => 'Okänd kategori';
+
+  @override
+  String ledgerBudgetUsageSummary(
+    String actual,
+    String total,
+    String currency,
+  ) {
+    return '$actual av $total $currency har använts';
+  }
+
+  @override
+  String ledgerBudgetPlannedAmount(String amount, String currency) {
+    return 'Planerat: $amount $currency';
+  }
+
+  @override
+  String get ledgerBudgetEmptyTitle => 'Inga budgetar';
+
+  @override
+  String get ledgerBudgetEmptyDescription =>
+      'Skapa budgetar för kategorier och underkategorier för att hålla koll på utgifterna.';
+
+  @override
+  String get ledgerBudgetPeriodMonthly => 'Månadsvis';
+
+  @override
+  String get ledgerBudgetPeriodQuarterly => 'Kvartalsvis';
+
+  @override
+  String get ledgerBudgetPeriodYearly => 'Årsvis';
+
+  @override
+  String ledgerBudgetQuarterName(int quarter, int year) {
+    return 'Kvartal $quarter $year';
+  }
+
+  @override
+  String ledgerBudgetYearName(int year) {
+    return '$year';
+  }
+
+  @override
+  String get ledgerCategoryCreateTitle => 'Ny kategori';
+
+  @override
+  String get ledgerCategoryEditTitle => 'Redigera kategori';
+
+  @override
+  String get ledgerCategoryNameLabel => 'Namn';
+
+  @override
+  String get ledgerCategoryParentLabel => 'Överordnad kategori';
+
+  @override
+  String get ledgerCategoryNoParent => 'Ingen överordnad';
+
+  @override
+  String get ledgerCategoryKindLabel => 'Typ';
+
+  @override
+  String get ledgerCategoryArchiveLabel => 'Arkivera kategori';
+
+  @override
+  String get ledgerCategoryCreateButton => 'Lägg till kategori';
+
+  @override
+  String get ledgerCategoryCreateSubButton => 'Lägg till underkategori';
+
+  @override
+  String get ledgerCategoryIncomeSection => 'Inkomstkategorier';
+
+  @override
+  String get ledgerCategoryExpenseSection => 'Utgiftskategorier';
+
+  @override
+  String get ledgerCategoryEmptySection => 'Inga kategorier ännu.';
+
+  @override
+  String get ledgerCategoryActiveLabel => 'Aktiv';
+
+  @override
+  String get ledgerCategoryArchivedLabel => 'Arkiverad';
+
+  @override
+  String get ledgerCategoryNoSubcategories => 'Inga underkategorier.';
+
+  @override
+  String get ledgerCategoryDeleteTitle => 'Ta bort kategori?';
+
+  @override
+  String ledgerCategoryDeleteMessage(String name) {
+    return 'Vill du ta bort kategorin \"$name\"?';
+  }
+
+  @override
+  String get ledgerCategoryKindIncome => 'Inkomst';
+
+  @override
+  String get ledgerCategoryKindExpense => 'Utgift';
+
+  @override
+  String get ledgerRecurringCreateTitle => 'Ny stående transaktion';
+
+  @override
+  String get ledgerRecurringEditTitle => 'Redigera stående transaktion';
+
+  @override
+  String get ledgerRecurringNameLabel => 'Namn';
+
+  @override
+  String get ledgerRecurringAmountLabel => 'Belopp';
+
+  @override
+  String get ledgerRecurringCurrencyLabel => 'Valuta';
+
+  @override
+  String get ledgerRecurringIntervalLabel => 'Intervall';
+
+  @override
+  String get ledgerRecurringIntervalCountLabel => 'Antal intervall';
+
+  @override
+  String ledgerRecurringNextOccurrenceLabel(String date) {
+    return 'Nästa tillfälle: $date';
+  }
+
+  @override
+  String get ledgerRecurringAutoApplyLabel => 'Skapa transaktioner automatiskt';
+
+  @override
+  String get ledgerRecurringMetadataLabel => 'Noteringar';
+
+  @override
+  String get ledgerRecurringCreateButton => 'Lägg till stående transaktion';
+
+  @override
+  String get ledgerRecurringDeleteTitle => 'Ta bort stående transaktion?';
+
+  @override
+  String get ledgerRecurringDeleteMessage =>
+      'Vill du ta bort den här stående transaktionen?';
+
+  @override
+  String get ledgerRecurringApplyNow => 'Skapa transaktion nu';
+
+  @override
+  String get ledgerRecurringEmptyTitle => 'Inga stående transaktioner ännu';
+
+  @override
+  String get ledgerRecurringEmptyDescription =>
+      'Skapa mallar för återkommande inkomster, utgifter eller överföringar.';
+
+  @override
+  String get ledgerRecurringIntervalDaily => 'Dagligen';
+
+  @override
+  String get ledgerRecurringIntervalWeekly => 'Veckovis';
+
+  @override
+  String get ledgerRecurringIntervalMonthly => 'Månadsvis';
+
+  @override
+  String get ledgerRecurringIntervalQuarterly => 'Kvartalsvis';
+
+  @override
+  String get ledgerRecurringIntervalYearly => 'Årsvis';
+
+  @override
+  String get ledgerRecurringIntervalCustom => 'Anpassat';
+
+  @override
+  String get ledgerTabAccounts => 'Konton';
+
+  @override
+  String get ledgerTabTransactions => 'Transaktioner';
+
+  @override
+  String get ledgerTabBudgets => 'Budgetar';
+
+  @override
+  String get ledgerTabRecurring => 'Stående transaktioner';
+
+  @override
+  String get ledgerTabCategories => 'Kategorier';
+
+  @override
+  String get ledgerDashboardNoAccounts =>
+      'Skapa ett konto för att se din ekonomi här.';
+
+  @override
+  String get ledgerDashboardNoNetWorth => 'Inga saldon ännu.';
+
+  @override
+  String ledgerDashboardPlannedIncomeChip(String currency, String amount) {
+    return '$currency inkomster $amount';
+  }
+
+  @override
+  String ledgerDashboardPlannedExpenseChip(String currency, String amount) {
+    return '$currency utgifter $amount';
+  }
+
+  @override
+  String get ledgerDashboardBudgetsTitle => 'Budgetöversikt';
+
+  @override
+  String get ledgerDashboardNoBudgets =>
+      'Inga budgetar för den aktuella perioden.';
 }

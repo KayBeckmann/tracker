@@ -1520,4 +1520,483 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncConflictServerLabel => 'Server';
+
+  @override
+  String get validationRequiredField => 'Please fill out this field.';
+
+  @override
+  String get validationNumberField => 'Enter a valid number.';
+
+  @override
+  String get ledgerAccountCreateTitle => 'Create account';
+
+  @override
+  String get ledgerAccountEditTitle => 'Edit account';
+
+  @override
+  String get ledgerAccountNameLabel => 'Account name';
+
+  @override
+  String get ledgerAccountKindLabel => 'Account type';
+
+  @override
+  String get ledgerAccountCurrencyLabel => 'Currency';
+
+  @override
+  String get ledgerValidationCurrencyCode =>
+      'Enter a three-letter currency code.';
+
+  @override
+  String get ledgerAccountInitialBalanceLabel => 'Starting balance';
+
+  @override
+  String get ledgerAccountIncludeInNetWorthLabel => 'Include in total balance';
+
+  @override
+  String get ledgerAccountCreateButton => 'Add account';
+
+  @override
+  String ledgerAccountCreateSuccess(String name) {
+    return 'Account \"$name\" created.';
+  }
+
+  @override
+  String ledgerAccountUpdateSuccess(String name) {
+    return 'Account \"$name\" updated.';
+  }
+
+  @override
+  String get ledgerAccountDeleteTitle => 'Delete account?';
+
+  @override
+  String ledgerAccountDeleteMessage(String name) {
+    return 'Delete the account \"$name\"? All related transactions stay on this device.';
+  }
+
+  @override
+  String ledgerAccountDeleteSuccess(String name) {
+    return 'Account \"$name\" deleted.';
+  }
+
+  @override
+  String ledgerAccountActualBalance(String amount, String currency) {
+    return 'Balance: $amount $currency';
+  }
+
+  @override
+  String ledgerAccountPlannedIncome(String amount, String currency) {
+    return 'Planned income: $amount $currency';
+  }
+
+  @override
+  String ledgerAccountPlannedExpense(String amount, String currency) {
+    return 'Planned spending: $amount $currency';
+  }
+
+  @override
+  String get ledgerAccountEmptyTitle => 'Create your first account';
+
+  @override
+  String get ledgerAccountEmptyDescription =>
+      'Track your cash, bank accounts, depots, investments or crypto wallets.';
+
+  @override
+  String get ledgerAccountKindCash => 'Cash';
+
+  @override
+  String get ledgerAccountKindBank => 'Bank account';
+
+  @override
+  String get ledgerAccountKindDepot => 'Depot';
+
+  @override
+  String get ledgerAccountKindAsset => 'Asset';
+
+  @override
+  String get ledgerAccountKindCrypto => 'Crypto wallet';
+
+  @override
+  String get ledgerTransactionCreateTitle => 'New transaction';
+
+  @override
+  String get ledgerTransactionEditTitle => 'Edit transaction';
+
+  @override
+  String get ledgerTransactionKindLabel => 'Transaction type';
+
+  @override
+  String get ledgerTransactionAccountLabel => 'Account';
+
+  @override
+  String get ledgerTransactionSourceAccountLabel => 'Source account';
+
+  @override
+  String get ledgerTransactionTargetAccountLabel => 'Target account';
+
+  @override
+  String get ledgerValidationDifferentAccounts =>
+      'Choose two different accounts.';
+
+  @override
+  String get ledgerTransactionCategoryLabel => 'Category';
+
+  @override
+  String get ledgerTransactionSubcategoryLabel => 'Subcategory';
+
+  @override
+  String get ledgerTransactionNoSubcategory => 'No subcategory';
+
+  @override
+  String get ledgerTransactionAmountLabel => 'Amount';
+
+  @override
+  String get ledgerTransactionCurrencyLabel => 'Currency';
+
+  @override
+  String ledgerTransactionDateLabel(String date) {
+    return 'Booking date: $date';
+  }
+
+  @override
+  String get ledgerTransactionDescriptionLabel => 'Description';
+
+  @override
+  String get ledgerTransactionCryptoSymbolLabel => 'Crypto symbol';
+
+  @override
+  String get ledgerTransactionCryptoQuantityLabel => 'Crypto amount';
+
+  @override
+  String get ledgerTransactionCryptoPriceLabel => 'Price per unit';
+
+  @override
+  String get ledgerTransactionPlannedLabel => 'Planned transaction';
+
+  @override
+  String get ledgerTransactionCreateButton => 'Add transaction';
+
+  @override
+  String get ledgerTransactionNoAccountsWarning =>
+      'Create an account before recording transactions.';
+
+  @override
+  String get ledgerTransactionDeleteTitle => 'Delete transaction?';
+
+  @override
+  String get ledgerTransactionDeleteMessage =>
+      'Delete this transaction from this device?';
+
+  @override
+  String get ledgerTransactionMarkExecuted => 'Mark as executed';
+
+  @override
+  String get ledgerTransactionFilterType => 'Type';
+
+  @override
+  String get ledgerTransactionFilterAll => 'All types';
+
+  @override
+  String get ledgerTransactionFilterStatus => 'Status';
+
+  @override
+  String get ledgerTransactionFilterAllStatuses => 'All statuses';
+
+  @override
+  String get ledgerTransactionFilterExecuted => 'Executed';
+
+  @override
+  String get ledgerTransactionFilterPlanned => 'Planned';
+
+  @override
+  String get ledgerTransactionStatusPlanned => 'Planned';
+
+  @override
+  String get ledgerTransactionEmptyTitle => 'No transactions yet';
+
+  @override
+  String get ledgerTransactionEmptyDescription =>
+      'Add income, expenses or transfers to start tracking your finances.';
+
+  @override
+  String get ledgerTransactionKindIncome => 'Income';
+
+  @override
+  String get ledgerTransactionKindExpense => 'Expense';
+
+  @override
+  String get ledgerTransactionKindTransfer => 'Transfer';
+
+  @override
+  String get ledgerTransactionKindCryptoPurchase => 'Crypto purchase';
+
+  @override
+  String ledgerCryptoCurrentPriceLoading(String symbol) {
+    return 'Loading current price for $symbol…';
+  }
+
+  @override
+  String ledgerCryptoProfit(String amount, String currency) {
+    return 'Profit $amount $currency';
+  }
+
+  @override
+  String ledgerCryptoLoss(String amount, String currency) {
+    return 'Loss $amount $currency';
+  }
+
+  @override
+  String ledgerCryptoCurrentPriceLabel(
+    String price,
+    String currency,
+    String symbol,
+  ) {
+    return 'Current price $price $currency ($symbol)';
+  }
+
+  @override
+  String get ledgerBudgetCreateTitle => 'New budget';
+
+  @override
+  String get ledgerBudgetEditTitle => 'Edit budget';
+
+  @override
+  String get ledgerBudgetCategoryLabel => 'Category or subcategory';
+
+  @override
+  String get ledgerBudgetPeriodLabel => 'Period';
+
+  @override
+  String get ledgerBudgetYearLabel => 'Year';
+
+  @override
+  String get ledgerBudgetMonthLabel => 'Month';
+
+  @override
+  String get ledgerBudgetQuarterLabel => 'Quarter';
+
+  @override
+  String get ledgerBudgetAmountLabel => 'Amount';
+
+  @override
+  String get ledgerBudgetCurrencyLabel => 'Currency';
+
+  @override
+  String get ledgerBudgetCreateButton => 'Add budget';
+
+  @override
+  String get ledgerBudgetDeleteTitle => 'Delete budget?';
+
+  @override
+  String get ledgerBudgetDeleteMessage =>
+      'Remove this budget from this device?';
+
+  @override
+  String get ledgerBudgetUnknownCategory => 'Unknown category';
+
+  @override
+  String ledgerBudgetUsageSummary(
+    String actual,
+    String total,
+    String currency,
+  ) {
+    return 'Spent $actual of $total $currency';
+  }
+
+  @override
+  String ledgerBudgetPlannedAmount(String amount, String currency) {
+    return 'Planned: $amount $currency';
+  }
+
+  @override
+  String get ledgerBudgetEmptyTitle => 'No budgets defined';
+
+  @override
+  String get ledgerBudgetEmptyDescription =>
+      'Create budgets for categories and subcategories to keep an eye on spending.';
+
+  @override
+  String get ledgerBudgetPeriodMonthly => 'Monthly';
+
+  @override
+  String get ledgerBudgetPeriodQuarterly => 'Quarterly';
+
+  @override
+  String get ledgerBudgetPeriodYearly => 'Yearly';
+
+  @override
+  String ledgerBudgetQuarterName(int quarter, int year) {
+    return 'Quarter $quarter $year';
+  }
+
+  @override
+  String ledgerBudgetYearName(int year) {
+    return '$year';
+  }
+
+  @override
+  String get ledgerCategoryCreateTitle => 'New category';
+
+  @override
+  String get ledgerCategoryEditTitle => 'Edit category';
+
+  @override
+  String get ledgerCategoryNameLabel => 'Name';
+
+  @override
+  String get ledgerCategoryParentLabel => 'Parent category';
+
+  @override
+  String get ledgerCategoryNoParent => 'No parent';
+
+  @override
+  String get ledgerCategoryKindLabel => 'Type';
+
+  @override
+  String get ledgerCategoryArchiveLabel => 'Archive category';
+
+  @override
+  String get ledgerCategoryCreateButton => 'Add category';
+
+  @override
+  String get ledgerCategoryCreateSubButton => 'Add subcategory';
+
+  @override
+  String get ledgerCategoryIncomeSection => 'Income categories';
+
+  @override
+  String get ledgerCategoryExpenseSection => 'Expense categories';
+
+  @override
+  String get ledgerCategoryEmptySection => 'No categories yet.';
+
+  @override
+  String get ledgerCategoryActiveLabel => 'Active';
+
+  @override
+  String get ledgerCategoryArchivedLabel => 'Archived';
+
+  @override
+  String get ledgerCategoryNoSubcategories => 'No subcategories.';
+
+  @override
+  String get ledgerCategoryDeleteTitle => 'Delete category?';
+
+  @override
+  String ledgerCategoryDeleteMessage(String name) {
+    return 'Delete the category \"$name\"?';
+  }
+
+  @override
+  String get ledgerCategoryKindIncome => 'Income';
+
+  @override
+  String get ledgerCategoryKindExpense => 'Expense';
+
+  @override
+  String get ledgerRecurringCreateTitle => 'New standing order';
+
+  @override
+  String get ledgerRecurringEditTitle => 'Edit standing order';
+
+  @override
+  String get ledgerRecurringNameLabel => 'Name';
+
+  @override
+  String get ledgerRecurringAmountLabel => 'Amount';
+
+  @override
+  String get ledgerRecurringCurrencyLabel => 'Currency';
+
+  @override
+  String get ledgerRecurringIntervalLabel => 'Interval';
+
+  @override
+  String get ledgerRecurringIntervalCountLabel => 'Interval count';
+
+  @override
+  String ledgerRecurringNextOccurrenceLabel(String date) {
+    return 'Next occurrence: $date';
+  }
+
+  @override
+  String get ledgerRecurringAutoApplyLabel =>
+      'Automatically create transactions';
+
+  @override
+  String get ledgerRecurringMetadataLabel => 'Notes';
+
+  @override
+  String get ledgerRecurringCreateButton => 'Add standing order';
+
+  @override
+  String get ledgerRecurringDeleteTitle => 'Delete standing order?';
+
+  @override
+  String get ledgerRecurringDeleteMessage => 'Remove this standing order?';
+
+  @override
+  String get ledgerRecurringApplyNow => 'Create transaction now';
+
+  @override
+  String get ledgerRecurringEmptyTitle => 'No standing orders yet';
+
+  @override
+  String get ledgerRecurringEmptyDescription =>
+      'Create templates for recurring income, expenses or transfers.';
+
+  @override
+  String get ledgerRecurringIntervalDaily => 'Daily';
+
+  @override
+  String get ledgerRecurringIntervalWeekly => 'Weekly';
+
+  @override
+  String get ledgerRecurringIntervalMonthly => 'Monthly';
+
+  @override
+  String get ledgerRecurringIntervalQuarterly => 'Quarterly';
+
+  @override
+  String get ledgerRecurringIntervalYearly => 'Yearly';
+
+  @override
+  String get ledgerRecurringIntervalCustom => 'Custom';
+
+  @override
+  String get ledgerTabAccounts => 'Accounts';
+
+  @override
+  String get ledgerTabTransactions => 'Transactions';
+
+  @override
+  String get ledgerTabBudgets => 'Budgets';
+
+  @override
+  String get ledgerTabRecurring => 'Standing orders';
+
+  @override
+  String get ledgerTabCategories => 'Categories';
+
+  @override
+  String get ledgerDashboardNoAccounts =>
+      'Create an account to see your finances here.';
+
+  @override
+  String get ledgerDashboardNoNetWorth => 'No balances recorded yet.';
+
+  @override
+  String ledgerDashboardPlannedIncomeChip(String currency, String amount) {
+    return '$currency income $amount';
+  }
+
+  @override
+  String ledgerDashboardPlannedExpenseChip(String currency, String amount) {
+    return '$currency spending $amount';
+  }
+
+  @override
+  String get ledgerDashboardBudgetsTitle => 'Budgets overview';
+
+  @override
+  String get ledgerDashboardNoBudgets => 'No budgets for the current period.';
 }

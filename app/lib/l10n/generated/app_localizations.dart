@@ -2803,6 +2803,850 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Server'**
   String get syncConflictServerLabel;
+
+  /// No description provided for @validationRequiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill out this field.'**
+  String get validationRequiredField;
+
+  /// No description provided for @validationNumberField.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number.'**
+  String get validationNumberField;
+
+  /// No description provided for @ledgerAccountCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get ledgerAccountCreateTitle;
+
+  /// No description provided for @ledgerAccountEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit account'**
+  String get ledgerAccountEditTitle;
+
+  /// No description provided for @ledgerAccountNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account name'**
+  String get ledgerAccountNameLabel;
+
+  /// No description provided for @ledgerAccountKindLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account type'**
+  String get ledgerAccountKindLabel;
+
+  /// No description provided for @ledgerAccountCurrencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get ledgerAccountCurrencyLabel;
+
+  /// No description provided for @ledgerValidationCurrencyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a three-letter currency code.'**
+  String get ledgerValidationCurrencyCode;
+
+  /// No description provided for @ledgerAccountInitialBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting balance'**
+  String get ledgerAccountInitialBalanceLabel;
+
+  /// No description provided for @ledgerAccountIncludeInNetWorthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Include in total balance'**
+  String get ledgerAccountIncludeInNetWorthLabel;
+
+  /// No description provided for @ledgerAccountCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add account'**
+  String get ledgerAccountCreateButton;
+
+  /// No description provided for @ledgerAccountCreateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account \"{name}\" created.'**
+  String ledgerAccountCreateSuccess(String name);
+
+  /// No description provided for @ledgerAccountUpdateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account \"{name}\" updated.'**
+  String ledgerAccountUpdateSuccess(String name);
+
+  /// No description provided for @ledgerAccountDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get ledgerAccountDeleteTitle;
+
+  /// No description provided for @ledgerAccountDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the account \"{name}\"? All related transactions stay on this device.'**
+  String ledgerAccountDeleteMessage(String name);
+
+  /// No description provided for @ledgerAccountDeleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account \"{name}\" deleted.'**
+  String ledgerAccountDeleteSuccess(String name);
+
+  /// No description provided for @ledgerAccountActualBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance: {amount} {currency}'**
+  String ledgerAccountActualBalance(String amount, String currency);
+
+  /// No description provided for @ledgerAccountPlannedIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned income: {amount} {currency}'**
+  String ledgerAccountPlannedIncome(String amount, String currency);
+
+  /// No description provided for @ledgerAccountPlannedExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned spending: {amount} {currency}'**
+  String ledgerAccountPlannedExpense(String amount, String currency);
+
+  /// No description provided for @ledgerAccountEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first account'**
+  String get ledgerAccountEmptyTitle;
+
+  /// No description provided for @ledgerAccountEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your cash, bank accounts, depots, investments or crypto wallets.'**
+  String get ledgerAccountEmptyDescription;
+
+  /// No description provided for @ledgerAccountKindCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get ledgerAccountKindCash;
+
+  /// No description provided for @ledgerAccountKindBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank account'**
+  String get ledgerAccountKindBank;
+
+  /// No description provided for @ledgerAccountKindDepot.
+  ///
+  /// In en, this message translates to:
+  /// **'Depot'**
+  String get ledgerAccountKindDepot;
+
+  /// No description provided for @ledgerAccountKindAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset'**
+  String get ledgerAccountKindAsset;
+
+  /// No description provided for @ledgerAccountKindCrypto.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto wallet'**
+  String get ledgerAccountKindCrypto;
+
+  /// No description provided for @ledgerTransactionCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New transaction'**
+  String get ledgerTransactionCreateTitle;
+
+  /// No description provided for @ledgerTransactionEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit transaction'**
+  String get ledgerTransactionEditTitle;
+
+  /// No description provided for @ledgerTransactionKindLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction type'**
+  String get ledgerTransactionKindLabel;
+
+  /// No description provided for @ledgerTransactionAccountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get ledgerTransactionAccountLabel;
+
+  /// No description provided for @ledgerTransactionSourceAccountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Source account'**
+  String get ledgerTransactionSourceAccountLabel;
+
+  /// No description provided for @ledgerTransactionTargetAccountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target account'**
+  String get ledgerTransactionTargetAccountLabel;
+
+  /// No description provided for @ledgerValidationDifferentAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose two different accounts.'**
+  String get ledgerValidationDifferentAccounts;
+
+  /// No description provided for @ledgerTransactionCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get ledgerTransactionCategoryLabel;
+
+  /// No description provided for @ledgerTransactionSubcategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Subcategory'**
+  String get ledgerTransactionSubcategoryLabel;
+
+  /// No description provided for @ledgerTransactionNoSubcategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No subcategory'**
+  String get ledgerTransactionNoSubcategory;
+
+  /// No description provided for @ledgerTransactionAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get ledgerTransactionAmountLabel;
+
+  /// No description provided for @ledgerTransactionCurrencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get ledgerTransactionCurrencyLabel;
+
+  /// No description provided for @ledgerTransactionDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking date: {date}'**
+  String ledgerTransactionDateLabel(String date);
+
+  /// No description provided for @ledgerTransactionDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get ledgerTransactionDescriptionLabel;
+
+  /// No description provided for @ledgerTransactionCryptoSymbolLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto symbol'**
+  String get ledgerTransactionCryptoSymbolLabel;
+
+  /// No description provided for @ledgerTransactionCryptoQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto amount'**
+  String get ledgerTransactionCryptoQuantityLabel;
+
+  /// No description provided for @ledgerTransactionCryptoPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per unit'**
+  String get ledgerTransactionCryptoPriceLabel;
+
+  /// No description provided for @ledgerTransactionPlannedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned transaction'**
+  String get ledgerTransactionPlannedLabel;
+
+  /// No description provided for @ledgerTransactionCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add transaction'**
+  String get ledgerTransactionCreateButton;
+
+  /// No description provided for @ledgerTransactionNoAccountsWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account before recording transactions.'**
+  String get ledgerTransactionNoAccountsWarning;
+
+  /// No description provided for @ledgerTransactionDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete transaction?'**
+  String get ledgerTransactionDeleteTitle;
+
+  /// No description provided for @ledgerTransactionDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this transaction from this device?'**
+  String get ledgerTransactionDeleteMessage;
+
+  /// No description provided for @ledgerTransactionMarkExecuted.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as executed'**
+  String get ledgerTransactionMarkExecuted;
+
+  /// No description provided for @ledgerTransactionFilterType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get ledgerTransactionFilterType;
+
+  /// No description provided for @ledgerTransactionFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get ledgerTransactionFilterAll;
+
+  /// No description provided for @ledgerTransactionFilterStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get ledgerTransactionFilterStatus;
+
+  /// No description provided for @ledgerTransactionFilterAllStatuses.
+  ///
+  /// In en, this message translates to:
+  /// **'All statuses'**
+  String get ledgerTransactionFilterAllStatuses;
+
+  /// No description provided for @ledgerTransactionFilterExecuted.
+  ///
+  /// In en, this message translates to:
+  /// **'Executed'**
+  String get ledgerTransactionFilterExecuted;
+
+  /// No description provided for @ledgerTransactionFilterPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get ledgerTransactionFilterPlanned;
+
+  /// No description provided for @ledgerTransactionStatusPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get ledgerTransactionStatusPlanned;
+
+  /// No description provided for @ledgerTransactionEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet'**
+  String get ledgerTransactionEmptyTitle;
+
+  /// No description provided for @ledgerTransactionEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add income, expenses or transfers to start tracking your finances.'**
+  String get ledgerTransactionEmptyDescription;
+
+  /// No description provided for @ledgerTransactionKindIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get ledgerTransactionKindIncome;
+
+  /// No description provided for @ledgerTransactionKindExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get ledgerTransactionKindExpense;
+
+  /// No description provided for @ledgerTransactionKindTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get ledgerTransactionKindTransfer;
+
+  /// No description provided for @ledgerTransactionKindCryptoPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto purchase'**
+  String get ledgerTransactionKindCryptoPurchase;
+
+  /// No description provided for @ledgerCryptoCurrentPriceLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading current price for {symbol}…'**
+  String ledgerCryptoCurrentPriceLoading(String symbol);
+
+  /// No description provided for @ledgerCryptoProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Profit {amount} {currency}'**
+  String ledgerCryptoProfit(String amount, String currency);
+
+  /// No description provided for @ledgerCryptoLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss {amount} {currency}'**
+  String ledgerCryptoLoss(String amount, String currency);
+
+  /// No description provided for @ledgerCryptoCurrentPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current price {price} {currency} ({symbol})'**
+  String ledgerCryptoCurrentPriceLabel(
+    String price,
+    String currency,
+    String symbol,
+  );
+
+  /// No description provided for @ledgerBudgetCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New budget'**
+  String get ledgerBudgetCreateTitle;
+
+  /// No description provided for @ledgerBudgetEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit budget'**
+  String get ledgerBudgetEditTitle;
+
+  /// No description provided for @ledgerBudgetCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category or subcategory'**
+  String get ledgerBudgetCategoryLabel;
+
+  /// No description provided for @ledgerBudgetPeriodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Period'**
+  String get ledgerBudgetPeriodLabel;
+
+  /// No description provided for @ledgerBudgetYearLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get ledgerBudgetYearLabel;
+
+  /// No description provided for @ledgerBudgetMonthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get ledgerBudgetMonthLabel;
+
+  /// No description provided for @ledgerBudgetQuarterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quarter'**
+  String get ledgerBudgetQuarterLabel;
+
+  /// No description provided for @ledgerBudgetAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get ledgerBudgetAmountLabel;
+
+  /// No description provided for @ledgerBudgetCurrencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get ledgerBudgetCurrencyLabel;
+
+  /// No description provided for @ledgerBudgetCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add budget'**
+  String get ledgerBudgetCreateButton;
+
+  /// No description provided for @ledgerBudgetDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete budget?'**
+  String get ledgerBudgetDeleteTitle;
+
+  /// No description provided for @ledgerBudgetDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this budget from this device?'**
+  String get ledgerBudgetDeleteMessage;
+
+  /// No description provided for @ledgerBudgetUnknownCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown category'**
+  String get ledgerBudgetUnknownCategory;
+
+  /// No description provided for @ledgerBudgetUsageSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent {actual} of {total} {currency}'**
+  String ledgerBudgetUsageSummary(String actual, String total, String currency);
+
+  /// No description provided for @ledgerBudgetPlannedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned: {amount} {currency}'**
+  String ledgerBudgetPlannedAmount(String amount, String currency);
+
+  /// No description provided for @ledgerBudgetEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No budgets defined'**
+  String get ledgerBudgetEmptyTitle;
+
+  /// No description provided for @ledgerBudgetEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create budgets for categories and subcategories to keep an eye on spending.'**
+  String get ledgerBudgetEmptyDescription;
+
+  /// No description provided for @ledgerBudgetPeriodMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get ledgerBudgetPeriodMonthly;
+
+  /// No description provided for @ledgerBudgetPeriodQuarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'Quarterly'**
+  String get ledgerBudgetPeriodQuarterly;
+
+  /// No description provided for @ledgerBudgetPeriodYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get ledgerBudgetPeriodYearly;
+
+  /// No description provided for @ledgerBudgetQuarterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Quarter {quarter} {year}'**
+  String ledgerBudgetQuarterName(int quarter, int year);
+
+  /// No description provided for @ledgerBudgetYearName.
+  ///
+  /// In en, this message translates to:
+  /// **'{year}'**
+  String ledgerBudgetYearName(int year);
+
+  /// No description provided for @ledgerCategoryCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New category'**
+  String get ledgerCategoryCreateTitle;
+
+  /// No description provided for @ledgerCategoryEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit category'**
+  String get ledgerCategoryEditTitle;
+
+  /// No description provided for @ledgerCategoryNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get ledgerCategoryNameLabel;
+
+  /// No description provided for @ledgerCategoryParentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent category'**
+  String get ledgerCategoryParentLabel;
+
+  /// No description provided for @ledgerCategoryNoParent.
+  ///
+  /// In en, this message translates to:
+  /// **'No parent'**
+  String get ledgerCategoryNoParent;
+
+  /// No description provided for @ledgerCategoryKindLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get ledgerCategoryKindLabel;
+
+  /// No description provided for @ledgerCategoryArchiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive category'**
+  String get ledgerCategoryArchiveLabel;
+
+  /// No description provided for @ledgerCategoryCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get ledgerCategoryCreateButton;
+
+  /// No description provided for @ledgerCategoryCreateSubButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add subcategory'**
+  String get ledgerCategoryCreateSubButton;
+
+  /// No description provided for @ledgerCategoryIncomeSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Income categories'**
+  String get ledgerCategoryIncomeSection;
+
+  /// No description provided for @ledgerCategoryExpenseSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense categories'**
+  String get ledgerCategoryExpenseSection;
+
+  /// No description provided for @ledgerCategoryEmptySection.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet.'**
+  String get ledgerCategoryEmptySection;
+
+  /// No description provided for @ledgerCategoryActiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get ledgerCategoryActiveLabel;
+
+  /// No description provided for @ledgerCategoryArchivedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get ledgerCategoryArchivedLabel;
+
+  /// No description provided for @ledgerCategoryNoSubcategories.
+  ///
+  /// In en, this message translates to:
+  /// **'No subcategories.'**
+  String get ledgerCategoryNoSubcategories;
+
+  /// No description provided for @ledgerCategoryDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete category?'**
+  String get ledgerCategoryDeleteTitle;
+
+  /// No description provided for @ledgerCategoryDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the category \"{name}\"?'**
+  String ledgerCategoryDeleteMessage(String name);
+
+  /// No description provided for @ledgerCategoryKindIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get ledgerCategoryKindIncome;
+
+  /// No description provided for @ledgerCategoryKindExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get ledgerCategoryKindExpense;
+
+  /// No description provided for @ledgerRecurringCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New standing order'**
+  String get ledgerRecurringCreateTitle;
+
+  /// No description provided for @ledgerRecurringEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit standing order'**
+  String get ledgerRecurringEditTitle;
+
+  /// No description provided for @ledgerRecurringNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get ledgerRecurringNameLabel;
+
+  /// No description provided for @ledgerRecurringAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get ledgerRecurringAmountLabel;
+
+  /// No description provided for @ledgerRecurringCurrencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get ledgerRecurringCurrencyLabel;
+
+  /// No description provided for @ledgerRecurringIntervalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval'**
+  String get ledgerRecurringIntervalLabel;
+
+  /// No description provided for @ledgerRecurringIntervalCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Interval count'**
+  String get ledgerRecurringIntervalCountLabel;
+
+  /// No description provided for @ledgerRecurringNextOccurrenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next occurrence: {date}'**
+  String ledgerRecurringNextOccurrenceLabel(String date);
+
+  /// No description provided for @ledgerRecurringAutoApplyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically create transactions'**
+  String get ledgerRecurringAutoApplyLabel;
+
+  /// No description provided for @ledgerRecurringMetadataLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get ledgerRecurringMetadataLabel;
+
+  /// No description provided for @ledgerRecurringCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add standing order'**
+  String get ledgerRecurringCreateButton;
+
+  /// No description provided for @ledgerRecurringDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete standing order?'**
+  String get ledgerRecurringDeleteTitle;
+
+  /// No description provided for @ledgerRecurringDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this standing order?'**
+  String get ledgerRecurringDeleteMessage;
+
+  /// No description provided for @ledgerRecurringApplyNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Create transaction now'**
+  String get ledgerRecurringApplyNow;
+
+  /// No description provided for @ledgerRecurringEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No standing orders yet'**
+  String get ledgerRecurringEmptyTitle;
+
+  /// No description provided for @ledgerRecurringEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create templates for recurring income, expenses or transfers.'**
+  String get ledgerRecurringEmptyDescription;
+
+  /// No description provided for @ledgerRecurringIntervalDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get ledgerRecurringIntervalDaily;
+
+  /// No description provided for @ledgerRecurringIntervalWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get ledgerRecurringIntervalWeekly;
+
+  /// No description provided for @ledgerRecurringIntervalMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get ledgerRecurringIntervalMonthly;
+
+  /// No description provided for @ledgerRecurringIntervalQuarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'Quarterly'**
+  String get ledgerRecurringIntervalQuarterly;
+
+  /// No description provided for @ledgerRecurringIntervalYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get ledgerRecurringIntervalYearly;
+
+  /// No description provided for @ledgerRecurringIntervalCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get ledgerRecurringIntervalCustom;
+
+  /// No description provided for @ledgerTabAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts'**
+  String get ledgerTabAccounts;
+
+  /// No description provided for @ledgerTabTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get ledgerTabTransactions;
+
+  /// No description provided for @ledgerTabBudgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets'**
+  String get ledgerTabBudgets;
+
+  /// No description provided for @ledgerTabRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Standing orders'**
+  String get ledgerTabRecurring;
+
+  /// No description provided for @ledgerTabCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get ledgerTabCategories;
+
+  /// No description provided for @ledgerDashboardNoAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account to see your finances here.'**
+  String get ledgerDashboardNoAccounts;
+
+  /// No description provided for @ledgerDashboardNoNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'No balances recorded yet.'**
+  String get ledgerDashboardNoNetWorth;
+
+  /// No description provided for @ledgerDashboardPlannedIncomeChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{currency} income {amount}'**
+  String ledgerDashboardPlannedIncomeChip(String currency, String amount);
+
+  /// No description provided for @ledgerDashboardPlannedExpenseChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{currency} spending {amount}'**
+  String ledgerDashboardPlannedExpenseChip(String currency, String amount);
+
+  /// No description provided for @ledgerDashboardBudgetsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets overview'**
+  String get ledgerDashboardBudgetsTitle;
+
+  /// No description provided for @ledgerDashboardNoBudgets.
+  ///
+  /// In en, this message translates to:
+  /// **'No budgets for the current period.'**
+  String get ledgerDashboardNoBudgets;
 }
 
 class _AppLocalizationsDelegate

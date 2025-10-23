@@ -4657,6 +4657,3996 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
   }
 }
 
+class $LedgerAccountsTable extends LedgerAccounts
+    with TableInfo<$LedgerAccountsTable, LedgerAccount> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LedgerAccountsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LedgerAccountKind, String>
+  accountKind =
+      GeneratedColumn<String>(
+        'account_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(LedgerAccountKind.cash.name),
+      ).withConverter<LedgerAccountKind>(
+        $LedgerAccountsTable.$converteraccountKind,
+      );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 3,
+      maxTextLength: 3,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('EUR'),
+  );
+  static const VerificationMeta _includeInNetWorthMeta = const VerificationMeta(
+    'includeInNetWorth',
+  );
+  @override
+  late final GeneratedColumn<bool> includeInNetWorth = GeneratedColumn<bool>(
+    'include_in_net_worth',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("include_in_net_worth" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _initialBalanceMeta = const VerificationMeta(
+    'initialBalance',
+  );
+  @override
+  late final GeneratedColumn<double> initialBalance = GeneratedColumn<double>(
+    'initial_balance',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    accountKind,
+    currencyCode,
+    includeInNetWorth,
+    initialBalance,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ledger_accounts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LedgerAccount> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('include_in_net_worth')) {
+      context.handle(
+        _includeInNetWorthMeta,
+        includeInNetWorth.isAcceptableOrUnknown(
+          data['include_in_net_worth']!,
+          _includeInNetWorthMeta,
+        ),
+      );
+    }
+    if (data.containsKey('initial_balance')) {
+      context.handle(
+        _initialBalanceMeta,
+        initialBalance.isAcceptableOrUnknown(
+          data['initial_balance']!,
+          _initialBalanceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LedgerAccount map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LedgerAccount(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      accountKind: $LedgerAccountsTable.$converteraccountKind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}account_kind'],
+        )!,
+      ),
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      )!,
+      includeInNetWorth: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}include_in_net_worth'],
+      )!,
+      initialBalance: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}initial_balance'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LedgerAccountsTable createAlias(String alias) {
+    return $LedgerAccountsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LedgerAccountKind, String, String>
+  $converteraccountKind = const EnumNameConverter<LedgerAccountKind>(
+    LedgerAccountKind.values,
+  );
+}
+
+class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
+  final int id;
+  final String name;
+  final LedgerAccountKind accountKind;
+  final String currencyCode;
+  final bool includeInNetWorth;
+  final double initialBalance;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const LedgerAccount({
+    required this.id,
+    required this.name,
+    required this.accountKind,
+    required this.currencyCode,
+    required this.includeInNetWorth,
+    required this.initialBalance,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    {
+      map['account_kind'] = Variable<String>(
+        $LedgerAccountsTable.$converteraccountKind.toSql(accountKind),
+      );
+    }
+    map['currency_code'] = Variable<String>(currencyCode);
+    map['include_in_net_worth'] = Variable<bool>(includeInNetWorth);
+    map['initial_balance'] = Variable<double>(initialBalance);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LedgerAccountsCompanion toCompanion(bool nullToAbsent) {
+    return LedgerAccountsCompanion(
+      id: Value(id),
+      name: Value(name),
+      accountKind: Value(accountKind),
+      currencyCode: Value(currencyCode),
+      includeInNetWorth: Value(includeInNetWorth),
+      initialBalance: Value(initialBalance),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LedgerAccount.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LedgerAccount(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      accountKind: $LedgerAccountsTable.$converteraccountKind.fromJson(
+        serializer.fromJson<String>(json['accountKind']),
+      ),
+      currencyCode: serializer.fromJson<String>(json['currencyCode']),
+      includeInNetWorth: serializer.fromJson<bool>(json['includeInNetWorth']),
+      initialBalance: serializer.fromJson<double>(json['initialBalance']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'accountKind': serializer.toJson<String>(
+        $LedgerAccountsTable.$converteraccountKind.toJson(accountKind),
+      ),
+      'currencyCode': serializer.toJson<String>(currencyCode),
+      'includeInNetWorth': serializer.toJson<bool>(includeInNetWorth),
+      'initialBalance': serializer.toJson<double>(initialBalance),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LedgerAccount copyWith({
+    int? id,
+    String? name,
+    LedgerAccountKind? accountKind,
+    String? currencyCode,
+    bool? includeInNetWorth,
+    double? initialBalance,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => LedgerAccount(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    accountKind: accountKind ?? this.accountKind,
+    currencyCode: currencyCode ?? this.currencyCode,
+    includeInNetWorth: includeInNetWorth ?? this.includeInNetWorth,
+    initialBalance: initialBalance ?? this.initialBalance,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LedgerAccount copyWithCompanion(LedgerAccountsCompanion data) {
+    return LedgerAccount(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      accountKind: data.accountKind.present
+          ? data.accountKind.value
+          : this.accountKind,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      includeInNetWorth: data.includeInNetWorth.present
+          ? data.includeInNetWorth.value
+          : this.includeInNetWorth,
+      initialBalance: data.initialBalance.present
+          ? data.initialBalance.value
+          : this.initialBalance,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerAccount(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('accountKind: $accountKind, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('includeInNetWorth: $includeInNetWorth, ')
+          ..write('initialBalance: $initialBalance, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    accountKind,
+    currencyCode,
+    includeInNetWorth,
+    initialBalance,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LedgerAccount &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.accountKind == this.accountKind &&
+          other.currencyCode == this.currencyCode &&
+          other.includeInNetWorth == this.includeInNetWorth &&
+          other.initialBalance == this.initialBalance &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<LedgerAccountKind> accountKind;
+  final Value<String> currencyCode;
+  final Value<bool> includeInNetWorth;
+  final Value<double> initialBalance;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const LedgerAccountsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.accountKind = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.includeInNetWorth = const Value.absent(),
+    this.initialBalance = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  LedgerAccountsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.accountKind = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.includeInNetWorth = const Value.absent(),
+    this.initialBalance = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<LedgerAccount> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? accountKind,
+    Expression<String>? currencyCode,
+    Expression<bool>? includeInNetWorth,
+    Expression<double>? initialBalance,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (accountKind != null) 'account_kind': accountKind,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (includeInNetWorth != null) 'include_in_net_worth': includeInNetWorth,
+      if (initialBalance != null) 'initial_balance': initialBalance,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  LedgerAccountsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<LedgerAccountKind>? accountKind,
+    Value<String>? currencyCode,
+    Value<bool>? includeInNetWorth,
+    Value<double>? initialBalance,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return LedgerAccountsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      accountKind: accountKind ?? this.accountKind,
+      currencyCode: currencyCode ?? this.currencyCode,
+      includeInNetWorth: includeInNetWorth ?? this.includeInNetWorth,
+      initialBalance: initialBalance ?? this.initialBalance,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (accountKind.present) {
+      map['account_kind'] = Variable<String>(
+        $LedgerAccountsTable.$converteraccountKind.toSql(accountKind.value),
+      );
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (includeInNetWorth.present) {
+      map['include_in_net_worth'] = Variable<bool>(includeInNetWorth.value);
+    }
+    if (initialBalance.present) {
+      map['initial_balance'] = Variable<double>(initialBalance.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerAccountsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('accountKind: $accountKind, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('includeInNetWorth: $includeInNetWorth, ')
+          ..write('initialBalance: $initialBalance, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LedgerCategoriesTable extends LedgerCategories
+    with TableInfo<$LedgerCategoriesTable, LedgerCategory> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LedgerCategoriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LedgerCategoryKind, String>
+  categoryKind =
+      GeneratedColumn<String>(
+        'category_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(LedgerCategoryKind.expense.name),
+      ).withConverter<LedgerCategoryKind>(
+        $LedgerCategoriesTable.$convertercategoryKind,
+      );
+  static const VerificationMeta _parentIdMeta = const VerificationMeta(
+    'parentId',
+  );
+  @override
+  late final GeneratedColumn<int> parentId = GeneratedColumn<int>(
+    'parent_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints:
+        'NULL REFERENCES ledger_categories(id) ON DELETE SET NULL',
+  );
+  static const VerificationMeta _isArchivedMeta = const VerificationMeta(
+    'isArchived',
+  );
+  @override
+  late final GeneratedColumn<bool> isArchived = GeneratedColumn<bool>(
+    'is_archived',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_archived" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    categoryKind,
+    parentId,
+    isArchived,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ledger_categories';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LedgerCategory> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('parent_id')) {
+      context.handle(
+        _parentIdMeta,
+        parentId.isAcceptableOrUnknown(data['parent_id']!, _parentIdMeta),
+      );
+    }
+    if (data.containsKey('is_archived')) {
+      context.handle(
+        _isArchivedMeta,
+        isArchived.isAcceptableOrUnknown(data['is_archived']!, _isArchivedMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LedgerCategory map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LedgerCategory(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      categoryKind: $LedgerCategoriesTable.$convertercategoryKind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}category_kind'],
+        )!,
+      ),
+      parentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}parent_id'],
+      ),
+      isArchived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_archived'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LedgerCategoriesTable createAlias(String alias) {
+    return $LedgerCategoriesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LedgerCategoryKind, String, String>
+  $convertercategoryKind = const EnumNameConverter<LedgerCategoryKind>(
+    LedgerCategoryKind.values,
+  );
+}
+
+class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
+  final int id;
+  final String name;
+  final LedgerCategoryKind categoryKind;
+  final int? parentId;
+  final bool isArchived;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const LedgerCategory({
+    required this.id,
+    required this.name,
+    required this.categoryKind,
+    this.parentId,
+    required this.isArchived,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    {
+      map['category_kind'] = Variable<String>(
+        $LedgerCategoriesTable.$convertercategoryKind.toSql(categoryKind),
+      );
+    }
+    if (!nullToAbsent || parentId != null) {
+      map['parent_id'] = Variable<int>(parentId);
+    }
+    map['is_archived'] = Variable<bool>(isArchived);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LedgerCategoriesCompanion toCompanion(bool nullToAbsent) {
+    return LedgerCategoriesCompanion(
+      id: Value(id),
+      name: Value(name),
+      categoryKind: Value(categoryKind),
+      parentId: parentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(parentId),
+      isArchived: Value(isArchived),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LedgerCategory.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LedgerCategory(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      categoryKind: $LedgerCategoriesTable.$convertercategoryKind.fromJson(
+        serializer.fromJson<String>(json['categoryKind']),
+      ),
+      parentId: serializer.fromJson<int?>(json['parentId']),
+      isArchived: serializer.fromJson<bool>(json['isArchived']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'categoryKind': serializer.toJson<String>(
+        $LedgerCategoriesTable.$convertercategoryKind.toJson(categoryKind),
+      ),
+      'parentId': serializer.toJson<int?>(parentId),
+      'isArchived': serializer.toJson<bool>(isArchived),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LedgerCategory copyWith({
+    int? id,
+    String? name,
+    LedgerCategoryKind? categoryKind,
+    Value<int?> parentId = const Value.absent(),
+    bool? isArchived,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => LedgerCategory(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    categoryKind: categoryKind ?? this.categoryKind,
+    parentId: parentId.present ? parentId.value : this.parentId,
+    isArchived: isArchived ?? this.isArchived,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LedgerCategory copyWithCompanion(LedgerCategoriesCompanion data) {
+    return LedgerCategory(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      categoryKind: data.categoryKind.present
+          ? data.categoryKind.value
+          : this.categoryKind,
+      parentId: data.parentId.present ? data.parentId.value : this.parentId,
+      isArchived: data.isArchived.present
+          ? data.isArchived.value
+          : this.isArchived,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerCategory(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('categoryKind: $categoryKind, ')
+          ..write('parentId: $parentId, ')
+          ..write('isArchived: $isArchived, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    categoryKind,
+    parentId,
+    isArchived,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LedgerCategory &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.categoryKind == this.categoryKind &&
+          other.parentId == this.parentId &&
+          other.isArchived == this.isArchived &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<LedgerCategoryKind> categoryKind;
+  final Value<int?> parentId;
+  final Value<bool> isArchived;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const LedgerCategoriesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.categoryKind = const Value.absent(),
+    this.parentId = const Value.absent(),
+    this.isArchived = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  LedgerCategoriesCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.categoryKind = const Value.absent(),
+    this.parentId = const Value.absent(),
+    this.isArchived = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<LedgerCategory> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? categoryKind,
+    Expression<int>? parentId,
+    Expression<bool>? isArchived,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (categoryKind != null) 'category_kind': categoryKind,
+      if (parentId != null) 'parent_id': parentId,
+      if (isArchived != null) 'is_archived': isArchived,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  LedgerCategoriesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<LedgerCategoryKind>? categoryKind,
+    Value<int?>? parentId,
+    Value<bool>? isArchived,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return LedgerCategoriesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      categoryKind: categoryKind ?? this.categoryKind,
+      parentId: parentId ?? this.parentId,
+      isArchived: isArchived ?? this.isArchived,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (categoryKind.present) {
+      map['category_kind'] = Variable<String>(
+        $LedgerCategoriesTable.$convertercategoryKind.toSql(categoryKind.value),
+      );
+    }
+    if (parentId.present) {
+      map['parent_id'] = Variable<int>(parentId.value);
+    }
+    if (isArchived.present) {
+      map['is_archived'] = Variable<bool>(isArchived.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerCategoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('categoryKind: $categoryKind, ')
+          ..write('parentId: $parentId, ')
+          ..write('isArchived: $isArchived, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LedgerBudgetsTable extends LedgerBudgets
+    with TableInfo<$LedgerBudgetsTable, LedgerBudget> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LedgerBudgetsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<int> categoryId = GeneratedColumn<int>(
+    'category_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ledger_categories (id) ON DELETE CASCADE',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LedgerBudgetPeriodKind, String>
+  periodKind =
+      GeneratedColumn<String>(
+        'period_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(LedgerBudgetPeriodKind.monthly.name),
+      ).withConverter<LedgerBudgetPeriodKind>(
+        $LedgerBudgetsTable.$converterperiodKind,
+      );
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  @override
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _monthMeta = const VerificationMeta('month');
+  @override
+  late final GeneratedColumn<int> month = GeneratedColumn<int>(
+    'month',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<double> amount = GeneratedColumn<double>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 3,
+      maxTextLength: 3,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('EUR'),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    categoryId,
+    periodKind,
+    year,
+    month,
+    amount,
+    currencyCode,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ledger_budgets';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LedgerBudget> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryIdMeta);
+    }
+    if (data.containsKey('year')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearMeta);
+    }
+    if (data.containsKey('month')) {
+      context.handle(
+        _monthMeta,
+        month.isAcceptableOrUnknown(data['month']!, _monthMeta),
+      );
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LedgerBudget map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LedgerBudget(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}category_id'],
+      )!,
+      periodKind: $LedgerBudgetsTable.$converterperiodKind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}period_kind'],
+        )!,
+      ),
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+      month: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}month'],
+      ),
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}amount'],
+      )!,
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LedgerBudgetsTable createAlias(String alias) {
+    return $LedgerBudgetsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LedgerBudgetPeriodKind, String, String>
+  $converterperiodKind = const EnumNameConverter<LedgerBudgetPeriodKind>(
+    LedgerBudgetPeriodKind.values,
+  );
+}
+
+class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
+  final int id;
+  final int categoryId;
+  final LedgerBudgetPeriodKind periodKind;
+  final int year;
+  final int? month;
+  final double amount;
+  final String currencyCode;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const LedgerBudget({
+    required this.id,
+    required this.categoryId,
+    required this.periodKind,
+    required this.year,
+    this.month,
+    required this.amount,
+    required this.currencyCode,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['category_id'] = Variable<int>(categoryId);
+    {
+      map['period_kind'] = Variable<String>(
+        $LedgerBudgetsTable.$converterperiodKind.toSql(periodKind),
+      );
+    }
+    map['year'] = Variable<int>(year);
+    if (!nullToAbsent || month != null) {
+      map['month'] = Variable<int>(month);
+    }
+    map['amount'] = Variable<double>(amount);
+    map['currency_code'] = Variable<String>(currencyCode);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LedgerBudgetsCompanion toCompanion(bool nullToAbsent) {
+    return LedgerBudgetsCompanion(
+      id: Value(id),
+      categoryId: Value(categoryId),
+      periodKind: Value(periodKind),
+      year: Value(year),
+      month: month == null && nullToAbsent
+          ? const Value.absent()
+          : Value(month),
+      amount: Value(amount),
+      currencyCode: Value(currencyCode),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LedgerBudget.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LedgerBudget(
+      id: serializer.fromJson<int>(json['id']),
+      categoryId: serializer.fromJson<int>(json['categoryId']),
+      periodKind: $LedgerBudgetsTable.$converterperiodKind.fromJson(
+        serializer.fromJson<String>(json['periodKind']),
+      ),
+      year: serializer.fromJson<int>(json['year']),
+      month: serializer.fromJson<int?>(json['month']),
+      amount: serializer.fromJson<double>(json['amount']),
+      currencyCode: serializer.fromJson<String>(json['currencyCode']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'categoryId': serializer.toJson<int>(categoryId),
+      'periodKind': serializer.toJson<String>(
+        $LedgerBudgetsTable.$converterperiodKind.toJson(periodKind),
+      ),
+      'year': serializer.toJson<int>(year),
+      'month': serializer.toJson<int?>(month),
+      'amount': serializer.toJson<double>(amount),
+      'currencyCode': serializer.toJson<String>(currencyCode),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LedgerBudget copyWith({
+    int? id,
+    int? categoryId,
+    LedgerBudgetPeriodKind? periodKind,
+    int? year,
+    Value<int?> month = const Value.absent(),
+    double? amount,
+    String? currencyCode,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => LedgerBudget(
+    id: id ?? this.id,
+    categoryId: categoryId ?? this.categoryId,
+    periodKind: periodKind ?? this.periodKind,
+    year: year ?? this.year,
+    month: month.present ? month.value : this.month,
+    amount: amount ?? this.amount,
+    currencyCode: currencyCode ?? this.currencyCode,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LedgerBudget copyWithCompanion(LedgerBudgetsCompanion data) {
+    return LedgerBudget(
+      id: data.id.present ? data.id.value : this.id,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      periodKind: data.periodKind.present
+          ? data.periodKind.value
+          : this.periodKind,
+      year: data.year.present ? data.year.value : this.year,
+      month: data.month.present ? data.month.value : this.month,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerBudget(')
+          ..write('id: $id, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('periodKind: $periodKind, ')
+          ..write('year: $year, ')
+          ..write('month: $month, ')
+          ..write('amount: $amount, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    categoryId,
+    periodKind,
+    year,
+    month,
+    amount,
+    currencyCode,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LedgerBudget &&
+          other.id == this.id &&
+          other.categoryId == this.categoryId &&
+          other.periodKind == this.periodKind &&
+          other.year == this.year &&
+          other.month == this.month &&
+          other.amount == this.amount &&
+          other.currencyCode == this.currencyCode &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
+  final Value<int> id;
+  final Value<int> categoryId;
+  final Value<LedgerBudgetPeriodKind> periodKind;
+  final Value<int> year;
+  final Value<int?> month;
+  final Value<double> amount;
+  final Value<String> currencyCode;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const LedgerBudgetsCompanion({
+    this.id = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.periodKind = const Value.absent(),
+    this.year = const Value.absent(),
+    this.month = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  LedgerBudgetsCompanion.insert({
+    this.id = const Value.absent(),
+    required int categoryId,
+    this.periodKind = const Value.absent(),
+    required int year,
+    this.month = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  }) : categoryId = Value(categoryId),
+       year = Value(year);
+  static Insertable<LedgerBudget> custom({
+    Expression<int>? id,
+    Expression<int>? categoryId,
+    Expression<String>? periodKind,
+    Expression<int>? year,
+    Expression<int>? month,
+    Expression<double>? amount,
+    Expression<String>? currencyCode,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (categoryId != null) 'category_id': categoryId,
+      if (periodKind != null) 'period_kind': periodKind,
+      if (year != null) 'year': year,
+      if (month != null) 'month': month,
+      if (amount != null) 'amount': amount,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  LedgerBudgetsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? categoryId,
+    Value<LedgerBudgetPeriodKind>? periodKind,
+    Value<int>? year,
+    Value<int?>? month,
+    Value<double>? amount,
+    Value<String>? currencyCode,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return LedgerBudgetsCompanion(
+      id: id ?? this.id,
+      categoryId: categoryId ?? this.categoryId,
+      periodKind: periodKind ?? this.periodKind,
+      year: year ?? this.year,
+      month: month ?? this.month,
+      amount: amount ?? this.amount,
+      currencyCode: currencyCode ?? this.currencyCode,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<int>(categoryId.value);
+    }
+    if (periodKind.present) {
+      map['period_kind'] = Variable<String>(
+        $LedgerBudgetsTable.$converterperiodKind.toSql(periodKind.value),
+      );
+    }
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (month.present) {
+      map['month'] = Variable<int>(month.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<double>(amount.value);
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerBudgetsCompanion(')
+          ..write('id: $id, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('periodKind: $periodKind, ')
+          ..write('year: $year, ')
+          ..write('month: $month, ')
+          ..write('amount: $amount, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LedgerTransactionsTable extends LedgerTransactions
+    with TableInfo<$LedgerTransactionsTable, LedgerTransaction> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LedgerTransactionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LedgerTransactionKind, String>
+  transactionKind =
+      GeneratedColumn<String>(
+        'transaction_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(LedgerTransactionKind.expense.name),
+      ).withConverter<LedgerTransactionKind>(
+        $LedgerTransactionsTable.$convertertransactionKind,
+      );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<int> accountId = GeneratedColumn<int>(
+    'account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ledger_accounts (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _targetAccountIdMeta = const VerificationMeta(
+    'targetAccountId',
+  );
+  @override
+  late final GeneratedColumn<int> targetAccountId = GeneratedColumn<int>(
+    'target_account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ledger_accounts (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<int> categoryId = GeneratedColumn<int>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ledger_categories (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _subcategoryIdMeta = const VerificationMeta(
+    'subcategoryId',
+  );
+  @override
+  late final GeneratedColumn<int> subcategoryId = GeneratedColumn<int>(
+    'subcategory_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ledger_categories (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<double> amount = GeneratedColumn<double>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 3,
+      maxTextLength: 3,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('EUR'),
+  );
+  static const VerificationMeta _bookingDateMeta = const VerificationMeta(
+    'bookingDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> bookingDate = GeneratedColumn<DateTime>(
+    'booking_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _isPlannedMeta = const VerificationMeta(
+    'isPlanned',
+  );
+  @override
+  late final GeneratedColumn<bool> isPlanned = GeneratedColumn<bool>(
+    'is_planned',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_planned" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _cryptoSymbolMeta = const VerificationMeta(
+    'cryptoSymbol',
+  );
+  @override
+  late final GeneratedColumn<String> cryptoSymbol = GeneratedColumn<String>(
+    'crypto_symbol',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cryptoQuantityMeta = const VerificationMeta(
+    'cryptoQuantity',
+  );
+  @override
+  late final GeneratedColumn<double> cryptoQuantity = GeneratedColumn<double>(
+    'crypto_quantity',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pricePerUnitMeta = const VerificationMeta(
+    'pricePerUnit',
+  );
+  @override
+  late final GeneratedColumn<double> pricePerUnit = GeneratedColumn<double>(
+    'price_per_unit',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _feeAmountMeta = const VerificationMeta(
+    'feeAmount',
+  );
+  @override
+  late final GeneratedColumn<double> feeAmount = GeneratedColumn<double>(
+    'fee_amount',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    transactionKind,
+    accountId,
+    targetAccountId,
+    categoryId,
+    subcategoryId,
+    amount,
+    currencyCode,
+    bookingDate,
+    isPlanned,
+    description,
+    cryptoSymbol,
+    cryptoQuantity,
+    pricePerUnit,
+    feeAmount,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ledger_transactions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LedgerTransaction> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    }
+    if (data.containsKey('target_account_id')) {
+      context.handle(
+        _targetAccountIdMeta,
+        targetAccountId.isAcceptableOrUnknown(
+          data['target_account_id']!,
+          _targetAccountIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('subcategory_id')) {
+      context.handle(
+        _subcategoryIdMeta,
+        subcategoryId.isAcceptableOrUnknown(
+          data['subcategory_id']!,
+          _subcategoryIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('booking_date')) {
+      context.handle(
+        _bookingDateMeta,
+        bookingDate.isAcceptableOrUnknown(
+          data['booking_date']!,
+          _bookingDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_planned')) {
+      context.handle(
+        _isPlannedMeta,
+        isPlanned.isAcceptableOrUnknown(data['is_planned']!, _isPlannedMeta),
+      );
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('crypto_symbol')) {
+      context.handle(
+        _cryptoSymbolMeta,
+        cryptoSymbol.isAcceptableOrUnknown(
+          data['crypto_symbol']!,
+          _cryptoSymbolMeta,
+        ),
+      );
+    }
+    if (data.containsKey('crypto_quantity')) {
+      context.handle(
+        _cryptoQuantityMeta,
+        cryptoQuantity.isAcceptableOrUnknown(
+          data['crypto_quantity']!,
+          _cryptoQuantityMeta,
+        ),
+      );
+    }
+    if (data.containsKey('price_per_unit')) {
+      context.handle(
+        _pricePerUnitMeta,
+        pricePerUnit.isAcceptableOrUnknown(
+          data['price_per_unit']!,
+          _pricePerUnitMeta,
+        ),
+      );
+    }
+    if (data.containsKey('fee_amount')) {
+      context.handle(
+        _feeAmountMeta,
+        feeAmount.isAcceptableOrUnknown(data['fee_amount']!, _feeAmountMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LedgerTransaction map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LedgerTransaction(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      transactionKind: $LedgerTransactionsTable.$convertertransactionKind
+          .fromSql(
+            attachedDatabase.typeMapping.read(
+              DriftSqlType.string,
+              data['${effectivePrefix}transaction_kind'],
+            )!,
+          ),
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}account_id'],
+      ),
+      targetAccountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_account_id'],
+      ),
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}category_id'],
+      ),
+      subcategoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}subcategory_id'],
+      ),
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}amount'],
+      )!,
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      )!,
+      bookingDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}booking_date'],
+      )!,
+      isPlanned: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_planned'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      )!,
+      cryptoSymbol: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crypto_symbol'],
+      ),
+      cryptoQuantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}crypto_quantity'],
+      ),
+      pricePerUnit: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}price_per_unit'],
+      ),
+      feeAmount: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}fee_amount'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LedgerTransactionsTable createAlias(String alias) {
+    return $LedgerTransactionsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LedgerTransactionKind, String, String>
+  $convertertransactionKind = const EnumNameConverter<LedgerTransactionKind>(
+    LedgerTransactionKind.values,
+  );
+}
+
+class LedgerTransaction extends DataClass
+    implements Insertable<LedgerTransaction> {
+  final int id;
+  final LedgerTransactionKind transactionKind;
+  final int? accountId;
+  final int? targetAccountId;
+  final int? categoryId;
+  final int? subcategoryId;
+  final double amount;
+  final String currencyCode;
+  final DateTime bookingDate;
+  final bool isPlanned;
+  final String description;
+  final String? cryptoSymbol;
+  final double? cryptoQuantity;
+  final double? pricePerUnit;
+  final double? feeAmount;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const LedgerTransaction({
+    required this.id,
+    required this.transactionKind,
+    this.accountId,
+    this.targetAccountId,
+    this.categoryId,
+    this.subcategoryId,
+    required this.amount,
+    required this.currencyCode,
+    required this.bookingDate,
+    required this.isPlanned,
+    required this.description,
+    this.cryptoSymbol,
+    this.cryptoQuantity,
+    this.pricePerUnit,
+    this.feeAmount,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    {
+      map['transaction_kind'] = Variable<String>(
+        $LedgerTransactionsTable.$convertertransactionKind.toSql(
+          transactionKind,
+        ),
+      );
+    }
+    if (!nullToAbsent || accountId != null) {
+      map['account_id'] = Variable<int>(accountId);
+    }
+    if (!nullToAbsent || targetAccountId != null) {
+      map['target_account_id'] = Variable<int>(targetAccountId);
+    }
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<int>(categoryId);
+    }
+    if (!nullToAbsent || subcategoryId != null) {
+      map['subcategory_id'] = Variable<int>(subcategoryId);
+    }
+    map['amount'] = Variable<double>(amount);
+    map['currency_code'] = Variable<String>(currencyCode);
+    map['booking_date'] = Variable<DateTime>(bookingDate);
+    map['is_planned'] = Variable<bool>(isPlanned);
+    map['description'] = Variable<String>(description);
+    if (!nullToAbsent || cryptoSymbol != null) {
+      map['crypto_symbol'] = Variable<String>(cryptoSymbol);
+    }
+    if (!nullToAbsent || cryptoQuantity != null) {
+      map['crypto_quantity'] = Variable<double>(cryptoQuantity);
+    }
+    if (!nullToAbsent || pricePerUnit != null) {
+      map['price_per_unit'] = Variable<double>(pricePerUnit);
+    }
+    if (!nullToAbsent || feeAmount != null) {
+      map['fee_amount'] = Variable<double>(feeAmount);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LedgerTransactionsCompanion toCompanion(bool nullToAbsent) {
+    return LedgerTransactionsCompanion(
+      id: Value(id),
+      transactionKind: Value(transactionKind),
+      accountId: accountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accountId),
+      targetAccountId: targetAccountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetAccountId),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
+      subcategoryId: subcategoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subcategoryId),
+      amount: Value(amount),
+      currencyCode: Value(currencyCode),
+      bookingDate: Value(bookingDate),
+      isPlanned: Value(isPlanned),
+      description: Value(description),
+      cryptoSymbol: cryptoSymbol == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cryptoSymbol),
+      cryptoQuantity: cryptoQuantity == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cryptoQuantity),
+      pricePerUnit: pricePerUnit == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pricePerUnit),
+      feeAmount: feeAmount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(feeAmount),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LedgerTransaction.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LedgerTransaction(
+      id: serializer.fromJson<int>(json['id']),
+      transactionKind: $LedgerTransactionsTable.$convertertransactionKind
+          .fromJson(serializer.fromJson<String>(json['transactionKind'])),
+      accountId: serializer.fromJson<int?>(json['accountId']),
+      targetAccountId: serializer.fromJson<int?>(json['targetAccountId']),
+      categoryId: serializer.fromJson<int?>(json['categoryId']),
+      subcategoryId: serializer.fromJson<int?>(json['subcategoryId']),
+      amount: serializer.fromJson<double>(json['amount']),
+      currencyCode: serializer.fromJson<String>(json['currencyCode']),
+      bookingDate: serializer.fromJson<DateTime>(json['bookingDate']),
+      isPlanned: serializer.fromJson<bool>(json['isPlanned']),
+      description: serializer.fromJson<String>(json['description']),
+      cryptoSymbol: serializer.fromJson<String?>(json['cryptoSymbol']),
+      cryptoQuantity: serializer.fromJson<double?>(json['cryptoQuantity']),
+      pricePerUnit: serializer.fromJson<double?>(json['pricePerUnit']),
+      feeAmount: serializer.fromJson<double?>(json['feeAmount']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'transactionKind': serializer.toJson<String>(
+        $LedgerTransactionsTable.$convertertransactionKind.toJson(
+          transactionKind,
+        ),
+      ),
+      'accountId': serializer.toJson<int?>(accountId),
+      'targetAccountId': serializer.toJson<int?>(targetAccountId),
+      'categoryId': serializer.toJson<int?>(categoryId),
+      'subcategoryId': serializer.toJson<int?>(subcategoryId),
+      'amount': serializer.toJson<double>(amount),
+      'currencyCode': serializer.toJson<String>(currencyCode),
+      'bookingDate': serializer.toJson<DateTime>(bookingDate),
+      'isPlanned': serializer.toJson<bool>(isPlanned),
+      'description': serializer.toJson<String>(description),
+      'cryptoSymbol': serializer.toJson<String?>(cryptoSymbol),
+      'cryptoQuantity': serializer.toJson<double?>(cryptoQuantity),
+      'pricePerUnit': serializer.toJson<double?>(pricePerUnit),
+      'feeAmount': serializer.toJson<double?>(feeAmount),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LedgerTransaction copyWith({
+    int? id,
+    LedgerTransactionKind? transactionKind,
+    Value<int?> accountId = const Value.absent(),
+    Value<int?> targetAccountId = const Value.absent(),
+    Value<int?> categoryId = const Value.absent(),
+    Value<int?> subcategoryId = const Value.absent(),
+    double? amount,
+    String? currencyCode,
+    DateTime? bookingDate,
+    bool? isPlanned,
+    String? description,
+    Value<String?> cryptoSymbol = const Value.absent(),
+    Value<double?> cryptoQuantity = const Value.absent(),
+    Value<double?> pricePerUnit = const Value.absent(),
+    Value<double?> feeAmount = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => LedgerTransaction(
+    id: id ?? this.id,
+    transactionKind: transactionKind ?? this.transactionKind,
+    accountId: accountId.present ? accountId.value : this.accountId,
+    targetAccountId: targetAccountId.present
+        ? targetAccountId.value
+        : this.targetAccountId,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    subcategoryId: subcategoryId.present
+        ? subcategoryId.value
+        : this.subcategoryId,
+    amount: amount ?? this.amount,
+    currencyCode: currencyCode ?? this.currencyCode,
+    bookingDate: bookingDate ?? this.bookingDate,
+    isPlanned: isPlanned ?? this.isPlanned,
+    description: description ?? this.description,
+    cryptoSymbol: cryptoSymbol.present ? cryptoSymbol.value : this.cryptoSymbol,
+    cryptoQuantity: cryptoQuantity.present
+        ? cryptoQuantity.value
+        : this.cryptoQuantity,
+    pricePerUnit: pricePerUnit.present ? pricePerUnit.value : this.pricePerUnit,
+    feeAmount: feeAmount.present ? feeAmount.value : this.feeAmount,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LedgerTransaction copyWithCompanion(LedgerTransactionsCompanion data) {
+    return LedgerTransaction(
+      id: data.id.present ? data.id.value : this.id,
+      transactionKind: data.transactionKind.present
+          ? data.transactionKind.value
+          : this.transactionKind,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      targetAccountId: data.targetAccountId.present
+          ? data.targetAccountId.value
+          : this.targetAccountId,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      subcategoryId: data.subcategoryId.present
+          ? data.subcategoryId.value
+          : this.subcategoryId,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      bookingDate: data.bookingDate.present
+          ? data.bookingDate.value
+          : this.bookingDate,
+      isPlanned: data.isPlanned.present ? data.isPlanned.value : this.isPlanned,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      cryptoSymbol: data.cryptoSymbol.present
+          ? data.cryptoSymbol.value
+          : this.cryptoSymbol,
+      cryptoQuantity: data.cryptoQuantity.present
+          ? data.cryptoQuantity.value
+          : this.cryptoQuantity,
+      pricePerUnit: data.pricePerUnit.present
+          ? data.pricePerUnit.value
+          : this.pricePerUnit,
+      feeAmount: data.feeAmount.present ? data.feeAmount.value : this.feeAmount,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerTransaction(')
+          ..write('id: $id, ')
+          ..write('transactionKind: $transactionKind, ')
+          ..write('accountId: $accountId, ')
+          ..write('targetAccountId: $targetAccountId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('subcategoryId: $subcategoryId, ')
+          ..write('amount: $amount, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('bookingDate: $bookingDate, ')
+          ..write('isPlanned: $isPlanned, ')
+          ..write('description: $description, ')
+          ..write('cryptoSymbol: $cryptoSymbol, ')
+          ..write('cryptoQuantity: $cryptoQuantity, ')
+          ..write('pricePerUnit: $pricePerUnit, ')
+          ..write('feeAmount: $feeAmount, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    transactionKind,
+    accountId,
+    targetAccountId,
+    categoryId,
+    subcategoryId,
+    amount,
+    currencyCode,
+    bookingDate,
+    isPlanned,
+    description,
+    cryptoSymbol,
+    cryptoQuantity,
+    pricePerUnit,
+    feeAmount,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LedgerTransaction &&
+          other.id == this.id &&
+          other.transactionKind == this.transactionKind &&
+          other.accountId == this.accountId &&
+          other.targetAccountId == this.targetAccountId &&
+          other.categoryId == this.categoryId &&
+          other.subcategoryId == this.subcategoryId &&
+          other.amount == this.amount &&
+          other.currencyCode == this.currencyCode &&
+          other.bookingDate == this.bookingDate &&
+          other.isPlanned == this.isPlanned &&
+          other.description == this.description &&
+          other.cryptoSymbol == this.cryptoSymbol &&
+          other.cryptoQuantity == this.cryptoQuantity &&
+          other.pricePerUnit == this.pricePerUnit &&
+          other.feeAmount == this.feeAmount &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
+  final Value<int> id;
+  final Value<LedgerTransactionKind> transactionKind;
+  final Value<int?> accountId;
+  final Value<int?> targetAccountId;
+  final Value<int?> categoryId;
+  final Value<int?> subcategoryId;
+  final Value<double> amount;
+  final Value<String> currencyCode;
+  final Value<DateTime> bookingDate;
+  final Value<bool> isPlanned;
+  final Value<String> description;
+  final Value<String?> cryptoSymbol;
+  final Value<double?> cryptoQuantity;
+  final Value<double?> pricePerUnit;
+  final Value<double?> feeAmount;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const LedgerTransactionsCompanion({
+    this.id = const Value.absent(),
+    this.transactionKind = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.targetAccountId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.subcategoryId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.bookingDate = const Value.absent(),
+    this.isPlanned = const Value.absent(),
+    this.description = const Value.absent(),
+    this.cryptoSymbol = const Value.absent(),
+    this.cryptoQuantity = const Value.absent(),
+    this.pricePerUnit = const Value.absent(),
+    this.feeAmount = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  LedgerTransactionsCompanion.insert({
+    this.id = const Value.absent(),
+    this.transactionKind = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.targetAccountId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.subcategoryId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.bookingDate = const Value.absent(),
+    this.isPlanned = const Value.absent(),
+    this.description = const Value.absent(),
+    this.cryptoSymbol = const Value.absent(),
+    this.cryptoQuantity = const Value.absent(),
+    this.pricePerUnit = const Value.absent(),
+    this.feeAmount = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  static Insertable<LedgerTransaction> custom({
+    Expression<int>? id,
+    Expression<String>? transactionKind,
+    Expression<int>? accountId,
+    Expression<int>? targetAccountId,
+    Expression<int>? categoryId,
+    Expression<int>? subcategoryId,
+    Expression<double>? amount,
+    Expression<String>? currencyCode,
+    Expression<DateTime>? bookingDate,
+    Expression<bool>? isPlanned,
+    Expression<String>? description,
+    Expression<String>? cryptoSymbol,
+    Expression<double>? cryptoQuantity,
+    Expression<double>? pricePerUnit,
+    Expression<double>? feeAmount,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (transactionKind != null) 'transaction_kind': transactionKind,
+      if (accountId != null) 'account_id': accountId,
+      if (targetAccountId != null) 'target_account_id': targetAccountId,
+      if (categoryId != null) 'category_id': categoryId,
+      if (subcategoryId != null) 'subcategory_id': subcategoryId,
+      if (amount != null) 'amount': amount,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (bookingDate != null) 'booking_date': bookingDate,
+      if (isPlanned != null) 'is_planned': isPlanned,
+      if (description != null) 'description': description,
+      if (cryptoSymbol != null) 'crypto_symbol': cryptoSymbol,
+      if (cryptoQuantity != null) 'crypto_quantity': cryptoQuantity,
+      if (pricePerUnit != null) 'price_per_unit': pricePerUnit,
+      if (feeAmount != null) 'fee_amount': feeAmount,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  LedgerTransactionsCompanion copyWith({
+    Value<int>? id,
+    Value<LedgerTransactionKind>? transactionKind,
+    Value<int?>? accountId,
+    Value<int?>? targetAccountId,
+    Value<int?>? categoryId,
+    Value<int?>? subcategoryId,
+    Value<double>? amount,
+    Value<String>? currencyCode,
+    Value<DateTime>? bookingDate,
+    Value<bool>? isPlanned,
+    Value<String>? description,
+    Value<String?>? cryptoSymbol,
+    Value<double?>? cryptoQuantity,
+    Value<double?>? pricePerUnit,
+    Value<double?>? feeAmount,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return LedgerTransactionsCompanion(
+      id: id ?? this.id,
+      transactionKind: transactionKind ?? this.transactionKind,
+      accountId: accountId ?? this.accountId,
+      targetAccountId: targetAccountId ?? this.targetAccountId,
+      categoryId: categoryId ?? this.categoryId,
+      subcategoryId: subcategoryId ?? this.subcategoryId,
+      amount: amount ?? this.amount,
+      currencyCode: currencyCode ?? this.currencyCode,
+      bookingDate: bookingDate ?? this.bookingDate,
+      isPlanned: isPlanned ?? this.isPlanned,
+      description: description ?? this.description,
+      cryptoSymbol: cryptoSymbol ?? this.cryptoSymbol,
+      cryptoQuantity: cryptoQuantity ?? this.cryptoQuantity,
+      pricePerUnit: pricePerUnit ?? this.pricePerUnit,
+      feeAmount: feeAmount ?? this.feeAmount,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (transactionKind.present) {
+      map['transaction_kind'] = Variable<String>(
+        $LedgerTransactionsTable.$convertertransactionKind.toSql(
+          transactionKind.value,
+        ),
+      );
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<int>(accountId.value);
+    }
+    if (targetAccountId.present) {
+      map['target_account_id'] = Variable<int>(targetAccountId.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<int>(categoryId.value);
+    }
+    if (subcategoryId.present) {
+      map['subcategory_id'] = Variable<int>(subcategoryId.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<double>(amount.value);
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (bookingDate.present) {
+      map['booking_date'] = Variable<DateTime>(bookingDate.value);
+    }
+    if (isPlanned.present) {
+      map['is_planned'] = Variable<bool>(isPlanned.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (cryptoSymbol.present) {
+      map['crypto_symbol'] = Variable<String>(cryptoSymbol.value);
+    }
+    if (cryptoQuantity.present) {
+      map['crypto_quantity'] = Variable<double>(cryptoQuantity.value);
+    }
+    if (pricePerUnit.present) {
+      map['price_per_unit'] = Variable<double>(pricePerUnit.value);
+    }
+    if (feeAmount.present) {
+      map['fee_amount'] = Variable<double>(feeAmount.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerTransactionsCompanion(')
+          ..write('id: $id, ')
+          ..write('transactionKind: $transactionKind, ')
+          ..write('accountId: $accountId, ')
+          ..write('targetAccountId: $targetAccountId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('subcategoryId: $subcategoryId, ')
+          ..write('amount: $amount, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('bookingDate: $bookingDate, ')
+          ..write('isPlanned: $isPlanned, ')
+          ..write('description: $description, ')
+          ..write('cryptoSymbol: $cryptoSymbol, ')
+          ..write('cryptoQuantity: $cryptoQuantity, ')
+          ..write('pricePerUnit: $pricePerUnit, ')
+          ..write('feeAmount: $feeAmount, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LedgerRecurringTransactionsTable extends LedgerRecurringTransactions
+    with
+        TableInfo<
+          $LedgerRecurringTransactionsTable,
+          LedgerRecurringTransaction
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LedgerRecurringTransactionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LedgerTransactionKind, String>
+  transactionKind =
+      GeneratedColumn<String>(
+        'transaction_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(LedgerTransactionKind.expense.name),
+      ).withConverter<LedgerTransactionKind>(
+        $LedgerRecurringTransactionsTable.$convertertransactionKind,
+      );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<int> accountId = GeneratedColumn<int>(
+    'account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ledger_accounts (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _targetAccountIdMeta = const VerificationMeta(
+    'targetAccountId',
+  );
+  @override
+  late final GeneratedColumn<int> targetAccountId = GeneratedColumn<int>(
+    'target_account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ledger_accounts (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<int> categoryId = GeneratedColumn<int>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ledger_categories (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _subcategoryIdMeta = const VerificationMeta(
+    'subcategoryId',
+  );
+  @override
+  late final GeneratedColumn<int> subcategoryId = GeneratedColumn<int>(
+    'subcategory_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ledger_categories (id) ON DELETE SET NULL',
+    ),
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<double> amount = GeneratedColumn<double>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 3,
+      maxTextLength: 3,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('EUR'),
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<
+    LedgerRecurringIntervalKind,
+    String
+  >
+  intervalKind =
+      GeneratedColumn<String>(
+        'interval_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(LedgerRecurringIntervalKind.monthly.name),
+      ).withConverter<LedgerRecurringIntervalKind>(
+        $LedgerRecurringTransactionsTable.$converterintervalKind,
+      );
+  static const VerificationMeta _intervalCountMeta = const VerificationMeta(
+    'intervalCount',
+  );
+  @override
+  late final GeneratedColumn<int> intervalCount = GeneratedColumn<int>(
+    'interval_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _nextOccurrenceMeta = const VerificationMeta(
+    'nextOccurrence',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextOccurrence =
+      GeneratedColumn<DateTime>(
+        'next_occurrence',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        defaultValue: currentDateAndTime,
+      );
+  static const VerificationMeta _endedAtMeta = const VerificationMeta(
+    'endedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> endedAt = GeneratedColumn<DateTime>(
+    'ended_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _autoApplyMeta = const VerificationMeta(
+    'autoApply',
+  );
+  @override
+  late final GeneratedColumn<bool> autoApply = GeneratedColumn<bool>(
+    'auto_apply',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("auto_apply" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _metadataJsonMeta = const VerificationMeta(
+    'metadataJson',
+  );
+  @override
+  late final GeneratedColumn<String> metadataJson = GeneratedColumn<String>(
+    'metadata_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    transactionKind,
+    accountId,
+    targetAccountId,
+    categoryId,
+    subcategoryId,
+    amount,
+    currencyCode,
+    intervalKind,
+    intervalCount,
+    startedAt,
+    nextOccurrence,
+    endedAt,
+    autoApply,
+    metadataJson,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ledger_recurring_transactions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LedgerRecurringTransaction> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    }
+    if (data.containsKey('target_account_id')) {
+      context.handle(
+        _targetAccountIdMeta,
+        targetAccountId.isAcceptableOrUnknown(
+          data['target_account_id']!,
+          _targetAccountIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('subcategory_id')) {
+      context.handle(
+        _subcategoryIdMeta,
+        subcategoryId.isAcceptableOrUnknown(
+          data['subcategory_id']!,
+          _subcategoryIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('interval_count')) {
+      context.handle(
+        _intervalCountMeta,
+        intervalCount.isAcceptableOrUnknown(
+          data['interval_count']!,
+          _intervalCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    }
+    if (data.containsKey('next_occurrence')) {
+      context.handle(
+        _nextOccurrenceMeta,
+        nextOccurrence.isAcceptableOrUnknown(
+          data['next_occurrence']!,
+          _nextOccurrenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('ended_at')) {
+      context.handle(
+        _endedAtMeta,
+        endedAt.isAcceptableOrUnknown(data['ended_at']!, _endedAtMeta),
+      );
+    }
+    if (data.containsKey('auto_apply')) {
+      context.handle(
+        _autoApplyMeta,
+        autoApply.isAcceptableOrUnknown(data['auto_apply']!, _autoApplyMeta),
+      );
+    }
+    if (data.containsKey('metadata_json')) {
+      context.handle(
+        _metadataJsonMeta,
+        metadataJson.isAcceptableOrUnknown(
+          data['metadata_json']!,
+          _metadataJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LedgerRecurringTransaction map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LedgerRecurringTransaction(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      transactionKind: $LedgerRecurringTransactionsTable
+          .$convertertransactionKind
+          .fromSql(
+            attachedDatabase.typeMapping.read(
+              DriftSqlType.string,
+              data['${effectivePrefix}transaction_kind'],
+            )!,
+          ),
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}account_id'],
+      ),
+      targetAccountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_account_id'],
+      ),
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}category_id'],
+      ),
+      subcategoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}subcategory_id'],
+      ),
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}amount'],
+      )!,
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      )!,
+      intervalKind: $LedgerRecurringTransactionsTable.$converterintervalKind
+          .fromSql(
+            attachedDatabase.typeMapping.read(
+              DriftSqlType.string,
+              data['${effectivePrefix}interval_kind'],
+            )!,
+          ),
+      intervalCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}interval_count'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      nextOccurrence: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_occurrence'],
+      )!,
+      endedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}ended_at'],
+      ),
+      autoApply: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}auto_apply'],
+      )!,
+      metadataJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}metadata_json'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LedgerRecurringTransactionsTable createAlias(String alias) {
+    return $LedgerRecurringTransactionsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LedgerTransactionKind, String, String>
+  $convertertransactionKind = const EnumNameConverter<LedgerTransactionKind>(
+    LedgerTransactionKind.values,
+  );
+  static JsonTypeConverter2<LedgerRecurringIntervalKind, String, String>
+  $converterintervalKind = const EnumNameConverter<LedgerRecurringIntervalKind>(
+    LedgerRecurringIntervalKind.values,
+  );
+}
+
+class LedgerRecurringTransaction extends DataClass
+    implements Insertable<LedgerRecurringTransaction> {
+  final int id;
+  final String name;
+  final LedgerTransactionKind transactionKind;
+  final int? accountId;
+  final int? targetAccountId;
+  final int? categoryId;
+  final int? subcategoryId;
+  final double amount;
+  final String currencyCode;
+  final LedgerRecurringIntervalKind intervalKind;
+  final int intervalCount;
+  final DateTime startedAt;
+  final DateTime nextOccurrence;
+  final DateTime? endedAt;
+  final bool autoApply;
+  final String metadataJson;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const LedgerRecurringTransaction({
+    required this.id,
+    required this.name,
+    required this.transactionKind,
+    this.accountId,
+    this.targetAccountId,
+    this.categoryId,
+    this.subcategoryId,
+    required this.amount,
+    required this.currencyCode,
+    required this.intervalKind,
+    required this.intervalCount,
+    required this.startedAt,
+    required this.nextOccurrence,
+    this.endedAt,
+    required this.autoApply,
+    required this.metadataJson,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    {
+      map['transaction_kind'] = Variable<String>(
+        $LedgerRecurringTransactionsTable.$convertertransactionKind.toSql(
+          transactionKind,
+        ),
+      );
+    }
+    if (!nullToAbsent || accountId != null) {
+      map['account_id'] = Variable<int>(accountId);
+    }
+    if (!nullToAbsent || targetAccountId != null) {
+      map['target_account_id'] = Variable<int>(targetAccountId);
+    }
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<int>(categoryId);
+    }
+    if (!nullToAbsent || subcategoryId != null) {
+      map['subcategory_id'] = Variable<int>(subcategoryId);
+    }
+    map['amount'] = Variable<double>(amount);
+    map['currency_code'] = Variable<String>(currencyCode);
+    {
+      map['interval_kind'] = Variable<String>(
+        $LedgerRecurringTransactionsTable.$converterintervalKind.toSql(
+          intervalKind,
+        ),
+      );
+    }
+    map['interval_count'] = Variable<int>(intervalCount);
+    map['started_at'] = Variable<DateTime>(startedAt);
+    map['next_occurrence'] = Variable<DateTime>(nextOccurrence);
+    if (!nullToAbsent || endedAt != null) {
+      map['ended_at'] = Variable<DateTime>(endedAt);
+    }
+    map['auto_apply'] = Variable<bool>(autoApply);
+    map['metadata_json'] = Variable<String>(metadataJson);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LedgerRecurringTransactionsCompanion toCompanion(bool nullToAbsent) {
+    return LedgerRecurringTransactionsCompanion(
+      id: Value(id),
+      name: Value(name),
+      transactionKind: Value(transactionKind),
+      accountId: accountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accountId),
+      targetAccountId: targetAccountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetAccountId),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
+      subcategoryId: subcategoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subcategoryId),
+      amount: Value(amount),
+      currencyCode: Value(currencyCode),
+      intervalKind: Value(intervalKind),
+      intervalCount: Value(intervalCount),
+      startedAt: Value(startedAt),
+      nextOccurrence: Value(nextOccurrence),
+      endedAt: endedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endedAt),
+      autoApply: Value(autoApply),
+      metadataJson: Value(metadataJson),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LedgerRecurringTransaction.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LedgerRecurringTransaction(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      transactionKind: $LedgerRecurringTransactionsTable
+          .$convertertransactionKind
+          .fromJson(serializer.fromJson<String>(json['transactionKind'])),
+      accountId: serializer.fromJson<int?>(json['accountId']),
+      targetAccountId: serializer.fromJson<int?>(json['targetAccountId']),
+      categoryId: serializer.fromJson<int?>(json['categoryId']),
+      subcategoryId: serializer.fromJson<int?>(json['subcategoryId']),
+      amount: serializer.fromJson<double>(json['amount']),
+      currencyCode: serializer.fromJson<String>(json['currencyCode']),
+      intervalKind: $LedgerRecurringTransactionsTable.$converterintervalKind
+          .fromJson(serializer.fromJson<String>(json['intervalKind'])),
+      intervalCount: serializer.fromJson<int>(json['intervalCount']),
+      startedAt: serializer.fromJson<DateTime>(json['startedAt']),
+      nextOccurrence: serializer.fromJson<DateTime>(json['nextOccurrence']),
+      endedAt: serializer.fromJson<DateTime?>(json['endedAt']),
+      autoApply: serializer.fromJson<bool>(json['autoApply']),
+      metadataJson: serializer.fromJson<String>(json['metadataJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'transactionKind': serializer.toJson<String>(
+        $LedgerRecurringTransactionsTable.$convertertransactionKind.toJson(
+          transactionKind,
+        ),
+      ),
+      'accountId': serializer.toJson<int?>(accountId),
+      'targetAccountId': serializer.toJson<int?>(targetAccountId),
+      'categoryId': serializer.toJson<int?>(categoryId),
+      'subcategoryId': serializer.toJson<int?>(subcategoryId),
+      'amount': serializer.toJson<double>(amount),
+      'currencyCode': serializer.toJson<String>(currencyCode),
+      'intervalKind': serializer.toJson<String>(
+        $LedgerRecurringTransactionsTable.$converterintervalKind.toJson(
+          intervalKind,
+        ),
+      ),
+      'intervalCount': serializer.toJson<int>(intervalCount),
+      'startedAt': serializer.toJson<DateTime>(startedAt),
+      'nextOccurrence': serializer.toJson<DateTime>(nextOccurrence),
+      'endedAt': serializer.toJson<DateTime?>(endedAt),
+      'autoApply': serializer.toJson<bool>(autoApply),
+      'metadataJson': serializer.toJson<String>(metadataJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LedgerRecurringTransaction copyWith({
+    int? id,
+    String? name,
+    LedgerTransactionKind? transactionKind,
+    Value<int?> accountId = const Value.absent(),
+    Value<int?> targetAccountId = const Value.absent(),
+    Value<int?> categoryId = const Value.absent(),
+    Value<int?> subcategoryId = const Value.absent(),
+    double? amount,
+    String? currencyCode,
+    LedgerRecurringIntervalKind? intervalKind,
+    int? intervalCount,
+    DateTime? startedAt,
+    DateTime? nextOccurrence,
+    Value<DateTime?> endedAt = const Value.absent(),
+    bool? autoApply,
+    String? metadataJson,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => LedgerRecurringTransaction(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    transactionKind: transactionKind ?? this.transactionKind,
+    accountId: accountId.present ? accountId.value : this.accountId,
+    targetAccountId: targetAccountId.present
+        ? targetAccountId.value
+        : this.targetAccountId,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    subcategoryId: subcategoryId.present
+        ? subcategoryId.value
+        : this.subcategoryId,
+    amount: amount ?? this.amount,
+    currencyCode: currencyCode ?? this.currencyCode,
+    intervalKind: intervalKind ?? this.intervalKind,
+    intervalCount: intervalCount ?? this.intervalCount,
+    startedAt: startedAt ?? this.startedAt,
+    nextOccurrence: nextOccurrence ?? this.nextOccurrence,
+    endedAt: endedAt.present ? endedAt.value : this.endedAt,
+    autoApply: autoApply ?? this.autoApply,
+    metadataJson: metadataJson ?? this.metadataJson,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LedgerRecurringTransaction copyWithCompanion(
+    LedgerRecurringTransactionsCompanion data,
+  ) {
+    return LedgerRecurringTransaction(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      transactionKind: data.transactionKind.present
+          ? data.transactionKind.value
+          : this.transactionKind,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      targetAccountId: data.targetAccountId.present
+          ? data.targetAccountId.value
+          : this.targetAccountId,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      subcategoryId: data.subcategoryId.present
+          ? data.subcategoryId.value
+          : this.subcategoryId,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      intervalKind: data.intervalKind.present
+          ? data.intervalKind.value
+          : this.intervalKind,
+      intervalCount: data.intervalCount.present
+          ? data.intervalCount.value
+          : this.intervalCount,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      nextOccurrence: data.nextOccurrence.present
+          ? data.nextOccurrence.value
+          : this.nextOccurrence,
+      endedAt: data.endedAt.present ? data.endedAt.value : this.endedAt,
+      autoApply: data.autoApply.present ? data.autoApply.value : this.autoApply,
+      metadataJson: data.metadataJson.present
+          ? data.metadataJson.value
+          : this.metadataJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerRecurringTransaction(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('transactionKind: $transactionKind, ')
+          ..write('accountId: $accountId, ')
+          ..write('targetAccountId: $targetAccountId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('subcategoryId: $subcategoryId, ')
+          ..write('amount: $amount, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('intervalKind: $intervalKind, ')
+          ..write('intervalCount: $intervalCount, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('nextOccurrence: $nextOccurrence, ')
+          ..write('endedAt: $endedAt, ')
+          ..write('autoApply: $autoApply, ')
+          ..write('metadataJson: $metadataJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    transactionKind,
+    accountId,
+    targetAccountId,
+    categoryId,
+    subcategoryId,
+    amount,
+    currencyCode,
+    intervalKind,
+    intervalCount,
+    startedAt,
+    nextOccurrence,
+    endedAt,
+    autoApply,
+    metadataJson,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LedgerRecurringTransaction &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.transactionKind == this.transactionKind &&
+          other.accountId == this.accountId &&
+          other.targetAccountId == this.targetAccountId &&
+          other.categoryId == this.categoryId &&
+          other.subcategoryId == this.subcategoryId &&
+          other.amount == this.amount &&
+          other.currencyCode == this.currencyCode &&
+          other.intervalKind == this.intervalKind &&
+          other.intervalCount == this.intervalCount &&
+          other.startedAt == this.startedAt &&
+          other.nextOccurrence == this.nextOccurrence &&
+          other.endedAt == this.endedAt &&
+          other.autoApply == this.autoApply &&
+          other.metadataJson == this.metadataJson &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LedgerRecurringTransactionsCompanion
+    extends UpdateCompanion<LedgerRecurringTransaction> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<LedgerTransactionKind> transactionKind;
+  final Value<int?> accountId;
+  final Value<int?> targetAccountId;
+  final Value<int?> categoryId;
+  final Value<int?> subcategoryId;
+  final Value<double> amount;
+  final Value<String> currencyCode;
+  final Value<LedgerRecurringIntervalKind> intervalKind;
+  final Value<int> intervalCount;
+  final Value<DateTime> startedAt;
+  final Value<DateTime> nextOccurrence;
+  final Value<DateTime?> endedAt;
+  final Value<bool> autoApply;
+  final Value<String> metadataJson;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const LedgerRecurringTransactionsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.transactionKind = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.targetAccountId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.subcategoryId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.intervalKind = const Value.absent(),
+    this.intervalCount = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.nextOccurrence = const Value.absent(),
+    this.endedAt = const Value.absent(),
+    this.autoApply = const Value.absent(),
+    this.metadataJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  LedgerRecurringTransactionsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.transactionKind = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.targetAccountId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.subcategoryId = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.intervalKind = const Value.absent(),
+    this.intervalCount = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.nextOccurrence = const Value.absent(),
+    this.endedAt = const Value.absent(),
+    this.autoApply = const Value.absent(),
+    this.metadataJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<LedgerRecurringTransaction> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? transactionKind,
+    Expression<int>? accountId,
+    Expression<int>? targetAccountId,
+    Expression<int>? categoryId,
+    Expression<int>? subcategoryId,
+    Expression<double>? amount,
+    Expression<String>? currencyCode,
+    Expression<String>? intervalKind,
+    Expression<int>? intervalCount,
+    Expression<DateTime>? startedAt,
+    Expression<DateTime>? nextOccurrence,
+    Expression<DateTime>? endedAt,
+    Expression<bool>? autoApply,
+    Expression<String>? metadataJson,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (transactionKind != null) 'transaction_kind': transactionKind,
+      if (accountId != null) 'account_id': accountId,
+      if (targetAccountId != null) 'target_account_id': targetAccountId,
+      if (categoryId != null) 'category_id': categoryId,
+      if (subcategoryId != null) 'subcategory_id': subcategoryId,
+      if (amount != null) 'amount': amount,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (intervalKind != null) 'interval_kind': intervalKind,
+      if (intervalCount != null) 'interval_count': intervalCount,
+      if (startedAt != null) 'started_at': startedAt,
+      if (nextOccurrence != null) 'next_occurrence': nextOccurrence,
+      if (endedAt != null) 'ended_at': endedAt,
+      if (autoApply != null) 'auto_apply': autoApply,
+      if (metadataJson != null) 'metadata_json': metadataJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  LedgerRecurringTransactionsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<LedgerTransactionKind>? transactionKind,
+    Value<int?>? accountId,
+    Value<int?>? targetAccountId,
+    Value<int?>? categoryId,
+    Value<int?>? subcategoryId,
+    Value<double>? amount,
+    Value<String>? currencyCode,
+    Value<LedgerRecurringIntervalKind>? intervalKind,
+    Value<int>? intervalCount,
+    Value<DateTime>? startedAt,
+    Value<DateTime>? nextOccurrence,
+    Value<DateTime?>? endedAt,
+    Value<bool>? autoApply,
+    Value<String>? metadataJson,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return LedgerRecurringTransactionsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      transactionKind: transactionKind ?? this.transactionKind,
+      accountId: accountId ?? this.accountId,
+      targetAccountId: targetAccountId ?? this.targetAccountId,
+      categoryId: categoryId ?? this.categoryId,
+      subcategoryId: subcategoryId ?? this.subcategoryId,
+      amount: amount ?? this.amount,
+      currencyCode: currencyCode ?? this.currencyCode,
+      intervalKind: intervalKind ?? this.intervalKind,
+      intervalCount: intervalCount ?? this.intervalCount,
+      startedAt: startedAt ?? this.startedAt,
+      nextOccurrence: nextOccurrence ?? this.nextOccurrence,
+      endedAt: endedAt ?? this.endedAt,
+      autoApply: autoApply ?? this.autoApply,
+      metadataJson: metadataJson ?? this.metadataJson,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (transactionKind.present) {
+      map['transaction_kind'] = Variable<String>(
+        $LedgerRecurringTransactionsTable.$convertertransactionKind.toSql(
+          transactionKind.value,
+        ),
+      );
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<int>(accountId.value);
+    }
+    if (targetAccountId.present) {
+      map['target_account_id'] = Variable<int>(targetAccountId.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<int>(categoryId.value);
+    }
+    if (subcategoryId.present) {
+      map['subcategory_id'] = Variable<int>(subcategoryId.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<double>(amount.value);
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (intervalKind.present) {
+      map['interval_kind'] = Variable<String>(
+        $LedgerRecurringTransactionsTable.$converterintervalKind.toSql(
+          intervalKind.value,
+        ),
+      );
+    }
+    if (intervalCount.present) {
+      map['interval_count'] = Variable<int>(intervalCount.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (nextOccurrence.present) {
+      map['next_occurrence'] = Variable<DateTime>(nextOccurrence.value);
+    }
+    if (endedAt.present) {
+      map['ended_at'] = Variable<DateTime>(endedAt.value);
+    }
+    if (autoApply.present) {
+      map['auto_apply'] = Variable<bool>(autoApply.value);
+    }
+    if (metadataJson.present) {
+      map['metadata_json'] = Variable<String>(metadataJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LedgerRecurringTransactionsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('transactionKind: $transactionKind, ')
+          ..write('accountId: $accountId, ')
+          ..write('targetAccountId: $targetAccountId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('subcategoryId: $subcategoryId, ')
+          ..write('amount: $amount, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('intervalKind: $intervalKind, ')
+          ..write('intervalCount: $intervalCount, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('nextOccurrence: $nextOccurrence, ')
+          ..write('endedAt: $endedAt, ')
+          ..write('autoApply: $autoApply, ')
+          ..write('metadataJson: $metadataJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CryptoPriceEntriesTable extends CryptoPriceEntries
+    with TableInfo<$CryptoPriceEntriesTable, CryptoPriceEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CryptoPriceEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _symbolMeta = const VerificationMeta('symbol');
+  @override
+  late final GeneratedColumn<String> symbol = GeneratedColumn<String>(
+    'symbol',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 3,
+      maxTextLength: 3,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('EUR'),
+  );
+  static const VerificationMeta _priceMeta = const VerificationMeta('price');
+  @override
+  late final GeneratedColumn<double> price = GeneratedColumn<double>(
+    'price',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _fetchedAtMeta = const VerificationMeta(
+    'fetchedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> fetchedAt = GeneratedColumn<DateTime>(
+    'fetched_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    symbol,
+    currencyCode,
+    price,
+    fetchedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'crypto_price_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CryptoPriceEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('symbol')) {
+      context.handle(
+        _symbolMeta,
+        symbol.isAcceptableOrUnknown(data['symbol']!, _symbolMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_symbolMeta);
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('price')) {
+      context.handle(
+        _priceMeta,
+        price.isAcceptableOrUnknown(data['price']!, _priceMeta),
+      );
+    }
+    if (data.containsKey('fetched_at')) {
+      context.handle(
+        _fetchedAtMeta,
+        fetchedAt.isAcceptableOrUnknown(data['fetched_at']!, _fetchedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CryptoPriceEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CryptoPriceEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      symbol: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}symbol'],
+      )!,
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      )!,
+      price: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}price'],
+      )!,
+      fetchedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}fetched_at'],
+      )!,
+    );
+  }
+
+  @override
+  $CryptoPriceEntriesTable createAlias(String alias) {
+    return $CryptoPriceEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class CryptoPriceEntry extends DataClass
+    implements Insertable<CryptoPriceEntry> {
+  final int id;
+  final String symbol;
+  final String currencyCode;
+  final double price;
+  final DateTime fetchedAt;
+  const CryptoPriceEntry({
+    required this.id,
+    required this.symbol,
+    required this.currencyCode,
+    required this.price,
+    required this.fetchedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['symbol'] = Variable<String>(symbol);
+    map['currency_code'] = Variable<String>(currencyCode);
+    map['price'] = Variable<double>(price);
+    map['fetched_at'] = Variable<DateTime>(fetchedAt);
+    return map;
+  }
+
+  CryptoPriceEntriesCompanion toCompanion(bool nullToAbsent) {
+    return CryptoPriceEntriesCompanion(
+      id: Value(id),
+      symbol: Value(symbol),
+      currencyCode: Value(currencyCode),
+      price: Value(price),
+      fetchedAt: Value(fetchedAt),
+    );
+  }
+
+  factory CryptoPriceEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CryptoPriceEntry(
+      id: serializer.fromJson<int>(json['id']),
+      symbol: serializer.fromJson<String>(json['symbol']),
+      currencyCode: serializer.fromJson<String>(json['currencyCode']),
+      price: serializer.fromJson<double>(json['price']),
+      fetchedAt: serializer.fromJson<DateTime>(json['fetchedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'symbol': serializer.toJson<String>(symbol),
+      'currencyCode': serializer.toJson<String>(currencyCode),
+      'price': serializer.toJson<double>(price),
+      'fetchedAt': serializer.toJson<DateTime>(fetchedAt),
+    };
+  }
+
+  CryptoPriceEntry copyWith({
+    int? id,
+    String? symbol,
+    String? currencyCode,
+    double? price,
+    DateTime? fetchedAt,
+  }) => CryptoPriceEntry(
+    id: id ?? this.id,
+    symbol: symbol ?? this.symbol,
+    currencyCode: currencyCode ?? this.currencyCode,
+    price: price ?? this.price,
+    fetchedAt: fetchedAt ?? this.fetchedAt,
+  );
+  CryptoPriceEntry copyWithCompanion(CryptoPriceEntriesCompanion data) {
+    return CryptoPriceEntry(
+      id: data.id.present ? data.id.value : this.id,
+      symbol: data.symbol.present ? data.symbol.value : this.symbol,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      price: data.price.present ? data.price.value : this.price,
+      fetchedAt: data.fetchedAt.present ? data.fetchedAt.value : this.fetchedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CryptoPriceEntry(')
+          ..write('id: $id, ')
+          ..write('symbol: $symbol, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('price: $price, ')
+          ..write('fetchedAt: $fetchedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, symbol, currencyCode, price, fetchedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CryptoPriceEntry &&
+          other.id == this.id &&
+          other.symbol == this.symbol &&
+          other.currencyCode == this.currencyCode &&
+          other.price == this.price &&
+          other.fetchedAt == this.fetchedAt);
+}
+
+class CryptoPriceEntriesCompanion extends UpdateCompanion<CryptoPriceEntry> {
+  final Value<int> id;
+  final Value<String> symbol;
+  final Value<String> currencyCode;
+  final Value<double> price;
+  final Value<DateTime> fetchedAt;
+  const CryptoPriceEntriesCompanion({
+    this.id = const Value.absent(),
+    this.symbol = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.price = const Value.absent(),
+    this.fetchedAt = const Value.absent(),
+  });
+  CryptoPriceEntriesCompanion.insert({
+    this.id = const Value.absent(),
+    required String symbol,
+    this.currencyCode = const Value.absent(),
+    this.price = const Value.absent(),
+    this.fetchedAt = const Value.absent(),
+  }) : symbol = Value(symbol);
+  static Insertable<CryptoPriceEntry> custom({
+    Expression<int>? id,
+    Expression<String>? symbol,
+    Expression<String>? currencyCode,
+    Expression<double>? price,
+    Expression<DateTime>? fetchedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (symbol != null) 'symbol': symbol,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (price != null) 'price': price,
+      if (fetchedAt != null) 'fetched_at': fetchedAt,
+    });
+  }
+
+  CryptoPriceEntriesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? symbol,
+    Value<String>? currencyCode,
+    Value<double>? price,
+    Value<DateTime>? fetchedAt,
+  }) {
+    return CryptoPriceEntriesCompanion(
+      id: id ?? this.id,
+      symbol: symbol ?? this.symbol,
+      currencyCode: currencyCode ?? this.currencyCode,
+      price: price ?? this.price,
+      fetchedAt: fetchedAt ?? this.fetchedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (symbol.present) {
+      map['symbol'] = Variable<String>(symbol.value);
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (price.present) {
+      map['price'] = Variable<double>(price.value);
+    }
+    if (fetchedAt.present) {
+      map['fetched_at'] = Variable<DateTime>(fetchedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CryptoPriceEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('symbol: $symbol, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('price: $price, ')
+          ..write('fetchedAt: $fetchedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4676,6 +8666,17 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $HabitLogsTable habitLogs = $HabitLogsTable(this);
+  late final $LedgerAccountsTable ledgerAccounts = $LedgerAccountsTable(this);
+  late final $LedgerCategoriesTable ledgerCategories = $LedgerCategoriesTable(
+    this,
+  );
+  late final $LedgerBudgetsTable ledgerBudgets = $LedgerBudgetsTable(this);
+  late final $LedgerTransactionsTable ledgerTransactions =
+      $LedgerTransactionsTable(this);
+  late final $LedgerRecurringTransactionsTable ledgerRecurringTransactions =
+      $LedgerRecurringTransactionsTable(this);
+  late final $CryptoPriceEntriesTable cryptoPriceEntries =
+      $CryptoPriceEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4690,6 +8691,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     journalTrackerValues,
     habitDefinitions,
     habitLogs,
+    ledgerAccounts,
+    ledgerCategories,
+    ledgerBudgets,
+    ledgerTransactions,
+    ledgerRecurringTransactions,
+    cryptoPriceEntries,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -4720,6 +8727,77 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('habit_logs', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ledger_categories',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('ledger_budgets', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ledger_accounts',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('ledger_transactions', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ledger_accounts',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('ledger_transactions', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ledger_categories',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('ledger_transactions', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ledger_categories',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('ledger_transactions', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ledger_accounts',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('ledger_recurring_transactions', kind: UpdateKind.update),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ledger_accounts',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('ledger_recurring_transactions', kind: UpdateKind.update),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ledger_categories',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('ledger_recurring_transactions', kind: UpdateKind.update),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'ledger_categories',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('ledger_recurring_transactions', kind: UpdateKind.update),
+      ],
     ),
   ]);
 }
@@ -7993,6 +12071,3026 @@ typedef $$HabitLogsTableProcessedTableManager =
       HabitLog,
       PrefetchHooks Function({bool habitId})
     >;
+typedef $$LedgerAccountsTableCreateCompanionBuilder =
+    LedgerAccountsCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<LedgerAccountKind> accountKind,
+      Value<String> currencyCode,
+      Value<bool> includeInNetWorth,
+      Value<double> initialBalance,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$LedgerAccountsTableUpdateCompanionBuilder =
+    LedgerAccountsCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<LedgerAccountKind> accountKind,
+      Value<String> currencyCode,
+      Value<bool> includeInNetWorth,
+      Value<double> initialBalance,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+
+class $$LedgerAccountsTableFilterComposer
+    extends Composer<_$AppDatabase, $LedgerAccountsTable> {
+  $$LedgerAccountsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LedgerAccountKind, LedgerAccountKind, String>
+  get accountKind => $composableBuilder(
+    column: $table.accountKind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get includeInNetWorth => $composableBuilder(
+    column: $table.includeInNetWorth,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get initialBalance => $composableBuilder(
+    column: $table.initialBalance,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LedgerAccountsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LedgerAccountsTable> {
+  $$LedgerAccountsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accountKind => $composableBuilder(
+    column: $table.accountKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get includeInNetWorth => $composableBuilder(
+    column: $table.includeInNetWorth,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get initialBalance => $composableBuilder(
+    column: $table.initialBalance,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LedgerAccountsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LedgerAccountsTable> {
+  $$LedgerAccountsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LedgerAccountKind, String> get accountKind =>
+      $composableBuilder(
+        column: $table.accountKind,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get includeInNetWorth => $composableBuilder(
+    column: $table.includeInNetWorth,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get initialBalance => $composableBuilder(
+    column: $table.initialBalance,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$LedgerAccountsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LedgerAccountsTable,
+          LedgerAccount,
+          $$LedgerAccountsTableFilterComposer,
+          $$LedgerAccountsTableOrderingComposer,
+          $$LedgerAccountsTableAnnotationComposer,
+          $$LedgerAccountsTableCreateCompanionBuilder,
+          $$LedgerAccountsTableUpdateCompanionBuilder,
+          (
+            LedgerAccount,
+            BaseReferences<_$AppDatabase, $LedgerAccountsTable, LedgerAccount>,
+          ),
+          LedgerAccount,
+          PrefetchHooks Function()
+        > {
+  $$LedgerAccountsTableTableManager(
+    _$AppDatabase db,
+    $LedgerAccountsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LedgerAccountsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LedgerAccountsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LedgerAccountsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<LedgerAccountKind> accountKind = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<bool> includeInNetWorth = const Value.absent(),
+                Value<double> initialBalance = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerAccountsCompanion(
+                id: id,
+                name: name,
+                accountKind: accountKind,
+                currencyCode: currencyCode,
+                includeInNetWorth: includeInNetWorth,
+                initialBalance: initialBalance,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<LedgerAccountKind> accountKind = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<bool> includeInNetWorth = const Value.absent(),
+                Value<double> initialBalance = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerAccountsCompanion.insert(
+                id: id,
+                name: name,
+                accountKind: accountKind,
+                currencyCode: currencyCode,
+                includeInNetWorth: includeInNetWorth,
+                initialBalance: initialBalance,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LedgerAccountsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LedgerAccountsTable,
+      LedgerAccount,
+      $$LedgerAccountsTableFilterComposer,
+      $$LedgerAccountsTableOrderingComposer,
+      $$LedgerAccountsTableAnnotationComposer,
+      $$LedgerAccountsTableCreateCompanionBuilder,
+      $$LedgerAccountsTableUpdateCompanionBuilder,
+      (
+        LedgerAccount,
+        BaseReferences<_$AppDatabase, $LedgerAccountsTable, LedgerAccount>,
+      ),
+      LedgerAccount,
+      PrefetchHooks Function()
+    >;
+typedef $$LedgerCategoriesTableCreateCompanionBuilder =
+    LedgerCategoriesCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<LedgerCategoryKind> categoryKind,
+      Value<int?> parentId,
+      Value<bool> isArchived,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$LedgerCategoriesTableUpdateCompanionBuilder =
+    LedgerCategoriesCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<LedgerCategoryKind> categoryKind,
+      Value<int?> parentId,
+      Value<bool> isArchived,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+
+final class $$LedgerCategoriesTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $LedgerCategoriesTable, LedgerCategory> {
+  $$LedgerCategoriesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<$LedgerBudgetsTable, List<LedgerBudget>>
+  _ledgerBudgetsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.ledgerBudgets,
+    aliasName: $_aliasNameGenerator(
+      db.ledgerCategories.id,
+      db.ledgerBudgets.categoryId,
+    ),
+  );
+
+  $$LedgerBudgetsTableProcessedTableManager get ledgerBudgetsRefs {
+    final manager = $$LedgerBudgetsTableTableManager(
+      $_db,
+      $_db.ledgerBudgets,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_ledgerBudgetsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$LedgerCategoriesTableFilterComposer
+    extends Composer<_$AppDatabase, $LedgerCategoriesTable> {
+  $$LedgerCategoriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<LedgerCategoryKind, LedgerCategoryKind, String>
+  get categoryKind => $composableBuilder(
+    column: $table.categoryKind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get parentId => $composableBuilder(
+    column: $table.parentId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> ledgerBudgetsRefs(
+    Expression<bool> Function($$LedgerBudgetsTableFilterComposer f) f,
+  ) {
+    final $$LedgerBudgetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ledgerBudgets,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerBudgetsTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerBudgets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$LedgerCategoriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $LedgerCategoriesTable> {
+  $$LedgerCategoriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get categoryKind => $composableBuilder(
+    column: $table.categoryKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get parentId => $composableBuilder(
+    column: $table.parentId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LedgerCategoriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LedgerCategoriesTable> {
+  $$LedgerCategoriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LedgerCategoryKind, String>
+  get categoryKind => $composableBuilder(
+    column: $table.categoryKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get parentId =>
+      $composableBuilder(column: $table.parentId, builder: (column) => column);
+
+  GeneratedColumn<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> ledgerBudgetsRefs<T extends Object>(
+    Expression<T> Function($$LedgerBudgetsTableAnnotationComposer a) f,
+  ) {
+    final $$LedgerBudgetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ledgerBudgets,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerBudgetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerBudgets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$LedgerCategoriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LedgerCategoriesTable,
+          LedgerCategory,
+          $$LedgerCategoriesTableFilterComposer,
+          $$LedgerCategoriesTableOrderingComposer,
+          $$LedgerCategoriesTableAnnotationComposer,
+          $$LedgerCategoriesTableCreateCompanionBuilder,
+          $$LedgerCategoriesTableUpdateCompanionBuilder,
+          (LedgerCategory, $$LedgerCategoriesTableReferences),
+          LedgerCategory,
+          PrefetchHooks Function({bool ledgerBudgetsRefs})
+        > {
+  $$LedgerCategoriesTableTableManager(
+    _$AppDatabase db,
+    $LedgerCategoriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LedgerCategoriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LedgerCategoriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LedgerCategoriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<LedgerCategoryKind> categoryKind = const Value.absent(),
+                Value<int?> parentId = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerCategoriesCompanion(
+                id: id,
+                name: name,
+                categoryKind: categoryKind,
+                parentId: parentId,
+                isArchived: isArchived,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<LedgerCategoryKind> categoryKind = const Value.absent(),
+                Value<int?> parentId = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerCategoriesCompanion.insert(
+                id: id,
+                name: name,
+                categoryKind: categoryKind,
+                parentId: parentId,
+                isArchived: isArchived,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$LedgerCategoriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({ledgerBudgetsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (ledgerBudgetsRefs) db.ledgerBudgets,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (ledgerBudgetsRefs)
+                    await $_getPrefetchedData<
+                      LedgerCategory,
+                      $LedgerCategoriesTable,
+                      LedgerBudget
+                    >(
+                      currentTable: table,
+                      referencedTable: $$LedgerCategoriesTableReferences
+                          ._ledgerBudgetsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$LedgerCategoriesTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).ledgerBudgetsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.categoryId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$LedgerCategoriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LedgerCategoriesTable,
+      LedgerCategory,
+      $$LedgerCategoriesTableFilterComposer,
+      $$LedgerCategoriesTableOrderingComposer,
+      $$LedgerCategoriesTableAnnotationComposer,
+      $$LedgerCategoriesTableCreateCompanionBuilder,
+      $$LedgerCategoriesTableUpdateCompanionBuilder,
+      (LedgerCategory, $$LedgerCategoriesTableReferences),
+      LedgerCategory,
+      PrefetchHooks Function({bool ledgerBudgetsRefs})
+    >;
+typedef $$LedgerBudgetsTableCreateCompanionBuilder =
+    LedgerBudgetsCompanion Function({
+      Value<int> id,
+      required int categoryId,
+      Value<LedgerBudgetPeriodKind> periodKind,
+      required int year,
+      Value<int?> month,
+      Value<double> amount,
+      Value<String> currencyCode,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$LedgerBudgetsTableUpdateCompanionBuilder =
+    LedgerBudgetsCompanion Function({
+      Value<int> id,
+      Value<int> categoryId,
+      Value<LedgerBudgetPeriodKind> periodKind,
+      Value<int> year,
+      Value<int?> month,
+      Value<double> amount,
+      Value<String> currencyCode,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+
+final class $$LedgerBudgetsTableReferences
+    extends BaseReferences<_$AppDatabase, $LedgerBudgetsTable, LedgerBudget> {
+  $$LedgerBudgetsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $LedgerCategoriesTable _categoryIdTable(_$AppDatabase db) =>
+      db.ledgerCategories.createAlias(
+        $_aliasNameGenerator(
+          db.ledgerBudgets.categoryId,
+          db.ledgerCategories.id,
+        ),
+      );
+
+  $$LedgerCategoriesTableProcessedTableManager get categoryId {
+    final $_column = $_itemColumn<int>('category_id')!;
+
+    final manager = $$LedgerCategoriesTableTableManager(
+      $_db,
+      $_db.ledgerCategories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$LedgerBudgetsTableFilterComposer
+    extends Composer<_$AppDatabase, $LedgerBudgetsTable> {
+  $$LedgerBudgetsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    LedgerBudgetPeriodKind,
+    LedgerBudgetPeriodKind,
+    String
+  >
+  get periodKind => $composableBuilder(
+    column: $table.periodKind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$LedgerCategoriesTableFilterComposer get categoryId {
+    final $$LedgerCategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LedgerBudgetsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LedgerBudgetsTable> {
+  $$LedgerBudgetsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get periodKind => $composableBuilder(
+    column: $table.periodKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$LedgerCategoriesTableOrderingComposer get categoryId {
+    final $$LedgerCategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LedgerBudgetsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LedgerBudgetsTable> {
+  $$LedgerBudgetsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LedgerBudgetPeriodKind, String>
+  get periodKind => $composableBuilder(
+    column: $table.periodKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  GeneratedColumn<int> get month =>
+      $composableBuilder(column: $table.month, builder: (column) => column);
+
+  GeneratedColumn<double> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$LedgerCategoriesTableAnnotationComposer get categoryId {
+    final $$LedgerCategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LedgerBudgetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LedgerBudgetsTable,
+          LedgerBudget,
+          $$LedgerBudgetsTableFilterComposer,
+          $$LedgerBudgetsTableOrderingComposer,
+          $$LedgerBudgetsTableAnnotationComposer,
+          $$LedgerBudgetsTableCreateCompanionBuilder,
+          $$LedgerBudgetsTableUpdateCompanionBuilder,
+          (LedgerBudget, $$LedgerBudgetsTableReferences),
+          LedgerBudget,
+          PrefetchHooks Function({bool categoryId})
+        > {
+  $$LedgerBudgetsTableTableManager(_$AppDatabase db, $LedgerBudgetsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LedgerBudgetsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LedgerBudgetsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LedgerBudgetsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> categoryId = const Value.absent(),
+                Value<LedgerBudgetPeriodKind> periodKind = const Value.absent(),
+                Value<int> year = const Value.absent(),
+                Value<int?> month = const Value.absent(),
+                Value<double> amount = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerBudgetsCompanion(
+                id: id,
+                categoryId: categoryId,
+                periodKind: periodKind,
+                year: year,
+                month: month,
+                amount: amount,
+                currencyCode: currencyCode,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int categoryId,
+                Value<LedgerBudgetPeriodKind> periodKind = const Value.absent(),
+                required int year,
+                Value<int?> month = const Value.absent(),
+                Value<double> amount = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerBudgetsCompanion.insert(
+                id: id,
+                categoryId: categoryId,
+                periodKind: periodKind,
+                year: year,
+                month: month,
+                amount: amount,
+                currencyCode: currencyCode,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$LedgerBudgetsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({categoryId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (categoryId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.categoryId,
+                                referencedTable: $$LedgerBudgetsTableReferences
+                                    ._categoryIdTable(db),
+                                referencedColumn: $$LedgerBudgetsTableReferences
+                                    ._categoryIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$LedgerBudgetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LedgerBudgetsTable,
+      LedgerBudget,
+      $$LedgerBudgetsTableFilterComposer,
+      $$LedgerBudgetsTableOrderingComposer,
+      $$LedgerBudgetsTableAnnotationComposer,
+      $$LedgerBudgetsTableCreateCompanionBuilder,
+      $$LedgerBudgetsTableUpdateCompanionBuilder,
+      (LedgerBudget, $$LedgerBudgetsTableReferences),
+      LedgerBudget,
+      PrefetchHooks Function({bool categoryId})
+    >;
+typedef $$LedgerTransactionsTableCreateCompanionBuilder =
+    LedgerTransactionsCompanion Function({
+      Value<int> id,
+      Value<LedgerTransactionKind> transactionKind,
+      Value<int?> accountId,
+      Value<int?> targetAccountId,
+      Value<int?> categoryId,
+      Value<int?> subcategoryId,
+      Value<double> amount,
+      Value<String> currencyCode,
+      Value<DateTime> bookingDate,
+      Value<bool> isPlanned,
+      Value<String> description,
+      Value<String?> cryptoSymbol,
+      Value<double?> cryptoQuantity,
+      Value<double?> pricePerUnit,
+      Value<double?> feeAmount,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$LedgerTransactionsTableUpdateCompanionBuilder =
+    LedgerTransactionsCompanion Function({
+      Value<int> id,
+      Value<LedgerTransactionKind> transactionKind,
+      Value<int?> accountId,
+      Value<int?> targetAccountId,
+      Value<int?> categoryId,
+      Value<int?> subcategoryId,
+      Value<double> amount,
+      Value<String> currencyCode,
+      Value<DateTime> bookingDate,
+      Value<bool> isPlanned,
+      Value<String> description,
+      Value<String?> cryptoSymbol,
+      Value<double?> cryptoQuantity,
+      Value<double?> pricePerUnit,
+      Value<double?> feeAmount,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+
+final class $$LedgerTransactionsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $LedgerTransactionsTable,
+          LedgerTransaction
+        > {
+  $$LedgerTransactionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $LedgerAccountsTable _accountIdTable(_$AppDatabase db) =>
+      db.ledgerAccounts.createAlias(
+        $_aliasNameGenerator(
+          db.ledgerTransactions.accountId,
+          db.ledgerAccounts.id,
+        ),
+      );
+
+  $$LedgerAccountsTableProcessedTableManager? get accountId {
+    final $_column = $_itemColumn<int>('account_id');
+    if ($_column == null) return null;
+    final manager = $$LedgerAccountsTableTableManager(
+      $_db,
+      $_db.ledgerAccounts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_accountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $LedgerAccountsTable _targetAccountIdTable(_$AppDatabase db) =>
+      db.ledgerAccounts.createAlias(
+        $_aliasNameGenerator(
+          db.ledgerTransactions.targetAccountId,
+          db.ledgerAccounts.id,
+        ),
+      );
+
+  $$LedgerAccountsTableProcessedTableManager? get targetAccountId {
+    final $_column = $_itemColumn<int>('target_account_id');
+    if ($_column == null) return null;
+    final manager = $$LedgerAccountsTableTableManager(
+      $_db,
+      $_db.ledgerAccounts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_targetAccountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $LedgerCategoriesTable _categoryIdTable(_$AppDatabase db) =>
+      db.ledgerCategories.createAlias(
+        $_aliasNameGenerator(
+          db.ledgerTransactions.categoryId,
+          db.ledgerCategories.id,
+        ),
+      );
+
+  $$LedgerCategoriesTableProcessedTableManager? get categoryId {
+    final $_column = $_itemColumn<int>('category_id');
+    if ($_column == null) return null;
+    final manager = $$LedgerCategoriesTableTableManager(
+      $_db,
+      $_db.ledgerCategories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $LedgerCategoriesTable _subcategoryIdTable(_$AppDatabase db) =>
+      db.ledgerCategories.createAlias(
+        $_aliasNameGenerator(
+          db.ledgerTransactions.subcategoryId,
+          db.ledgerCategories.id,
+        ),
+      );
+
+  $$LedgerCategoriesTableProcessedTableManager? get subcategoryId {
+    final $_column = $_itemColumn<int>('subcategory_id');
+    if ($_column == null) return null;
+    final manager = $$LedgerCategoriesTableTableManager(
+      $_db,
+      $_db.ledgerCategories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_subcategoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$LedgerTransactionsTableFilterComposer
+    extends Composer<_$AppDatabase, $LedgerTransactionsTable> {
+  $$LedgerTransactionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    LedgerTransactionKind,
+    LedgerTransactionKind,
+    String
+  >
+  get transactionKind => $composableBuilder(
+    column: $table.transactionKind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get bookingDate => $composableBuilder(
+    column: $table.bookingDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isPlanned => $composableBuilder(
+    column: $table.isPlanned,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cryptoSymbol => $composableBuilder(
+    column: $table.cryptoSymbol,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get cryptoQuantity => $composableBuilder(
+    column: $table.cryptoQuantity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get pricePerUnit => $composableBuilder(
+    column: $table.pricePerUnit,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get feeAmount => $composableBuilder(
+    column: $table.feeAmount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$LedgerAccountsTableFilterComposer get accountId {
+    final $$LedgerAccountsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerAccountsTableFilterComposer get targetAccountId {
+    final $$LedgerAccountsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.targetAccountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableFilterComposer get categoryId {
+    final $$LedgerCategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableFilterComposer get subcategoryId {
+    final $$LedgerCategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.subcategoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LedgerTransactionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LedgerTransactionsTable> {
+  $$LedgerTransactionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get transactionKind => $composableBuilder(
+    column: $table.transactionKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get bookingDate => $composableBuilder(
+    column: $table.bookingDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isPlanned => $composableBuilder(
+    column: $table.isPlanned,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cryptoSymbol => $composableBuilder(
+    column: $table.cryptoSymbol,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get cryptoQuantity => $composableBuilder(
+    column: $table.cryptoQuantity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get pricePerUnit => $composableBuilder(
+    column: $table.pricePerUnit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get feeAmount => $composableBuilder(
+    column: $table.feeAmount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$LedgerAccountsTableOrderingComposer get accountId {
+    final $$LedgerAccountsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableOrderingComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerAccountsTableOrderingComposer get targetAccountId {
+    final $$LedgerAccountsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.targetAccountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableOrderingComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableOrderingComposer get categoryId {
+    final $$LedgerCategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableOrderingComposer get subcategoryId {
+    final $$LedgerCategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.subcategoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LedgerTransactionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LedgerTransactionsTable> {
+  $$LedgerTransactionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LedgerTransactionKind, String>
+  get transactionKind => $composableBuilder(
+    column: $table.transactionKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get bookingDate => $composableBuilder(
+    column: $table.bookingDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isPlanned =>
+      $composableBuilder(column: $table.isPlanned, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get cryptoSymbol => $composableBuilder(
+    column: $table.cryptoSymbol,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get cryptoQuantity => $composableBuilder(
+    column: $table.cryptoQuantity,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get pricePerUnit => $composableBuilder(
+    column: $table.pricePerUnit,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get feeAmount =>
+      $composableBuilder(column: $table.feeAmount, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$LedgerAccountsTableAnnotationComposer get accountId {
+    final $$LedgerAccountsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerAccountsTableAnnotationComposer get targetAccountId {
+    final $$LedgerAccountsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.targetAccountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableAnnotationComposer get categoryId {
+    final $$LedgerCategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableAnnotationComposer get subcategoryId {
+    final $$LedgerCategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.subcategoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LedgerTransactionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LedgerTransactionsTable,
+          LedgerTransaction,
+          $$LedgerTransactionsTableFilterComposer,
+          $$LedgerTransactionsTableOrderingComposer,
+          $$LedgerTransactionsTableAnnotationComposer,
+          $$LedgerTransactionsTableCreateCompanionBuilder,
+          $$LedgerTransactionsTableUpdateCompanionBuilder,
+          (LedgerTransaction, $$LedgerTransactionsTableReferences),
+          LedgerTransaction,
+          PrefetchHooks Function({
+            bool accountId,
+            bool targetAccountId,
+            bool categoryId,
+            bool subcategoryId,
+          })
+        > {
+  $$LedgerTransactionsTableTableManager(
+    _$AppDatabase db,
+    $LedgerTransactionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LedgerTransactionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LedgerTransactionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LedgerTransactionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<LedgerTransactionKind> transactionKind =
+                    const Value.absent(),
+                Value<int?> accountId = const Value.absent(),
+                Value<int?> targetAccountId = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                Value<int?> subcategoryId = const Value.absent(),
+                Value<double> amount = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<DateTime> bookingDate = const Value.absent(),
+                Value<bool> isPlanned = const Value.absent(),
+                Value<String> description = const Value.absent(),
+                Value<String?> cryptoSymbol = const Value.absent(),
+                Value<double?> cryptoQuantity = const Value.absent(),
+                Value<double?> pricePerUnit = const Value.absent(),
+                Value<double?> feeAmount = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerTransactionsCompanion(
+                id: id,
+                transactionKind: transactionKind,
+                accountId: accountId,
+                targetAccountId: targetAccountId,
+                categoryId: categoryId,
+                subcategoryId: subcategoryId,
+                amount: amount,
+                currencyCode: currencyCode,
+                bookingDate: bookingDate,
+                isPlanned: isPlanned,
+                description: description,
+                cryptoSymbol: cryptoSymbol,
+                cryptoQuantity: cryptoQuantity,
+                pricePerUnit: pricePerUnit,
+                feeAmount: feeAmount,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<LedgerTransactionKind> transactionKind =
+                    const Value.absent(),
+                Value<int?> accountId = const Value.absent(),
+                Value<int?> targetAccountId = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                Value<int?> subcategoryId = const Value.absent(),
+                Value<double> amount = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<DateTime> bookingDate = const Value.absent(),
+                Value<bool> isPlanned = const Value.absent(),
+                Value<String> description = const Value.absent(),
+                Value<String?> cryptoSymbol = const Value.absent(),
+                Value<double?> cryptoQuantity = const Value.absent(),
+                Value<double?> pricePerUnit = const Value.absent(),
+                Value<double?> feeAmount = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerTransactionsCompanion.insert(
+                id: id,
+                transactionKind: transactionKind,
+                accountId: accountId,
+                targetAccountId: targetAccountId,
+                categoryId: categoryId,
+                subcategoryId: subcategoryId,
+                amount: amount,
+                currencyCode: currencyCode,
+                bookingDate: bookingDate,
+                isPlanned: isPlanned,
+                description: description,
+                cryptoSymbol: cryptoSymbol,
+                cryptoQuantity: cryptoQuantity,
+                pricePerUnit: pricePerUnit,
+                feeAmount: feeAmount,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$LedgerTransactionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                accountId = false,
+                targetAccountId = false,
+                categoryId = false,
+                subcategoryId = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable:
+                                        $$LedgerTransactionsTableReferences
+                                            ._accountIdTable(db),
+                                    referencedColumn:
+                                        $$LedgerTransactionsTableReferences
+                                            ._accountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (targetAccountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.targetAccountId,
+                                    referencedTable:
+                                        $$LedgerTransactionsTableReferences
+                                            ._targetAccountIdTable(db),
+                                    referencedColumn:
+                                        $$LedgerTransactionsTableReferences
+                                            ._targetAccountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (categoryId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.categoryId,
+                                    referencedTable:
+                                        $$LedgerTransactionsTableReferences
+                                            ._categoryIdTable(db),
+                                    referencedColumn:
+                                        $$LedgerTransactionsTableReferences
+                                            ._categoryIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (subcategoryId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.subcategoryId,
+                                    referencedTable:
+                                        $$LedgerTransactionsTableReferences
+                                            ._subcategoryIdTable(db),
+                                    referencedColumn:
+                                        $$LedgerTransactionsTableReferences
+                                            ._subcategoryIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$LedgerTransactionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LedgerTransactionsTable,
+      LedgerTransaction,
+      $$LedgerTransactionsTableFilterComposer,
+      $$LedgerTransactionsTableOrderingComposer,
+      $$LedgerTransactionsTableAnnotationComposer,
+      $$LedgerTransactionsTableCreateCompanionBuilder,
+      $$LedgerTransactionsTableUpdateCompanionBuilder,
+      (LedgerTransaction, $$LedgerTransactionsTableReferences),
+      LedgerTransaction,
+      PrefetchHooks Function({
+        bool accountId,
+        bool targetAccountId,
+        bool categoryId,
+        bool subcategoryId,
+      })
+    >;
+typedef $$LedgerRecurringTransactionsTableCreateCompanionBuilder =
+    LedgerRecurringTransactionsCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<LedgerTransactionKind> transactionKind,
+      Value<int?> accountId,
+      Value<int?> targetAccountId,
+      Value<int?> categoryId,
+      Value<int?> subcategoryId,
+      Value<double> amount,
+      Value<String> currencyCode,
+      Value<LedgerRecurringIntervalKind> intervalKind,
+      Value<int> intervalCount,
+      Value<DateTime> startedAt,
+      Value<DateTime> nextOccurrence,
+      Value<DateTime?> endedAt,
+      Value<bool> autoApply,
+      Value<String> metadataJson,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$LedgerRecurringTransactionsTableUpdateCompanionBuilder =
+    LedgerRecurringTransactionsCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<LedgerTransactionKind> transactionKind,
+      Value<int?> accountId,
+      Value<int?> targetAccountId,
+      Value<int?> categoryId,
+      Value<int?> subcategoryId,
+      Value<double> amount,
+      Value<String> currencyCode,
+      Value<LedgerRecurringIntervalKind> intervalKind,
+      Value<int> intervalCount,
+      Value<DateTime> startedAt,
+      Value<DateTime> nextOccurrence,
+      Value<DateTime?> endedAt,
+      Value<bool> autoApply,
+      Value<String> metadataJson,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+    });
+
+final class $$LedgerRecurringTransactionsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $LedgerRecurringTransactionsTable,
+          LedgerRecurringTransaction
+        > {
+  $$LedgerRecurringTransactionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $LedgerAccountsTable _accountIdTable(_$AppDatabase db) =>
+      db.ledgerAccounts.createAlias(
+        $_aliasNameGenerator(
+          db.ledgerRecurringTransactions.accountId,
+          db.ledgerAccounts.id,
+        ),
+      );
+
+  $$LedgerAccountsTableProcessedTableManager? get accountId {
+    final $_column = $_itemColumn<int>('account_id');
+    if ($_column == null) return null;
+    final manager = $$LedgerAccountsTableTableManager(
+      $_db,
+      $_db.ledgerAccounts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_accountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $LedgerAccountsTable _targetAccountIdTable(_$AppDatabase db) =>
+      db.ledgerAccounts.createAlias(
+        $_aliasNameGenerator(
+          db.ledgerRecurringTransactions.targetAccountId,
+          db.ledgerAccounts.id,
+        ),
+      );
+
+  $$LedgerAccountsTableProcessedTableManager? get targetAccountId {
+    final $_column = $_itemColumn<int>('target_account_id');
+    if ($_column == null) return null;
+    final manager = $$LedgerAccountsTableTableManager(
+      $_db,
+      $_db.ledgerAccounts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_targetAccountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $LedgerCategoriesTable _categoryIdTable(_$AppDatabase db) =>
+      db.ledgerCategories.createAlias(
+        $_aliasNameGenerator(
+          db.ledgerRecurringTransactions.categoryId,
+          db.ledgerCategories.id,
+        ),
+      );
+
+  $$LedgerCategoriesTableProcessedTableManager? get categoryId {
+    final $_column = $_itemColumn<int>('category_id');
+    if ($_column == null) return null;
+    final manager = $$LedgerCategoriesTableTableManager(
+      $_db,
+      $_db.ledgerCategories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $LedgerCategoriesTable _subcategoryIdTable(_$AppDatabase db) =>
+      db.ledgerCategories.createAlias(
+        $_aliasNameGenerator(
+          db.ledgerRecurringTransactions.subcategoryId,
+          db.ledgerCategories.id,
+        ),
+      );
+
+  $$LedgerCategoriesTableProcessedTableManager? get subcategoryId {
+    final $_column = $_itemColumn<int>('subcategory_id');
+    if ($_column == null) return null;
+    final manager = $$LedgerCategoriesTableTableManager(
+      $_db,
+      $_db.ledgerCategories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_subcategoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$LedgerRecurringTransactionsTableFilterComposer
+    extends Composer<_$AppDatabase, $LedgerRecurringTransactionsTable> {
+  $$LedgerRecurringTransactionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    LedgerTransactionKind,
+    LedgerTransactionKind,
+    String
+  >
+  get transactionKind => $composableBuilder(
+    column: $table.transactionKind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    LedgerRecurringIntervalKind,
+    LedgerRecurringIntervalKind,
+    String
+  >
+  get intervalKind => $composableBuilder(
+    column: $table.intervalKind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get intervalCount => $composableBuilder(
+    column: $table.intervalCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextOccurrence => $composableBuilder(
+    column: $table.nextOccurrence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get endedAt => $composableBuilder(
+    column: $table.endedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get autoApply => $composableBuilder(
+    column: $table.autoApply,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get metadataJson => $composableBuilder(
+    column: $table.metadataJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$LedgerAccountsTableFilterComposer get accountId {
+    final $$LedgerAccountsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerAccountsTableFilterComposer get targetAccountId {
+    final $$LedgerAccountsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.targetAccountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableFilterComposer get categoryId {
+    final $$LedgerCategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableFilterComposer get subcategoryId {
+    final $$LedgerCategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.subcategoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LedgerRecurringTransactionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LedgerRecurringTransactionsTable> {
+  $$LedgerRecurringTransactionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get transactionKind => $composableBuilder(
+    column: $table.transactionKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get intervalKind => $composableBuilder(
+    column: $table.intervalKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get intervalCount => $composableBuilder(
+    column: $table.intervalCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextOccurrence => $composableBuilder(
+    column: $table.nextOccurrence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get endedAt => $composableBuilder(
+    column: $table.endedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get autoApply => $composableBuilder(
+    column: $table.autoApply,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get metadataJson => $composableBuilder(
+    column: $table.metadataJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$LedgerAccountsTableOrderingComposer get accountId {
+    final $$LedgerAccountsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableOrderingComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerAccountsTableOrderingComposer get targetAccountId {
+    final $$LedgerAccountsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.targetAccountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableOrderingComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableOrderingComposer get categoryId {
+    final $$LedgerCategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableOrderingComposer get subcategoryId {
+    final $$LedgerCategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.subcategoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LedgerRecurringTransactionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LedgerRecurringTransactionsTable> {
+  $$LedgerRecurringTransactionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LedgerTransactionKind, String>
+  get transactionKind => $composableBuilder(
+    column: $table.transactionKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<LedgerRecurringIntervalKind, String>
+  get intervalKind => $composableBuilder(
+    column: $table.intervalKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get intervalCount => $composableBuilder(
+    column: $table.intervalCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get nextOccurrence => $composableBuilder(
+    column: $table.nextOccurrence,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get endedAt =>
+      $composableBuilder(column: $table.endedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get autoApply =>
+      $composableBuilder(column: $table.autoApply, builder: (column) => column);
+
+  GeneratedColumn<String> get metadataJson => $composableBuilder(
+    column: $table.metadataJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$LedgerAccountsTableAnnotationComposer get accountId {
+    final $$LedgerAccountsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerAccountsTableAnnotationComposer get targetAccountId {
+    final $$LedgerAccountsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.targetAccountId,
+      referencedTable: $db.ledgerAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerAccountsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableAnnotationComposer get categoryId {
+    final $$LedgerCategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$LedgerCategoriesTableAnnotationComposer get subcategoryId {
+    final $$LedgerCategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.subcategoryId,
+      referencedTable: $db.ledgerCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LedgerCategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ledgerCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LedgerRecurringTransactionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LedgerRecurringTransactionsTable,
+          LedgerRecurringTransaction,
+          $$LedgerRecurringTransactionsTableFilterComposer,
+          $$LedgerRecurringTransactionsTableOrderingComposer,
+          $$LedgerRecurringTransactionsTableAnnotationComposer,
+          $$LedgerRecurringTransactionsTableCreateCompanionBuilder,
+          $$LedgerRecurringTransactionsTableUpdateCompanionBuilder,
+          (
+            LedgerRecurringTransaction,
+            $$LedgerRecurringTransactionsTableReferences,
+          ),
+          LedgerRecurringTransaction,
+          PrefetchHooks Function({
+            bool accountId,
+            bool targetAccountId,
+            bool categoryId,
+            bool subcategoryId,
+          })
+        > {
+  $$LedgerRecurringTransactionsTableTableManager(
+    _$AppDatabase db,
+    $LedgerRecurringTransactionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LedgerRecurringTransactionsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$LedgerRecurringTransactionsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$LedgerRecurringTransactionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<LedgerTransactionKind> transactionKind =
+                    const Value.absent(),
+                Value<int?> accountId = const Value.absent(),
+                Value<int?> targetAccountId = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                Value<int?> subcategoryId = const Value.absent(),
+                Value<double> amount = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<LedgerRecurringIntervalKind> intervalKind =
+                    const Value.absent(),
+                Value<int> intervalCount = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime> nextOccurrence = const Value.absent(),
+                Value<DateTime?> endedAt = const Value.absent(),
+                Value<bool> autoApply = const Value.absent(),
+                Value<String> metadataJson = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerRecurringTransactionsCompanion(
+                id: id,
+                name: name,
+                transactionKind: transactionKind,
+                accountId: accountId,
+                targetAccountId: targetAccountId,
+                categoryId: categoryId,
+                subcategoryId: subcategoryId,
+                amount: amount,
+                currencyCode: currencyCode,
+                intervalKind: intervalKind,
+                intervalCount: intervalCount,
+                startedAt: startedAt,
+                nextOccurrence: nextOccurrence,
+                endedAt: endedAt,
+                autoApply: autoApply,
+                metadataJson: metadataJson,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<LedgerTransactionKind> transactionKind =
+                    const Value.absent(),
+                Value<int?> accountId = const Value.absent(),
+                Value<int?> targetAccountId = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                Value<int?> subcategoryId = const Value.absent(),
+                Value<double> amount = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<LedgerRecurringIntervalKind> intervalKind =
+                    const Value.absent(),
+                Value<int> intervalCount = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<DateTime> nextOccurrence = const Value.absent(),
+                Value<DateTime?> endedAt = const Value.absent(),
+                Value<bool> autoApply = const Value.absent(),
+                Value<String> metadataJson = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => LedgerRecurringTransactionsCompanion.insert(
+                id: id,
+                name: name,
+                transactionKind: transactionKind,
+                accountId: accountId,
+                targetAccountId: targetAccountId,
+                categoryId: categoryId,
+                subcategoryId: subcategoryId,
+                amount: amount,
+                currencyCode: currencyCode,
+                intervalKind: intervalKind,
+                intervalCount: intervalCount,
+                startedAt: startedAt,
+                nextOccurrence: nextOccurrence,
+                endedAt: endedAt,
+                autoApply: autoApply,
+                metadataJson: metadataJson,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$LedgerRecurringTransactionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                accountId = false,
+                targetAccountId = false,
+                categoryId = false,
+                subcategoryId = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable:
+                                        $$LedgerRecurringTransactionsTableReferences
+                                            ._accountIdTable(db),
+                                    referencedColumn:
+                                        $$LedgerRecurringTransactionsTableReferences
+                                            ._accountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (targetAccountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.targetAccountId,
+                                    referencedTable:
+                                        $$LedgerRecurringTransactionsTableReferences
+                                            ._targetAccountIdTable(db),
+                                    referencedColumn:
+                                        $$LedgerRecurringTransactionsTableReferences
+                                            ._targetAccountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (categoryId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.categoryId,
+                                    referencedTable:
+                                        $$LedgerRecurringTransactionsTableReferences
+                                            ._categoryIdTable(db),
+                                    referencedColumn:
+                                        $$LedgerRecurringTransactionsTableReferences
+                                            ._categoryIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (subcategoryId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.subcategoryId,
+                                    referencedTable:
+                                        $$LedgerRecurringTransactionsTableReferences
+                                            ._subcategoryIdTable(db),
+                                    referencedColumn:
+                                        $$LedgerRecurringTransactionsTableReferences
+                                            ._subcategoryIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$LedgerRecurringTransactionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LedgerRecurringTransactionsTable,
+      LedgerRecurringTransaction,
+      $$LedgerRecurringTransactionsTableFilterComposer,
+      $$LedgerRecurringTransactionsTableOrderingComposer,
+      $$LedgerRecurringTransactionsTableAnnotationComposer,
+      $$LedgerRecurringTransactionsTableCreateCompanionBuilder,
+      $$LedgerRecurringTransactionsTableUpdateCompanionBuilder,
+      (
+        LedgerRecurringTransaction,
+        $$LedgerRecurringTransactionsTableReferences,
+      ),
+      LedgerRecurringTransaction,
+      PrefetchHooks Function({
+        bool accountId,
+        bool targetAccountId,
+        bool categoryId,
+        bool subcategoryId,
+      })
+    >;
+typedef $$CryptoPriceEntriesTableCreateCompanionBuilder =
+    CryptoPriceEntriesCompanion Function({
+      Value<int> id,
+      required String symbol,
+      Value<String> currencyCode,
+      Value<double> price,
+      Value<DateTime> fetchedAt,
+    });
+typedef $$CryptoPriceEntriesTableUpdateCompanionBuilder =
+    CryptoPriceEntriesCompanion Function({
+      Value<int> id,
+      Value<String> symbol,
+      Value<String> currencyCode,
+      Value<double> price,
+      Value<DateTime> fetchedAt,
+    });
+
+class $$CryptoPriceEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CryptoPriceEntriesTable> {
+  $$CryptoPriceEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get symbol => $composableBuilder(
+    column: $table.symbol,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get price => $composableBuilder(
+    column: $table.price,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get fetchedAt => $composableBuilder(
+    column: $table.fetchedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CryptoPriceEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CryptoPriceEntriesTable> {
+  $$CryptoPriceEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get symbol => $composableBuilder(
+    column: $table.symbol,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get price => $composableBuilder(
+    column: $table.price,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get fetchedAt => $composableBuilder(
+    column: $table.fetchedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CryptoPriceEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CryptoPriceEntriesTable> {
+  $$CryptoPriceEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get symbol =>
+      $composableBuilder(column: $table.symbol, builder: (column) => column);
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get fetchedAt =>
+      $composableBuilder(column: $table.fetchedAt, builder: (column) => column);
+}
+
+class $$CryptoPriceEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CryptoPriceEntriesTable,
+          CryptoPriceEntry,
+          $$CryptoPriceEntriesTableFilterComposer,
+          $$CryptoPriceEntriesTableOrderingComposer,
+          $$CryptoPriceEntriesTableAnnotationComposer,
+          $$CryptoPriceEntriesTableCreateCompanionBuilder,
+          $$CryptoPriceEntriesTableUpdateCompanionBuilder,
+          (
+            CryptoPriceEntry,
+            BaseReferences<
+              _$AppDatabase,
+              $CryptoPriceEntriesTable,
+              CryptoPriceEntry
+            >,
+          ),
+          CryptoPriceEntry,
+          PrefetchHooks Function()
+        > {
+  $$CryptoPriceEntriesTableTableManager(
+    _$AppDatabase db,
+    $CryptoPriceEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CryptoPriceEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CryptoPriceEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CryptoPriceEntriesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> symbol = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<double> price = const Value.absent(),
+                Value<DateTime> fetchedAt = const Value.absent(),
+              }) => CryptoPriceEntriesCompanion(
+                id: id,
+                symbol: symbol,
+                currencyCode: currencyCode,
+                price: price,
+                fetchedAt: fetchedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String symbol,
+                Value<String> currencyCode = const Value.absent(),
+                Value<double> price = const Value.absent(),
+                Value<DateTime> fetchedAt = const Value.absent(),
+              }) => CryptoPriceEntriesCompanion.insert(
+                id: id,
+                symbol: symbol,
+                currencyCode: currencyCode,
+                price: price,
+                fetchedAt: fetchedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CryptoPriceEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CryptoPriceEntriesTable,
+      CryptoPriceEntry,
+      $$CryptoPriceEntriesTableFilterComposer,
+      $$CryptoPriceEntriesTableOrderingComposer,
+      $$CryptoPriceEntriesTableAnnotationComposer,
+      $$CryptoPriceEntriesTableCreateCompanionBuilder,
+      $$CryptoPriceEntriesTableUpdateCompanionBuilder,
+      (
+        CryptoPriceEntry,
+        BaseReferences<
+          _$AppDatabase,
+          $CryptoPriceEntriesTable,
+          CryptoPriceEntry
+        >,
+      ),
+      CryptoPriceEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8015,4 +15113,20 @@ class $AppDatabaseManager {
       $$HabitDefinitionsTableTableManager(_db, _db.habitDefinitions);
   $$HabitLogsTableTableManager get habitLogs =>
       $$HabitLogsTableTableManager(_db, _db.habitLogs);
+  $$LedgerAccountsTableTableManager get ledgerAccounts =>
+      $$LedgerAccountsTableTableManager(_db, _db.ledgerAccounts);
+  $$LedgerCategoriesTableTableManager get ledgerCategories =>
+      $$LedgerCategoriesTableTableManager(_db, _db.ledgerCategories);
+  $$LedgerBudgetsTableTableManager get ledgerBudgets =>
+      $$LedgerBudgetsTableTableManager(_db, _db.ledgerBudgets);
+  $$LedgerTransactionsTableTableManager get ledgerTransactions =>
+      $$LedgerTransactionsTableTableManager(_db, _db.ledgerTransactions);
+  $$LedgerRecurringTransactionsTableTableManager
+  get ledgerRecurringTransactions =>
+      $$LedgerRecurringTransactionsTableTableManager(
+        _db,
+        _db.ledgerRecurringTransactions,
+      );
+  $$CryptoPriceEntriesTableTableManager get cryptoPriceEntries =>
+      $$CryptoPriceEntriesTableTableManager(_db, _db.cryptoPriceEntries);
 }

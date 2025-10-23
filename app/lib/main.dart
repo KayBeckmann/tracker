@@ -27,6 +27,9 @@ import 'tasks/task_reminder_service.dart';
 import 'time_tracking/time_tracking_page.dart';
 import 'time_tracking/time_tracking_summary.dart';
 import 'time_tracking/time_tracking_types.dart';
+import 'ledger/ledger_models.dart';
+import 'ledger/ledger_page.dart';
+import 'ledger/ledger_utils.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
@@ -1467,20 +1470,20 @@ class _HomePageState extends State<HomePage> {
         Wrap(
           spacing: 16,
           runSpacing: 16,
-          children: modules
-              .map((section) {
-                switch (section) {
-                  case _AppSection.notes:
-                    return _buildNotesDashboardCard(context, loc);
-                  case _AppSection.journal:
-                    return _buildJournalDashboardCard(context, loc);
-                  case _AppSection.habits:
-                    return _buildHabitsDashboardCard(context, loc);
-                  default:
-                    return _buildModuleCard(context, loc, section);
-                }
-              })
-              .toList(),
+          children: modules.map((section) {
+            switch (section) {
+              case _AppSection.notes:
+                return _buildNotesDashboardCard(context, loc);
+              case _AppSection.journal:
+                return _buildJournalDashboardCard(context, loc);
+              case _AppSection.habits:
+                return _buildHabitsDashboardCard(context, loc);
+              case _AppSection.ledger:
+                return _buildLedgerDashboardCard(context, loc);
+              default:
+                return _buildModuleCard(context, loc, section);
+            }
+          }).toList(),
         ),
       );
     }
@@ -1836,10 +1839,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHabitsDashboardCard(
-    BuildContext context,
-    AppLocalizations loc,
-  ) {
+  Widget _buildHabitsDashboardCard(BuildContext context, AppLocalizations loc) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -1927,10 +1927,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               )
             else
-              Text(
-                loc.dashboardHabitsEmpty,
-                style: theme.textTheme.bodyMedium,
-              ),
+              Text(loc.dashboardHabitsEmpty, style: theme.textTheme.bodyMedium),
           ];
           return buildCard(body);
         }
@@ -1941,8 +1938,9 @@ class _HomePageState extends State<HomePage> {
             final logs = logsSnapshot.data ?? const <HabitLog>[];
             final now = DateTime.now();
             final entries = habits.map((habit) {
-              final habitLogs =
-                  logs.where((log) => log.habitId == habit.id).toList();
+              final habitLogs = logs
+                  .where((log) => log.habitId == habit.id)
+                  .toList();
               final period = periodForHabit(habit, now);
               final periodLogs = habitLogs
                   .where((log) => period.contains(log.occurredAt))
@@ -1961,8 +1959,9 @@ class _HomePageState extends State<HomePage> {
                 ratio = 0;
               }
               final double progress = ratio.clamp(0.0, 1.0).toDouble();
-              final bool onTrack =
-                  hasTarget ? ratio >= 1.0 - 1e-6 : periodLogs.isNotEmpty;
+              final bool onTrack = hasTarget
+                  ? ratio >= 1.0 - 1e-6
+                  : periodLogs.isNotEmpty;
               final label = habitProgressLabel(
                 loc: loc,
                 habit: habit,
@@ -1990,8 +1989,7 @@ class _HomePageState extends State<HomePage> {
 
             entries.sort((a, b) => a.ratio.compareTo(b.ratio));
             final topEntries = entries.take(3).toList();
-            final onTrackCount =
-                entries.where((entry) => entry.onTrack).length;
+            final onTrackCount = entries.where((entry) => entry.onTrack).length;
             final summaryStyle = onTrackCount == habits.length
                 ? theme.textTheme.bodyMedium?.copyWith(
                     color: colorScheme.primary,
@@ -2027,10 +2025,7 @@ class _HomePageState extends State<HomePage> {
             if (entries.length > topEntries.length) {
               content.add(const SizedBox(height: 12));
               content.add(
-                Text(
-                  loc.habitsOpenDetails,
-                  style: theme.textTheme.bodySmall,
-                ),
+                Text(loc.habitsOpenDetails, style: theme.textTheme.bodySmall),
               );
             }
 
@@ -2039,6 +2034,315 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
+  }
+
+  Widget _buildLedgerDashboardCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final numberFormat = NumberFormat.currency(symbol: '', decimalDigits: 2);
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 220, maxWidth: 360),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => _onSelectSection(_AppSection.ledger),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: StreamBuilder<List<LedgerAccount>>(
+              stream: _database.watchLedgerAccounts(),
+              builder: (context, accountSnapshot) {
+                final accounts =
+                    accountSnapshot.data ?? const <LedgerAccount>[];
+                return StreamBuilder<List<LedgerTransaction>>(
+                  stream: _database.watchLedgerTransactions(),
+                  builder: (context, transactionSnapshot) {
+                    final transactions =
+                        transactionSnapshot.data ?? const <LedgerTransaction>[];
+                    if (accounts.isEmpty) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildLedgerDashboardHeader(theme, colorScheme, loc),
+                          const SizedBox(height: 12),
+                          Text(
+                            loc.ledgerDashboardNoAccounts,
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ],
+                      );
+                    }
+                    final accountSnapshots = buildAccountSnapshots(
+                      accounts: accounts,
+                      transactions: transactions,
+                    );
+                    final summary = buildDashboardSummary(
+                      accounts: accountSnapshots,
+                    );
+                    return StreamBuilder<List<LedgerBudget>>(
+                      stream: _database.watchLedgerBudgets(),
+                      builder: (context, budgetSnapshot) {
+                        final budgets =
+                            budgetSnapshot.data ?? const <LedgerBudget>[];
+                        return StreamBuilder<List<LedgerCategory>>(
+                          stream: _database.watchAllLedgerCategories(),
+                          builder: (context, categorySnapshot) {
+                            final categories =
+                                categorySnapshot.data ??
+                                const <LedgerCategory>[];
+                            final usages = buildBudgetUsage(
+                              budgets: budgets,
+                              transactions: transactions,
+                              categories: categories,
+                            );
+                            final filteredUsages = _filterCurrentBudgetUsages(
+                              usages,
+                            );
+                            final prioritized = filteredUsages.isNotEmpty
+                                ? filteredUsages
+                                : usages;
+                            final sortedUsages = prioritized.toList()
+                              ..sort((a, b) {
+                                final ratioA = a.budget.amount <= 0
+                                    ? 0.0
+                                    : a.actualAmount / a.budget.amount;
+                                final ratioB = b.budget.amount <= 0
+                                    ? 0.0
+                                    : b.actualAmount / b.budget.amount;
+                                return ratioB.compareTo(ratioA);
+                              });
+                            final displayedBudgets = sortedUsages
+                                .take(3)
+                                .toList();
+                            final categoryById = <int, LedgerCategory>{
+                              for (final category in categories)
+                                category.id: category,
+                            };
+
+                            final children = <Widget>[
+                              _buildLedgerDashboardHeader(
+                                theme,
+                                colorScheme,
+                                loc,
+                              ),
+                              const SizedBox(height: 12),
+                            ];
+
+                            if (summary.netWorthByCurrency.isEmpty) {
+                              children.add(
+                                Text(
+                                  loc.ledgerDashboardNoNetWorth,
+                                  style: theme.textTheme.bodyMedium,
+                                ),
+                              );
+                            } else {
+                              children.add(
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: summary.netWorthByCurrency.entries
+                                      .map(
+                                        (entry) => Chip(
+                                          avatar: const Icon(
+                                            Icons
+                                                .account_balance_wallet_outlined,
+                                            size: 16,
+                                          ),
+                                          label: Text(
+                                            '${entry.key} ${numberFormat.format(entry.value)}',
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                              );
+                            }
+
+                            if (summary.plannedIncomeByCurrency.isNotEmpty) {
+                              children.add(const SizedBox(height: 8));
+                              children.add(
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: summary
+                                      .plannedIncomeByCurrency
+                                      .entries
+                                      .map(
+                                        (entry) => Chip(
+                                          avatar: const Icon(
+                                            Icons.trending_up,
+                                            size: 16,
+                                          ),
+                                          label: Text(
+                                            loc.ledgerDashboardPlannedIncomeChip(
+                                              entry.key,
+                                              numberFormat.format(entry.value),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                              );
+                            }
+
+                            if (summary.plannedExpensesByCurrency.isNotEmpty) {
+                              children.add(const SizedBox(height: 8));
+                              children.add(
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: summary
+                                      .plannedExpensesByCurrency
+                                      .entries
+                                      .map(
+                                        (entry) => Chip(
+                                          avatar: const Icon(
+                                            Icons.trending_down,
+                                            size: 16,
+                                          ),
+                                          label: Text(
+                                            loc.ledgerDashboardPlannedExpenseChip(
+                                              entry.key,
+                                              numberFormat.format(entry.value),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                              );
+                            }
+
+                            children.add(const SizedBox(height: 12));
+                            children.add(
+                              Text(
+                                loc.ledgerDashboardBudgetsTitle,
+                                style: theme.textTheme.titleSmall,
+                              ),
+                            );
+
+                            if (displayedBudgets.isEmpty) {
+                              children.add(
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Text(
+                                    loc.ledgerDashboardNoBudgets,
+                                    style: theme.textTheme.bodyMedium,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              for (final usage in displayedBudgets) {
+                                final budget = usage.budget;
+                                final categoryName =
+                                    categoryById[budget.categoryId]?.name ??
+                                    loc.ledgerBudgetUnknownCategory;
+                                final progress = budget.amount <= 0
+                                    ? 0.0
+                                    : (usage.actualAmount / budget.amount)
+                                          .clamp(0, 1)
+                                          .toDouble();
+                                children.add(const SizedBox(height: 8));
+                                children.add(
+                                  Text(
+                                    categoryName,
+                                    style: theme.textTheme.bodyMedium,
+                                  ),
+                                );
+                                children.add(const SizedBox(height: 4));
+                                children.add(
+                                  LinearProgressIndicator(value: progress),
+                                );
+                                children.add(const SizedBox(height: 4));
+                                children.add(
+                                  Text(
+                                    loc.ledgerBudgetUsageSummary(
+                                      usage.actualAmount.toStringAsFixed(2),
+                                      budget.amount.toStringAsFixed(2),
+                                      budget.currencyCode,
+                                    ),
+                                    style: theme.textTheme.bodySmall,
+                                  ),
+                                );
+                                if (usage.plannedAmount > 0) {
+                                  children.add(
+                                    Text(
+                                      loc.ledgerBudgetPlannedAmount(
+                                        usage.plannedAmount.toStringAsFixed(2),
+                                        budget.currencyCode,
+                                      ),
+                                      style: theme.textTheme.bodySmall,
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: children,
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLedgerDashboardHeader(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    AppLocalizations loc,
+  ) {
+    return Row(
+      children: [
+        Icon(
+          _sectionIcon(_AppSection.ledger),
+          size: 32,
+          color: colorScheme.primary,
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            _localizedSectionTitle(loc, _AppSection.ledger),
+            style: theme.textTheme.titleMedium,
+          ),
+        ),
+        const Icon(Icons.chevron_right),
+      ],
+    );
+  }
+
+  List<LedgerBudgetUsage> _filterCurrentBudgetUsages(
+    List<LedgerBudgetUsage> usages,
+  ) {
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final currentMonth = now.month;
+    final currentQuarter = ((currentMonth - 1) ~/ 3) + 1;
+    return usages.where((usage) {
+      final budget = usage.budget;
+      switch (budget.periodKind) {
+        case LedgerBudgetPeriodKind.monthly:
+          if (budget.month == null) {
+            return false;
+          }
+          return budget.year == currentYear && budget.month == currentMonth;
+        case LedgerBudgetPeriodKind.quarterly:
+          final budgetQuarter = ((budget.month ?? 1) - 1) ~/ 3 + 1;
+          return budget.year == currentYear && budgetQuarter == currentQuarter;
+        case LedgerBudgetPeriodKind.yearly:
+          return budget.year == currentYear;
+      }
+    }).toList();
   }
 
   Widget _buildHabitDashboardRow({
@@ -2050,8 +2354,9 @@ class _HomePageState extends State<HomePage> {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final Color progressColor =
-        onTrack ? colorScheme.primary : colorScheme.tertiary;
+    final Color progressColor = onTrack
+        ? colorScheme.primary
+        : colorScheme.tertiary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2079,15 +2384,13 @@ class _HomePageState extends State<HomePage> {
             value: progress.clamp(0.0, 1.0).toDouble(),
             minHeight: 6,
             color: progressColor,
-            backgroundColor:
-                colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+            backgroundColor: colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.35,
+            ),
           ),
         ),
         const SizedBox(height: 6),
-        Text(
-          label,
-          style: theme.textTheme.bodySmall,
-        ),
+        Text(label, style: theme.textTheme.bodySmall),
       ],
     );
   }
@@ -2318,14 +2621,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildLedger(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return Center(
-      child: Text(
-        loc.ledgerPlaceholder,
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-    );
+    return LedgerPage(database: _database);
   }
 
   Widget _buildSettings(

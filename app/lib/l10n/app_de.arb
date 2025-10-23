@@ -802,5 +802,324 @@
   "syncConflictKeepServer": "Serverversion übernehmen",
   "syncConflictResolved": "Konflikte wurden gelöst.",
   "syncConflictDeviceLabel": "Gerät",
-  "syncConflictServerLabel": "Server"
+  "syncConflictServerLabel": "Server",
+  "validationRequiredField": "Bitte fülle dieses Feld aus.",
+  "validationNumberField": "Bitte gib eine gültige Zahl ein.",
+  "ledgerAccountCreateTitle": "Konto erstellen",
+  "ledgerAccountEditTitle": "Konto bearbeiten",
+  "ledgerAccountNameLabel": "Kontoname",
+  "ledgerAccountKindLabel": "Kontotyp",
+  "ledgerAccountCurrencyLabel": "Währung",
+  "ledgerValidationCurrencyCode": "Bitte gib einen dreistelligen Währungscode ein.",
+  "ledgerAccountInitialBalanceLabel": "Anfangssaldo",
+  "ledgerAccountIncludeInNetWorthLabel": "In Gesamtsumme berücksichtigen",
+  "ledgerAccountCreateButton": "Konto hinzufügen",
+  "ledgerAccountCreateSuccess": "Konto \"{name}\" erstellt.",
+  "@ledgerAccountCreateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountUpdateSuccess": "Konto \"{name}\" aktualisiert.",
+  "@ledgerAccountUpdateSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountDeleteTitle": "Konto löschen?",
+  "ledgerAccountDeleteMessage": "Soll das Konto \"{name}\" gelöscht werden? Zugehörige Buchungen bleiben auf diesem Gerät.",
+  "@ledgerAccountDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountDeleteSuccess": "Konto \"{name}\" gelöscht.",
+  "@ledgerAccountDeleteSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountActualBalance": "Saldo: {amount} {currency}",
+  "@ledgerAccountActualBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountPlannedIncome": "Geplante Einnahmen: {amount} {currency}",
+  "@ledgerAccountPlannedIncome": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountPlannedExpense": "Geplante Ausgaben: {amount} {currency}",
+  "@ledgerAccountPlannedExpense": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAccountEmptyTitle": "Lege dein erstes Konto an",
+  "ledgerAccountEmptyDescription": "Verwalte Bargeld, Bankkonten, Depots, Anlagewerte oder Kryptos.",
+  "ledgerAccountKindCash": "Bargeld",
+  "ledgerAccountKindBank": "Bankkonto",
+  "ledgerAccountKindDepot": "Depot",
+  "ledgerAccountKindAsset": "Anlagewert",
+  "ledgerAccountKindCrypto": "Kryptowallet",
+  "ledgerTransactionCreateTitle": "Neue Buchung",
+  "ledgerTransactionEditTitle": "Buchung bearbeiten",
+  "ledgerTransactionKindLabel": "Buchungstyp",
+  "ledgerTransactionAccountLabel": "Konto",
+  "ledgerTransactionSourceAccountLabel": "Quellkonto",
+  "ledgerTransactionTargetAccountLabel": "Zielkonto",
+  "ledgerValidationDifferentAccounts": "Wähle zwei unterschiedliche Konten.",
+  "ledgerTransactionCategoryLabel": "Kategorie",
+  "ledgerTransactionSubcategoryLabel": "Unterkategorie",
+  "ledgerTransactionNoSubcategory": "Keine Unterkategorie",
+  "ledgerTransactionAmountLabel": "Betrag",
+  "ledgerTransactionCurrencyLabel": "Währung",
+  "ledgerTransactionDateLabel": "Buchungsdatum: {date}",
+  "@ledgerTransactionDateLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerTransactionDescriptionLabel": "Beschreibung",
+  "ledgerTransactionCryptoSymbolLabel": "Kryptosymbol",
+  "ledgerTransactionCryptoQuantityLabel": "Kryptomenge",
+  "ledgerTransactionCryptoPriceLabel": "Preis je Einheit",
+  "ledgerTransactionPlannedLabel": "Geplante Buchung",
+  "ledgerTransactionCreateButton": "Buchung hinzufügen",
+  "ledgerTransactionNoAccountsWarning": "Lege zuerst ein Konto an, bevor du Buchungen erfasst.",
+  "ledgerTransactionDeleteTitle": "Buchung löschen?",
+  "ledgerTransactionDeleteMessage": "Soll diese Buchung von diesem Gerät entfernt werden?",
+  "ledgerTransactionMarkExecuted": "Als ausgeführt markieren",
+  "ledgerTransactionFilterType": "Typ",
+  "ledgerTransactionFilterAll": "Alle Typen",
+  "ledgerTransactionFilterStatus": "Status",
+  "ledgerTransactionFilterAllStatuses": "Alle Status",
+  "ledgerTransactionFilterExecuted": "Ausgeführt",
+  "ledgerTransactionFilterPlanned": "Geplant",
+  "ledgerTransactionStatusPlanned": "Geplant",
+  "ledgerTransactionEmptyTitle": "Noch keine Buchungen",
+  "ledgerTransactionEmptyDescription": "Erfasse Einnahmen, Ausgaben oder Umbuchungen, um deine Finanzen zu verfolgen.",
+  "ledgerTransactionKindIncome": "Einnahme",
+  "ledgerTransactionKindExpense": "Ausgabe",
+  "ledgerTransactionKindTransfer": "Umbuchung",
+  "ledgerTransactionKindCryptoPurchase": "Kryptokauf",
+  "ledgerCryptoCurrentPriceLoading": "Aktuellen Kurs für {symbol} laden …",
+  "@ledgerCryptoCurrentPriceLoading": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerCryptoProfit": "Gewinn {amount} {currency}",
+  "@ledgerCryptoProfit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerCryptoLoss": "Verlust {amount} {currency}",
+  "@ledgerCryptoLoss": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerCryptoCurrentPriceLabel": "Aktueller Kurs {price} {currency} ({symbol})",
+  "@ledgerCryptoCurrentPriceLabel": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      },
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerBudgetCreateTitle": "Neues Budget",
+  "ledgerBudgetEditTitle": "Budget bearbeiten",
+  "ledgerBudgetCategoryLabel": "Kategorie oder Unterkategorie",
+  "ledgerBudgetPeriodLabel": "Zeitraum",
+  "ledgerBudgetYearLabel": "Jahr",
+  "ledgerBudgetMonthLabel": "Monat",
+  "ledgerBudgetQuarterLabel": "Quartal",
+  "ledgerBudgetAmountLabel": "Betrag",
+  "ledgerBudgetCurrencyLabel": "Währung",
+  "ledgerBudgetCreateButton": "Budget hinzufügen",
+  "ledgerBudgetDeleteTitle": "Budget löschen?",
+  "ledgerBudgetDeleteMessage": "Soll dieses Budget von diesem Gerät entfernt werden?",
+  "ledgerBudgetUnknownCategory": "Unbekannte Kategorie",
+  "ledgerBudgetUsageSummary": "{actual} von {total} {currency} ausgegeben",
+  "@ledgerBudgetUsageSummary": {
+    "placeholders": {
+      "actual": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerBudgetPlannedAmount": "Geplant: {amount} {currency}",
+  "@ledgerBudgetPlannedAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerBudgetEmptyTitle": "Keine Budgets vorhanden",
+  "ledgerBudgetEmptyDescription": "Lege Budgets für Kategorien und Unterkategorien fest, um deine Ausgaben im Blick zu behalten.",
+  "ledgerBudgetPeriodMonthly": "Monatlich",
+  "ledgerBudgetPeriodQuarterly": "Vierteljährlich",
+  "ledgerBudgetPeriodYearly": "Jährlich",
+  "ledgerBudgetQuarterName": "Quartal {quarter} {year}",
+  "@ledgerBudgetQuarterName": {
+    "placeholders": {
+      "quarter": {
+        "type": "int"
+      },
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "ledgerBudgetYearName": "{year}",
+  "@ledgerBudgetYearName": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "ledgerCategoryCreateTitle": "Neue Kategorie",
+  "ledgerCategoryEditTitle": "Kategorie bearbeiten",
+  "ledgerCategoryNameLabel": "Name",
+  "ledgerCategoryParentLabel": "Überkategorie",
+  "ledgerCategoryNoParent": "Keine Überkategorie",
+  "ledgerCategoryKindLabel": "Typ",
+  "ledgerCategoryArchiveLabel": "Kategorie archivieren",
+  "ledgerCategoryCreateButton": "Kategorie hinzufügen",
+  "ledgerCategoryCreateSubButton": "Unterkategorie hinzufügen",
+  "ledgerCategoryIncomeSection": "Einnahmekategorien",
+  "ledgerCategoryExpenseSection": "Ausgabekategorien",
+  "ledgerCategoryEmptySection": "Noch keine Kategorien.",
+  "ledgerCategoryActiveLabel": "Aktiv",
+  "ledgerCategoryArchivedLabel": "Archiviert",
+  "ledgerCategoryNoSubcategories": "Keine Unterkategorien.",
+  "ledgerCategoryDeleteTitle": "Kategorie löschen?",
+  "ledgerCategoryDeleteMessage": "Soll die Kategorie \"{name}\" gelöscht werden?",
+  "@ledgerCategoryDeleteMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerCategoryKindIncome": "Einnahme",
+  "ledgerCategoryKindExpense": "Ausgabe",
+  "ledgerRecurringCreateTitle": "Neuer Dauerauftrag",
+  "ledgerRecurringEditTitle": "Dauerauftrag bearbeiten",
+  "ledgerRecurringNameLabel": "Name",
+  "ledgerRecurringAmountLabel": "Betrag",
+  "ledgerRecurringCurrencyLabel": "Währung",
+  "ledgerRecurringIntervalLabel": "Intervall",
+  "ledgerRecurringIntervalCountLabel": "Intervallanzahl",
+  "ledgerRecurringNextOccurrenceLabel": "Nächste Ausführung: {date}",
+  "@ledgerRecurringNextOccurrenceLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerRecurringAutoApplyLabel": "Buchungen automatisch erzeugen",
+  "ledgerRecurringMetadataLabel": "Notizen",
+  "ledgerRecurringCreateButton": "Dauerauftrag hinzufügen",
+  "ledgerRecurringDeleteTitle": "Dauerauftrag löschen?",
+  "ledgerRecurringDeleteMessage": "Soll dieser Dauerauftrag entfernt werden?",
+  "ledgerRecurringApplyNow": "Buchung jetzt erstellen",
+  "ledgerRecurringEmptyTitle": "Noch keine Daueraufträge",
+  "ledgerRecurringEmptyDescription": "Erstelle Vorlagen für wiederkehrende Einnahmen, Ausgaben oder Umbuchungen.",
+  "ledgerRecurringIntervalDaily": "Täglich",
+  "ledgerRecurringIntervalWeekly": "Wöchentlich",
+  "ledgerRecurringIntervalMonthly": "Monatlich",
+  "ledgerRecurringIntervalQuarterly": "Vierteljährlich",
+  "ledgerRecurringIntervalYearly": "Jährlich",
+  "ledgerRecurringIntervalCustom": "Benutzerdefiniert",
+  "ledgerTabAccounts": "Konten",
+  "ledgerTabTransactions": "Buchungen",
+  "ledgerTabBudgets": "Budgets",
+  "ledgerTabRecurring": "Daueraufträge",
+  "ledgerTabCategories": "Kategorien",
+  "ledgerDashboardNoAccounts": "Lege ein Konto an, um deine Finanzen hier zu sehen.",
+  "ledgerDashboardNoNetWorth": "Noch keine Salden vorhanden.",
+  "ledgerDashboardPlannedIncomeChip": "{currency} Einnahmen {amount}",
+  "@ledgerDashboardPlannedIncomeChip": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerDashboardPlannedExpenseChip": "{currency} Ausgaben {amount}",
+  "@ledgerDashboardPlannedExpenseChip": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerDashboardBudgetsTitle": "Budgetübersicht",
+  "ledgerDashboardNoBudgets": "Keine Budgets für den aktuellen Zeitraum."
 }

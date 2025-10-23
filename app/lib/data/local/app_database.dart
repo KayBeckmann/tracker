@@ -18,6 +18,23 @@ enum HabitIntervalKind { daily, multiplePerDay, weekly, multiplePerWeek }
 
 enum HabitValueKind { boolean, integer, decimal }
 
+enum LedgerAccountKind { cash, bankAccount, depot, asset, crypto }
+
+enum LedgerCategoryKind { income, expense }
+
+enum LedgerTransactionKind { income, expense, transfer, cryptoPurchase }
+
+enum LedgerBudgetPeriodKind { monthly, quarterly, yearly }
+
+enum LedgerRecurringIntervalKind {
+  daily,
+  weekly,
+  monthly,
+  quarterly,
+  yearly,
+  custom,
+}
+
 const Uuid _uuid = Uuid();
 
 class GreetingEntries extends Table {
@@ -182,14 +199,14 @@ class HabitDefinitions extends Table {
   TextColumn get description => text().withDefault(const Constant(''))();
 
   TextColumn get interval => textEnum<HabitIntervalKind>().withDefault(
-        Constant(HabitIntervalKind.daily.name),
-      )();
+    Constant(HabitIntervalKind.daily.name),
+  )();
 
   IntColumn get targetOccurrences => integer().withDefault(const Constant(1))();
 
   TextColumn get measurementKind => textEnum<HabitValueKind>().withDefault(
-        Constant(HabitValueKind.boolean.name),
-      )();
+    Constant(HabitValueKind.boolean.name),
+  )();
 
   RealColumn get targetValue => real().nullable()();
 
@@ -204,10 +221,10 @@ class HabitLogs extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   IntColumn get habitId => integer().references(
-        HabitDefinitions,
-        #id,
-        onDelete: KeyAction.cascade,
-      )();
+    HabitDefinitions,
+    #id,
+    onDelete: KeyAction.cascade,
+  )();
 
   DateTimeColumn get occurredAt => dateTime()();
 
@@ -216,6 +233,209 @@ class HabitLogs extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class LedgerAccounts extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text()();
+
+  TextColumn get accountKind => textEnum<LedgerAccountKind>().withDefault(
+    Constant(LedgerAccountKind.cash.name),
+  )();
+
+  TextColumn get currencyCode =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('EUR'))();
+
+  BoolColumn get includeInNetWorth =>
+      boolean().withDefault(const Constant(true))();
+
+  RealColumn get initialBalance => real().withDefault(const Constant(0))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class LedgerCategories extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text()();
+
+  TextColumn get categoryKind => textEnum<LedgerCategoryKind>().withDefault(
+    Constant(LedgerCategoryKind.expense.name),
+  )();
+
+  IntColumn get parentId => integer().nullable().customConstraint(
+    'NULL REFERENCES ledger_categories(id) ON DELETE SET NULL',
+  )();
+
+  BoolColumn get isArchived => boolean().withDefault(const Constant(false))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class LedgerBudgets extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  IntColumn get categoryId => integer().references(
+    LedgerCategories,
+    #id,
+    onDelete: KeyAction.cascade,
+  )();
+
+  TextColumn get periodKind => textEnum<LedgerBudgetPeriodKind>().withDefault(
+    Constant(LedgerBudgetPeriodKind.monthly.name),
+  )();
+
+  IntColumn get year => integer()();
+
+  IntColumn get month => integer().nullable()();
+
+  RealColumn get amount => real().withDefault(const Constant(0))();
+
+  TextColumn get currencyCode =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('EUR'))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  List<String> get customConstraints => const [
+    'UNIQUE(category_id, period_kind, year, month)',
+  ];
+}
+
+class LedgerTransactions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get transactionKind => textEnum<LedgerTransactionKind>()
+      .withDefault(Constant(LedgerTransactionKind.expense.name))();
+
+  IntColumn get accountId => integer().nullable().references(
+    LedgerAccounts,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  IntColumn get targetAccountId => integer().nullable().references(
+    LedgerAccounts,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  IntColumn get categoryId => integer().nullable().references(
+    LedgerCategories,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  IntColumn get subcategoryId => integer().nullable().references(
+    LedgerCategories,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  RealColumn get amount => real().withDefault(const Constant(0))();
+
+  TextColumn get currencyCode =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('EUR'))();
+
+  DateTimeColumn get bookingDate =>
+      dateTime().withDefault(currentDateAndTime)();
+
+  BoolColumn get isPlanned => boolean().withDefault(const Constant(false))();
+
+  TextColumn get description => text().withDefault(const Constant(''))();
+
+  TextColumn get cryptoSymbol => text().nullable()();
+
+  RealColumn get cryptoQuantity => real().nullable()();
+
+  RealColumn get pricePerUnit => real().nullable()();
+
+  RealColumn get feeAmount => real().nullable()();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class LedgerRecurringTransactions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get name => text()();
+
+  TextColumn get transactionKind => textEnum<LedgerTransactionKind>()
+      .withDefault(Constant(LedgerTransactionKind.expense.name))();
+
+  IntColumn get accountId => integer().nullable().references(
+    LedgerAccounts,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  IntColumn get targetAccountId => integer().nullable().references(
+    LedgerAccounts,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  IntColumn get categoryId => integer().nullable().references(
+    LedgerCategories,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  IntColumn get subcategoryId => integer().nullable().references(
+    LedgerCategories,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  RealColumn get amount => real().withDefault(const Constant(0))();
+
+  TextColumn get currencyCode =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('EUR'))();
+
+  TextColumn get intervalKind => textEnum<LedgerRecurringIntervalKind>()
+      .withDefault(Constant(LedgerRecurringIntervalKind.monthly.name))();
+
+  IntColumn get intervalCount => integer().withDefault(const Constant(1))();
+
+  DateTimeColumn get startedAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get nextOccurrence =>
+      dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get endedAt => dateTime().nullable()();
+
+  BoolColumn get autoApply => boolean().withDefault(const Constant(false))();
+
+  TextColumn get metadataJson => text().withDefault(const Constant('{}'))();
+
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class CryptoPriceEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get symbol => text()();
+
+  TextColumn get currencyCode =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('EUR'))();
+
+  RealColumn get price => real().withDefault(const Constant(0))();
+
+  DateTimeColumn get fetchedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  List<String> get customConstraints => const ['UNIQUE(symbol, currency_code)'];
 }
 
 @DriftDatabase(
@@ -229,6 +449,12 @@ class HabitLogs extends Table {
     JournalTrackerValues,
     HabitDefinitions,
     HabitLogs,
+    LedgerAccounts,
+    LedgerCategories,
+    LedgerBudgets,
+    LedgerTransactions,
+    LedgerRecurringTransactions,
+    CryptoPriceEntries,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -242,7 +468,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -280,6 +506,14 @@ class AppDatabase extends _$AppDatabase {
       if (from < 8) {
         await m.createTable(habitDefinitions);
         await m.createTable(habitLogs);
+      }
+      if (from < 9) {
+        await m.createTable(ledgerAccounts);
+        await m.createTable(ledgerCategories);
+        await m.createTable(ledgerBudgets);
+        await m.createTable(ledgerTransactions);
+        await m.createTable(ledgerRecurringTransactions);
+        await m.createTable(cryptoPriceEntries);
       }
     },
   );
@@ -955,11 +1189,10 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Stream<List<HabitLog>> watchAllHabitLogs() {
-    return (select(habitLogs)
-          ..orderBy([
-            (tbl) => OrderingTerm.desc(tbl.occurredAt),
-            (tbl) => OrderingTerm.desc(tbl.id),
-          ]))
+    return (select(habitLogs)..orderBy([
+          (tbl) => OrderingTerm.desc(tbl.occurredAt),
+          (tbl) => OrderingTerm.desc(tbl.id),
+        ]))
         .watch();
   }
 
@@ -988,9 +1221,8 @@ class AppDatabase extends _$AppDatabase {
       updatedAt: Value(now),
     );
     final id = await into(habitLogs).insert(companion);
-    await (update(habitDefinitions)..where((tbl) => tbl.id.equals(habitId))).write(
-      HabitDefinitionsCompanion(updatedAt: Value(now)),
-    );
+    await (update(habitDefinitions)..where((tbl) => tbl.id.equals(habitId)))
+        .write(HabitDefinitionsCompanion(updatedAt: Value(now)));
     return id;
   }
 
@@ -1033,5 +1265,613 @@ class AppDatabase extends _$AppDatabase {
             (tbl) => OrderingTerm.asc(tbl.id),
           ]))
         .get();
+  }
+
+  Stream<List<LedgerAccount>> watchLedgerAccounts() {
+    return (select(
+      ledgerAccounts,
+    )..orderBy([(tbl) => OrderingTerm.asc(tbl.name)])).watch();
+  }
+
+  Future<int> createLedgerAccount({
+    required String name,
+    LedgerAccountKind accountKind = LedgerAccountKind.cash,
+    String currencyCode = 'EUR',
+    bool includeInNetWorth = true,
+    double initialBalance = 0,
+  }) async {
+    final now = DateTime.now().toUtc();
+    final companion = LedgerAccountsCompanion.insert(
+      name: name,
+      accountKind: Value(accountKind),
+      currencyCode: Value(currencyCode.toUpperCase()),
+      includeInNetWorth: Value(includeInNetWorth),
+      initialBalance: Value(initialBalance),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(ledgerAccounts).insert(companion);
+  }
+
+  Future<void> updateLedgerAccount(LedgerAccount account) async {
+    final updated = account.copyWith(
+      currencyCode: account.currencyCode.toUpperCase(),
+      updatedAt: DateTime.now().toUtc(),
+    );
+    await update(ledgerAccounts).replace(updated);
+  }
+
+  Future<void> setLedgerAccountIncludeInNetWorth({
+    required int id,
+    required bool includeInNetWorth,
+  }) async {
+    await (update(ledgerAccounts)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerAccountsCompanion(
+        includeInNetWorth: Value(includeInNetWorth),
+        updatedAt: Value(DateTime.now().toUtc()),
+      ),
+    );
+  }
+
+  Future<void> deleteLedgerAccount(int id) async {
+    await (delete(ledgerAccounts)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<LedgerAccount?> getLedgerAccountById(int id) {
+    return (select(
+      ledgerAccounts,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Stream<List<LedgerCategory>> watchLedgerCategories({
+    LedgerCategoryKind? categoryKind,
+    int? parentId,
+    bool includeArchived = false,
+  }) {
+    final query = select(ledgerCategories)
+      ..orderBy([
+        (tbl) => OrderingTerm.asc(tbl.parentId),
+        (tbl) => OrderingTerm.asc(tbl.name),
+      ]);
+    if (!includeArchived) {
+      query.where((tbl) => tbl.isArchived.equals(false));
+    }
+    if (categoryKind != null) {
+      query.where((tbl) => tbl.categoryKind.equalsValue(categoryKind));
+    }
+    if (parentId != null) {
+      query.where((tbl) => tbl.parentId.equals(parentId));
+    } else {
+      query.where((tbl) => tbl.parentId.isNull());
+    }
+    return query.watch();
+  }
+
+  Stream<List<LedgerCategory>> watchAllLedgerCategories({
+    LedgerCategoryKind? categoryKind,
+    bool includeArchived = false,
+  }) {
+    final query = select(ledgerCategories)
+      ..orderBy([
+        (tbl) => OrderingTerm.asc(tbl.categoryKind),
+        (tbl) => OrderingTerm.asc(tbl.parentId),
+        (tbl) => OrderingTerm.asc(tbl.name),
+      ]);
+    if (!includeArchived) {
+      query.where((tbl) => tbl.isArchived.equals(false));
+    }
+    if (categoryKind != null) {
+      query.where((tbl) => tbl.categoryKind.equalsValue(categoryKind));
+    }
+    return query.watch();
+  }
+
+  Stream<List<LedgerCategory>> watchLedgerSubcategories({
+    required int parentId,
+    bool includeArchived = false,
+  }) {
+    final query = select(ledgerCategories)
+      ..where((tbl) => tbl.parentId.equals(parentId))
+      ..orderBy([(tbl) => OrderingTerm.asc(tbl.name)]);
+    if (!includeArchived) {
+      query.where((tbl) => tbl.isArchived.equals(false));
+    }
+    return query.watch();
+  }
+
+  Future<int> createLedgerCategory({
+    required String name,
+    required LedgerCategoryKind categoryKind,
+    int? parentId,
+  }) async {
+    final now = DateTime.now().toUtc();
+    final Value<int?> resolvedParent = parentId == null
+        ? const Value.absent()
+        : Value(parentId);
+    final companion = LedgerCategoriesCompanion.insert(
+      name: name,
+      categoryKind: Value(categoryKind),
+      parentId: resolvedParent,
+      isArchived: const Value(false),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(ledgerCategories).insert(companion);
+  }
+
+  Future<void> updateLedgerCategory(LedgerCategory category) async {
+    final updated = category.copyWith(
+      name: category.name.trim(),
+      updatedAt: DateTime.now().toUtc(),
+    );
+    await update(ledgerCategories).replace(updated);
+  }
+
+  Future<void> setLedgerCategoryArchived({
+    required int id,
+    required bool archived,
+  }) async {
+    await (update(ledgerCategories)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerCategoriesCompanion(
+        isArchived: Value(archived),
+        updatedAt: Value(DateTime.now().toUtc()),
+      ),
+    );
+  }
+
+  Future<void> deleteLedgerCategory(int id) async {
+    await (delete(ledgerCategories)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<LedgerCategory?> getLedgerCategoryById(int id) {
+    return (select(
+      ledgerCategories,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Stream<List<LedgerBudget>> watchLedgerBudgets({
+    LedgerBudgetPeriodKind? periodKind,
+  }) {
+    final query = select(ledgerBudgets)
+      ..orderBy([
+        (tbl) => OrderingTerm.desc(tbl.year),
+        (tbl) => OrderingTerm.desc(tbl.month),
+        (tbl) => OrderingTerm.asc(tbl.categoryId),
+      ]);
+    if (periodKind != null) {
+      query.where((tbl) => tbl.periodKind.equalsValue(periodKind));
+    }
+    return query.watch();
+  }
+
+  Future<int> upsertLedgerBudget({
+    required int categoryId,
+    LedgerBudgetPeriodKind periodKind = LedgerBudgetPeriodKind.monthly,
+    required int year,
+    int? month,
+    required double amount,
+    String currencyCode = 'EUR',
+  }) async {
+    final now = DateTime.now().toUtc();
+    final Value<int?> resolvedMonth = month == null
+        ? const Value.absent()
+        : Value(month);
+    final entry = LedgerBudgetsCompanion.insert(
+      categoryId: categoryId,
+      periodKind: Value(periodKind),
+      year: year,
+      month: resolvedMonth,
+      amount: Value(amount),
+      currencyCode: Value(currencyCode.toUpperCase()),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(ledgerBudgets).insertOnConflictUpdate(entry);
+  }
+
+  Future<void> deleteLedgerBudget(int id) async {
+    await (delete(ledgerBudgets)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Stream<List<LedgerTransaction>> watchLedgerTransactions({
+    LedgerTransactionKind? kind,
+    DateTime? start,
+    DateTime? end,
+    bool? isPlanned,
+  }) {
+    final query = select(ledgerTransactions)
+      ..orderBy([
+        (tbl) => OrderingTerm.desc(tbl.bookingDate),
+        (tbl) => OrderingTerm.desc(tbl.createdAt),
+      ]);
+    if (kind != null) {
+      query.where((tbl) => tbl.transactionKind.equalsValue(kind));
+    }
+    if (start != null) {
+      query.where((tbl) => tbl.bookingDate.isBiggerOrEqualValue(start.toUtc()));
+    }
+    if (end != null) {
+      query.where((tbl) => tbl.bookingDate.isSmallerOrEqualValue(end.toUtc()));
+    }
+    if (isPlanned != null) {
+      query.where((tbl) => tbl.isPlanned.equals(isPlanned));
+    }
+    return query.watch();
+  }
+
+  Future<LedgerTransaction?> getLedgerTransaction(int id) {
+    return (select(
+      ledgerTransactions,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<int> insertLedgerTransaction({
+    required LedgerTransactionKind transactionKind,
+    required double amount,
+    required String currencyCode,
+    DateTime? bookingDate,
+    bool isPlanned = false,
+    int? accountId,
+    int? targetAccountId,
+    int? categoryId,
+    int? subcategoryId,
+    String description = '',
+    String? cryptoSymbol,
+    double? cryptoQuantity,
+    double? pricePerUnit,
+    double? feeAmount,
+  }) {
+    assert(amount >= 0, 'Amount must be positive.');
+    final now = DateTime.now().toUtc();
+    final Value<int?> resolvedAccount = accountId == null
+        ? const Value.absent()
+        : Value(accountId);
+    final Value<int?> resolvedTarget = targetAccountId == null
+        ? const Value.absent()
+        : Value(targetAccountId);
+    final Value<int?> resolvedCategory = categoryId == null
+        ? const Value.absent()
+        : Value(categoryId);
+    final Value<int?> resolvedSubcategory = subcategoryId == null
+        ? const Value.absent()
+        : Value(subcategoryId);
+    final Value<String?> resolvedSymbol =
+        cryptoSymbol == null || cryptoSymbol.isEmpty
+        ? const Value.absent()
+        : Value(cryptoSymbol.toUpperCase());
+    final Value<double?> resolvedQuantity = cryptoQuantity == null
+        ? const Value.absent()
+        : Value(cryptoQuantity);
+    final Value<double?> resolvedPrice = pricePerUnit == null
+        ? const Value.absent()
+        : Value(pricePerUnit);
+    final Value<double?> resolvedFee = feeAmount == null
+        ? const Value.absent()
+        : Value(feeAmount);
+    final companion = LedgerTransactionsCompanion.insert(
+      transactionKind: Value(transactionKind),
+      amount: Value(amount),
+      currencyCode: Value(currencyCode.toUpperCase()),
+      bookingDate: Value((bookingDate ?? DateTime.now()).toUtc()),
+      isPlanned: Value(isPlanned),
+      description: Value(description),
+      accountId: resolvedAccount,
+      targetAccountId: resolvedTarget,
+      categoryId: resolvedCategory,
+      subcategoryId: resolvedSubcategory,
+      cryptoSymbol: resolvedSymbol,
+      cryptoQuantity: resolvedQuantity,
+      pricePerUnit: resolvedPrice,
+      feeAmount: resolvedFee,
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(ledgerTransactions).insert(companion);
+  }
+
+  Future<void> updateLedgerTransaction(LedgerTransaction transaction) async {
+    final updated = transaction.copyWith(
+      currencyCode: transaction.currencyCode.toUpperCase(),
+      description: transaction.description.trim(),
+      cryptoSymbol: Value(transaction.cryptoSymbol?.toUpperCase()),
+      updatedAt: DateTime.now().toUtc(),
+    );
+    await update(ledgerTransactions).replace(updated);
+  }
+
+  Future<void> deleteLedgerTransaction(int id) async {
+    await (delete(ledgerTransactions)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Stream<List<LedgerRecurringTransaction>> watchLedgerRecurringTransactions() {
+    return (select(ledgerRecurringTransactions)..orderBy([
+          (tbl) => OrderingTerm.asc(tbl.nextOccurrence),
+          (tbl) => OrderingTerm.asc(tbl.createdAt),
+        ]))
+        .watch();
+  }
+
+  Future<int> createLedgerRecurringTransaction({
+    required String name,
+    required LedgerTransactionKind transactionKind,
+    required double amount,
+    required String currencyCode,
+    DateTime? startedAt,
+    DateTime? nextOccurrence,
+    int intervalCount = 1,
+    LedgerRecurringIntervalKind intervalKind =
+        LedgerRecurringIntervalKind.monthly,
+    int? accountId,
+    int? targetAccountId,
+    int? categoryId,
+    int? subcategoryId,
+    bool autoApply = false,
+    String metadataJson = '{}',
+  }) {
+    assert(amount >= 0, 'Amount must be positive.');
+    final now = DateTime.now().toUtc();
+    final Value<int?> resolvedAccount = accountId == null
+        ? const Value.absent()
+        : Value(accountId);
+    final Value<int?> resolvedTarget = targetAccountId == null
+        ? const Value.absent()
+        : Value(targetAccountId);
+    final Value<int?> resolvedCategory = categoryId == null
+        ? const Value.absent()
+        : Value(categoryId);
+    final Value<int?> resolvedSubcategory = subcategoryId == null
+        ? const Value.absent()
+        : Value(subcategoryId);
+    final companion = LedgerRecurringTransactionsCompanion.insert(
+      name: name,
+      transactionKind: Value(transactionKind),
+      amount: Value(amount),
+      currencyCode: Value(currencyCode.toUpperCase()),
+      startedAt: Value((startedAt ?? DateTime.now()).toUtc()),
+      nextOccurrence: Value((nextOccurrence ?? DateTime.now()).toUtc()),
+      intervalCount: Value(intervalCount),
+      intervalKind: Value(intervalKind),
+      accountId: resolvedAccount,
+      targetAccountId: resolvedTarget,
+      categoryId: resolvedCategory,
+      subcategoryId: resolvedSubcategory,
+      autoApply: Value(autoApply),
+      metadataJson: Value(metadataJson),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    );
+    return into(ledgerRecurringTransactions).insert(companion);
+  }
+
+  Future<void> updateLedgerRecurringTransaction(
+    LedgerRecurringTransaction recurring,
+  ) async {
+    final updated = recurring.copyWith(
+      currencyCode: recurring.currencyCode.toUpperCase(),
+      metadataJson: recurring.metadataJson.trim().isEmpty
+          ? '{}'
+          : recurring.metadataJson,
+      updatedAt: DateTime.now().toUtc(),
+    );
+    await update(ledgerRecurringTransactions).replace(updated);
+  }
+
+  Future<void> setRecurringNextOccurrence({
+    required int id,
+    required DateTime nextOccurrence,
+  }) async {
+    await (update(
+      ledgerRecurringTransactions,
+    )..where((tbl) => tbl.id.equals(id))).write(
+      LedgerRecurringTransactionsCompanion(
+        nextOccurrence: Value(nextOccurrence.toUtc()),
+        updatedAt: Value(DateTime.now().toUtc()),
+      ),
+    );
+  }
+
+  Future<void> deleteLedgerRecurringTransaction(int id) async {
+    await (delete(
+      ledgerRecurringTransactions,
+    )..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  DateTime _calculateNextOccurrence(LedgerRecurringTransaction recurring) {
+    final base = recurring.nextOccurrence.toUtc();
+    switch (recurring.intervalKind) {
+      case LedgerRecurringIntervalKind.daily:
+        return base.add(Duration(days: recurring.intervalCount));
+      case LedgerRecurringIntervalKind.weekly:
+        return base.add(Duration(days: 7 * recurring.intervalCount));
+      case LedgerRecurringIntervalKind.monthly:
+        return DateTime.utc(
+          base.year,
+          base.month + recurring.intervalCount,
+          base.day,
+          base.hour,
+          base.minute,
+          base.second,
+          base.millisecond,
+          base.microsecond,
+        );
+      case LedgerRecurringIntervalKind.quarterly:
+        return DateTime.utc(
+          base.year,
+          base.month + 3 * recurring.intervalCount,
+          base.day,
+          base.hour,
+          base.minute,
+          base.second,
+          base.millisecond,
+          base.microsecond,
+        );
+      case LedgerRecurringIntervalKind.yearly:
+        return DateTime.utc(
+          base.year + recurring.intervalCount,
+          base.month,
+          base.day,
+          base.hour,
+          base.minute,
+          base.second,
+          base.millisecond,
+          base.microsecond,
+        );
+      case LedgerRecurringIntervalKind.custom:
+        return base.add(Duration(days: recurring.intervalCount));
+    }
+  }
+
+  Future<int> applyRecurringTransaction({
+    required LedgerRecurringTransaction recurring,
+    DateTime? bookingDate,
+    bool isPlanned = false,
+  }) async {
+    final createdId = await insertLedgerTransaction(
+      transactionKind: recurring.transactionKind,
+      amount: recurring.amount,
+      currencyCode: recurring.currencyCode,
+      bookingDate: bookingDate ?? recurring.nextOccurrence,
+      isPlanned: isPlanned,
+      accountId: recurring.accountId,
+      targetAccountId: recurring.targetAccountId,
+      categoryId: recurring.categoryId,
+      subcategoryId: recurring.subcategoryId,
+      description: recurring.name,
+    );
+    final next = _calculateNextOccurrence(recurring);
+    await setRecurringNextOccurrence(id: recurring.id, nextOccurrence: next);
+    return createdId;
+  }
+
+  Stream<List<CryptoPriceEntry>> watchCryptoPriceEntries() {
+    return (select(cryptoPriceEntries)..orderBy([
+          (tbl) => OrderingTerm.asc(tbl.symbol),
+          (tbl) => OrderingTerm.asc(tbl.currencyCode),
+        ]))
+        .watch();
+  }
+
+  Future<CryptoPriceEntry?> getCachedCryptoPrice({
+    required String symbol,
+    required String currencyCode,
+  }) {
+    final normalizedSymbol = symbol.toUpperCase();
+    final normalizedCurrency = currencyCode.toUpperCase();
+    return (select(cryptoPriceEntries)
+          ..where((tbl) => tbl.symbol.equals(normalizedSymbol))
+          ..where((tbl) => tbl.currencyCode.equals(normalizedCurrency))
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  Future<void> upsertCryptoPrice({
+    required String symbol,
+    required String currencyCode,
+    required double price,
+    required DateTime fetchedAt,
+  }) async {
+    final normalizedSymbol = symbol.toUpperCase();
+    final normalizedCurrency = currencyCode.toUpperCase();
+    final existing = await getCachedCryptoPrice(
+      symbol: normalizedSymbol,
+      currencyCode: normalizedCurrency,
+    );
+    final companion = CryptoPriceEntriesCompanion(
+      symbol: Value(normalizedSymbol),
+      currencyCode: Value(normalizedCurrency),
+      price: Value(price),
+      fetchedAt: Value(fetchedAt.toUtc()),
+    );
+    if (existing == null) {
+      await into(cryptoPriceEntries).insert(companion);
+      return;
+    }
+    await (update(
+      cryptoPriceEntries,
+    )..where((tbl) => tbl.id.equals(existing.id))).write(companion.copyWith());
+  }
+
+  Future<Map<int, double>> calculateAccountBalances({
+    bool includePlanned = false,
+  }) async {
+    final accounts = await select(ledgerAccounts).get();
+    final transactions = await select(ledgerTransactions).get();
+    final Map<int, double> result = {
+      for (final account in accounts) account.id: account.initialBalance,
+    };
+    for (final transaction in transactions) {
+      if (!includePlanned && transaction.isPlanned) {
+        continue;
+      }
+      final amount = transaction.amount;
+      switch (transaction.transactionKind) {
+        case LedgerTransactionKind.income:
+          if (transaction.accountId != null) {
+            result.update(
+              transaction.accountId!,
+              (value) => value + amount,
+              ifAbsent: () => amount,
+            );
+          }
+          break;
+        case LedgerTransactionKind.expense:
+          if (transaction.accountId != null) {
+            result.update(
+              transaction.accountId!,
+              (value) => value - amount,
+              ifAbsent: () => -amount,
+            );
+          }
+          break;
+        case LedgerTransactionKind.transfer:
+          if (transaction.accountId != null) {
+            result.update(
+              transaction.accountId!,
+              (value) => value - amount,
+              ifAbsent: () => -amount,
+            );
+          }
+          if (transaction.targetAccountId != null) {
+            result.update(
+              transaction.targetAccountId!,
+              (value) => value + amount,
+              ifAbsent: () => amount,
+            );
+          }
+          break;
+        case LedgerTransactionKind.cryptoPurchase:
+          if (transaction.accountId != null) {
+            result.update(
+              transaction.accountId!,
+              (value) => value - amount,
+              ifAbsent: () => -amount,
+            );
+          }
+          break;
+      }
+    }
+    return result;
+  }
+
+  Future<Map<String, double>> calculateNetWorthByCurrency({
+    bool includePlanned = false,
+  }) async {
+    final accounts = await select(ledgerAccounts).get();
+    final balances = await calculateAccountBalances(
+      includePlanned: includePlanned,
+    );
+    final Map<String, double> sums = {};
+    for (final account in accounts) {
+      if (!account.includeInNetWorth) {
+        continue;
+      }
+      final balance = balances[account.id] ?? account.initialBalance;
+      sums.update(
+        account.currencyCode.toUpperCase(),
+        (value) => value + balance,
+        ifAbsent: () => balance,
+      );
+    }
+    return sums;
   }
 }
