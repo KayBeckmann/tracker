@@ -37,6 +37,65 @@ a:hover {
   text-align: center;
 }
 
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+
+.top-bar__logo {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.top-bar__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.top-bar__nav a {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+.top-bar__nav a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.lang-switcher {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lang-switcher button {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.lang-switcher button:hover {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.lang-switcher .is-active-lang {
+  background: #fff;
+  color: #0f172a;
+  border-color: #fff;
+}
+
 .hero__content {
   max-width: 720px;
   margin: 0 auto;
@@ -215,6 +274,22 @@ a:hover {
   font-size: 0.85rem;
 }
 
+@media (max-width: 768px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .top-bar__nav {
+    gap: 12px;
+  }
+
+  .lang-switcher {
+    justify-content: flex-start;
+  }
+}
+
 /* Wiki */
 .wiki-body {
   background: var(--bg);
@@ -233,14 +308,20 @@ a:hover {
   background: rgba(15, 23, 42, 0.9);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+  gap: 16px;
 }
 .wiki-logo {
   font-weight: 700;
   font-size: 1.2rem;
   color: #fff;
 }
+.wiki-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
 .wiki-nav a {
-  margin-left: 20px;
   color: var(--text-muted);
 }
 .wiki-nav a:hover {
@@ -306,6 +387,22 @@ a:hover {
   padding: 120px 24px 80px;
   background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.15), transparent),
     var(--bg);
+}
+
+.legal-language-bar {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 32px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.legal-brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
 }
 
 .legal-container {

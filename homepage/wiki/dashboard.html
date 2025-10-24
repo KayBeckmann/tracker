@@ -1,59 +1,68 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker Wiki – Dashboard</title>
+    <title data-i18n="wiki.dashboard.meta.title">Tracker Wiki — Dashboard</title>
     <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
   </head>
   <body class="wiki-body">
     <header class="wiki-header">
-      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
       <nav class="wiki-nav">
-        <a href="index.html">Wiki Übersicht</a>
-        <a href="../index.html#module">Module</a>
-        <a href="../impressum.html">Impressum</a>
-        <a href="../datenschutz.html">Datenschutz</a>
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
       </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
     </header>
     <main class="wiki-content">
       <article class="wiki-article">
-        <h1>Dashboard</h1>
+        <h1 data-i18n="wiki.dashboard.title">Dashboard</h1>
         <section>
-          <h2>Bedienung</h2>
-          <ul>
-            <li>Startseite der App nach Login oder lokalem Start.</li>
-            <li>Zeigt Willkommensnachricht, Statusmeldungen und Kennzahlen anderer Module.</li>
-            <li>Schnellzugriff auf Backend-Kommunikation und gespeicherte Antworten.</li>
-            <li>Lösch-Schaltfläche entfernt lokale Antworten.</li>
+          <h2 data-i18n="wiki.dashboard.sections.usage.heading">Usage</h2>
+          <ul data-i18n-html="wiki.dashboard.sections.usage.list">
+            <li>Landing screen after signing in or launching the local app.</li>
+            <li>Shows welcome message, system alerts, and cross-module metrics.</li>
+            <li>Quick actions trigger backend calls and surface stored responses.</li>
+            <li>Clearing the response list removes locally cached handshake data.</li>
           </ul>
         </section>
         <section>
-          <h2>Datenmodell</h2>
-          <ul>
-            <li>Nutzt Drift-Tabelle <code>greeting_entries</code> für gespeicherte Serverantworten.</li>
-            <li>Greift auf Hive für Sprache, Theme und Modul-Konfiguration zu.</li>
-            <li>Keine eigenen Synchronisationsdaten.</li>
+          <h2 data-i18n="wiki.dashboard.sections.data.heading">Data model</h2>
+          <ul data-i18n-html="wiki.dashboard.sections.data.list">
+            <li>Uses Drift table <code>greeting_entries</code> to persist server responses.</li>
+            <li>Reads Hive boxes for language, theme, and module preferences.</li>
+            <li>No dedicated sync entities yet; aggregated KPIs are on the roadmap.</li>
           </ul>
         </section>
         <section>
-          <h2>Synchronisation</h2>
-          <ul>
-            <li>Einträge aus dem Begrüßungsservice bleiben lokal.</li>
-            <li>Bei aktiver Mitgliedschaft sind erweiterte Dashboard-Kennzahlen geplant.</li>
+          <h2 data-i18n="wiki.dashboard.sections.sync.heading">Synchronisation</h2>
+          <ul data-i18n-html="wiki.dashboard.sections.sync.list">
+            <li>Greeting entries remain strictly local for debugging purposes.</li>
+            <li>Membership tier will surface cross-module metrics from synced data.</li>
+            <li>Widget layout preferences will sync once Phase&nbsp;3 launches.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
-          <ul>
-            <li>Integration echter Modul-Daten (Tasks, Habits, Ledger).</li>
-            <li>Personalisierbares Layout (Widgets, Reihenfolge).</li>
+          <h2 data-i18n="wiki.dashboard.sections.roadmap.heading">Roadmap</h2>
+          <ul data-i18n-html="wiki.dashboard.sections.roadmap.list">
+            <li>Inject live metrics from tasks, habits, ledger, and journal.</li>
+            <li>Offer configurable widgets, sizing, and drag-and-drop layout.</li>
+            <li>Support multiple dashboards for personal and work contexts.</li>
           </ul>
         </section>
       </article>
     </main>
     <footer class="wiki-footer">
-      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>

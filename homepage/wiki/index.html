@@ -1,62 +1,72 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker Wiki – Übersicht</title>
+    <title data-i18n="wiki.index.meta.title">Tracker Wiki — Overview</title>
     <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
   </head>
   <body class="wiki-body">
     <header class="wiki-header">
-      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
       <nav class="wiki-nav">
-        <a href="../index.html#module">Zur Produktseite</a>
-        <a href="../impressum.html">Impressum</a>
-        <a href="../datenschutz.html">Datenschutz</a>
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
       </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
     </header>
     <main class="wiki-content">
       <article class="wiki-article">
-        <h1>Tracker Wiki</h1>
-        <p>Hier findest du Detailinformationen zu jedem Modul: Bedienung, Datenmodell und Synchronisationsarchitektur.</p>
+        <h1 data-i18n="wiki.index.title">Tracker Wiki</h1>
+        <p data-i18n="wiki.index.intro">
+          Detailed guidance for every module: daily workflows, data structures, and synchronisation notes.
+        </p>
         <div class="wiki-card-grid">
           <a class="wiki-card" href="dashboard.html">
-            <h2>Dashboard</h2>
-            <p>Überblick, Kennzahlen und zentrale Aktionen.</p>
+            <h2 data-i18n="wiki.index.cards.dashboard.title">Dashboard</h2>
+            <p data-i18n="wiki.index.cards.dashboard.body">Overview, metrics, and quick actions.</p>
           </a>
           <a class="wiki-card" href="tasks.html">
-            <h2>Aufgaben &amp; Termine</h2>
-            <p>Planung, Kalender, Kategorien und Erinnerungen.</p>
+            <h2 data-i18n="wiki.index.cards.tasks.title">Tasks &amp; Appointments</h2>
+            <p data-i18n="wiki.index.cards.tasks.body">Planning, calendars, categories, and reminders.</p>
           </a>
           <a class="wiki-card" href="time_tracking.html">
-            <h2>Zeiterfassung</h2>
-            <p>Sessions erfassen, Aufgaben verknüpfen, Auswerten.</p>
+            <h2 data-i18n="wiki.index.cards.timeTracking.title">Time Tracking</h2>
+            <p data-i18n="wiki.index.cards.timeTracking.body">Sessions, task links, and analytics.</p>
           </a>
           <a class="wiki-card" href="notes.html">
-            <h2>Notizen</h2>
-            <p>Markdown, Zeichnungen, Tags und Suche.</p>
+            <h2 data-i18n="wiki.index.cards.notes.title">Notes</h2>
+            <p data-i18n="wiki.index.cards.notes.body">Markdown, drawings, tags, and search.</p>
           </a>
           <a class="wiki-card" href="journal.html">
-            <h2>Journal &amp; Mood Tracker</h2>
-            <p>Tägliche Reflexion mit Stimmungsverlauf.</p>
+            <h2 data-i18n="wiki.index.cards.journal.title">Journal &amp; Mood</h2>
+            <p data-i18n="wiki.index.cards.journal.body">Daily reflection and mood tracking roadmap.</p>
           </a>
           <a class="wiki-card" href="habits.html">
-            <h2>Habits</h2>
-            <p>Routinen tracken, Serien aufbauen, Trends erkennen.</p>
+            <h2 data-i18n="wiki.index.cards.habits.title">Habits</h2>
+            <p data-i18n="wiki.index.cards.habits.body">Track routines, streaks, and progress.</p>
           </a>
           <a class="wiki-card" href="ledger.html">
-            <h2>Haushaltsbuch</h2>
-            <p>Finanzen, Budgets und Berichte im Blick behalten.</p>
+            <h2 data-i18n="wiki.index.cards.ledger.title">Household Ledger</h2>
+            <p data-i18n="wiki.index.cards.ledger.body">Finances, budgets, and reports.</p>
           </a>
           <a class="wiki-card" href="settings.html">
-            <h2>Einstellungen</h2>
-            <p>Sprache, Theme, Module, Synchronisation.</p>
+            <h2 data-i18n="wiki.index.cards.settings.title">Settings</h2>
+            <p data-i18n="wiki.index.cards.settings.body">Language, theme, modules, and sync.</p>
           </a>
         </div>
       </article>
     </main>
     <footer class="wiki-footer">
-      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>

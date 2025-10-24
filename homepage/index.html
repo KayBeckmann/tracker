@@ -3,245 +3,294 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker – Produktübersicht</title>
+    <title data-i18n="homepage.meta.title">Tracker — Personal Productivity Suite</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="translations.js" defer></script>
+    <script src="i18n.js" defer></script>
   </head>
   <body>
     <header class="hero">
+      <div class="top-bar">
+        <a class="top-bar__logo" href="index.html" data-i18n="common.brand">Tracker</a>
+        <nav class="top-bar__nav">
+          <a href="#vision" data-i18n="common.nav.vision">Vision</a>
+          <a href="#module" data-i18n="common.nav.modules">Modules</a>
+          <a href="#sync" data-i18n="common.nav.sync">Sync Modes</a>
+          <a href="#availability" data-i18n="common.nav.availability">Downloads</a>
+          <a href="#roadmap" data-i18n="common.nav.roadmap">Roadmap</a>
+          <a href="wiki/index.html" data-i18n="common.nav.wiki">Wiki</a>
+          <a href="impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+          <a href="datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
+        </nav>
+        <div class="lang-switcher">
+          <button type="button" data-lang="en">English</button>
+          <button type="button" data-lang="de">Deutsch</button>
+          <button type="button" data-lang="sv">Svenska</button>
+        </div>
+      </div>
       <div class="hero__content">
-        <h1>Tracker</h1>
-        <p>Die modulare Produktivitäts-Suite für persönliche Planung, Dokumentation und verschlüsselte Synchronisierung.</p>
+        <h1 data-i18n="homepage.hero.title">Tracker</h1>
+        <p data-i18n="homepage.hero.subtitle">
+          The modular productivity suite for personal planning, knowledge capture, and secure synchronisation across every device.
+        </p>
         <div class="hero__actions">
-          <a class="cta" href="#module">Module entdecken</a>
-          <a class="cta-secondary" href="/wiki/">Zum Wiki</a>
+          <a class="cta" href="#module" data-i18n="homepage.hero.ctaPrimary">Explore the modules</a>
+          <a class="cta-secondary" href="wiki/index.html" data-i18n="homepage.hero.ctaSecondary">Open the wiki</a>
         </div>
       </div>
     </header>
-
     <main>
       <section id="vision" class="section">
         <div class="section__inner">
-          <h2>Warum Tracker?</h2>
-          <p>
-            Tracker vereint Aufgabenplanung, Notizen, Journal, Gewohnheiten und Finanzen in einer flexiblen App.
-            Alle Inhalte funktionieren offline. Wer sich anmeldet und ein Abo abschließt, kann seine Daten
-            Ende-zu-Ende verschlüsselt zwischen Geräten synchronisieren.
+          <h2 data-i18n="homepage.vision.heading">Why Tracker?</h2>
+          <p data-i18n="homepage.vision.body">
+            Tracker combines tasks, notes, journaling, habits, budgets, and time tracking in an offline-first workspace. A paid membership
+            unlocks end-to-end encrypted sync between your devices.
           </p>
           <div class="grid">
             <article class="card">
-              <h3>Offline zuerst</h3>
-              <p>Ohne Account bleibt alles lokal auf dem Gerät. Ideal für Privatsphäre und Reisen.</p>
+              <h3 data-i18n="homepage.vision.cards.offline.title">Offline first</h3>
+              <p data-i18n="homepage.vision.cards.offline.body">
+                Work entirely locally without creating an account—ideal for privacy and travelling.
+              </p>
             </article>
             <article class="card">
-              <h3>Verschlüsselte Cloud</h3>
-              <p>Mit Mitgliedschaft werden Daten sicher im Backend gespeichert und synchronisiert.</p>
+              <h3 data-i18n="homepage.vision.cards.encrypted.title">Encrypted cloud</h3>
+              <p data-i18n="homepage.vision.cards.encrypted.body">
+                Membership unlocks zero-knowledge sync across devices with conflict management on the roadmap.
+              </p>
             </article>
             <article class="card">
-              <h3>Modular &amp; anpassbar</h3>
-              <p>Module lassen sich ein- und ausblenden, farblich anpassen und in der Reihenfolge sortieren.</p>
+              <h3 data-i18n="homepage.vision.cards.modular.title">Modular &amp; adaptable</h3>
+              <p data-i18n="homepage.vision.cards.modular.body">
+                Enable only the modules you need, adjust colours, and personalise their order.
+              </p>
             </article>
           </div>
         </div>
       </section>
-
       <section id="module" class="section section--alt">
         <div class="section__inner">
-          <h2>Die Module im Überblick</h2>
+          <h2 data-i18n="homepage.modules.heading">Modules at a glance</h2>
           <div class="module-grid">
             <article class="module-card">
-              <h3>Dashboard</h3>
-              <p>Personalisiertes Cockpit mit den wichtigsten Kennzahlen und Schnellaktionen.</p>
-              <ul>
-                <li>Überblick über Statusmeldungen</li>
-                <li>Schnellzugriff auf kürzliche Einträge</li>
-                <li>Integration aller Module</li>
+              <h3 data-i18n="homepage.modules.dashboard.title">Dashboard</h3>
+              <p data-i18n="homepage.modules.dashboard.body">Personal cockpit with highlights from every module.</p>
+              <ul data-i18n-html="homepage.modules.dashboard.list">
+                <li>At-a-glance status cards across modules (available)</li>
+                <li>Quick access to recent notes, tasks, and entries (available)</li>
+                <li>Configurable widgets and layout (roadmap)</li>
               </ul>
             </article>
             <article class="module-card">
-              <h3>Aufgaben &amp; Termine</h3>
-              <p>Plane Aufgaben, verwalte Kategorien und verbinde Zeiterfassung.</p>
-              <ul>
-                <li>Aufgabenlisten und Kalender-Vorschau</li>
-                <li>Prioritäten, Kategorien &amp; Erinnerungen</li>
-                <li>Zeiterfassung direkt aus Aufgaben</li>
+              <h3 data-i18n="homepage.modules.tasks.title">Tasks &amp; Appointments</h3>
+              <p data-i18n="homepage.modules.tasks.body">Plan tasks, deadlines, reminders, and calendar events together.</p>
+              <ul data-i18n-html="homepage.modules.tasks.list">
+                <li>Task lists plus calendar overview with highlighted days (available)</li>
+                <li>Sort by due date, priority, and category (available)</li>
+                <li>Time tracking directly from tasks (in development)</li>
               </ul>
             </article>
             <article class="module-card">
-              <h3>Notizen</h3>
-              <p>Markdown-Editor, Zeichnungen, Tags und Suche in einem flexiblen Workspace.</p>
-              <ul>
-                <li>Markdown mit Live-Vorschau</li>
-                <li>Freihand-Zeichnungen &amp; Formen</li>
-                <li>Tagging, Filter &amp; Sortierung</li>
+              <h3 data-i18n="homepage.modules.notes.title">Notes</h3>
+              <p data-i18n="homepage.modules.notes.body">Flexible Markdown knowledge base with drawing support.</p>
+              <ul data-i18n-html="homepage.modules.notes.list">
+                <li>Live preview editor with tagging and full-text search (available)</li>
+                <li>Freehand sketches and shapes for visual notes (available)</li>
+                <li>Templates, multi-tag filters, and backlinks (roadmap)</li>
               </ul>
             </article>
             <article class="module-card">
-              <h3>Journal &amp; Mood Tracker</h3>
-              <p>Erfasse tägliche Einträge, Emotionen und Highlights für persönliche Reflexion.</p>
-              <ul>
-                <li>Tages- &amp; Wochenansichten</li>
-                <li>Stimmungsindikatoren &amp; Tags</li>
-                <li>Verknüpfung zu Notizen &amp; Aufgaben</li>
+              <h3 data-i18n="homepage.modules.journal.title">Journal &amp; Mood Tracker</h3>
+              <p data-i18n="homepage.modules.journal.body">Daily reflection with planned mood tracking and highlights.</p>
+              <ul data-i18n-html="homepage.modules.journal.list">
+                <li>Day and week timelines with mood indicators (in design)</li>
+                <li>Link entries to notes and tasks (roadmap)</li>
+                <li>Encrypted sync once memberships launch (planned)</li>
               </ul>
             </article>
             <article class="module-card">
-              <h3>Gewohnheiten</h3>
-              <p>Tracke Routinen, Zähler oder Zeitziele und analysiere deine Entwicklung.</p>
-              <ul>
-                <li>Tägliche oder wöchentliche Ziele</li>
-                <li>Statistiken &amp; Verlaufsdiagramme</li>
-                <li>Flexible Erinnerungseinstellungen</li>
+              <h3 data-i18n="homepage.modules.habits.title">Habits</h3>
+              <p data-i18n="homepage.modules.habits.body">Build routines with streaks, counters, and insights.</p>
+              <ul data-i18n-html="homepage.modules.habits.list">
+                <li>Track daily or weekly goals with flexible units (available)</li>
+                <li>Historical comparison views and streak analytics (available)</li>
+                <li>Shared templates and suggestions (roadmap)</li>
               </ul>
             </article>
             <article class="module-card">
-              <h3>Haushaltsbuch</h3>
-              <p>Behalte Einnahmen und Ausgaben im Blick und exportiere Berichte.</p>
-              <ul>
-                <li>Kategorien &amp; Budgets</li>
-                <li>Diagramme &amp; Filter</li>
-                <li>Exportfunktionen für Steuer &amp; Analyse</li>
+              <h3 data-i18n="homepage.modules.ledger.title">Household Ledger</h3>
+              <p data-i18n="homepage.modules.ledger.body">Stay on top of expenses, budgets, and reports.</p>
+              <ul data-i18n-html="homepage.modules.ledger.list">
+                <li>Income and expense tracking with categories (available)</li>
+                <li>Budget versus actual overviews and filters (available)</li>
+                <li>Charts and backend sync integration (in progress)</li>
               </ul>
             </article>
             <article class="module-card">
-              <h3>Zeiterfassung</h3>
-              <p>Erfasse Sessions, verknüpfe sie mit Aufgaben und halte den Fokus.</p>
-              <ul>
-                <li>Manuelle und Timer-Eingabe</li>
-                <li>Tag-basierte Auswertungen</li>
-                <li>Integration in Aufgabenplan</li>
+              <h3 data-i18n="homepage.modules.timeTracking.title">Time Tracking</h3>
+              <p data-i18n="homepage.modules.timeTracking.body">Measure focus sessions and tie them to tasks.</p>
+              <ul data-i18n-html="homepage.modules.timeTracking.list">
+                <li>Manual entry and timers for sessions (available)</li>
+                <li>Day and tag based summaries (available)</li>
+                <li>Deeper task integration and exports (roadmap)</li>
               </ul>
             </article>
             <article class="module-card module-card--secondary">
-              <h3>Einstellungen</h3>
-              <p>Steuerzentrale für Sprache, Theme, Modul-Sichtbarkeit und Synchronisierung.</p>
-              <ul>
-                <li>Sprache &amp; Theme anpassen</li>
-                <li>Module ein-/ausblenden &amp; sortieren</li>
-                <li>Synchronisierung &amp; Mitgliedschaft verwalten</li>
+              <h3 data-i18n="homepage.modules.settings.title">Settings</h3>
+              <p data-i18n="homepage.modules.settings.body">Control language, theming, modules, and sync.</p>
+              <ul data-i18n-html="homepage.modules.settings.list">
+                <li>Backend login for email, Google, and Apple ID (available)</li>
+                <li>Language and theme preferences (in development)</li>
+                <li>Module visibility and sync controls (roadmap)</li>
               </ul>
             </article>
           </div>
         </div>
       </section>
-
       <section id="sync" class="section">
         <div class="section__inner">
-          <h2>Lokale Nutzung oder verschlüsselte Cloud</h2>
+          <h2 data-i18n="homepage.sync.heading">Local first or encrypted cloud</h2>
+          <p data-i18n="homepage.sync.body">
+            Choose the mode that fits your privacy needs. Tracker works fully offline, while memberships unlock zero-knowledge sync.
+          </p>
           <div class="grid grid--cols2">
             <article class="card">
-              <h3>Nur lokal</h3>
-              <ul>
-                <li>Alle Daten bleiben auf dem Gerät</li>
-                <li>Kein Account erforderlich</li>
-                <li>Ideal für sensible Informationen</li>
+              <h3 data-i18n="homepage.sync.local.title">Local only</h3>
+              <ul data-i18n-html="homepage.sync.local.list">
+                <li>All data stays on your device by default</li>
+                <li>No account required for the full feature set</li>
+                <li>Ideal for sensitive or offline workflows</li>
               </ul>
             </article>
             <article class="card">
-              <h3>Synchronisiert</h3>
-              <ul>
-                <li>Verschlüsselte Speicherung im Backend</li>
-                <li>Zugriff von mehreren Geräten</li>
-                <li>Mitgliedschaft: 2€/Monat oder 20€/Jahr</li>
+              <h3 data-i18n="homepage.sync.cloud.title">Encrypted sync</h3>
+              <ul data-i18n-html="homepage.sync.cloud.list">
+                <li>End-to-end encryption with per-device keys</li>
+                <li>Access your workspace on mobile, desktop, and web</li>
+                <li>Membership planned at €2/month or €20/year</li>
               </ul>
             </article>
           </div>
         </div>
       </section>
-
       <section id="availability" class="section">
         <div class="section__inner">
-          <h2>Verfügbarkeit &amp; Downloads</h2>
+          <h2 data-i18n="homepage.availability.heading">Availability &amp; downloads</h2>
           <div class="grid grid--cols2">
             <article class="card card--link">
-              <h3>Web-Version</h3>
-              <p>Starte die Web-App direkt im Browser.</p>
-              <a class="card-link" href="https://app.personal-tracker.life/" target="_blank" rel="noopener">Jetzt öffnen</a>
+              <h3 data-i18n="homepage.availability.web.title">Web app</h3>
+              <p data-i18n="homepage.availability.web.body">Launch the progressive web app directly in your browser.</p>
+              <a
+                class="card-link"
+                href="https://app.personal-tracker.life/"
+                target="_blank"
+                rel="noopener"
+                data-i18n="homepage.availability.web.link"
+                >Open now</a
+              >
             </article>
             <article class="card card--link">
-              <h3>Google Play Store</h3>
-              <p>Tracker bald im Play Store verfügbar. Bleib dran!</p>
-              <a class="card-link" href="https://play.google.com/store/apps/details?id=com.example.tracker" target="_blank" rel="noopener">Zur Play-Store-Seite</a>
+              <h3 data-i18n="homepage.availability.playStore.title">Google Play Store</h3>
+              <p data-i18n="homepage.availability.playStore.body">
+                Play Store listing is in preparation—follow the roadmap for the launch date.
+              </p>
+              <a
+                class="card-link"
+                href="https://play.google.com/store/apps/details?id=com.example.tracker"
+                target="_blank"
+                rel="noopener"
+                data-i18n="homepage.availability.playStore.link"
+                >Preview listing</a
+              >
             </article>
             <article class="card card--link">
-              <h3>Windows Download</h3>
-              <p>Vorbereiteter Platzhalter für den Windows-Build.</p>
-              <a class="card-link" href="downloads/tracker-windows.txt" download>Download vorbereiten</a>
+              <h3 data-i18n="homepage.availability.windows.title">Windows download</h3>
+              <p data-i18n="homepage.availability.windows.body">
+                Placeholder build while automated packaging is finalised.
+              </p>
+              <a class="card-link" href="downloads/tracker-windows.txt" download data-i18n="homepage.availability.windows.link"
+                >Prepare download</a
+              >
             </article>
             <article class="card card--link">
-              <h3>Linux Download</h3>
-              <p>Vorbereiteter Platzhalter für den Linux-Build.</p>
-              <a class="card-link" href="downloads/tracker-linux.txt" download>Download vorbereiten</a>
+              <h3 data-i18n="homepage.availability.linux.title">Linux download</h3>
+              <p data-i18n="homepage.availability.linux.body">
+                Placeholder build while automated packaging is finalised.
+              </p>
+              <a class="card-link" href="downloads/tracker-linux.txt" download data-i18n="homepage.availability.linux.link"
+                >Prepare download</a
+              >
             </article>
           </div>
         </div>
       </section>
-
       <section id="roadmap" class="section section--alt">
         <div class="section__inner">
-          <h2>Roadmap &amp; aktueller Status</h2>
-          <p>Wir arbeiten iterativ entlang der folgenden Schwerpunkte:</p>
+          <h2 data-i18n="homepage.roadmap.heading">Roadmap &amp; current status</h2>
+          <p data-i18n="homepage.roadmap.body">We iterate in focused phases to deliver the full Tracker experience.</p>
           <div class="roadmap-grid">
             <article class="roadmap-card">
-              <h3>Phase 1 – Grundlage</h3>
-              <ul>
-                <li>Flutter-App &amp; Backend-Basis – <strong>abgeschlossen</strong></li>
-                <li>Lokale Datenbank &amp; Authentifizierung – <strong>abgeschlossen</strong></li>
-                <li>Mehrsprachigkeit (DE/EN/SV) – <strong>abgeschlossen</strong></li>
+              <h3 data-i18n="homepage.roadmap.phase1.title">Phase&nbsp;1 — Foundation (completed)</h3>
+              <ul data-i18n-html="homepage.roadmap.phase1.list">
+                <li>Flutter app and backend scaffolding — completed</li>
+                <li>Local database integration &amp; authentication — completed</li>
+                <li>Initial multilingual support (DE/EN/SV) — completed</li>
               </ul>
             </article>
             <article class="roadmap-card">
-              <h3>Phase 2 – Module verfeinern</h3>
-              <ul>
-                <li>Tasks, Kalender &amp; Benachrichtigungen</li>
-                <li>Erweiterte Notiz-Features (Vorlagen, Cross-Linking)</li>
-                <li>Journal mit Mood-Tracker</li>
-                <li>Habits, Haushaltsbuch &amp; Berichte</li>
+              <h3 data-i18n="homepage.roadmap.phase2.title">Phase&nbsp;2 — Module polish (in progress)</h3>
+              <ul data-i18n-html="homepage.roadmap.phase2.list">
+                <li>Deepen tasks, calendar, and notification flows</li>
+                <li>Rich note features including templates and backlinks</li>
+                <li>Journal flows with mood tracking</li>
+                <li>Habits, ledger insights, and dashboard widgets</li>
               </ul>
             </article>
             <article class="roadmap-card">
-              <h3>Phase 3 – Synchronisation</h3>
-              <ul>
-                <li>Ende-zu-Ende-Verschlüsselung</li>
-                <li>Konfliktauflösung &amp; Versionierung</li>
-                <li>Integration von Zahlungen (PayPal, Bitcoin)</li>
+              <h3 data-i18n="homepage.roadmap.phase3.title">Phase&nbsp;3 — Synchronisation (upcoming)</h3>
+              <ul data-i18n-html="homepage.roadmap.phase3.list">
+                <li>End-to-end encryption and revision history</li>
+                <li>Conflict resolution workflows</li>
+                <li>Membership payments via PayPal and Bitcoin</li>
               </ul>
             </article>
             <article class="roadmap-card">
-              <h3>Phase 4 – Launch &amp; Plattformen</h3>
-              <ul>
-                <li>Cross-Platform-Optimierung (Android, iOS, Web, Desktop)</li>
-                <li>CI/CD &amp; automatisiertes Testing</li>
-                <li>Produktseite &amp; Dokumentation</li>
+              <h3 data-i18n="homepage.roadmap.phase4.title">Phase&nbsp;4 — Launch &amp; platforms (upcoming)</h3>
+              <ul data-i18n-html="homepage.roadmap.phase4.list">
+                <li>Cross-platform refinements (Android, iOS, Web, Desktop)</li>
+                <li>CI/CD automation and expanded testing</li>
+                <li>Product site, documentation, and onboarding</li>
               </ul>
             </article>
           </div>
         </div>
       </section>
     </main>
-
     <footer class="footer">
       <div class="footer__inner">
         <div>
-          <h4>Tracker</h4>
-          <p>Produktivität neu gedacht – lokal, sicher, flexibel.</p>
+          <h4 data-i18n="homepage.footer.title">Tracker</h4>
+          <p data-i18n="homepage.footer.body">Productivity reimagined—local-first, secure, adaptable.</p>
         </div>
         <div>
-          <h5>Links</h5>
+          <h5 data-i18n="homepage.footer.linksTitle">Links</h5>
           <ul>
-            <li><a href="#vision">Vision</a></li>
-            <li><a href="#module">Module</a></li>
-            <li><a href="#sync">Sync-Modi</a></li>
-            <li><a href="#roadmap">Roadmap</a></li>
-            <li><a href="/impressum.html">Impressum</a></li>
-            <li><a href="/datenschutz.html">Datenschutz</a></li>
+            <li><a href="#vision" data-i18n="common.nav.vision">Vision</a></li>
+            <li><a href="#module" data-i18n="common.nav.modules">Modules</a></li>
+            <li><a href="#sync" data-i18n="common.nav.sync">Sync Modes</a></li>
+            <li><a href="#roadmap" data-i18n="common.nav.roadmap">Roadmap</a></li>
+            <li><a href="wiki/index.html" data-i18n="common.nav.wiki">Wiki</a></li>
+            <li><a href="impressum.html" data-i18n="common.nav.imprint">Imprint</a></li>
+            <li><a href="datenschutz.html" data-i18n="common.nav.privacy">Privacy</a></li>
           </ul>
         </div>
         <div>
-          <h5>Kontakt</h5>
-          <p>kontakt@tracker-app.dev</p>
+          <h5 data-i18n="homepage.footer.contactTitle">Contact</h5>
+          <p><a href="mailto:kontakt@tracker-app.dev" data-i18n="homepage.footer.contactEmail">kontakt@tracker-app.dev</a></p>
         </div>
       </div>
-      <p class="footer__legal">&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p class="footer__legal" data-i18n="homepage.footer.legal">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>

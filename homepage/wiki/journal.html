@@ -1,60 +1,69 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker Wiki – Journal &amp; Mood Tracker</title>
+    <title data-i18n="wiki.journal.meta.title">Tracker Wiki — Journal &amp; Mood</title>
     <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
   </head>
   <body class="wiki-body">
     <header class="wiki-header">
-      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
       <nav class="wiki-nav">
-        <a href="index.html">Wiki Übersicht</a>
-        <a href="../index.html#module">Module</a>
-        <a href="../impressum.html">Impressum</a>
-        <a href="../datenschutz.html">Datenschutz</a>
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
       </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
     </header>
     <main class="wiki-content">
       <article class="wiki-article">
-        <h1>Journal &amp; Mood Tracker</h1>
+        <h1 data-i18n="wiki.journal.title">Journal &amp; Mood Tracker</h1>
         <section>
-          <h2>Bedienung</h2>
-          <ul>
-            <li>Persönliches Tagebuch mit Stimmungserfassung.</li>
-            <li>Tages-, Wochen- und Monatsübersichten.</li>
-            <li>Eingabemaske mit Text, Tags, Stimmungsskala und optionalen Verknüpfungen zu Notizen/Aufgaben.</li>
-            <li>Filter nach Zeitraum, Stimmung und Tags.</li>
+          <h2 data-i18n="wiki.journal.sections.usage.heading">Usage concept</h2>
+          <ul data-i18n-html="wiki.journal.sections.usage.list">
+            <li>Capture daily reflections, highlights, and challenges.</li>
+            <li>Record mood scores with optional tags for triggers and wins.</li>
+            <li>Link entries to notes, tasks, and habit streaks for context.</li>
+            <li>Timeline views for day, week, and month help spot trends.</li>
           </ul>
         </section>
         <section>
-          <h2>Datenmodell (geplant)</h2>
-          <ul>
-            <li>Tabellen <code>journal_entries</code>, <code>mood_metrics</code>, <code>journal_tags</code>.</li>
-            <li>Link-Tabellen verbinden Journal mit Notizen/Tasks.</li>
+          <h2 data-i18n="wiki.journal.sections.data.heading">Data model (in design)</h2>
+          <ul data-i18n-html="wiki.journal.sections.data.list">
+            <li>Tables: <code>journal_entries</code>, <code>journal_moods</code>, and join tables for linked entities.</li>
+            <li>Mood scores will use a 1–5 scale with optional emoji mapping.</li>
+            <li>Entries store free-form text, attachments, and weather context (planned).</li>
           </ul>
         </section>
         <section>
-          <h2>Synchronisation</h2>
-          <ul>
-            <li>Lokal voll nutzbar.</li>
-            <li>Mit Mitgliedschaft: verschlüsselte Synchronisation aller Journal- und Stimmungsdaten.</li>
-            <li>Sensible Daten werden nur mit Zustimmung synchronisiert.</li>
+          <h2 data-i18n="wiki.journal.sections.sync.heading">Synchronisation</h2>
+          <ul data-i18n-html="wiki.journal.sections.sync.list">
+            <li>Entries remain local until encrypted sync launches.</li>
+            <li>Membership sync will encrypt text, attachments, and mood metrics end to end.</li>
+            <li>Version history ensures reflections are never lost during merges.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
-          <ul>
-            <li>UI inkl. Diagramme und Verlaufsansichten.</li>
-            <li>Automatische Erinnerungen für tägliche Einträge.</li>
-            <li>Integration mit Habit-Tracking.</li>
+          <h2 data-i18n="wiki.journal.sections.roadmap.heading">Roadmap</h2>
+          <ul data-i18n-html="wiki.journal.sections.roadmap.list">
+            <li>Ship the first journal interface with daily prompts.</li>
+            <li>Add mood visualisations including streaks and trends.</li>
+            <li>Surface correlations between mood, habits, and time tracking.</li>
+            <li>Implement private export to PDF and Markdown.</li>
           </ul>
         </section>
       </article>
     </main>
     <footer class="wiki-footer">
-      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>

@@ -1,60 +1,69 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker Wiki – Habits</title>
+    <title data-i18n="wiki.habits.meta.title">Tracker Wiki — Habits</title>
     <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
   </head>
   <body class="wiki-body">
     <header class="wiki-header">
-      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
       <nav class="wiki-nav">
-        <a href="index.html">Wiki Übersicht</a>
-        <a href="../index.html#module">Module</a>
-        <a href="../impressum.html">Impressum</a>
-        <a href="../datenschutz.html">Datenschutz</a>
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
       </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
     </header>
     <main class="wiki-content">
       <article class="wiki-article">
-        <h1>Habits</h1>
+        <h1 data-i18n="wiki.habits.title">Habits</h1>
         <section>
-          <h2>Bedienung</h2>
-          <ul>
-            <li>Tägliche, wöchentliche oder benutzerdefinierte Gewohnheiten anlegen.</li>
-            <li>Eingaben als Anzahl, Zeit oder Status.</li>
-            <li>Visualisierung per Kalender/Diagramm mit Trendlinien.</li>
-            <li>Erinnerungssystem für Routinen (geplant).</li>
+          <h2 data-i18n="wiki.habits.sections.usage.heading">Usage</h2>
+          <ul data-i18n-html="wiki.habits.sections.usage.list">
+            <li>Define routines with daily, weekly, or custom cadences.</li>
+            <li>Track completions with counters, timers, or boolean check-ins.</li>
+            <li>Visualise streaks and compare current versus target performance.</li>
+            <li>Annotate streak breaks with notes for future reflection.</li>
           </ul>
         </section>
         <section>
-          <h2>Datenmodell (geplant)</h2>
-          <ul>
-            <li>Tabellen <code>habits</code>, <code>habit_entries</code>, <code>habit_tags</code>.</li>
-            <li>Felder für Zieltyp, Intervall, Soll-Wert, Serien.</li>
+          <h2 data-i18n="wiki.habits.sections.data.heading">Data model</h2>
+          <ul data-i18n-html="wiki.habits.sections.data.list">
+            <li>Tables: <code>habit_definitions</code>, <code>habit_entries</code>, and <code>habit_targets</code>.</li>
+            <li>Entries store date, value, optional duration, and note.</li>
+            <li>Aggregated streak metrics are derived and cached for dashboards.</li>
           </ul>
         </section>
         <section>
-          <h2>Synchronisation</h2>
-          <ul>
-            <li>Lokal nutzbar, Daten werden sicher im Geräte-Speicher abgelegt.</li>
-            <li>Mit Mitgliedschaft: verschlüsselte Synchronisation aller Habit-Daten.</li>
-            <li>Konfliktlösung über Tagesstempel (letzte Änderung gewinnt).</li>
+          <h2 data-i18n="wiki.habits.sections.sync.heading">Synchronisation</h2>
+          <ul data-i18n-html="wiki.habits.sections.sync.list">
+            <li>Habit data is available offline with automatic Drift persistence.</li>
+            <li>Membership sync will merge entries by timestamp while preserving streaks.</li>
+            <li>Conflicts keep the higher completion value and log the merge.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
-          <ul>
-            <li>UI-Design &amp; Implementierung.</li>
-            <li>Historische Vergleiche, Heatmaps.</li>
-            <li>Integration in Dashboard &amp; Notifications.</li>
+          <h2 data-i18n="wiki.habits.sections.roadmap.heading">Roadmap</h2>
+          <ul data-i18n-html="wiki.habits.sections.roadmap.list">
+            <li>Shared habit templates and recommendations.</li>
+            <li>Calendar heatmaps for quick monthly overview.</li>
+            <li>Automation hooks to trigger habits from tasks or time tracking.</li>
+            <li>Export streak summaries for accountability partners.</li>
           </ul>
         </section>
       </article>
     </main>
     <footer class="wiki-footer">
-      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>

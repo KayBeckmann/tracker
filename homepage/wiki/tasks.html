@@ -1,63 +1,70 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker Wiki – Aufgaben &amp; Termine</title>
+    <title data-i18n="wiki.tasks.meta.title">Tracker Wiki — Tasks &amp; Appointments</title>
     <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
   </head>
   <body class="wiki-body">
     <header class="wiki-header">
-      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
       <nav class="wiki-nav">
-        <a href="index.html">Wiki Übersicht</a>
-        <a href="../index.html#module">Module</a>
-        <a href="../impressum.html">Impressum</a>
-        <a href="../datenschutz.html">Datenschutz</a>
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
       </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
     </header>
     <main class="wiki-content">
       <article class="wiki-article">
-        <h1>Aufgaben &amp; Termine</h1>
+        <h1 data-i18n="wiki.tasks.title">Tasks &amp; Appointments</h1>
         <section>
-          <h2>Bedienung</h2>
-          <ul>
-            <li>Planung von Aufgaben, Terminen und Erinnerungen.</li>
-            <li>Kalenderansicht hebt Tage mit Terminen hervor.</li>
-            <li>Listen mit Sortierung nach Fälligkeit, Priorität und Kategorie.</li>
-            <li>Kategorieverwaltung mit automatischer Erstellung beim Anlegen neuer Einträge.</li>
-            <li>Zeiterfassung direkt aus Aufgaben starten.</li>
+          <h2 data-i18n="wiki.tasks.sections.usage.heading">Usage</h2>
+          <ul data-i18n-html="wiki.tasks.sections.usage.list">
+            <li>Plan tasks, appointments, and reminders in a unified workspace.</li>
+            <li>Calendar view highlights busy days and upcoming deadlines.</li>
+            <li>Lists support sorting by due date, priority, and category.</li>
+            <li>Categories are created automatically when referenced in new entries.</li>
+            <li>Start time tracking sessions straight from a task (in development).</li>
           </ul>
         </section>
         <section>
-          <h2>Datenmodell (geplant)</h2>
-          <ul>
-            <li>Tabellen <code>tasks</code>, <code>appointments</code>, <code>categories</code>, <code>reminders</code>.</li>
-            <li>Relationen: <code>tasks</code> ↔ <code>time_entries</code> (1:n), Aufgaben ↔ Notizen (n:m geplant).</li>
-            <li>Kategorien als referenzielle Entities.</li>
+          <h2 data-i18n="wiki.tasks.sections.data.heading">Data model (planned)</h2>
+          <ul data-i18n-html="wiki.tasks.sections.data.list">
+            <li>Core tables: <code>tasks</code>, <code>appointments</code>, <code>categories</code>, <code>reminders</code>.</li>
+            <li>Relations: <code>tasks</code> ↔ <code>time_entries</code> (1:n), tasks ↔ notes (n:m planned).</li>
+            <li>Categories stored as reference entities with colour and icon metadata.</li>
           </ul>
         </section>
         <section>
-          <h2>Synchronisation</h2>
-          <ul>
-            <li>Lokal voll funktionsfähig.</li>
-            <li>Mit Mitgliedschaft: verschlüsselte Synchronisation aller Aufgaben, Termine, Erinnerungen.</li>
-            <li>Konfliktstrategie (Roadmap Phase 3): letzte Änderung gewinnt, Versionierung geplant.</li>
+          <h2 data-i18n="wiki.tasks.sections.sync.heading">Synchronisation</h2>
+          <ul data-i18n-html="wiki.tasks.sections.sync.list">
+            <li>Fully usable offline with Drift/Hive persistence.</li>
+            <li>Membership sync will encrypt tasks, appointments, reminders, and categories.</li>
+            <li>Conflict handling: last write wins with revision history on the roadmap.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
-          <ul>
-            <li>UI/UX Implementierung.</li>
-            <li>Erinnerungssystem &amp; Notifications.</li>
-            <li>Kalender- und Listenansichten finalisieren.</li>
-            <li>Kategorien-UI + automatische Erstellung.</li>
+          <h2 data-i18n="wiki.tasks.sections.roadmap.heading">Roadmap</h2>
+          <ul data-i18n-html="wiki.tasks.sections.roadmap.list">
+            <li>Complete appointment detail editing (title, due date, priority, category).</li>
+            <li>Add dedicated category management and colour selection.</li>
+            <li>Integrate deeper time tracking flows with running timers.</li>
+            <li>Improve notifications, recurring patterns, and smart suggestions.</li>
           </ul>
         </section>
       </article>
     </main>
     <footer class="wiki-footer">
-      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>

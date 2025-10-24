@@ -1,59 +1,69 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker Wiki – Haushaltsbuch</title>
+    <title data-i18n="wiki.ledger.meta.title">Tracker Wiki — Household Ledger</title>
     <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
   </head>
   <body class="wiki-body">
     <header class="wiki-header">
-      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
       <nav class="wiki-nav">
-        <a href="index.html">Wiki Übersicht</a>
-        <a href="../index.html#module">Module</a>
-        <a href="../impressum.html">Impressum</a>
-        <a href="../datenschutz.html">Datenschutz</a>
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
       </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
     </header>
     <main class="wiki-content">
       <article class="wiki-article">
-        <h1>Haushaltsbuch</h1>
+        <h1 data-i18n="wiki.ledger.title">Household Ledger</h1>
         <section>
-          <h2>Bedienung</h2>
-          <ul>
-            <li>Einnahmen, Ausgaben und Budgets verwalten.</li>
-            <li>Listen- und Diagrammansichten mit Filtern nach Kategorie/Zeitraum.</li>
-            <li>Exportfunktionen (CSV/PDF) geplant.</li>
-            <li>Budgets mit Warnschwellen.</li>
+          <h2 data-i18n="wiki.ledger.sections.usage.heading">Usage</h2>
+          <ul data-i18n-html="wiki.ledger.sections.usage.list">
+            <li>Track incomes and expenses with categories and payment methods.</li>
+            <li>Set budgets per category and review progress throughout the month.</li>
+            <li>Filter by time range, tags, and accounts for targeted analysis.</li>
+            <li>Export data for tax preparation or personal finance reviews (planned).</li>
           </ul>
         </section>
         <section>
-          <h2>Datenmodell (geplant)</h2>
-          <ul>
-            <li>Tabellen <code>ledger_entries</code>, <code>ledger_categories</code>, <code>ledger_budgets</code>.</li>
-            <li>Felder: Betrag, Währung, Kategorie, Zahlungsart, Beleg-Link, Notiz.</li>
+          <h2 data-i18n="wiki.ledger.sections.data.heading">Data model</h2>
+          <ul data-i18n-html="wiki.ledger.sections.data.list">
+            <li>Tables: <code>ledger_entries</code>, <code>ledger_categories</code>, <code>ledger_budgets</code>, <code>ledger_accounts</code>.</li>
+            <li>Entries include amount, currency, type, category, account, and optional receipt metadata.</li>
+            <li>Monthly rollups cache totals for faster dashboard views.</li>
           </ul>
         </section>
         <section>
-          <h2>Synchronisation</h2>
-          <ul>
-            <li>Lokal verfügbar; verschlüsselte Speicherung im Gerätespeicher.</li>
-            <li>Mit Mitgliedschaft: verschlüsselte Synchronisation inkl. Anhänge.</li>
+          <h2 data-i18n="wiki.ledger.sections.sync.heading">Synchronisation</h2>
+          <ul data-i18n-html="wiki.ledger.sections.sync.list">
+            <li>Local-first ledger keeps all financial data on device by default.</li>
+            <li>Encrypted sync will be opt-in for memberships with per-device keys.</li>
+            <li>Conflicts resolve by amount and timestamp while preserving history.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
-          <ul>
-            <li>Berichte (Monatsübersichten, Diagramme).</li>
-            <li>Automatische Kategorisierung per Regeln.</li>
-            <li>Export/Import-Schnittstellen.</li>
+          <h2 data-i18n="wiki.ledger.sections.roadmap.heading">Roadmap</h2>
+          <ul data-i18n-html="wiki.ledger.sections.roadmap.list">
+            <li>Interactive charts for category trends and cashflow.</li>
+            <li>Recurring transactions and rule-based categorisation.</li>
+            <li>Receipt capture via photos with OCR (research).</li>
+            <li>Shared budgets for household collaboration.</li>
           </ul>
         </section>
       </article>
     </main>
     <footer class="wiki-footer">
-      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>

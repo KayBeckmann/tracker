@@ -1,62 +1,69 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker Wiki – Notizen</title>
+    <title data-i18n="wiki.notes.meta.title">Tracker Wiki — Notes</title>
     <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
   </head>
   <body class="wiki-body">
     <header class="wiki-header">
-      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
       <nav class="wiki-nav">
-        <a href="index.html">Wiki Übersicht</a>
-        <a href="../index.html#module">Module</a>
-        <a href="../impressum.html">Impressum</a>
-        <a href="../datenschutz.html">Datenschutz</a>
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
       </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
     </header>
     <main class="wiki-content">
       <article class="wiki-article">
-        <h1>Notizen</h1>
+        <h1 data-i18n="wiki.notes.title">Notes</h1>
         <section>
-          <h2>Bedienung</h2>
-          <ul>
-            <li>Listenansicht mit Markdown- und Zeichnungs-Notizen.</li>
-            <li>Textsuche plus Tag-Filter (Dropdown).</li>
-            <li>Button „Neue Notiz“ öffnet Auswahl zwischen Markdown und Zeichnung.</li>
-            <li>Markdown-Editor mit Live-Vorschau und Tag-Vorschlagschips.</li>
-            <li>Zeichnungsmodus: Stift, Linie, Rechteck, Ellipse; Farb- und Strichstärkeauswahl.</li>
+          <h2 data-i18n="wiki.notes.sections.usage.heading">Usage</h2>
+          <ul data-i18n-html="wiki.notes.sections.usage.list">
+            <li>Write Markdown notes with live preview and split view.</li>
+            <li>The first line becomes the title; creation and update times are tracked automatically.</li>
+            <li>Tag notes, filter by tag, and search across full text and metadata.</li>
+            <li>Switch to freehand mode for sketches, diagrams, and quick wireframes.</li>
           </ul>
         </section>
         <section>
-          <h2>Datenmodell</h2>
-          <ul>
-            <li>Tabelle <code>note_entries</code> mit Feldern: <code>id</code>, <code>title</code>, <code>content</code>, <code>drawing_json</code>, <code>tags</code>, <code>kind</code>, <code>created_at</code>, <code>updated_at</code>.</li>
-            <li>Enum <code>NoteKind</code> unterscheidet Markdown und Zeichnung.</li>
-            <li>Tags aktuell als kommaseparierte Liste; Tag-Tabelle geplant.</li>
+          <h2 data-i18n="wiki.notes.sections.data.heading">Data model</h2>
+          <ul data-i18n-html="wiki.notes.sections.data.list">
+            <li>Tables: <code>notes</code>, <code>note_tags</code>, and join table <code>note_tag_links</code>.</li>
+            <li>Metadata columns store created/updated timestamps and last editor.</li>
+            <li>Drawings are kept as embedded vectors with optional PNG fallback.</li>
           </ul>
         </section>
         <section>
-          <h2>Synchronisation</h2>
-          <ul>
-            <li>Standard: alles lokal in Drift + Hive.</li>
-            <li>Mit Mitgliedschaft: verschlüsselte Synchronisation von Text und Zeichnungen.</li>
-            <li>Zeichnungen als JSON mit Vektorpfaden.</li>
+          <h2 data-i18n="wiki.notes.sections.sync.heading">Synchronisation</h2>
+          <ul data-i18n-html="wiki.notes.sections.sync.list">
+            <li>Notes live locally by default for privacy and offline access.</li>
+            <li>Membership sync will encrypt note bodies, drawings, and attachments.</li>
+            <li>Conflict resolution keeps both versions with a merge assistant planned.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
-          <ul>
-            <li>Automatische Tag-Vorschläge und intelligente Suche.</li>
-            <li>Bidirektionale Verlinkung zu Aufgaben und Terminen.</li>
-            <li>Vorlagen, Kalender-Filter, Bildanhänge.</li>
+          <h2 data-i18n="wiki.notes.sections.roadmap.heading">Roadmap</h2>
+          <ul data-i18n-html="wiki.notes.sections.roadmap.list">
+            <li>Seed onboarding notes that explain core workflows.</li>
+            <li>Multi-tag filtering, saved searches, and notebook groupings.</li>
+            <li>Note templates plus cross-linking with tasks and journal entries.</li>
+            <li>Image insertion with local storage and optional sync support.</li>
           </ul>
         </section>
       </article>
     </main>
     <footer class="wiki-footer">
-      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>

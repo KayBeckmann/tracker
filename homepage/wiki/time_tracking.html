@@ -1,60 +1,69 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker Wiki – Zeiterfassung</title>
+    <title data-i18n="wiki.time.meta.title">Tracker Wiki — Time Tracking</title>
     <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
   </head>
   <body class="wiki-body">
     <header class="wiki-header">
-      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
       <nav class="wiki-nav">
-        <a href="index.html">Wiki Übersicht</a>
-        <a href="../index.html#module">Module</a>
-        <a href="../impressum.html">Impressum</a>
-        <a href="../datenschutz.html">Datenschutz</a>
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
       </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
     </header>
     <main class="wiki-content">
       <article class="wiki-article">
-        <h1>Zeiterfassung</h1>
+        <h1 data-i18n="wiki.time.title">Time Tracking</h1>
         <section>
-          <h2>Bedienung</h2>
-          <ul>
-            <li>Sessions manuell oder per Timer erfassen.</li>
-            <li>Aufgabenverknüpfung ermöglicht Zuordnung zu Projekten.</li>
-            <li>Tags für gruppierte Auswertungen.</li>
-            <li>Geplante UI: Start/Stop-Timer, Sessionliste, Filter nach Aufgabe/Tag.</li>
+          <h2 data-i18n="wiki.time.sections.usage.heading">Usage</h2>
+          <ul data-i18n-html="wiki.time.sections.usage.list">
+            <li>Capture focus sessions manually or with the built-in timer.</li>
+            <li>Attach sessions to tasks for end-to-end reporting.</li>
+            <li>Tag entries, add notes, and review the day timeline.</li>
+            <li>Pause and resume timers without losing recorded duration.</li>
           </ul>
         </section>
         <section>
-          <h2>Datenmodell (geplant)</h2>
-          <ul>
-            <li>Tabelle <code>time_entries</code> mit Feldern: <code>task_id</code>, <code>started_at</code>, <code>ended_at</code>, <code>duration</code>, <code>tags</code>.</li>
-            <li>Verknüpfung zu Aufgaben (FK) und Tags.</li>
+          <h2 data-i18n="wiki.time.sections.data.heading">Data model</h2>
+          <ul data-i18n-html="wiki.time.sections.data.list">
+            <li>Core table <code>time_entries</code> stores duration, start, stop, and optional task reference.</li>
+            <li>Bridge table <code>time_entry_tags</code> links entries with multiple tags.</li>
+            <li>Aggregations for day and week summaries are computed on the fly.</li>
           </ul>
         </section>
         <section>
-          <h2>Synchronisation</h2>
-          <ul>
-            <li>Offline nutzbar; Sessions bleiben lokal.</li>
-            <li>Mit Mitgliedschaft: verschlüsselte Synchronisation aller Zeiteinträge.</li>
-            <li>Konfliktauflösung: Merge per Session-ID, Änderungen versioniert.</li>
+          <h2 data-i18n="wiki.time.sections.sync.heading">Synchronisation</h2>
+          <ul data-i18n-html="wiki.time.sections.sync.list">
+            <li>Offline first with all data persisted locally.</li>
+            <li>Membership sync will replicate time entries and tags across devices.</li>
+            <li>Conflict handling merges overlapping sessions by keeping precise timestamps.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
-          <ul>
-            <li>Integration ins Aufgabenmodul.</li>
-            <li>Visualisierungen (Diagramme, Wochenübersichten).</li>
-            <li>Automatische Pausenerkennung &amp; Fokus-Modus.</li>
+          <h2 data-i18n="wiki.time.sections.roadmap.heading">Roadmap</h2>
+          <ul data-i18n-html="wiki.time.sections.roadmap.list">
+            <li>Start and stop timers directly from task cards.</li>
+            <li>Enable multi-select edits and bulk tag operations.</li>
+            <li>Export reports (CSV/JSON) for invoicing and analysis.</li>
+            <li>Visualise trends with charts and session heatmaps.</li>
           </ul>
         </section>
       </article>
     </main>
     <footer class="wiki-footer">
-      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>

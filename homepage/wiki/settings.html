@@ -1,58 +1,69 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracker Wiki – Einstellungen</title>
+    <title data-i18n="wiki.settings.meta.title">Tracker Wiki — Settings</title>
     <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
   </head>
   <body class="wiki-body">
     <header class="wiki-header">
-      <a class="wiki-logo" href="../index.html">Tracker</a>
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
       <nav class="wiki-nav">
-        <a href="index.html">Wiki Übersicht</a>
-        <a href="../index.html#module">Module</a>
-        <a href="../impressum.html">Impressum</a>
-        <a href="../datenschutz.html">Datenschutz</a>
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
       </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
     </header>
     <main class="wiki-content">
       <article class="wiki-article">
-        <h1>Einstellungen</h1>
+        <h1 data-i18n="wiki.settings.title">Settings</h1>
         <section>
-          <h2>Bedienung</h2>
-          <ul>
-            <li>Sprache, Theme, Module (Sichtbarkeit &amp; Reihenfolge) und Synchronisation verwalten.</li>
-            <li>Änderungen werden direkt in Hive gespeichert.</li>
-            <li>Synchronisationsstatus &amp; Mitgliedschaft nach Backend-Login sichtbar.</li>
+          <h2 data-i18n="wiki.settings.sections.usage.heading">Usage</h2>
+          <ul data-i18n-html="wiki.settings.sections.usage.list">
+            <li>Manage account login via email/password, Google, or Apple ID.</li>
+            <li>Configure module visibility and default dashboards (planned).</li>
+            <li>Select app language and theme once the UI switches ship.</li>
+            <li>Review storage usage and trigger local backups (roadmap).</li>
           </ul>
         </section>
         <section>
-          <h2>Datenmodell</h2>
-          <ul>
-            <li>Hive-Keys: <code>preferred_locale</code>, <code>preferred_theme_mode</code>, <code>preferred_seed_color</code>, <code>enabled_modules</code>, <code>module_order</code>.</li>
-            <li>Membership-Infos via Backend <code>/api/membership</code>.</li>
+          <h2 data-i18n="wiki.settings.sections.data.heading">Data model</h2>
+          <ul data-i18n-html="wiki.settings.sections.data.list">
+            <li>Preferences stored in Hive boxes for fast, offline access.</li>
+            <li>Account credentials handled via secure auth APIs in the backend.</li>
+            <li>Upcoming <code>user_preferences</code> table will unify sync state.</li>
           </ul>
         </section>
         <section>
-          <h2>Synchronisation</h2>
-          <ul>
-            <li>Settings bleiben lokal; Modul-Sichtbarkeit und Reihenfolge sind gerätespezifisch.</li>
-            <li>Mitgliedschaftsstatus steuert Sync-Freischaltung.</li>
+          <h2 data-i18n="wiki.settings.sections.sync.heading">Synchronisation</h2>
+          <ul data-i18n-html="wiki.settings.sections.sync.list">
+            <li>Language and theme apply locally until multi-device sync launches.</li>
+            <li>Membership sync will propagate module visibility, dashboards, and shortcuts.</li>
+            <li>Security-sensitive settings (2FA, keys) stay server-side only.</li>
           </ul>
         </section>
         <section>
-          <h2>Roadmap</h2>
-          <ul>
-            <li>Erweiterte Theme-Verwaltung (eigene Paletten).</li>
-            <li>Export/Import für Einstellungen.</li>
-            <li>Integration externer Identity Provider (Google, Apple ID).</li>
+          <h2 data-i18n="wiki.settings.sections.roadmap.heading">Roadmap</h2>
+          <ul data-i18n-html="wiki.settings.sections.roadmap.list">
+            <li>Launch full language/theme switcher UI in-app.</li>
+            <li>Expose subscription status, billing history, and upgrade flows.</li>
+            <li>Add import/export for preferences and module layouts.</li>
+            <li>Integrate advanced privacy options (biometric lock, quick wipe).</li>
           </ul>
         </section>
       </article>
     </main>
     <footer class="wiki-footer">
-      <p>&copy; 2025 Tracker. Alle Rechte vorbehalten.</p>
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
     </footer>
   </body>
 </html>
