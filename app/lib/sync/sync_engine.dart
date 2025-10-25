@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
 import '../data/local/app_database.dart';
+import '../time_tracking/time_tracking_types.dart';
 import 'encryption_service.dart';
 import 'sync_api_client.dart';
 
@@ -12,6 +13,7 @@ const String encryptionKeyStorageKey = 'encryption_key';
 const String encryptionSaltStorageKey = 'encryption_salt';
 const String lastSyncNotesKey = 'sync_notes_last';
 const String lastSyncTasksKey = 'sync_tasks_last';
+const String lastSyncTimeEntriesKey = 'sync_time_entries_last';
 
 class SyncEngine {
   SyncEngine({
@@ -34,6 +36,8 @@ class SyncEngine {
   DateTime? get lastNotesSync => _readTimestamp(lastSyncNotesKey);
 
   DateTime? get lastTasksSync => _readTimestamp(lastSyncTasksKey);
+
+  DateTime? get lastTimeEntriesSync => _readTimestamp(lastSyncTimeEntriesKey);
 
   void loadStoredKey() {
     encryptionService.loadKeyFromStorage(
@@ -71,6 +75,8 @@ class SyncEngine {
     conflicts.addAll(noteConflicts);
     final taskConflicts = await _pushTasks(token);
     conflicts.addAll(taskConflicts);
+    final timeConflicts = await _pushTimeEntries(token);
+    conflicts.addAll(timeConflicts);
 
     if (conflicts.isNotEmpty) {
       return SyncResult(conflicts: conflicts);
@@ -78,10 +84,12 @@ class SyncEngine {
 
     await _pullNotes(token);
     await _pullTasks(token);
+    await _pullTimeEntries(token);
 
     final now = DateTime.now().toUtc();
     storageBox.put(lastSyncNotesKey, now.toIso8601String());
     storageBox.put(lastSyncTasksKey, now.toIso8601String());
+    storageBox.put(lastSyncTimeEntriesKey, now.toIso8601String());
 
     return const SyncResult(conflicts: <SyncConflictData>[]);
   }
@@ -117,6 +125,19 @@ class SyncEngine {
           );
         }
         break;
+      case 'time_entries':
+        final entry = conflict.timeEntry;
+        if (entry == null) {
+          return;
+        }
+        if (decision == ConflictDecision.keepServer) {
+          await _applyServerTimeEntry(conflict);
+        } else {
+          await database.updateTimeEntry(
+            entry.copyWith(remoteVersion: conflict.server.version),
+          );
+        }
+        break;
     }
   }
 
@@ -127,6 +148,7 @@ class SyncEngine {
     await storageBox.delete(encryptionSaltStorageKey);
     await storageBox.delete(lastSyncNotesKey);
     await storageBox.delete(lastSyncTasksKey);
+    await storageBox.delete(lastSyncTimeEntriesKey);
   }
 
   Future<List<SyncConflictData>> _pushNotes(String token) async {
@@ -281,6 +303,85 @@ class SyncEngine {
     }
   }
 
+  Future<List<SyncConflictData>> _pushTimeEntries(String token) async {
+    final entries = await database.getTimeEntriesNeedingSync();
+    if (entries.isEmpty) {
+      return const [];
+    }
+
+    final outgoing = <Map<String, Object?>>[];
+    final localPayloads = <String, Map<String, Object?>>{};
+    final entryByRemoteId = <String, TimeEntry>{};
+
+    for (var entry in entries) {
+      if (entry.remoteId == null || entry.remoteId!.isEmpty) {
+        final generatedId = _uuid.v4();
+        await database.assignTimeEntryRemoteId(
+          id: entry.id,
+          remoteId: generatedId,
+        );
+        entry = entry.copyWith(remoteId: Value(generatedId));
+      }
+      final payload = await _serializeTimeEntry(entry);
+      final ciphertext = await encryptionService.encryptMap(payload);
+      final version = entry.remoteVersion + 1;
+      final remoteId = entry.remoteId!;
+      outgoing.add(<String, Object?>{
+        'id': remoteId,
+        'collection': 'time_entries',
+        'ciphertext': ciphertext,
+        'version': version,
+        'clientUpdatedAt': entry.updatedAt.toUtc().toIso8601String(),
+        'deleted': false,
+      });
+      localPayloads[remoteId] = payload;
+      entryByRemoteId[remoteId] = entry;
+    }
+
+    try {
+      final response = await apiClient.upsertItems(
+        token: token,
+        collection: 'time_entries',
+        items: outgoing,
+      );
+      for (final item in response.items) {
+        final entry = entryByRemoteId[item.id];
+        if (entry != null) {
+          await database.markTimeEntrySynced(
+            id: entry.id,
+            remoteVersion: item.version,
+            syncedAt: item.updatedAt,
+          );
+        }
+      }
+      return const [];
+    } on SyncConflictException catch (conflict) {
+      final conflicts = <SyncConflictData>[];
+      for (final entry in conflict.conflicts) {
+        final serverPayload = await encryptionService.decryptToMap(
+          entry.server.ciphertext,
+        );
+        final local =
+            entryByRemoteId[entry.id] ??
+            await database.getTimeEntryByRemoteId(entry.id);
+        final localPayload =
+            localPayloads[entry.id] ??
+            (local != null ? await _serializeTimeEntry(local) : <String, Object?>{});
+        conflicts.add(
+          SyncConflictData(
+            collection: 'time_entries',
+            remoteId: entry.id,
+            server: entry.server,
+            serverPayload: serverPayload,
+            localPayload: localPayload,
+            timeEntry: local,
+          ),
+        );
+      }
+      return conflicts;
+    }
+  }
+
   Future<void> _pullNotes(String token) async {
     final since = lastNotesSync;
     final remoteItems = await apiClient.fetchItems(
@@ -321,6 +422,26 @@ class SyncEngine {
     }
   }
 
+  Future<void> _pullTimeEntries(String token) async {
+    final since = lastTimeEntriesSync;
+    final remoteItems = await apiClient.fetchItems(
+      token: token,
+      collection: 'time_entries',
+      since: since,
+    );
+    for (final item in remoteItems) {
+      if (item.deleted) {
+        final local = await database.getTimeEntryByRemoteId(item.id);
+        if (local != null) {
+          await database.deleteTimeEntry(local.id);
+        }
+        continue;
+      }
+      final payload = await encryptionService.decryptToMap(item.ciphertext);
+      await _applyRemoteTimeEntry(item, payload);
+    }
+  }
+
   Map<String, Object?> _serializeNote(NoteEntry note) {
     return <String, Object?>{
       'kind': note.kind.name,
@@ -349,6 +470,25 @@ class SyncEngine {
       'reminderAt': task.reminderAt?.toUtc().toIso8601String(),
       'createdAt': task.createdAt.toUtc().toIso8601String(),
       'updatedAt': task.updatedAt.toUtc().toIso8601String(),
+    };
+  }
+
+  Future<Map<String, Object?>> _serializeTimeEntry(TimeEntry entry) async {
+    String? taskRemoteId;
+    if (entry.taskId != null) {
+      final task = await database.getTaskById(entry.taskId!);
+      taskRemoteId = task?.remoteId;
+    }
+    return <String, Object?>{
+      'startedAt': entry.startedAt.toUtc().toIso8601String(),
+      'endedAt': entry.endedAt?.toUtc().toIso8601String(),
+      'durationMinutes': entry.durationMinutes,
+      'note': entry.note,
+      'kind': entry.kind.name,
+      'taskRemoteId': taskRemoteId,
+      'isManual': entry.isManual,
+      'createdAt': entry.createdAt.toUtc().toIso8601String(),
+      'updatedAt': entry.updatedAt.toUtc().toIso8601String(),
     };
   }
 
@@ -513,6 +653,93 @@ class SyncEngine {
     await _applyRemoteTask(conflict.server, conflict.serverPayload);
   }
 
+  Future<void> _applyRemoteTimeEntry(
+    RemoteSyncItem item,
+    Map<String, dynamic> payload,
+  ) async {
+    final existing = await database.getTimeEntryByRemoteId(item.id);
+    final startedAt =
+        _parseDate(payload['startedAt']) ?? item.updatedAt.toUtc();
+    final endedAt = _parseDate(payload['endedAt']);
+    final durationMinutes =
+        (payload['durationMinutes'] as num?)?.toInt() ?? 0;
+    final note = payload['note'] as String? ?? '';
+    final kindRaw = payload['kind'] as String? ?? TimeEntryKind.work.name;
+    final kind = TimeEntryKind.values.firstWhere(
+      (value) => value.name == kindRaw,
+      orElse: () => TimeEntryKind.work,
+    );
+    final taskRemoteId = payload['taskRemoteId'] as String?;
+    final isManual = payload['isManual'] as bool? ?? false;
+    final createdAt =
+        _parseDate(payload['createdAt']) ?? item.updatedAt.toUtc();
+    final updatedAt =
+        _parseDate(payload['updatedAt']) ?? item.updatedAt.toUtc();
+
+    int? taskId;
+    if (taskRemoteId != null) {
+      final task = await database.getTaskByRemoteId(taskRemoteId);
+      taskId = task?.id;
+    }
+
+    if (existing == null) {
+      await database.insertTimeEntry(
+        startedAt: startedAt.toUtc(),
+        endedAt: endedAt?.toUtc(),
+        durationMinutes: durationMinutes,
+        kind: kind,
+        note: note,
+        taskId: taskId,
+        isManual: isManual,
+        remoteId: item.id,
+        remoteVersion: item.version,
+        needsSync: false,
+        syncedAt: updatedAt,
+      );
+      final inserted = await database.getTimeEntryByRemoteId(item.id);
+      if (inserted != null) {
+        await (database.update(
+          database.timeEntries,
+        )..where((tbl) => tbl.id.equals(inserted.id))).write(
+          TimeEntriesCompanion(
+            createdAt: Value(createdAt.toUtc()),
+            updatedAt: Value(updatedAt.toUtc()),
+            needsSync: const Value(false),
+            remoteVersion: Value(item.version),
+            syncedAt: Value(updatedAt.toUtc()),
+            taskId: taskId == null ? const Value.absent() : Value(taskId),
+            endedAt:
+                endedAt == null ? const Value.absent() : Value(endedAt.toUtc()),
+          ),
+        );
+      }
+      return;
+    }
+
+    await (database.update(
+      database.timeEntries,
+    )..where((tbl) => tbl.id.equals(existing.id))).write(
+      TimeEntriesCompanion(
+        startedAt: Value(startedAt.toUtc()),
+        endedAt: endedAt == null ? const Value.absent() : Value(endedAt.toUtc()),
+        durationMinutes: Value(durationMinutes),
+        note: Value(note),
+        kind: Value(kind),
+        taskId: taskId == null ? const Value.absent() : Value(taskId),
+        isManual: Value(isManual),
+        createdAt: Value(createdAt.toUtc()),
+        updatedAt: Value(updatedAt.toUtc()),
+        remoteVersion: Value(item.version),
+        needsSync: const Value(false),
+        syncedAt: Value(updatedAt.toUtc()),
+      ),
+    );
+  }
+
+  Future<void> _applyServerTimeEntry(SyncConflictData conflict) async {
+    await _applyRemoteTimeEntry(conflict.server, conflict.serverPayload);
+  }
+
   DateTime? _parseDate(Object? value) {
     if (value == null) {
       return null;
@@ -553,6 +780,7 @@ class SyncConflictData {
     required this.localPayload,
     this.note,
     this.task,
+    this.timeEntry,
   });
 
   final String collection;
@@ -562,6 +790,7 @@ class SyncConflictData {
   final Map<String, Object?> localPayload;
   final NoteEntry? note;
   final TaskEntry? task;
+  final TimeEntry? timeEntry;
 }
 
 enum ConflictDecision { keepLocal, keepServer }

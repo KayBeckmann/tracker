@@ -1152,18 +1152,32 @@ class _HomePageState extends State<HomePage> {
     final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final String deviceTitle = _conflictTitle(
+      context,
       conflict,
       isDevice: true,
       loc: loc,
     );
     final String serverTitle = _conflictTitle(
+      context,
       conflict,
       isDevice: false,
       loc: loc,
     );
-    final DateTime? deviceUpdated = conflict.collection == 'notes'
-        ? conflict.note?.updatedAt
-        : conflict.task?.updatedAt;
+    DateTime? deviceUpdated;
+    switch (conflict.collection) {
+      case 'notes':
+        deviceUpdated = conflict.note?.updatedAt;
+        break;
+      case 'tasks':
+        deviceUpdated = conflict.task?.updatedAt;
+        break;
+      case 'time_entries':
+        deviceUpdated = conflict.timeEntry?.updatedAt;
+        break;
+      default:
+        deviceUpdated = null;
+        break;
+    }
     final DateTime serverUpdated = conflict.server.updatedAt;
 
     return showDialog<ConflictDecision>(
@@ -1241,6 +1255,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _conflictTitle(
+    BuildContext context,
     SyncConflictData conflict, {
     required bool isDevice,
     required AppLocalizations loc,
@@ -1258,6 +1273,36 @@ class _HomePageState extends State<HomePage> {
         return loc.notesUntitled;
       }
       return serverTitle;
+    }
+
+    if (conflict.collection == 'time_entries') {
+      if (isDevice) {
+        final entry = conflict.timeEntry;
+        if (entry == null) {
+          return loc.timeTrackingFormTitle;
+        }
+        final start = _formatDateTime(context, entry.startedAt.toLocal());
+        final duration = formatTrackedMinutes(entry.durationMinutes);
+        return '$start • $duration';
+      }
+      final serverStartRaw = conflict.serverPayload['startedAt'];
+      DateTime? serverStart;
+      if (serverStartRaw is String && serverStartRaw.isNotEmpty) {
+        serverStart = DateTime.tryParse(serverStartRaw)?.toLocal();
+      }
+      final durationRaw = conflict.serverPayload['durationMinutes'];
+      final String? duration = durationRaw is num
+          ? formatTrackedMinutes(durationRaw.toInt())
+          : null;
+      final startText =
+          serverStart == null ? loc.timeTrackingFormTitle : _formatDateTime(
+            context,
+            serverStart,
+          );
+      if (duration == null || duration.isEmpty) {
+        return startText;
+      }
+      return '$startText • $duration';
     }
 
     if (isDevice) {

@@ -1967,6 +1967,55 @@ class $TimeEntriesTable extends TimeEntries
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1979,6 +2028,10 @@ class $TimeEntriesTable extends TimeEntries
     isManual,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2046,6 +2099,33 @@ class $TimeEntriesTable extends TimeEntries
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -2097,6 +2177,22 @@ class $TimeEntriesTable extends TimeEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -2120,6 +2216,10 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
   final bool isManual;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const TimeEntry({
     required this.id,
     required this.startedAt,
@@ -2131,6 +2231,10 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
     required this.isManual,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2153,6 +2257,14 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
     map['is_manual'] = Variable<bool>(isManual);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -2172,6 +2284,14 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
       isManual: Value(isManual),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -2193,6 +2313,10 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
       isManual: serializer.fromJson<bool>(json['isManual']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -2211,6 +2335,10 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
       'isManual': serializer.toJson<bool>(isManual),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -2225,6 +2353,10 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
     bool? isManual,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => TimeEntry(
     id: id ?? this.id,
     startedAt: startedAt ?? this.startedAt,
@@ -2236,6 +2368,10 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
     isManual: isManual ?? this.isManual,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   TimeEntry copyWithCompanion(TimeEntriesCompanion data) {
     return TimeEntry(
@@ -2251,6 +2387,12 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
       isManual: data.isManual.present ? data.isManual.value : this.isManual,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -2266,7 +2408,11 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
           ..write('taskId: $taskId, ')
           ..write('isManual: $isManual, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -2283,6 +2429,10 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
     isManual,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -2297,7 +2447,11 @@ class TimeEntry extends DataClass implements Insertable<TimeEntry> {
           other.taskId == this.taskId &&
           other.isManual == this.isManual &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
@@ -2311,6 +2465,10 @@ class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
   final Value<bool> isManual;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const TimeEntriesCompanion({
     this.id = const Value.absent(),
     this.startedAt = const Value.absent(),
@@ -2322,6 +2480,10 @@ class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
     this.isManual = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   TimeEntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -2334,6 +2496,10 @@ class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
     this.isManual = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   static Insertable<TimeEntry> custom({
     Expression<int>? id,
@@ -2346,6 +2512,10 @@ class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
     Expression<bool>? isManual,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2358,6 +2528,10 @@ class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
       if (isManual != null) 'is_manual': isManual,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -2372,6 +2546,10 @@ class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
     Value<bool>? isManual,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return TimeEntriesCompanion(
       id: id ?? this.id,
@@ -2384,6 +2562,10 @@ class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
       isManual: isManual ?? this.isManual,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -2422,6 +2604,18 @@ class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -2437,7 +2631,11 @@ class TimeEntriesCompanion extends UpdateCompanion<TimeEntry> {
           ..write('taskId: $taskId, ')
           ..write('isManual: $isManual, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -10021,6 +10219,10 @@ typedef $$TimeEntriesTableCreateCompanionBuilder =
       Value<bool> isManual,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$TimeEntriesTableUpdateCompanionBuilder =
     TimeEntriesCompanion Function({
@@ -10034,6 +10236,10 @@ typedef $$TimeEntriesTableUpdateCompanionBuilder =
       Value<bool> isManual,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$TimeEntriesTableReferences
@@ -10115,6 +10321,26 @@ class $$TimeEntriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$TaskEntriesTableFilterComposer get taskId {
     final $$TaskEntriesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -10193,6 +10419,26 @@ class $$TimeEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$TaskEntriesTableOrderingComposer get taskId {
     final $$TaskEntriesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -10254,6 +10500,20 @@ class $$TimeEntriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
   $$TaskEntriesTableAnnotationComposer get taskId {
     final $$TaskEntriesTableAnnotationComposer composer = $composerBuilder(
@@ -10317,6 +10577,10 @@ class $$TimeEntriesTableTableManager
                 Value<bool> isManual = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => TimeEntriesCompanion(
                 id: id,
                 startedAt: startedAt,
@@ -10328,6 +10592,10 @@ class $$TimeEntriesTableTableManager
                 isManual: isManual,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -10341,6 +10609,10 @@ class $$TimeEntriesTableTableManager
                 Value<bool> isManual = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => TimeEntriesCompanion.insert(
                 id: id,
                 startedAt: startedAt,
@@ -10352,6 +10624,10 @@ class $$TimeEntriesTableTableManager
                 isManual: isManual,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(

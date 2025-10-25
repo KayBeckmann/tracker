@@ -139,6 +139,14 @@ class TimeEntries extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class JournalEntries extends Table {
@@ -468,7 +476,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -514,6 +522,12 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(ledgerTransactions);
         await m.createTable(ledgerRecurringTransactions);
         await m.createTable(cryptoPriceEntries);
+      }
+      if (from < 10) {
+        await m.addColumn(timeEntries, timeEntries.remoteId);
+        await m.addColumn(timeEntries, timeEntries.remoteVersion);
+        await m.addColumn(timeEntries, timeEntries.needsSync);
+        await m.addColumn(timeEntries, timeEntries.syncedAt);
       }
     },
   );
@@ -902,8 +916,13 @@ class AppDatabase extends _$AppDatabase {
     String note = '',
     int? taskId,
     bool isManual = false,
+    String? remoteId,
+    int remoteVersion = 0,
+    bool needsSync = true,
+    DateTime? syncedAt,
   }) {
     final now = DateTime.now().toUtc();
+    final resolvedRemoteId = remoteId ?? _uuid.v4();
     final companion = TimeEntriesCompanion.insert(
       startedAt: Value(startedAt.toUtc()),
       endedAt: endedAt == null ? const Value.absent() : Value(endedAt.toUtc()),
@@ -914,12 +933,19 @@ class AppDatabase extends _$AppDatabase {
       isManual: Value(isManual),
       createdAt: Value(now),
       updatedAt: Value(now),
+      remoteId: Value(resolvedRemoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null ? const Value.absent() : Value(syncedAt.toUtc()),
     );
     return into(timeEntries).insert(companion);
   }
 
   Future<void> updateTimeEntry(TimeEntry entry) async {
-    final updated = entry.copyWith(updatedAt: DateTime.now().toUtc());
+    final updated = entry.copyWith(
+      updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
+    );
     await update(timeEntries).replace(updated);
   }
 
@@ -936,6 +962,7 @@ class AppDatabase extends _$AppDatabase {
       taskId: taskId == null ? const Value.absent() : Value(taskId),
       note: note == null ? const Value.absent() : Value(note),
       updatedAt: Value(DateTime.now().toUtc()),
+      needsSync: const Value(true),
     );
     await (update(
       timeEntries,
@@ -944,6 +971,46 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> deleteTimeEntry(int id) {
     return (delete(timeEntries)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<TimeEntry?> getTimeEntryByRemoteId(String remoteId) {
+    return (select(
+      timeEntries,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<TimeEntry>> getTimeEntriesNeedingSync() {
+    return (select(
+      timeEntries,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignTimeEntryRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(timeEntries)..where((tbl) => tbl.id.equals(id))).write(
+      TimeEntriesCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markTimeEntrySynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(timeEntries)..where((tbl) => tbl.id.equals(id))).write(
+      TimeEntriesCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   DateTime _normalizeDate(DateTime date) =>
