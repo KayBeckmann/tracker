@@ -23,7 +23,7 @@
             - [x] Design and implement task/appointment creation and management UI.
             - [x] Implement local storage for tasks/appointments.
             - [x] Develop pop-up notification and reminder functionality.
-            - [ ] Zeiterfassung mit Task.
+            - [x] Zeiterfassung mit Task.
             - [x] Implement Calendar Overview:
                 - [x] Display calendar view.
                 - [x] Visually highlight days with appointments.
@@ -80,6 +80,10 @@
             - [x] Develop reporting and categorization features.
             - [ ] Integrate ledger data synchronisation with backend.
             - [ ] Add charts/insights for budget vs. actual comparisons.
+        - [ ] Time Tracking Module:
+            - [x] Persist manual and automatic entries with Drift.
+            - [x] Synchronize time entries (encrypted) via backend for paid members.
+            - [ ] Surface sync conflicts inside the UI (detail view).
         - [ ] Settings Module:
             - [ ] Design and implement user settings UI.
             - [ ] Implement local storage for user preferences.
@@ -111,6 +115,12 @@
         - [ ] Integrate Google authentication.
     - [ ] Implement Data Synchronization API:
         - [ ] Design and implement synchronization logic for all modules (Dashboard, Tasks, Notes, Habits, Household Book, Settings).
+            - [x] Notes
+            - [x] Tasks
+            - [x] Time Tracking
+            - [ ] Habits
+            - [ ] Household Book
+            - [ ] Settings / Preferences
         - [x] Handle conflict resolution for synchronized entities.
     - [ ] Implement Payment Gateway:
         - [ ] Integrate PayPal payment processing.
