@@ -4,7 +4,7 @@ services:
       context: ./homepage
     image: tracker/homepage:latest
     ports:
-      - "8080:80"
+      - "8070:80"
     restart: unless-stopped
 
   wiki:
@@ -13,7 +13,7 @@ services:
       dockerfile: wiki/Dockerfile
     image: tracker/wiki:latest
     ports:
-      - "8082:80"
+      - "8072:80"
     restart: unless-stopped
 
   webapp:
@@ -24,7 +24,7 @@ services:
         BACKEND_URL: https://api.personal-tracker.life
     image: tracker/webapp:latest
     ports:
-      - "8081:80"
+      - "8071:80"
     restart: unless-stopped
 
   db:
@@ -56,7 +56,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8083:8080"
+      - "8073:8080"
     networks:
       - internal
     restart: unless-stopped
