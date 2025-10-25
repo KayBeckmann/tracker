@@ -113,6 +113,10 @@ class AppServer {
     if (user == null) {
       return _errorResponse(401, 'Nicht autorisiert.');
     }
+    final guard = _guardSyncAccess(user);
+    if (guard != null) {
+      return guard;
+    }
 
     await syncService.deleteAllForUser(userId);
     return _jsonResponse(_membershipJson(user));
@@ -122,6 +126,15 @@ class AppServer {
     final userId = userIdFromContext(request);
     if (userId == null) {
       return _errorResponse(401, 'Nicht autorisiert.');
+    }
+
+    final user = await authService.getUserById(userId);
+    if (user == null) {
+      return _errorResponse(401, 'Nicht autorisiert.');
+    }
+    final guard = _guardSyncAccess(user);
+    if (guard != null) {
+      return guard;
     }
 
     final collection = request.url.queryParameters['collection'];
@@ -152,6 +165,15 @@ class AppServer {
     final userId = userIdFromContext(request);
     if (userId == null) {
       return _errorResponse(401, 'Nicht autorisiert.');
+    }
+
+    final user = await authService.getUserById(userId);
+    if (user == null) {
+      return _errorResponse(401, 'Nicht autorisiert.');
+    }
+    final guard = _guardSyncAccess(user);
+    if (guard != null) {
+      return guard;
     }
 
     try {
@@ -192,12 +214,34 @@ class AppServer {
     return <String, Object?>{
       'membership_level': user.membershipLevel,
       'membership_expires_at': user.membershipExpiresAt?.toIso8601String(),
-      'sync_enabled': true,
+      'sync_enabled': user.syncEnabled,
+      'sync_allowed': _hasActiveMembership(user),
       'last_payment_method': user.lastPaymentMethod,
       'sync_retention_until': user.syncRetentionUntil?.toIso8601String(),
       'price_monthly': 0.0,
       'price_yearly': 0.0,
     };
+  }
+
+  Response? _guardSyncAccess(UserRecord user) {
+    if (_hasActiveMembership(user)) {
+      return null;
+    }
+    return _errorResponse(
+      402,
+      'Eine aktive Mitgliedschaft ist erforderlich, um Daten zu synchronisieren.',
+    );
+  }
+
+  bool _hasActiveMembership(UserRecord user) {
+    if (!user.syncEnabled) {
+      return false;
+    }
+    final expiresAt = user.membershipExpiresAt;
+    if (expiresAt == null) {
+      return true;
+    }
+    return !expiresAt.isBefore(DateTime.now().toUtc());
   }
 
   Future<Map<String, dynamic>> _decodeJson(Request request) async {
