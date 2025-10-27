@@ -1332,6 +1332,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsGeneralTitle => 'Settings';
+
+  @override
   String get settingsAppearanceSectionTitle => 'Appearance';
 
   @override

@@ -2462,6 +2462,12 @@ abstract class AppLocalizations {
   /// **'Current language: {language}'**
   String settingsCurrentLanguage(String language);
 
+  /// No description provided for @settingsGeneralTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsGeneralTitle;
+
   /// No description provided for @settingsAppearanceSectionTitle.
   ///
   /// In en, this message translates to:

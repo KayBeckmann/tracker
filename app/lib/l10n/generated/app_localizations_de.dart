@@ -1344,6 +1344,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get settingsGeneralTitle => 'Einstellungen';
+
+  @override
   String get settingsAppearanceSectionTitle => 'Darstellung';
 
   @override

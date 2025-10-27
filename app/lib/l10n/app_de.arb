@@ -746,6 +746,7 @@
   "settingsLanguageSwedish": "Schwedisch",
   "settingsLanguageApply": "Sprache übernehmen",
   "settingsCurrentLanguage": "Aktuelle Sprache: {language}",
+  "settingsGeneralTitle": "Einstellungen",
   "settingsAppearanceSectionTitle": "Darstellung",
   "settingsThemeModeLabel": "Designmodus",
   "settingsThemeModeSystem": "Systemstandard",

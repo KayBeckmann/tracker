@@ -20,6 +20,7 @@ import 'habits/habit_utils.dart';
 import 'journal/journal_lock_view.dart';
 import 'journal/journal_page.dart';
 import 'tasks/tasks_page.dart';
+import 'settings/settings_keys.dart';
 import 'sync/encryption_service.dart';
 import 'sync/sync_api_client.dart';
 import 'sync/sync_engine.dart';
@@ -35,23 +36,6 @@ const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
   defaultValue: 'https://api.personal-tracker.life',
 );
-
-const String trackerBoxName = 'tracker_box';
-const String preferredLocaleKey = 'preferred_locale';
-const String preferredThemeModeKey = 'preferred_theme_mode';
-const String preferredSeedColorKey = 'preferred_seed_color';
-const String enabledModulesKey = 'enabled_modules';
-const String moduleOrderKey = 'module_order';
-const String timeTrackingRoundingKey = 'time_tracking_rounding';
-const String timeTrackingTargetModeKey = 'time_tracking_target_mode';
-const String timeTrackingDailyTargetMinutesKey =
-    'time_tracking_daily_target_minutes';
-const String timeTrackingWeeklyTargetMinutesKey =
-    'time_tracking_weekly_target_minutes';
-const String journalTemplateKey = 'journal_template';
-const String journalPinHashKey = 'journal_pin_hash';
-const String journalPinSaltKey = 'journal_pin_salt';
-const String journalBiometricEnabledKey = 'journal_biometric_enabled';
 
 const List<Locale> supportedAppLocales = <Locale>[
   Locale('en'),
@@ -110,6 +94,7 @@ class _TrackerAppState extends State<TrackerApp> {
       _locale = locale;
     });
     _settingsBox.put(preferredLocaleKey, locale.languageCode);
+    _markSettingsDirty();
   }
 
   void _handleThemeModeChanged(ThemeMode mode) {
@@ -122,6 +107,7 @@ class _TrackerAppState extends State<TrackerApp> {
       _ => 'system',
     };
     _settingsBox.put(preferredThemeModeKey, value);
+    _markSettingsDirty();
   }
 
   void _handleSeedColorChanged(Color color) {
@@ -129,6 +115,14 @@ class _TrackerAppState extends State<TrackerApp> {
       _seedColor = color;
     });
     _settingsBox.put(preferredSeedColorKey, color.toARGB32());
+    _markSettingsDirty();
+  }
+
+  void _markSettingsDirty() {
+    final now = DateTime.now().toUtc().toIso8601String();
+    _settingsBox
+      ..put(settingsDirtyKey, true)
+      ..put(settingsLastUpdatedAtKey, now);
   }
 
   @override
@@ -507,6 +501,77 @@ class _HomePageState extends State<HomePage> {
     _journalUnlocked = !_journalProtectionEnabled;
   }
 
+  void _reloadSettingsFromStorage() {
+    if (!mounted) {
+      return;
+    }
+
+    Locale resolveLocale() {
+      final Object? stored = _trackerBox.get(preferredLocaleKey);
+      if (stored is String && stored.isNotEmpty) {
+        return Locale(stored);
+      }
+      return widget.currentLocale;
+    }
+
+    ThemeMode resolveThemeMode() {
+      final Object? stored = _trackerBox.get(preferredThemeModeKey);
+      if (stored is String) {
+        return switch (stored) {
+          'light' => ThemeMode.light,
+          'dark' => ThemeMode.dark,
+          _ => ThemeMode.system,
+        };
+      }
+      return widget.themeMode;
+    }
+
+    Color resolveSeedColor() {
+      final Object? stored = _trackerBox.get(preferredSeedColorKey);
+      if (stored is int) {
+        return Color(stored);
+      }
+      return widget.seedColor;
+    }
+
+    final locale = resolveLocale();
+    final themeMode = resolveThemeMode();
+    final seedColor = resolveSeedColor();
+
+    if (widget.currentLocale != locale) {
+      widget.onLocaleChanged(locale);
+    }
+    if (widget.themeMode != themeMode) {
+      widget.onThemeModeChanged(themeMode);
+    }
+    if (widget.seedColor != seedColor) {
+      widget.onSeedColorChanged(seedColor);
+    }
+
+    setState(() {
+      _pendingLocale = locale;
+      _pendingThemeMode = themeMode;
+      _pendingSeedColor = seedColor;
+      _loadModuleSettings();
+    });
+
+    final String dailyText = formatDurationInput(
+      _timeTrackingDailyTargetMinutes,
+    );
+    final String weeklyText = formatDurationInput(
+      _timeTrackingWeeklyTargetMinutes,
+    );
+    if (_dailyTargetController.text != dailyText) {
+      _dailyTargetController.text = dailyText;
+    }
+    if (_weeklyTargetController.text != weeklyText) {
+      _weeklyTargetController.text = weeklyText;
+    }
+    if (_journalTemplateController.text != _journalTemplate) {
+      _journalTemplateController.text = _journalTemplate;
+    }
+  }
+
   void _persistModuleSettings() {
     final List<String> orderNames = _moduleOrder
         .map((section) => section.name)
@@ -516,6 +581,14 @@ class _HomePageState extends State<HomePage> {
         .map((section) => section.name)
         .toList();
     _trackerBox.put(enabledModulesKey, enabledNames);
+    _markSettingsDirty();
+  }
+
+  void _markSettingsDirty() {
+    final now = DateTime.now().toUtc().toIso8601String();
+    _trackerBox
+      ..put(settingsDirtyKey, true)
+      ..put(settingsLastUpdatedAtKey, now);
   }
 
   void _updateTimeTrackingRounding(TimeTrackingRounding value) {
@@ -523,6 +596,7 @@ class _HomePageState extends State<HomePage> {
       _timeTrackingRounding = value;
     });
     _trackerBox.put(timeTrackingRoundingKey, value.name);
+    _markSettingsDirty();
   }
 
   void _updateTimeTrackingTargetMode(TimeTrackingTargetMode mode) {
@@ -530,6 +604,7 @@ class _HomePageState extends State<HomePage> {
       _timeTrackingTargetMode = mode;
     });
     _trackerBox.put(timeTrackingTargetModeKey, mode.name);
+    _markSettingsDirty();
   }
 
   void _updateTimeTrackingDailyTarget(int minutes) {
@@ -539,6 +614,7 @@ class _HomePageState extends State<HomePage> {
       _dailyTargetController.text = formatDurationInput(sanitized);
     });
     _trackerBox.put(timeTrackingDailyTargetMinutesKey, sanitized);
+    _markSettingsDirty();
   }
 
   void _updateTimeTrackingWeeklyTarget(int minutes) {
@@ -548,6 +624,7 @@ class _HomePageState extends State<HomePage> {
       _weeklyTargetController.text = formatDurationInput(sanitized);
     });
     _trackerBox.put(timeTrackingWeeklyTargetMinutesKey, sanitized);
+    _markSettingsDirty();
   }
 
   void _submitDailyTarget(BuildContext context, AppLocalizations loc) {
@@ -1097,6 +1174,7 @@ class _HomePageState extends State<HomePage> {
       _isSyncInProgress = true;
     });
 
+    bool appliedRemoteUpdates = false;
     try {
       final result = await _syncEngine.synchronize();
       if (!mounted) {
@@ -1114,9 +1192,11 @@ class _HomePageState extends State<HomePage> {
         if (retryResult.hasConflicts) {
           _showSnackBar(loc.syncConflictMessage);
         } else {
+          appliedRemoteUpdates = true;
           _showSnackBar(loc.syncSuccess);
         }
       } else {
+        appliedRemoteUpdates = true;
         _showSnackBar(loc.syncSuccess);
       }
     } catch (error) {
@@ -1129,6 +1209,9 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _isSyncInProgress = false;
         });
+        if (appliedRemoteUpdates) {
+          _reloadSettingsFromStorage();
+        }
       }
     }
   }
@@ -1173,6 +1256,9 @@ class _HomePageState extends State<HomePage> {
         break;
       case 'time_entries':
         deviceUpdated = conflict.timeEntry?.updatedAt;
+        break;
+      case 'settings':
+        deviceUpdated = conflict.settingsUpdatedAt;
         break;
       default:
         deviceUpdated = null;
@@ -1303,6 +1389,10 @@ class _HomePageState extends State<HomePage> {
         return startText;
       }
       return '$startText • $duration';
+    }
+
+    if (conflict.collection == 'settings') {
+      return loc.settingsGeneralTitle;
     }
 
     if (isDevice) {
@@ -3265,6 +3355,7 @@ class _HomePageState extends State<HomePage> {
     final messenger = ScaffoldMessenger.of(context);
     final loc = AppLocalizations.of(context);
     await _trackerBox.put(journalTemplateKey, template);
+    _markSettingsDirty();
     if (!mounted) {
       return;
     }
@@ -3279,6 +3370,7 @@ class _HomePageState extends State<HomePage> {
     final messenger = ScaffoldMessenger.of(context);
     final loc = AppLocalizations.of(context);
     await _trackerBox.put(journalTemplateKey, '');
+    _markSettingsDirty();
     if (!mounted) {
       return;
     }
@@ -3400,6 +3492,7 @@ class _HomePageState extends State<HomePage> {
     final hash = await _hashJournalPin(pin, salt);
     await _trackerBox.put(journalPinSaltKey, salt);
     await _trackerBox.put(journalPinHashKey, hash);
+    _markSettingsDirty();
     if (!mounted) {
       return;
     }
@@ -3486,6 +3579,7 @@ class _HomePageState extends State<HomePage> {
     }
     await _trackerBox.delete(journalPinHashKey);
     await _trackerBox.delete(journalPinSaltKey);
+    _markSettingsDirty();
     if (!mounted) {
       return;
     }
@@ -3513,6 +3607,7 @@ class _HomePageState extends State<HomePage> {
       }
     }
     await _trackerBox.put(journalBiometricEnabledKey, value);
+    _markSettingsDirty();
     if (!mounted) {
       return;
     }

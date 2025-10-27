@@ -815,6 +815,7 @@
       }
     }
   },
+  "settingsGeneralTitle": "Settings",
   "settingsAppearanceSectionTitle": "Appearance",
   "settingsThemeModeLabel": "Theme mode",
   "settingsThemeModeSystem": "System default",

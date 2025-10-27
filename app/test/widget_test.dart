@@ -5,8 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 
-import 'package:app/main.dart';
 import 'package:app/data/local/app_database.dart';
+import 'package:app/main.dart';
+import 'package:app/settings/settings_keys.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

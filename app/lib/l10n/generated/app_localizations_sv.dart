@@ -1332,6 +1332,9 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
+  String get settingsGeneralTitle => 'Inställningar';
+
+  @override
   String get settingsAppearanceSectionTitle => 'Utseende';
 
   @override

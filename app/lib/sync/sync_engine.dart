@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
 import '../data/local/app_database.dart';
+import '../settings/settings_keys.dart';
 import '../time_tracking/time_tracking_types.dart';
 import 'encryption_service.dart';
 import 'sync_api_client.dart';
@@ -38,6 +39,8 @@ class SyncEngine {
   DateTime? get lastTasksSync => _readTimestamp(lastSyncTasksKey);
 
   DateTime? get lastTimeEntriesSync => _readTimestamp(lastSyncTimeEntriesKey);
+
+  DateTime? get lastSettingsSync => _readTimestamp(lastSyncSettingsKey);
 
   void loadStoredKey() {
     encryptionService.loadKeyFromStorage(
@@ -77,6 +80,8 @@ class SyncEngine {
     conflicts.addAll(taskConflicts);
     final timeConflicts = await _pushTimeEntries(token);
     conflicts.addAll(timeConflicts);
+    final settingsConflicts = await _pushSettings(token);
+    conflicts.addAll(settingsConflicts);
 
     if (conflicts.isNotEmpty) {
       return SyncResult(conflicts: conflicts);
@@ -85,11 +90,13 @@ class SyncEngine {
     await _pullNotes(token);
     await _pullTasks(token);
     await _pullTimeEntries(token);
+    await _pullSettings(token);
 
     final now = DateTime.now().toUtc();
     storageBox.put(lastSyncNotesKey, now.toIso8601String());
     storageBox.put(lastSyncTasksKey, now.toIso8601String());
     storageBox.put(lastSyncTimeEntriesKey, now.toIso8601String());
+    storageBox.put(lastSyncSettingsKey, now.toIso8601String());
 
     return const SyncResult(conflicts: <SyncConflictData>[]);
   }
@@ -138,6 +145,20 @@ class SyncEngine {
           );
         }
         break;
+      case 'settings':
+        if (decision == ConflictDecision.keepServer) {
+          await _applyRemoteSettings(conflict.server, conflict.serverPayload);
+        } else {
+          final updatedAt =
+              conflict.settingsUpdatedAt ?? DateTime.now().toUtc();
+          _storeSettingsMetadata(
+            remoteId: conflict.remoteId,
+            remoteVersion: conflict.server.version,
+            updatedAt: updatedAt,
+            markDirty: true,
+          );
+        }
+        break;
     }
   }
 
@@ -149,6 +170,11 @@ class SyncEngine {
     await storageBox.delete(lastSyncNotesKey);
     await storageBox.delete(lastSyncTasksKey);
     await storageBox.delete(lastSyncTimeEntriesKey);
+    await storageBox.delete(lastSyncSettingsKey);
+    await storageBox.delete(settingsRemoteIdKey);
+    await storageBox.delete(settingsRemoteVersionKey);
+    await storageBox.delete(settingsLastUpdatedAtKey);
+    await storageBox.delete(settingsDirtyKey);
   }
 
   Future<List<SyncConflictData>> _pushNotes(String token) async {
@@ -382,6 +408,68 @@ class SyncEngine {
     }
   }
 
+  Future<List<SyncConflictData>> _pushSettings(String token) async {
+    if (!_isSettingsDirty) {
+      return const [];
+    }
+
+    final DateTime updatedAt = _ensureSettingsUpdatedAt();
+    final payload = _serializeSettingsPayload(updatedAt: updatedAt);
+    final ciphertext = await encryptionService.encryptMap(payload);
+    final String remoteId = _settingsRemoteId ?? _uuid.v4();
+    final int version = _settingsRemoteVersion + 1;
+
+    final outgoing = <String, Object?>{
+      'id': remoteId,
+      'collection': 'settings',
+      'ciphertext': ciphertext,
+      'version': version,
+      'clientUpdatedAt': updatedAt.toIso8601String(),
+      'deleted': false,
+    };
+
+    try {
+      final response = await apiClient.upsertItems(
+        token: token,
+        collection: 'settings',
+        items: <Map<String, Object?>>[outgoing],
+      );
+      if (response.items.isNotEmpty) {
+        final item = response.items.first;
+        _storeSettingsMetadata(
+          remoteId: item.id,
+          remoteVersion: item.version,
+          updatedAt: item.updatedAt,
+        );
+      } else {
+        _storeSettingsMetadata(
+          remoteId: remoteId,
+          remoteVersion: version,
+          updatedAt: updatedAt,
+        );
+      }
+      return const [];
+    } on SyncConflictException catch (conflict) {
+      final conflicts = <SyncConflictData>[];
+      for (final entry in conflict.conflicts) {
+        final serverPayload = await encryptionService.decryptToMap(
+          entry.server.ciphertext,
+        );
+        conflicts.add(
+          SyncConflictData(
+            collection: 'settings',
+            remoteId: entry.id,
+            server: entry.server,
+            serverPayload: serverPayload,
+            localPayload: payload,
+            settingsUpdatedAt: updatedAt,
+          ),
+        );
+      }
+      return conflicts;
+    }
+  }
+
   Future<void> _pullNotes(String token) async {
     final since = lastNotesSync;
     final remoteItems = await apiClient.fetchItems(
@@ -439,6 +527,27 @@ class SyncEngine {
       }
       final payload = await encryptionService.decryptToMap(item.ciphertext);
       await _applyRemoteTimeEntry(item, payload);
+    }
+  }
+
+  Future<void> _pullSettings(String token) async {
+    final since = lastSettingsSync;
+    final remoteItems = await apiClient.fetchItems(
+      token: token,
+      collection: 'settings',
+      since: since,
+    );
+    for (final item in remoteItems) {
+      if (item.deleted) {
+        storageBox
+          ..delete(settingsRemoteIdKey)
+          ..delete(settingsRemoteVersionKey)
+          ..put(settingsDirtyKey, true)
+          ..put(settingsLastUpdatedAtKey, item.updatedAt.toIso8601String());
+        continue;
+      }
+      final payload = await encryptionService.decryptToMap(item.ciphertext);
+      await _applyRemoteSettings(item, payload);
     }
   }
 
@@ -736,6 +845,268 @@ class SyncEngine {
     );
   }
 
+  Future<void> _applyRemoteSettings(
+    RemoteSyncItem item,
+    Map<String, dynamic> payload,
+  ) async {
+    _writeStringPreference(
+      storageKey: preferredLocaleKey,
+      raw: payload['locale'],
+    );
+    _writeStringPreference(
+      storageKey: preferredThemeModeKey,
+      raw: payload['themeMode'],
+    );
+    _writeIntPreference(
+      storageKey: preferredSeedColorKey,
+      raw: payload['seedColor'],
+    );
+    _writeStringListPreference(
+      storageKey: moduleOrderKey,
+      raw: payload['moduleOrder'],
+    );
+    _writeStringListPreference(
+      storageKey: enabledModulesKey,
+      raw: payload['enabledModules'],
+    );
+    _writeStringPreference(
+      storageKey: timeTrackingRoundingKey,
+      raw: payload['timeTrackingRounding'],
+    );
+    _writeStringPreference(
+      storageKey: timeTrackingTargetModeKey,
+      raw: payload['timeTrackingTargetMode'],
+    );
+    _writeIntPreference(
+      storageKey: timeTrackingDailyTargetMinutesKey,
+      raw: payload['timeTrackingDailyTargetMinutes'],
+    );
+    _writeIntPreference(
+      storageKey: timeTrackingWeeklyTargetMinutesKey,
+      raw: payload['timeTrackingWeeklyTargetMinutes'],
+    );
+    _writeStringPreference(
+      storageKey: journalTemplateKey,
+      raw: payload['journalTemplate'],
+      allowEmpty: true,
+    );
+    _writeStringPreference(
+      storageKey: journalPinHashKey,
+      raw: payload['journalPinHash'],
+      allowEmpty: true,
+    );
+    _writeStringPreference(
+      storageKey: journalPinSaltKey,
+      raw: payload['journalPinSalt'],
+      allowEmpty: true,
+    );
+    _writeBoolPreference(
+      storageKey: journalBiometricEnabledKey,
+      raw: payload['journalBiometricEnabled'],
+    );
+
+    final DateTime updatedAt =
+        _parseDate(payload['updatedAt']) ?? item.clientUpdatedAt ??
+            item.updatedAt;
+    _storeSettingsMetadata(
+      remoteId: item.id,
+      remoteVersion: item.version,
+      updatedAt: updatedAt,
+    );
+  }
+
+  Map<String, Object?> _serializeSettingsPayload({
+    required DateTime updatedAt,
+  }) {
+    List<String>? readList(String key) {
+      final raw = storageBox.get(key);
+      if (raw is List) {
+        return raw
+            .map((value) => value is String ? value : '$value')
+            .cast<String>()
+            .toList(growable: false);
+      }
+      return null;
+    }
+
+    int? readInt(String key) {
+      final raw = storageBox.get(key);
+      if (raw is int) {
+        return raw;
+      }
+      if (raw is num) {
+        return raw.toInt();
+      }
+      return null;
+    }
+
+    bool? readBool(String key) {
+      final raw = storageBox.get(key);
+      return raw is bool ? raw : null;
+    }
+
+    final Object? templateRaw = storageBox.get(journalTemplateKey);
+    final Object? pinHashRaw = storageBox.get(journalPinHashKey);
+    final Object? pinSaltRaw = storageBox.get(journalPinSaltKey);
+
+    return <String, Object?>{
+      'locale': storageBox.get(preferredLocaleKey) as String?,
+      'themeMode': storageBox.get(preferredThemeModeKey) as String?,
+      'seedColor': readInt(preferredSeedColorKey),
+      'moduleOrder': readList(moduleOrderKey),
+      'enabledModules': readList(enabledModulesKey),
+      'timeTrackingRounding':
+          storageBox.get(timeTrackingRoundingKey) as String?,
+      'timeTrackingTargetMode':
+          storageBox.get(timeTrackingTargetModeKey) as String?,
+      'timeTrackingDailyTargetMinutes':
+          readInt(timeTrackingDailyTargetMinutesKey),
+      'timeTrackingWeeklyTargetMinutes':
+          readInt(timeTrackingWeeklyTargetMinutesKey),
+      'journalTemplate': templateRaw is String ? templateRaw : null,
+      'journalPinHash': pinHashRaw is String ? pinHashRaw : null,
+      'journalPinSalt': pinSaltRaw is String ? pinSaltRaw : null,
+      'journalBiometricEnabled': readBool(journalBiometricEnabledKey),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+
+  void _writeStringPreference({
+    required String storageKey,
+    Object? raw,
+    bool allowEmpty = false,
+  }) {
+    final value = _parseString(raw, allowEmpty: allowEmpty);
+    if (value == null) {
+      storageBox.delete(storageKey);
+    } else {
+      storageBox.put(storageKey, value);
+    }
+  }
+
+  void _writeIntPreference({required String storageKey, Object? raw}) {
+    final value = _parseInt(raw);
+    if (value == null) {
+      storageBox.delete(storageKey);
+    } else {
+      storageBox.put(storageKey, value);
+    }
+  }
+
+  void _writeStringListPreference({required String storageKey, Object? raw}) {
+    final list = _parseStringList(raw);
+    if (list == null) {
+      storageBox.delete(storageKey);
+    } else {
+      storageBox.put(storageKey, list);
+    }
+  }
+
+  void _writeBoolPreference({required String storageKey, Object? raw}) {
+    final value = _parseBool(raw);
+    if (value == null) {
+      storageBox.delete(storageKey);
+    } else {
+      storageBox.put(storageKey, value);
+    }
+  }
+
+  String? _parseString(Object? value, {bool allowEmpty = false}) {
+    if (value is String) {
+      if (allowEmpty) {
+        return value;
+      }
+      final trimmed = value.trim();
+      if (trimmed.isEmpty) {
+        return null;
+      }
+      return value;
+    }
+    return null;
+  }
+
+  int? _parseInt(Object? value) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    return null;
+  }
+
+  bool? _parseBool(Object? value) {
+    if (value is bool) {
+      return value;
+    }
+    return null;
+  }
+
+  List<String>? _parseStringList(Object? value) {
+    if (value is List) {
+      return value
+          .map((entry) => entry is String ? entry : '$entry')
+          .map((entry) => entry.trim())
+          .where((entry) => entry.isNotEmpty)
+          .cast<String>()
+          .toList(growable: false);
+    }
+    return null;
+  }
+
+  void _storeSettingsMetadata({
+    required String remoteId,
+    required int remoteVersion,
+    required DateTime updatedAt,
+    bool markDirty = false,
+  }) {
+    storageBox
+      ..put(settingsRemoteIdKey, remoteId)
+      ..put(settingsRemoteVersionKey, remoteVersion)
+      ..put(settingsLastUpdatedAtKey, updatedAt.toIso8601String())
+      ..put(settingsDirtyKey, markDirty);
+  }
+
+  bool get _isSettingsDirty {
+    final raw = storageBox.get(settingsDirtyKey);
+    if (raw is bool) {
+      return raw;
+    }
+    return true;
+  }
+
+  String? get _settingsRemoteId {
+    final raw = storageBox.get(settingsRemoteIdKey);
+    if (raw is String && raw.isNotEmpty) {
+      return raw;
+    }
+    return null;
+  }
+
+  int get _settingsRemoteVersion {
+    final raw = storageBox.get(settingsRemoteVersionKey);
+    if (raw is int) {
+      return raw;
+    }
+    if (raw is num) {
+      return raw.toInt();
+    }
+    return 0;
+  }
+
+  DateTime _ensureSettingsUpdatedAt() {
+    final raw = storageBox.get(settingsLastUpdatedAtKey);
+    if (raw is String && raw.isNotEmpty) {
+      final parsed = DateTime.tryParse(raw);
+      if (parsed != null) {
+        return parsed.toUtc();
+      }
+    }
+    final now = DateTime.now().toUtc();
+    storageBox.put(settingsLastUpdatedAtKey, now.toIso8601String());
+    return now;
+  }
+
   Future<void> _applyServerTimeEntry(SyncConflictData conflict) async {
     await _applyRemoteTimeEntry(conflict.server, conflict.serverPayload);
   }
@@ -781,6 +1152,7 @@ class SyncConflictData {
     this.note,
     this.task,
     this.timeEntry,
+    this.settingsUpdatedAt,
   });
 
   final String collection;
@@ -791,6 +1163,7 @@ class SyncConflictData {
   final NoteEntry? note;
   final TaskEntry? task;
   final TimeEntry? timeEntry;
+  final DateTime? settingsUpdatedAt;
 }
 
 enum ConflictDecision { keepLocal, keepServer }

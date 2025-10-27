@@ -746,6 +746,7 @@
   "settingsLanguageSwedish": "Svenska",
   "settingsLanguageApply": "Använd språk",
   "settingsCurrentLanguage": "Aktuellt språk: {language}",
+  "settingsGeneralTitle": "Inställningar",
   "settingsAppearanceSectionTitle": "Utseende",
   "settingsThemeModeLabel": "Temaläge",
   "settingsThemeModeSystem": "Systemstandard",
