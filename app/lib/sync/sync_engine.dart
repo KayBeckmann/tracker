@@ -21,6 +21,10 @@ const String lastSyncJournalTrackerValuesKey =
     'sync_journal_tracker_values_last';
 const String lastSyncHabitDefinitionsKey = 'sync_habits_last';
 const String lastSyncHabitLogsKey = 'sync_habit_logs_last';
+const String lastSyncLedgerAccountsKey = 'sync_ledger_accounts_last';
+const String lastSyncLedgerCategoriesKey = 'sync_ledger_categories_last';
+const String lastSyncLedgerTransactionsKey = 'sync_ledger_transactions_last';
+const String lastSyncLedgerRecurringKey = 'sync_ledger_recurring_last';
 
 class SyncEngine {
   SyncEngine({
@@ -61,6 +65,18 @@ class SyncEngine {
       _readTimestamp(lastSyncHabitDefinitionsKey);
 
   DateTime? get lastHabitLogsSync => _readTimestamp(lastSyncHabitLogsKey);
+
+  DateTime? get lastLedgerAccountsSync =>
+      _readTimestamp(lastSyncLedgerAccountsKey);
+
+  DateTime? get lastLedgerCategoriesSync =>
+      _readTimestamp(lastSyncLedgerCategoriesKey);
+
+  DateTime? get lastLedgerTransactionsSync =>
+      _readTimestamp(lastSyncLedgerTransactionsKey);
+
+  DateTime? get lastLedgerRecurringSync =>
+      _readTimestamp(lastSyncLedgerRecurringKey);
 
   void loadStoredKey() {
     encryptionService.loadKeyFromStorage(
@@ -112,6 +128,15 @@ class SyncEngine {
     conflicts.addAll(habitConflicts);
     final habitLogConflicts = await _pushHabitLogs(token);
     conflicts.addAll(habitLogConflicts);
+    final ledgerAccountConflicts = await _pushLedgerAccounts(token);
+    conflicts.addAll(ledgerAccountConflicts);
+    final ledgerCategoryConflicts = await _pushLedgerCategories(token);
+    conflicts.addAll(ledgerCategoryConflicts);
+    final ledgerTransactionConflicts = await _pushLedgerTransactions(token);
+    conflicts.addAll(ledgerTransactionConflicts);
+    final ledgerRecurringConflicts =
+        await _pushLedgerRecurringTransactions(token);
+    conflicts.addAll(ledgerRecurringConflicts);
 
     if (conflicts.isNotEmpty) {
       return SyncResult(conflicts: conflicts);
@@ -121,6 +146,10 @@ class SyncEngine {
     await _pullTasks(token);
     await _pullTimeEntries(token);
     await _pullSettings(token);
+    await _pullLedgerAccounts(token);
+    await _pullLedgerCategories(token);
+    await _pullLedgerTransactions(token);
+    await _pullLedgerRecurringTransactions(token);
     await _pullJournalEntries(token);
     await _pullJournalTrackers(token);
     await _pullJournalTrackerValues(token);
@@ -137,7 +166,11 @@ class SyncEngine {
       ..put(lastSyncJournalTrackersKey, now.toIso8601String())
       ..put(lastSyncJournalTrackerValuesKey, now.toIso8601String())
       ..put(lastSyncHabitDefinitionsKey, now.toIso8601String())
-      ..put(lastSyncHabitLogsKey, now.toIso8601String());
+      ..put(lastSyncHabitLogsKey, now.toIso8601String())
+      ..put(lastSyncLedgerAccountsKey, now.toIso8601String())
+      ..put(lastSyncLedgerCategoriesKey, now.toIso8601String())
+      ..put(lastSyncLedgerTransactionsKey, now.toIso8601String())
+      ..put(lastSyncLedgerRecurringKey, now.toIso8601String());
 
     return const SyncResult(conflicts: <SyncConflictData>[]);
   }
@@ -217,6 +250,10 @@ class SyncEngine {
     await storageBox.delete(lastSyncJournalTrackerValuesKey);
     await storageBox.delete(lastSyncHabitDefinitionsKey);
     await storageBox.delete(lastSyncHabitLogsKey);
+    await storageBox.delete(lastSyncLedgerAccountsKey);
+    await storageBox.delete(lastSyncLedgerCategoriesKey);
+    await storageBox.delete(lastSyncLedgerTransactionsKey);
+    await storageBox.delete(lastSyncLedgerRecurringKey);
     await storageBox.delete(settingsRemoteIdKey);
     await storageBox.delete(settingsRemoteVersionKey);
     await storageBox.delete(settingsLastUpdatedAtKey);
@@ -854,6 +891,351 @@ class SyncEngine {
     return const [];
   }
 
+  Future<List<SyncConflictData>> _pushLedgerAccounts(String token) async {
+    final accounts = await database.getLedgerAccountsNeedingSync();
+    if (accounts.isEmpty) {
+      return const [];
+    }
+
+    final outgoing = <Map<String, Object?>>[];
+    final accountByRemoteId = <String, LedgerAccount>{};
+
+    for (var account in accounts) {
+      if (account.remoteId == null || account.remoteId!.isEmpty) {
+        final generatedId = _uuid.v4();
+        await database.assignLedgerAccountRemoteId(
+          id: account.id,
+          remoteId: generatedId,
+        );
+        account = account.copyWith(remoteId: Value(generatedId));
+      }
+      final payload = _serializeLedgerAccount(account);
+      final ciphertext = await encryptionService.encryptMap(payload);
+      final version = account.remoteVersion + 1;
+      final remoteId = account.remoteId!;
+      outgoing.add(<String, Object?>{
+        'id': remoteId,
+        'collection': 'ledger_accounts',
+        'ciphertext': ciphertext,
+        'version': version,
+        'clientUpdatedAt': account.updatedAt.toUtc().toIso8601String(),
+        'deleted': false,
+      });
+      accountByRemoteId[remoteId] = account;
+    }
+
+    try {
+      final response = await apiClient.upsertItems(
+        token: token,
+        collection: 'ledger_accounts',
+        items: outgoing,
+      );
+      for (final item in response.items) {
+        final account = accountByRemoteId[item.id];
+        if (account != null) {
+          await database.markLedgerAccountSynced(
+            id: account.id,
+            remoteVersion: item.version,
+            syncedAt: item.updatedAt,
+          );
+        }
+      }
+    } on SyncConflictException catch (conflict) {
+      for (final entry in conflict.conflicts) {
+        final payload = await encryptionService.decryptToMap(
+          entry.server.ciphertext,
+        );
+        await _applyRemoteLedgerAccount(entry.server, payload);
+      }
+    }
+
+    return const [];
+  }
+
+  Future<List<SyncConflictData>> _pushLedgerCategories(String token) async {
+    final categories = await database.getLedgerCategoriesNeedingSync();
+    if (categories.isEmpty) {
+      return const [];
+    }
+
+    final outgoing = <Map<String, Object?>>[];
+    final categoryByRemoteId = <String, LedgerCategory>{};
+
+    for (var category in categories) {
+      if (category.remoteId == null || category.remoteId!.isEmpty) {
+        final generatedId = _uuid.v4();
+        await database.assignLedgerCategoryRemoteId(
+          id: category.id,
+          remoteId: generatedId,
+        );
+        category = category.copyWith(remoteId: Value(generatedId));
+      }
+      if (category.parentId != null) {
+        final parent =
+            await database.getLedgerCategoryById(category.parentId!);
+        if (parent != null &&
+            (parent.remoteId == null || parent.remoteId!.isEmpty)) {
+          await database.assignLedgerCategoryRemoteId(
+            id: parent.id,
+            remoteId: _uuid.v4(),
+          );
+        }
+      }
+      final payload = await _serializeLedgerCategory(category);
+      final ciphertext = await encryptionService.encryptMap(payload);
+      final version = category.remoteVersion + 1;
+      final remoteId = category.remoteId!;
+      outgoing.add(<String, Object?>{
+        'id': remoteId,
+        'collection': 'ledger_categories',
+        'ciphertext': ciphertext,
+        'version': version,
+        'clientUpdatedAt': category.updatedAt.toUtc().toIso8601String(),
+        'deleted': false,
+      });
+      categoryByRemoteId[remoteId] = category;
+    }
+
+    try {
+      final response = await apiClient.upsertItems(
+        token: token,
+        collection: 'ledger_categories',
+        items: outgoing,
+      );
+      for (final item in response.items) {
+        final category = categoryByRemoteId[item.id];
+        if (category != null) {
+          await database.markLedgerCategorySynced(
+            id: category.id,
+            remoteVersion: item.version,
+            syncedAt: item.updatedAt,
+          );
+        }
+      }
+    } on SyncConflictException catch (conflict) {
+      for (final entry in conflict.conflicts) {
+        final payload = await encryptionService.decryptToMap(
+          entry.server.ciphertext,
+        );
+        await _applyRemoteLedgerCategory(entry.server, payload);
+      }
+    }
+
+    return const [];
+  }
+
+  Future<List<SyncConflictData>> _pushLedgerTransactions(String token) async {
+    final transactions = await database.getLedgerTransactionsNeedingSync();
+    if (transactions.isEmpty) {
+      return const [];
+    }
+
+    final outgoing = <Map<String, Object?>>[];
+    final transactionByRemoteId = <String, LedgerTransaction>{};
+
+    for (var transaction in transactions) {
+      if (transaction.remoteId == null || transaction.remoteId!.isEmpty) {
+        final generatedId = _uuid.v4();
+        await database.assignLedgerTransactionRemoteId(
+          id: transaction.id,
+          remoteId: generatedId,
+        );
+        transaction = transaction.copyWith(remoteId: Value(generatedId));
+      }
+      if (transaction.accountId != null) {
+        final account =
+            await database.getLedgerAccountById(transaction.accountId!);
+        if (account != null &&
+            (account.remoteId == null || account.remoteId!.isEmpty)) {
+          await database.assignLedgerAccountRemoteId(
+            id: account.id,
+            remoteId: _uuid.v4(),
+          );
+        }
+      }
+      if (transaction.targetAccountId != null) {
+        final account =
+            await database.getLedgerAccountById(transaction.targetAccountId!);
+        if (account != null &&
+            (account.remoteId == null || account.remoteId!.isEmpty)) {
+          await database.assignLedgerAccountRemoteId(
+            id: account.id,
+            remoteId: _uuid.v4(),
+          );
+        }
+      }
+      if (transaction.categoryId != null) {
+        final category =
+            await database.getLedgerCategoryById(transaction.categoryId!);
+        if (category != null &&
+            (category.remoteId == null || category.remoteId!.isEmpty)) {
+          await database.assignLedgerCategoryRemoteId(
+            id: category.id,
+            remoteId: _uuid.v4(),
+          );
+        }
+      }
+      if (transaction.subcategoryId != null) {
+        final category =
+            await database.getLedgerCategoryById(transaction.subcategoryId!);
+        if (category != null &&
+            (category.remoteId == null || category.remoteId!.isEmpty)) {
+          await database.assignLedgerCategoryRemoteId(
+            id: category.id,
+            remoteId: _uuid.v4(),
+          );
+        }
+      }
+      final payload = await _serializeLedgerTransaction(transaction);
+      final ciphertext = await encryptionService.encryptMap(payload);
+      final version = transaction.remoteVersion + 1;
+      final remoteId = transaction.remoteId!;
+      outgoing.add(<String, Object?>{
+        'id': remoteId,
+        'collection': 'ledger_transactions',
+        'ciphertext': ciphertext,
+        'version': version,
+        'clientUpdatedAt': transaction.updatedAt.toUtc().toIso8601String(),
+        'deleted': false,
+      });
+      transactionByRemoteId[remoteId] = transaction;
+    }
+
+    try {
+      final response = await apiClient.upsertItems(
+        token: token,
+        collection: 'ledger_transactions',
+        items: outgoing,
+      );
+      for (final item in response.items) {
+        final transaction = transactionByRemoteId[item.id];
+        if (transaction != null) {
+          await database.markLedgerTransactionSynced(
+            id: transaction.id,
+            remoteVersion: item.version,
+            syncedAt: item.updatedAt,
+          );
+        }
+      }
+    } on SyncConflictException catch (conflict) {
+      for (final entry in conflict.conflicts) {
+        final payload = await encryptionService.decryptToMap(
+          entry.server.ciphertext,
+        );
+        await _applyRemoteLedgerTransaction(entry.server, payload);
+      }
+    }
+
+    return const [];
+  }
+
+  Future<List<SyncConflictData>> _pushLedgerRecurringTransactions(
+    String token,
+  ) async {
+    final recurring =
+        await database.getLedgerRecurringTransactionsNeedingSync();
+    if (recurring.isEmpty) {
+      return const [];
+    }
+
+    final outgoing = <Map<String, Object?>>[];
+    final recurringByRemoteId = <String, LedgerRecurringTransaction>{};
+
+    for (var entry in recurring) {
+      if (entry.remoteId == null || entry.remoteId!.isEmpty) {
+        final generatedId = _uuid.v4();
+        await database.assignLedgerRecurringRemoteId(
+          id: entry.id,
+          remoteId: generatedId,
+        );
+        entry = entry.copyWith(remoteId: Value(generatedId));
+      }
+      if (entry.accountId != null) {
+        final account = await database.getLedgerAccountById(entry.accountId!);
+        if (account != null &&
+            (account.remoteId == null || account.remoteId!.isEmpty)) {
+          await database.assignLedgerAccountRemoteId(
+            id: account.id,
+            remoteId: _uuid.v4(),
+          );
+        }
+      }
+      if (entry.targetAccountId != null) {
+        final account =
+            await database.getLedgerAccountById(entry.targetAccountId!);
+        if (account != null &&
+            (account.remoteId == null || account.remoteId!.isEmpty)) {
+          await database.assignLedgerAccountRemoteId(
+            id: account.id,
+            remoteId: _uuid.v4(),
+          );
+        }
+      }
+      if (entry.categoryId != null) {
+        final category =
+            await database.getLedgerCategoryById(entry.categoryId!);
+        if (category != null &&
+            (category.remoteId == null || category.remoteId!.isEmpty)) {
+          await database.assignLedgerCategoryRemoteId(
+            id: category.id,
+            remoteId: _uuid.v4(),
+          );
+        }
+      }
+      if (entry.subcategoryId != null) {
+        final category =
+            await database.getLedgerCategoryById(entry.subcategoryId!);
+        if (category != null &&
+            (category.remoteId == null || category.remoteId!.isEmpty)) {
+          await database.assignLedgerCategoryRemoteId(
+            id: category.id,
+            remoteId: _uuid.v4(),
+          );
+        }
+      }
+      final payload = await _serializeLedgerRecurringTransaction(entry);
+      final ciphertext = await encryptionService.encryptMap(payload);
+      final version = entry.remoteVersion + 1;
+      final remoteId = entry.remoteId!;
+      outgoing.add(<String, Object?>{
+        'id': remoteId,
+        'collection': 'ledger_recurring_transactions',
+        'ciphertext': ciphertext,
+        'version': version,
+        'clientUpdatedAt': entry.updatedAt.toUtc().toIso8601String(),
+        'deleted': false,
+      });
+      recurringByRemoteId[remoteId] = entry;
+    }
+
+    try {
+      final response = await apiClient.upsertItems(
+        token: token,
+        collection: 'ledger_recurring_transactions',
+        items: outgoing,
+      );
+      for (final item in response.items) {
+        final entry = recurringByRemoteId[item.id];
+        if (entry != null) {
+          await database.markLedgerRecurringTransactionSynced(
+            id: entry.id,
+            remoteVersion: item.version,
+            syncedAt: item.updatedAt,
+          );
+        }
+      }
+    } on SyncConflictException catch (conflict) {
+      for (final entry in conflict.conflicts) {
+        final payload = await encryptionService.decryptToMap(
+          entry.server.ciphertext,
+        );
+        await _applyRemoteLedgerRecurringTransaction(entry.server, payload);
+      }
+    }
+
+    return const [];
+  }
+
   Future<void> _pullNotes(String token) async {
     final since = lastNotesSync;
     final remoteItems = await apiClient.fetchItems(
@@ -932,6 +1314,87 @@ class SyncEngine {
       }
       final payload = await encryptionService.decryptToMap(item.ciphertext);
       await _applyRemoteSettings(item, payload);
+    }
+  }
+
+  Future<void> _pullLedgerAccounts(String token) async {
+    final since = lastLedgerAccountsSync;
+    final remoteItems = await apiClient.fetchItems(
+      token: token,
+      collection: 'ledger_accounts',
+      since: since,
+    );
+    for (final item in remoteItems) {
+      if (item.deleted) {
+        final local = await database.getLedgerAccountByRemoteId(item.id);
+        if (local != null) {
+          await database.deleteLedgerAccount(local.id);
+        }
+        continue;
+      }
+      final payload = await encryptionService.decryptToMap(item.ciphertext);
+      await _applyRemoteLedgerAccount(item, payload);
+    }
+  }
+
+  Future<void> _pullLedgerCategories(String token) async {
+    final since = lastLedgerCategoriesSync;
+    final remoteItems = await apiClient.fetchItems(
+      token: token,
+      collection: 'ledger_categories',
+      since: since,
+    );
+    for (final item in remoteItems) {
+      if (item.deleted) {
+        final local = await database.getLedgerCategoryByRemoteId(item.id);
+        if (local != null) {
+          await database.deleteLedgerCategory(local.id);
+        }
+        continue;
+      }
+      final payload = await encryptionService.decryptToMap(item.ciphertext);
+      await _applyRemoteLedgerCategory(item, payload);
+    }
+  }
+
+  Future<void> _pullLedgerTransactions(String token) async {
+    final since = lastLedgerTransactionsSync;
+    final remoteItems = await apiClient.fetchItems(
+      token: token,
+      collection: 'ledger_transactions',
+      since: since,
+    );
+    for (final item in remoteItems) {
+      if (item.deleted) {
+        final local = await database.getLedgerTransactionByRemoteId(item.id);
+        if (local != null) {
+          await database.deleteLedgerTransaction(local.id);
+        }
+        continue;
+      }
+      final payload = await encryptionService.decryptToMap(item.ciphertext);
+      await _applyRemoteLedgerTransaction(item, payload);
+    }
+  }
+
+  Future<void> _pullLedgerRecurringTransactions(String token) async {
+    final since = lastLedgerRecurringSync;
+    final remoteItems = await apiClient.fetchItems(
+      token: token,
+      collection: 'ledger_recurring_transactions',
+      since: since,
+    );
+    for (final item in remoteItems) {
+      if (item.deleted) {
+        final local =
+            await database.getLedgerRecurringTransactionByRemoteId(item.id);
+        if (local != null) {
+          await database.deleteLedgerRecurringTransaction(local.id);
+        }
+        continue;
+      }
+      final payload = await encryptionService.decryptToMap(item.ciphertext);
+      await _applyRemoteLedgerRecurringTransaction(item, payload);
     }
   }
 
@@ -1141,6 +1604,130 @@ class SyncEngine {
       'updatedAt': log.updatedAt.toUtc().toIso8601String(),
     };
   }
+
+  Map<String, Object?> _serializeLedgerAccount(LedgerAccount account) {
+    return <String, Object?>{
+      'name': account.name,
+      'accountKind': account.accountKind.name,
+      'currencyCode': account.currencyCode.toUpperCase(),
+      'includeInNetWorth': account.includeInNetWorth,
+      'initialBalance': account.initialBalance,
+      'createdAt': account.createdAt.toUtc().toIso8601String(),
+      'updatedAt': account.updatedAt.toUtc().toIso8601String(),
+    };
+  }
+
+  Future<Map<String, Object?>> _serializeLedgerCategory(
+    LedgerCategory category,
+  ) async {
+    String? parentRemoteId;
+    if (category.parentId != null) {
+      final parent =
+          await database.getLedgerCategoryById(category.parentId!);
+      parentRemoteId = parent?.remoteId;
+    }
+    return <String, Object?>{
+      'name': category.name,
+      'categoryKind': category.categoryKind.name,
+      'parentRemoteId': parentRemoteId,
+      'isArchived': category.isArchived,
+      'createdAt': category.createdAt.toUtc().toIso8601String(),
+      'updatedAt': category.updatedAt.toUtc().toIso8601String(),
+    };
+  }
+
+  Future<Map<String, Object?>> _serializeLedgerTransaction(
+    LedgerTransaction transaction,
+  ) async {
+    Future<String?> accountRemoteId(int? accountId) async {
+      if (accountId == null) {
+        return null;
+      }
+      final account = await database.getLedgerAccountById(accountId);
+      return account?.remoteId;
+    }
+
+    Future<String?> categoryRemoteId(int? categoryId) async {
+      if (categoryId == null) {
+        return null;
+      }
+      final category = await database.getLedgerCategoryById(categoryId);
+      return category?.remoteId;
+    }
+
+    final accountRemote = await accountRemoteId(transaction.accountId);
+    final targetAccountRemote =
+        await accountRemoteId(transaction.targetAccountId);
+    final categoryRemote = await categoryRemoteId(transaction.categoryId);
+    final subcategoryRemote =
+        await categoryRemoteId(transaction.subcategoryId);
+
+    return <String, Object?>{
+      'transactionKind': transaction.transactionKind.name,
+      'amount': transaction.amount,
+      'currencyCode': transaction.currencyCode.toUpperCase(),
+      'bookingDate': transaction.bookingDate.toUtc().toIso8601String(),
+      'isPlanned': transaction.isPlanned,
+      'description': transaction.description,
+      'accountRemoteId': accountRemote,
+      'targetAccountRemoteId': targetAccountRemote,
+      'categoryRemoteId': categoryRemote,
+      'subcategoryRemoteId': subcategoryRemote,
+      'cryptoSymbol': transaction.cryptoSymbol?.toUpperCase(),
+      'cryptoQuantity': transaction.cryptoQuantity,
+      'pricePerUnit': transaction.pricePerUnit,
+      'feeAmount': transaction.feeAmount,
+      'createdAt': transaction.createdAt.toUtc().toIso8601String(),
+      'updatedAt': transaction.updatedAt.toUtc().toIso8601String(),
+    };
+  }
+
+  Future<Map<String, Object?>> _serializeLedgerRecurringTransaction(
+    LedgerRecurringTransaction entry,
+  ) async {
+    Future<String?> accountRemoteId(int? accountId) async {
+      if (accountId == null) {
+        return null;
+      }
+      final account = await database.getLedgerAccountById(accountId);
+      return account?.remoteId;
+    }
+
+    Future<String?> categoryRemoteId(int? categoryId) async {
+      if (categoryId == null) {
+        return null;
+      }
+      final category = await database.getLedgerCategoryById(categoryId);
+      return category?.remoteId;
+    }
+
+    final accountRemote = await accountRemoteId(entry.accountId);
+    final targetAccountRemote =
+        await accountRemoteId(entry.targetAccountId);
+    final categoryRemote = await categoryRemoteId(entry.categoryId);
+    final subcategoryRemote =
+        await categoryRemoteId(entry.subcategoryId);
+
+    return <String, Object?>{
+      'name': entry.name,
+      'transactionKind': entry.transactionKind.name,
+      'amount': entry.amount,
+      'currencyCode': entry.currencyCode.toUpperCase(),
+      'startedAt': entry.startedAt.toUtc().toIso8601String(),
+      'nextOccurrence': entry.nextOccurrence.toUtc().toIso8601String(),
+      'intervalCount': entry.intervalCount,
+      'intervalKind': entry.intervalKind.name,
+      'accountRemoteId': accountRemote,
+      'targetAccountRemoteId': targetAccountRemote,
+      'categoryRemoteId': categoryRemote,
+      'subcategoryRemoteId': subcategoryRemote,
+      'autoApply': entry.autoApply,
+      'metadataJson': entry.metadataJson,
+      'createdAt': entry.createdAt.toUtc().toIso8601String(),
+      'updatedAt': entry.updatedAt.toUtc().toIso8601String(),
+    };
+  }
+
 
   Future<void> _applyRemoteNote(
     RemoteSyncItem item,
@@ -1628,6 +2215,389 @@ class SyncEngine {
         createdAt: Value(createdAt.toUtc()),
         updatedAt: Value(updatedAt.toUtc()),
         remoteId: Value(item.id),
+        remoteVersion: Value(item.version),
+        needsSync: const Value(false),
+        syncedAt: Value(updatedAt.toUtc()),
+      ),
+    );
+  }
+
+  Future<void> _applyRemoteLedgerAccount(
+    RemoteSyncItem item,
+    Map<String, dynamic> payload,
+  ) async {
+    final existing = await database.getLedgerAccountByRemoteId(item.id);
+    final name = payload['name'] as String? ?? '';
+    final kindRaw =
+        payload['accountKind'] as String? ?? LedgerAccountKind.cash.name;
+    final kind = LedgerAccountKind.values.firstWhere(
+      (value) => value.name == kindRaw,
+      orElse: () => LedgerAccountKind.cash,
+    );
+    final currencyCode =
+        (payload['currencyCode'] as String? ?? 'EUR').toUpperCase();
+    final includeInNetWorth = payload['includeInNetWorth'] as bool? ?? true;
+    final initialBalance =
+        (payload['initialBalance'] as num?)?.toDouble() ?? 0;
+    final createdAt =
+        _parseDate(payload['createdAt']) ?? item.updatedAt.toUtc();
+    final updatedAt =
+        _parseDate(payload['updatedAt']) ?? item.updatedAt.toUtc();
+
+    if (existing == null) {
+      await database.into(database.ledgerAccounts).insert(
+        LedgerAccountsCompanion.insert(
+          name: name,
+          accountKind: Value(kind),
+          currencyCode: Value(currencyCode),
+          includeInNetWorth: Value(includeInNetWorth),
+          initialBalance: Value(initialBalance),
+          createdAt: Value(createdAt.toUtc()),
+          updatedAt: Value(updatedAt.toUtc()),
+          remoteId: Value(item.id),
+          remoteVersion: Value(item.version),
+          needsSync: const Value(false),
+          syncedAt: Value(updatedAt.toUtc()),
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+      return;
+    }
+
+    await (database.update(
+      database.ledgerAccounts,
+    )..where((tbl) => tbl.id.equals(existing.id))).write(
+      LedgerAccountsCompanion(
+        name: Value(name),
+        accountKind: Value(kind),
+        currencyCode: Value(currencyCode),
+        includeInNetWorth: Value(includeInNetWorth),
+        initialBalance: Value(initialBalance),
+        createdAt: Value(createdAt.toUtc()),
+        updatedAt: Value(updatedAt.toUtc()),
+        remoteVersion: Value(item.version),
+        needsSync: const Value(false),
+        syncedAt: Value(updatedAt.toUtc()),
+      ),
+    );
+  }
+
+  Future<void> _applyRemoteLedgerCategory(
+    RemoteSyncItem item,
+    Map<String, dynamic> payload,
+  ) async {
+    final existing = await database.getLedgerCategoryByRemoteId(item.id);
+    final name = payload['name'] as String? ?? '';
+    final kindRaw =
+        payload['categoryKind'] as String? ?? LedgerCategoryKind.expense.name;
+    final kind = LedgerCategoryKind.values.firstWhere(
+      (value) => value.name == kindRaw,
+      orElse: () => LedgerCategoryKind.expense,
+    );
+    final parentRemoteId = payload['parentRemoteId'] as String?;
+    final isArchived = payload['isArchived'] as bool? ?? false;
+    final createdAt =
+        _parseDate(payload['createdAt']) ?? item.updatedAt.toUtc();
+    final updatedAt =
+        _parseDate(payload['updatedAt']) ?? item.updatedAt.toUtc();
+
+    int? parentId;
+    if (parentRemoteId != null && parentRemoteId.isNotEmpty) {
+      final parent = await database.getLedgerCategoryByRemoteId(parentRemoteId);
+      parentId = parent?.id;
+    }
+
+    final Value<int?> parentValue = parentId == null
+        ? const Value<int?>.absent()
+        : Value<int?>(parentId);
+
+    if (existing == null) {
+      await database.into(database.ledgerCategories).insert(
+        LedgerCategoriesCompanion.insert(
+          name: name,
+          categoryKind: Value(kind),
+          parentId: parentValue,
+          isArchived: Value(isArchived),
+          createdAt: Value(createdAt.toUtc()),
+          updatedAt: Value(updatedAt.toUtc()),
+          remoteId: Value(item.id),
+          remoteVersion: Value(item.version),
+          needsSync: const Value(false),
+          syncedAt: Value(updatedAt.toUtc()),
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+      return;
+    }
+
+    await (database.update(
+      database.ledgerCategories,
+    )..where((tbl) => tbl.id.equals(existing.id))).write(
+      LedgerCategoriesCompanion(
+        name: Value(name),
+        categoryKind: Value(kind),
+        parentId: parentValue,
+        isArchived: Value(isArchived),
+        createdAt: Value(createdAt.toUtc()),
+        updatedAt: Value(updatedAt.toUtc()),
+        remoteVersion: Value(item.version),
+        needsSync: const Value(false),
+        syncedAt: Value(updatedAt.toUtc()),
+      ),
+    );
+  }
+
+  Future<void> _applyRemoteLedgerTransaction(
+    RemoteSyncItem item,
+    Map<String, dynamic> payload,
+  ) async {
+    final existing = await database.getLedgerTransactionByRemoteId(item.id);
+    final kindRaw = payload['transactionKind'] as String? ??
+        LedgerTransactionKind.expense.name;
+    final kind = LedgerTransactionKind.values.firstWhere(
+      (value) => value.name == kindRaw,
+      orElse: () => LedgerTransactionKind.expense,
+    );
+    final amount = (payload['amount'] as num?)?.toDouble() ?? 0;
+    final currencyCode =
+        (payload['currencyCode'] as String? ?? 'EUR').toUpperCase();
+    final bookingDate =
+        _parseDate(payload['bookingDate']) ?? item.updatedAt.toUtc();
+    final isPlanned = payload['isPlanned'] as bool? ?? false;
+    final description = payload['description'] as String? ?? '';
+    final accountRemoteId = payload['accountRemoteId'] as String?;
+    final targetAccountRemoteId =
+        payload['targetAccountRemoteId'] as String?;
+    final categoryRemoteId = payload['categoryRemoteId'] as String?;
+    final subcategoryRemoteId = payload['subcategoryRemoteId'] as String?;
+    final cryptoSymbol =
+        (payload['cryptoSymbol'] as String?)?.toUpperCase();
+    final cryptoQuantity =
+        (payload['cryptoQuantity'] as num?)?.toDouble();
+    final pricePerUnit =
+        (payload['pricePerUnit'] as num?)?.toDouble();
+    final feeAmount = (payload['feeAmount'] as num?)?.toDouble();
+    final createdAt =
+        _parseDate(payload['createdAt']) ?? item.updatedAt.toUtc();
+    final updatedAt =
+        _parseDate(payload['updatedAt']) ?? item.updatedAt.toUtc();
+
+    Future<Value<int?>> resolveAccount(String? remoteId) async {
+      if (remoteId == null || remoteId.isEmpty) {
+        return const Value<int?>.absent();
+      }
+      final account = await database.getLedgerAccountByRemoteId(remoteId);
+      return account == null
+          ? const Value<int?>.absent()
+          : Value<int?>(account.id);
+    }
+
+    Future<Value<int?>> resolveCategory(String? remoteId) async {
+      if (remoteId == null || remoteId.isEmpty) {
+        return const Value<int?>.absent();
+      }
+      final category = await database.getLedgerCategoryByRemoteId(remoteId);
+      return category == null
+          ? const Value<int?>.absent()
+          : Value<int?>(category.id);
+    }
+
+    final accountIdValue = await resolveAccount(accountRemoteId);
+    final targetAccountIdValue =
+        await resolveAccount(targetAccountRemoteId);
+    final categoryIdValue = await resolveCategory(categoryRemoteId);
+    final subcategoryIdValue =
+        await resolveCategory(subcategoryRemoteId);
+
+    final Value<double?> cryptoQuantityValue = cryptoQuantity == null
+        ? const Value<double?>.absent()
+        : Value<double?>(cryptoQuantity);
+    final Value<double?> pricePerUnitValue = pricePerUnit == null
+        ? const Value<double?>.absent()
+        : Value<double?>(pricePerUnit);
+    final Value<double?> feeAmountValue = feeAmount == null
+        ? const Value<double?>.absent()
+        : Value<double?>(feeAmount);
+    final Value<String?> cryptoSymbolValue =
+        cryptoSymbol == null || cryptoSymbol.isEmpty
+            ? const Value<String?>.absent()
+            : Value<String?>(cryptoSymbol);
+
+    if (existing == null) {
+      await database.into(database.ledgerTransactions).insert(
+        LedgerTransactionsCompanion.insert(
+          transactionKind: Value(kind),
+          amount: Value(amount),
+          currencyCode: Value(currencyCode),
+          bookingDate: Value(bookingDate.toUtc()),
+          isPlanned: Value(isPlanned),
+          description: Value(description),
+          accountId: accountIdValue,
+          targetAccountId: targetAccountIdValue,
+          categoryId: categoryIdValue,
+          subcategoryId: subcategoryIdValue,
+          cryptoSymbol: cryptoSymbolValue,
+          cryptoQuantity: cryptoQuantityValue,
+          pricePerUnit: pricePerUnitValue,
+          feeAmount: feeAmountValue,
+          createdAt: Value(createdAt.toUtc()),
+          updatedAt: Value(updatedAt.toUtc()),
+          remoteId: Value(item.id),
+          remoteVersion: Value(item.version),
+          needsSync: const Value(false),
+          syncedAt: Value(updatedAt.toUtc()),
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+      return;
+    }
+
+    await (database.update(
+      database.ledgerTransactions,
+    )..where((tbl) => tbl.id.equals(existing.id))).write(
+      LedgerTransactionsCompanion(
+        transactionKind: Value(kind),
+        amount: Value(amount),
+        currencyCode: Value(currencyCode),
+        bookingDate: Value(bookingDate.toUtc()),
+        isPlanned: Value(isPlanned),
+        description: Value(description),
+        accountId: accountIdValue,
+        targetAccountId: targetAccountIdValue,
+        categoryId: categoryIdValue,
+        subcategoryId: subcategoryIdValue,
+        cryptoSymbol: cryptoSymbolValue,
+        cryptoQuantity: cryptoQuantityValue,
+        pricePerUnit: pricePerUnitValue,
+        feeAmount: feeAmountValue,
+        createdAt: Value(createdAt.toUtc()),
+        updatedAt: Value(updatedAt.toUtc()),
+        remoteVersion: Value(item.version),
+        needsSync: const Value(false),
+        syncedAt: Value(updatedAt.toUtc()),
+      ),
+    );
+  }
+
+  Future<void> _applyRemoteLedgerRecurringTransaction(
+    RemoteSyncItem item,
+    Map<String, dynamic> payload,
+  ) async {
+    final existing =
+        await database.getLedgerRecurringTransactionByRemoteId(item.id);
+    final name = payload['name'] as String? ?? '';
+    final kindRaw = payload['transactionKind'] as String? ??
+        LedgerTransactionKind.expense.name;
+    final kind = LedgerTransactionKind.values.firstWhere(
+      (value) => value.name == kindRaw,
+      orElse: () => LedgerTransactionKind.expense,
+    );
+    final amount = (payload['amount'] as num?)?.toDouble() ?? 0;
+    final currencyCode =
+        (payload['currencyCode'] as String? ?? 'EUR').toUpperCase();
+    final startedAt =
+        _parseDate(payload['startedAt']) ?? item.updatedAt.toUtc();
+    final nextOccurrence =
+        _parseDate(payload['nextOccurrence']) ?? item.updatedAt.toUtc();
+    final intervalCount = (payload['intervalCount'] as num?)?.toInt() ?? 1;
+    final intervalKindRaw = payload['intervalKind'] as String? ??
+        LedgerRecurringIntervalKind.monthly.name;
+    final intervalKind = LedgerRecurringIntervalKind.values.firstWhere(
+      (value) => value.name == intervalKindRaw,
+      orElse: () => LedgerRecurringIntervalKind.monthly,
+    );
+    final accountRemoteId = payload['accountRemoteId'] as String?;
+    final targetAccountRemoteId =
+        payload['targetAccountRemoteId'] as String?;
+    final categoryRemoteId = payload['categoryRemoteId'] as String?;
+    final subcategoryRemoteId =
+        payload['subcategoryRemoteId'] as String?;
+    final autoApply = payload['autoApply'] as bool? ?? false;
+    final rawMetadata = payload['metadataJson'] as String?;
+    final metadataJson = rawMetadata == null || rawMetadata.trim().isEmpty
+        ? '{}'
+        : rawMetadata;
+    final createdAt =
+        _parseDate(payload['createdAt']) ?? item.updatedAt.toUtc();
+    final updatedAt =
+        _parseDate(payload['updatedAt']) ?? item.updatedAt.toUtc();
+
+    Future<Value<int?>> resolveAccount(String? remoteId) async {
+      if (remoteId == null || remoteId.isEmpty) {
+        return const Value<int?>.absent();
+      }
+      final account = await database.getLedgerAccountByRemoteId(remoteId);
+      return account == null
+          ? const Value<int?>.absent()
+          : Value<int?>(account.id);
+    }
+
+    Future<Value<int?>> resolveCategory(String? remoteId) async {
+      if (remoteId == null || remoteId.isEmpty) {
+        return const Value<int?>.absent();
+      }
+      final category = await database.getLedgerCategoryByRemoteId(remoteId);
+      return category == null
+          ? const Value<int?>.absent()
+          : Value<int?>(category.id);
+    }
+
+    final accountIdValue = await resolveAccount(accountRemoteId);
+    final targetAccountIdValue =
+        await resolveAccount(targetAccountRemoteId);
+    final categoryIdValue = await resolveCategory(categoryRemoteId);
+    final subcategoryIdValue =
+        await resolveCategory(subcategoryRemoteId);
+
+    if (existing == null) {
+      await database.into(database.ledgerRecurringTransactions).insert(
+        LedgerRecurringTransactionsCompanion.insert(
+          name: name,
+          transactionKind: Value(kind),
+          amount: Value(amount),
+          currencyCode: Value(currencyCode),
+          startedAt: Value(startedAt.toUtc()),
+          nextOccurrence: Value(nextOccurrence.toUtc()),
+          intervalCount: Value(intervalCount),
+          intervalKind: Value(intervalKind),
+          accountId: accountIdValue,
+          targetAccountId: targetAccountIdValue,
+          categoryId: categoryIdValue,
+          subcategoryId: subcategoryIdValue,
+          autoApply: Value(autoApply),
+          metadataJson: Value(metadataJson),
+          createdAt: Value(createdAt.toUtc()),
+          updatedAt: Value(updatedAt.toUtc()),
+          remoteId: Value(item.id),
+          remoteVersion: Value(item.version),
+          needsSync: const Value(false),
+          syncedAt: Value(updatedAt.toUtc()),
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+      return;
+    }
+
+    await (database.update(
+      database.ledgerRecurringTransactions,
+    )..where((tbl) => tbl.id.equals(existing.id))).write(
+      LedgerRecurringTransactionsCompanion(
+        name: Value(name),
+        transactionKind: Value(kind),
+        amount: Value(amount),
+        currencyCode: Value(currencyCode),
+        startedAt: Value(startedAt.toUtc()),
+        nextOccurrence: Value(nextOccurrence.toUtc()),
+        intervalCount: Value(intervalCount),
+        intervalKind: Value(intervalKind),
+        accountId: accountIdValue,
+        targetAccountId: targetAccountIdValue,
+        categoryId: categoryIdValue,
+        subcategoryId: subcategoryIdValue,
+        autoApply: Value(autoApply),
+        metadataJson: Value(metadataJson),
+        createdAt: Value(createdAt.toUtc()),
+        updatedAt: Value(updatedAt.toUtc()),
         remoteVersion: Value(item.version),
         needsSync: const Value(false),
         syncedAt: Value(updatedAt.toUtc()),

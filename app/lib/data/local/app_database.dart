@@ -303,6 +303,14 @@ class LedgerAccounts extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class LedgerCategories extends Table {
@@ -323,6 +331,14 @@ class LedgerCategories extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class LedgerBudgets extends Table {
@@ -410,6 +426,14 @@ class LedgerTransactions extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class LedgerRecurringTransactions extends Table {
@@ -468,6 +492,14 @@ class LedgerRecurringTransactions extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class CryptoPriceEntries extends Table {
@@ -516,7 +548,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -593,6 +625,36 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(habitLogs, habitLogs.remoteVersion);
         await m.addColumn(habitLogs, habitLogs.needsSync);
         await m.addColumn(habitLogs, habitLogs.syncedAt);
+      }
+      if (from < 12) {
+        await m.addColumn(ledgerAccounts, ledgerAccounts.remoteId);
+        await m.addColumn(ledgerAccounts, ledgerAccounts.remoteVersion);
+        await m.addColumn(ledgerAccounts, ledgerAccounts.needsSync);
+        await m.addColumn(ledgerAccounts, ledgerAccounts.syncedAt);
+        await m.addColumn(ledgerCategories, ledgerCategories.remoteId);
+        await m.addColumn(ledgerCategories, ledgerCategories.remoteVersion);
+        await m.addColumn(ledgerCategories, ledgerCategories.needsSync);
+        await m.addColumn(ledgerCategories, ledgerCategories.syncedAt);
+        await m.addColumn(ledgerTransactions, ledgerTransactions.remoteId);
+        await m.addColumn(ledgerTransactions, ledgerTransactions.remoteVersion);
+        await m.addColumn(ledgerTransactions, ledgerTransactions.needsSync);
+        await m.addColumn(ledgerTransactions, ledgerTransactions.syncedAt);
+        await m.addColumn(
+          ledgerRecurringTransactions,
+          ledgerRecurringTransactions.remoteId,
+        );
+        await m.addColumn(
+          ledgerRecurringTransactions,
+          ledgerRecurringTransactions.remoteVersion,
+        );
+        await m.addColumn(
+          ledgerRecurringTransactions,
+          ledgerRecurringTransactions.needsSync,
+        );
+        await m.addColumn(
+          ledgerRecurringTransactions,
+          ledgerRecurringTransactions.syncedAt,
+        );
       }
     },
   );
@@ -1713,14 +1775,22 @@ class AppDatabase extends _$AppDatabase {
       initialBalance: Value(initialBalance),
       createdAt: Value(now),
       updatedAt: Value(now),
+      remoteId: Value(_uuid.v4()),
+      remoteVersion: const Value(0),
+      needsSync: const Value(true),
+      syncedAt: const Value.absent(),
     );
     return into(ledgerAccounts).insert(companion);
   }
 
   Future<void> updateLedgerAccount(LedgerAccount account) async {
-    final updated = account.copyWith(
+    final ledger = account.remoteId == null || account.remoteId!.isEmpty
+        ? account.copyWith(remoteId: Value(_uuid.v4()))
+        : account;
+    final updated = ledger.copyWith(
       currencyCode: account.currencyCode.toUpperCase(),
       updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
     );
     await update(ledgerAccounts).replace(updated);
   }
@@ -1729,10 +1799,16 @@ class AppDatabase extends _$AppDatabase {
     required int id,
     required bool includeInNetWorth,
   }) async {
+    final current = await getLedgerAccountById(id);
+    final remoteId = current?.remoteId;
+    final ledgerRemoteId =
+        remoteId == null || remoteId.isEmpty ? _uuid.v4() : remoteId;
     await (update(ledgerAccounts)..where((tbl) => tbl.id.equals(id))).write(
       LedgerAccountsCompanion(
         includeInNetWorth: Value(includeInNetWorth),
         updatedAt: Value(DateTime.now().toUtc()),
+        remoteId: Value(ledgerRemoteId),
+        needsSync: const Value(true),
       ),
     );
   }
@@ -1745,6 +1821,46 @@ class AppDatabase extends _$AppDatabase {
     return (select(
       ledgerAccounts,
     )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<LedgerAccount?> getLedgerAccountByRemoteId(String remoteId) {
+    return (select(
+      ledgerAccounts,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<LedgerAccount>> getLedgerAccountsNeedingSync() {
+    return (select(
+      ledgerAccounts,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignLedgerAccountRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(ledgerAccounts)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerAccountsCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markLedgerAccountSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(ledgerAccounts)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerAccountsCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   Stream<List<LedgerCategory>> watchLedgerCategories({
@@ -1819,14 +1935,22 @@ class AppDatabase extends _$AppDatabase {
       isArchived: const Value(false),
       createdAt: Value(now),
       updatedAt: Value(now),
+      remoteId: Value(_uuid.v4()),
+      remoteVersion: const Value(0),
+      needsSync: const Value(true),
+      syncedAt: const Value.absent(),
     );
     return into(ledgerCategories).insert(companion);
   }
 
   Future<void> updateLedgerCategory(LedgerCategory category) async {
-    final updated = category.copyWith(
+    final ledger = category.remoteId == null || category.remoteId!.isEmpty
+        ? category.copyWith(remoteId: Value(_uuid.v4()))
+        : category;
+    final updated = ledger.copyWith(
       name: category.name.trim(),
       updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
     );
     await update(ledgerCategories).replace(updated);
   }
@@ -1835,10 +1959,16 @@ class AppDatabase extends _$AppDatabase {
     required int id,
     required bool archived,
   }) async {
+    final current = await getLedgerCategoryById(id);
+    final remoteId = current?.remoteId;
+    final resolvedRemoteId =
+        remoteId == null || remoteId.isEmpty ? _uuid.v4() : remoteId;
     await (update(ledgerCategories)..where((tbl) => tbl.id.equals(id))).write(
       LedgerCategoriesCompanion(
         isArchived: Value(archived),
         updatedAt: Value(DateTime.now().toUtc()),
+        remoteId: Value(resolvedRemoteId),
+        needsSync: const Value(true),
       ),
     );
   }
@@ -1851,6 +1981,46 @@ class AppDatabase extends _$AppDatabase {
     return (select(
       ledgerCategories,
     )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<LedgerCategory?> getLedgerCategoryByRemoteId(String remoteId) {
+    return (select(
+      ledgerCategories,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<LedgerCategory>> getLedgerCategoriesNeedingSync() {
+    return (select(
+      ledgerCategories,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignLedgerCategoryRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(ledgerCategories)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerCategoriesCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markLedgerCategorySynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(ledgerCategories)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerCategoriesCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   Stream<List<LedgerBudget>> watchLedgerBudgets({
@@ -1989,22 +2159,73 @@ class AppDatabase extends _$AppDatabase {
       feeAmount: resolvedFee,
       createdAt: Value(now),
       updatedAt: Value(now),
+      remoteId: Value(_uuid.v4()),
+      remoteVersion: const Value(0),
+      needsSync: const Value(true),
+      syncedAt: const Value.absent(),
     );
     return into(ledgerTransactions).insert(companion);
   }
 
   Future<void> updateLedgerTransaction(LedgerTransaction transaction) async {
-    final updated = transaction.copyWith(
+    final ledger =
+        transaction.remoteId == null || transaction.remoteId!.isEmpty
+            ? transaction.copyWith(remoteId: Value(_uuid.v4()))
+            : transaction;
+    final updated = ledger.copyWith(
       currencyCode: transaction.currencyCode.toUpperCase(),
       description: transaction.description.trim(),
       cryptoSymbol: Value(transaction.cryptoSymbol?.toUpperCase()),
       updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
     );
     await update(ledgerTransactions).replace(updated);
   }
 
   Future<void> deleteLedgerTransaction(int id) async {
     await (delete(ledgerTransactions)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<LedgerTransaction?> getLedgerTransactionByRemoteId(
+    String remoteId,
+  ) {
+    return (select(
+      ledgerTransactions,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<LedgerTransaction>> getLedgerTransactionsNeedingSync() {
+    return (select(
+      ledgerTransactions,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignLedgerTransactionRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(ledgerTransactions)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerTransactionsCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markLedgerTransactionSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(ledgerTransactions)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerTransactionsCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   Stream<List<LedgerRecurringTransaction>> watchLedgerRecurringTransactions() {
@@ -2063,6 +2284,10 @@ class AppDatabase extends _$AppDatabase {
       metadataJson: Value(metadataJson),
       createdAt: Value(now),
       updatedAt: Value(now),
+      remoteId: Value(_uuid.v4()),
+      remoteVersion: const Value(0),
+      needsSync: const Value(true),
+      syncedAt: const Value.absent(),
     );
     return into(ledgerRecurringTransactions).insert(companion);
   }
@@ -2070,12 +2295,17 @@ class AppDatabase extends _$AppDatabase {
   Future<void> updateLedgerRecurringTransaction(
     LedgerRecurringTransaction recurring,
   ) async {
-    final updated = recurring.copyWith(
+    final ledger =
+        recurring.remoteId == null || recurring.remoteId!.isEmpty
+            ? recurring.copyWith(remoteId: Value(_uuid.v4()))
+            : recurring;
+    final updated = ledger.copyWith(
       currencyCode: recurring.currencyCode.toUpperCase(),
       metadataJson: recurring.metadataJson.trim().isEmpty
           ? '{}'
           : recurring.metadataJson,
       updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
     );
     await update(ledgerRecurringTransactions).replace(updated);
   }
@@ -2084,12 +2314,20 @@ class AppDatabase extends _$AppDatabase {
     required int id,
     required DateTime nextOccurrence,
   }) async {
+    final current = await (select(ledgerRecurringTransactions)
+          ..where((tbl) => tbl.id.equals(id)))
+        .getSingleOrNull();
+    final remoteId = current?.remoteId;
+    final resolvedRemoteId =
+        remoteId == null || remoteId.isEmpty ? _uuid.v4() : remoteId;
     await (update(
       ledgerRecurringTransactions,
     )..where((tbl) => tbl.id.equals(id))).write(
       LedgerRecurringTransactionsCompanion(
         nextOccurrence: Value(nextOccurrence.toUtc()),
         updatedAt: Value(DateTime.now().toUtc()),
+        remoteId: Value(resolvedRemoteId),
+        needsSync: const Value(true),
       ),
     );
   }
@@ -2098,6 +2336,53 @@ class AppDatabase extends _$AppDatabase {
     await (delete(
       ledgerRecurringTransactions,
     )..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<LedgerRecurringTransaction?> getLedgerRecurringTransactionByRemoteId(
+    String remoteId,
+  ) {
+    return (select(
+      ledgerRecurringTransactions,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<LedgerRecurringTransaction>>
+      getLedgerRecurringTransactionsNeedingSync() {
+    return (select(
+      ledgerRecurringTransactions,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignLedgerRecurringRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(ledgerRecurringTransactions)
+          ..where((tbl) => tbl.id.equals(id)))
+        .write(
+      LedgerRecurringTransactionsCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markLedgerRecurringTransactionSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(ledgerRecurringTransactions)
+          ..where((tbl) => tbl.id.equals(id)))
+        .write(
+      LedgerRecurringTransactionsCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   DateTime _calculateNextOccurrence(LedgerRecurringTransaction recurring) {

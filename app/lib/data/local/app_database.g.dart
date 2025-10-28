@@ -5978,6 +5978,55 @@ class $LedgerAccountsTable extends LedgerAccounts
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -5988,6 +6037,10 @@ class $LedgerAccountsTable extends LedgerAccounts
     initialBalance,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -6051,6 +6104,33 @@ class $LedgerAccountsTable extends LedgerAccounts
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -6094,6 +6174,22 @@ class $LedgerAccountsTable extends LedgerAccounts
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -6117,6 +6213,10 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
   final double initialBalance;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const LedgerAccount({
     required this.id,
     required this.name,
@@ -6126,6 +6226,10 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     required this.initialBalance,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6142,6 +6246,14 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     map['initial_balance'] = Variable<double>(initialBalance);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -6155,6 +6267,14 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
       initialBalance: Value(initialBalance),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -6174,6 +6294,10 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
       initialBalance: serializer.fromJson<double>(json['initialBalance']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -6190,6 +6314,10 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
       'initialBalance': serializer.toJson<double>(initialBalance),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -6202,6 +6330,10 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     double? initialBalance,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => LedgerAccount(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -6211,6 +6343,10 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     initialBalance: initialBalance ?? this.initialBalance,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   LedgerAccount copyWithCompanion(LedgerAccountsCompanion data) {
     return LedgerAccount(
@@ -6230,6 +6366,12 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
           : this.initialBalance,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -6243,7 +6385,11 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
           ..write('includeInNetWorth: $includeInNetWorth, ')
           ..write('initialBalance: $initialBalance, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -6258,6 +6404,10 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     initialBalance,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -6270,7 +6420,11 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
           other.includeInNetWorth == this.includeInNetWorth &&
           other.initialBalance == this.initialBalance &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
@@ -6282,6 +6436,10 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
   final Value<double> initialBalance;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const LedgerAccountsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -6291,6 +6449,10 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     this.initialBalance = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   LedgerAccountsCompanion.insert({
     this.id = const Value.absent(),
@@ -6301,6 +6463,10 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     this.initialBalance = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : name = Value(name);
   static Insertable<LedgerAccount> custom({
     Expression<int>? id,
@@ -6311,6 +6477,10 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     Expression<double>? initialBalance,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -6321,6 +6491,10 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
       if (initialBalance != null) 'initial_balance': initialBalance,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -6333,6 +6507,10 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     Value<double>? initialBalance,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return LedgerAccountsCompanion(
       id: id ?? this.id,
@@ -6343,6 +6521,10 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
       initialBalance: initialBalance ?? this.initialBalance,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -6375,6 +6557,18 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -6388,7 +6582,11 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
           ..write('includeInNetWorth: $includeInNetWorth, ')
           ..write('initialBalance: $initialBalance, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -6487,6 +6685,55 @@ class $LedgerCategoriesTable extends LedgerCategories
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -6496,6 +6743,10 @@ class $LedgerCategoriesTable extends LedgerCategories
     isArchived,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -6544,6 +6795,33 @@ class $LedgerCategoriesTable extends LedgerCategories
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -6583,6 +6861,22 @@ class $LedgerCategoriesTable extends LedgerCategories
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -6605,6 +6899,10 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
   final bool isArchived;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const LedgerCategory({
     required this.id,
     required this.name,
@@ -6613,6 +6911,10 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
     required this.isArchived,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6630,6 +6932,14 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
     map['is_archived'] = Variable<bool>(isArchived);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -6644,6 +6954,14 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
       isArchived: Value(isArchived),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -6662,6 +6980,10 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
       isArchived: serializer.fromJson<bool>(json['isArchived']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -6677,6 +6999,10 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
       'isArchived': serializer.toJson<bool>(isArchived),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -6688,6 +7014,10 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
     bool? isArchived,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => LedgerCategory(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -6696,6 +7026,10 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
     isArchived: isArchived ?? this.isArchived,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   LedgerCategory copyWithCompanion(LedgerCategoriesCompanion data) {
     return LedgerCategory(
@@ -6710,6 +7044,12 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
           : this.isArchived,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -6722,7 +7062,11 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
           ..write('parentId: $parentId, ')
           ..write('isArchived: $isArchived, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -6736,6 +7080,10 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
     isArchived,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -6747,7 +7095,11 @@ class LedgerCategory extends DataClass implements Insertable<LedgerCategory> {
           other.parentId == this.parentId &&
           other.isArchived == this.isArchived &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
@@ -6758,6 +7110,10 @@ class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
   final Value<bool> isArchived;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const LedgerCategoriesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -6766,6 +7122,10 @@ class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
     this.isArchived = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   LedgerCategoriesCompanion.insert({
     this.id = const Value.absent(),
@@ -6775,6 +7135,10 @@ class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
     this.isArchived = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : name = Value(name);
   static Insertable<LedgerCategory> custom({
     Expression<int>? id,
@@ -6784,6 +7148,10 @@ class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
     Expression<bool>? isArchived,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -6793,6 +7161,10 @@ class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
       if (isArchived != null) 'is_archived': isArchived,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -6804,6 +7176,10 @@ class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
     Value<bool>? isArchived,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return LedgerCategoriesCompanion(
       id: id ?? this.id,
@@ -6813,6 +7189,10 @@ class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
       isArchived: isArchived ?? this.isArchived,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -6842,6 +7222,18 @@ class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -6854,7 +7246,11 @@ class LedgerCategoriesCompanion extends UpdateCompanion<LedgerCategory> {
           ..write('parentId: $parentId, ')
           ..write('isArchived: $isArchived, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -7644,6 +8040,55 @@ class $LedgerTransactionsTable extends LedgerTransactions
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -7663,6 +8108,10 @@ class $LedgerTransactionsTable extends LedgerTransactions
     feeAmount,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -7793,6 +8242,33 @@ class $LedgerTransactionsTable extends LedgerTransactions
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -7873,6 +8349,22 @@ class $LedgerTransactionsTable extends LedgerTransactions
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -7906,6 +8398,10 @@ class LedgerTransaction extends DataClass
   final double? feeAmount;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const LedgerTransaction({
     required this.id,
     required this.transactionKind,
@@ -7924,6 +8420,10 @@ class LedgerTransaction extends DataClass
     this.feeAmount,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -7967,6 +8467,14 @@ class LedgerTransaction extends DataClass
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -8005,6 +8513,14 @@ class LedgerTransaction extends DataClass
           : Value(feeAmount),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -8032,6 +8548,10 @@ class LedgerTransaction extends DataClass
       feeAmount: serializer.fromJson<double?>(json['feeAmount']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -8059,6 +8579,10 @@ class LedgerTransaction extends DataClass
       'feeAmount': serializer.toJson<double?>(feeAmount),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -8080,6 +8604,10 @@ class LedgerTransaction extends DataClass
     Value<double?> feeAmount = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => LedgerTransaction(
     id: id ?? this.id,
     transactionKind: transactionKind ?? this.transactionKind,
@@ -8104,6 +8632,10 @@ class LedgerTransaction extends DataClass
     feeAmount: feeAmount.present ? feeAmount.value : this.feeAmount,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   LedgerTransaction copyWithCompanion(LedgerTransactionsCompanion data) {
     return LedgerTransaction(
@@ -8144,6 +8676,12 @@ class LedgerTransaction extends DataClass
       feeAmount: data.feeAmount.present ? data.feeAmount.value : this.feeAmount,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -8166,13 +8704,17 @@ class LedgerTransaction extends DataClass
           ..write('pricePerUnit: $pricePerUnit, ')
           ..write('feeAmount: $feeAmount, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     transactionKind,
     accountId,
@@ -8190,7 +8732,11 @@ class LedgerTransaction extends DataClass
     feeAmount,
     createdAt,
     updatedAt,
-  );
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -8211,7 +8757,11 @@ class LedgerTransaction extends DataClass
           other.pricePerUnit == this.pricePerUnit &&
           other.feeAmount == this.feeAmount &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
@@ -8232,6 +8782,10 @@ class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
   final Value<double?> feeAmount;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const LedgerTransactionsCompanion({
     this.id = const Value.absent(),
     this.transactionKind = const Value.absent(),
@@ -8250,6 +8804,10 @@ class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
     this.feeAmount = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   LedgerTransactionsCompanion.insert({
     this.id = const Value.absent(),
@@ -8269,6 +8827,10 @@ class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
     this.feeAmount = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   static Insertable<LedgerTransaction> custom({
     Expression<int>? id,
@@ -8288,6 +8850,10 @@ class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
     Expression<double>? feeAmount,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -8307,6 +8873,10 @@ class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
       if (feeAmount != null) 'fee_amount': feeAmount,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -8328,6 +8898,10 @@ class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
     Value<double?>? feeAmount,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return LedgerTransactionsCompanion(
       id: id ?? this.id,
@@ -8347,6 +8921,10 @@ class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
       feeAmount: feeAmount ?? this.feeAmount,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -8408,6 +8986,18 @@ class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -8430,7 +9020,11 @@ class LedgerTransactionsCompanion extends UpdateCompanion<LedgerTransaction> {
           ..write('pricePerUnit: $pricePerUnit, ')
           ..write('feeAmount: $feeAmount, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -8678,6 +9272,55 @@ class $LedgerRecurringTransactionsTable extends LedgerRecurringTransactions
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -8698,6 +9341,10 @@ class $LedgerRecurringTransactionsTable extends LedgerRecurringTransactions
     metadataJson,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -8824,6 +9471,33 @@ class $LedgerRecurringTransactionsTable extends LedgerRecurringTransactions
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -8915,6 +9589,22 @@ class $LedgerRecurringTransactionsTable extends LedgerRecurringTransactions
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -8953,6 +9643,10 @@ class LedgerRecurringTransaction extends DataClass
   final String metadataJson;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const LedgerRecurringTransaction({
     required this.id,
     required this.name,
@@ -8972,6 +9666,10 @@ class LedgerRecurringTransaction extends DataClass
     required this.metadataJson,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -9016,6 +9714,14 @@ class LedgerRecurringTransaction extends DataClass
     map['metadata_json'] = Variable<String>(metadataJson);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -9049,6 +9755,14 @@ class LedgerRecurringTransaction extends DataClass
       metadataJson: Value(metadataJson),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -9079,6 +9793,10 @@ class LedgerRecurringTransaction extends DataClass
       metadataJson: serializer.fromJson<String>(json['metadataJson']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -9111,6 +9829,10 @@ class LedgerRecurringTransaction extends DataClass
       'metadataJson': serializer.toJson<String>(metadataJson),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -9133,6 +9855,10 @@ class LedgerRecurringTransaction extends DataClass
     String? metadataJson,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => LedgerRecurringTransaction(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -9156,6 +9882,10 @@ class LedgerRecurringTransaction extends DataClass
     metadataJson: metadataJson ?? this.metadataJson,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   LedgerRecurringTransaction copyWithCompanion(
     LedgerRecurringTransactionsCompanion data,
@@ -9197,6 +9927,12 @@ class LedgerRecurringTransaction extends DataClass
           : this.metadataJson,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -9220,13 +9956,17 @@ class LedgerRecurringTransaction extends DataClass
           ..write('autoApply: $autoApply, ')
           ..write('metadataJson: $metadataJson, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     name,
     transactionKind,
@@ -9245,7 +9985,11 @@ class LedgerRecurringTransaction extends DataClass
     metadataJson,
     createdAt,
     updatedAt,
-  );
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -9267,7 +10011,11 @@ class LedgerRecurringTransaction extends DataClass
           other.autoApply == this.autoApply &&
           other.metadataJson == this.metadataJson &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class LedgerRecurringTransactionsCompanion
@@ -9290,6 +10038,10 @@ class LedgerRecurringTransactionsCompanion
   final Value<String> metadataJson;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const LedgerRecurringTransactionsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -9309,6 +10061,10 @@ class LedgerRecurringTransactionsCompanion
     this.metadataJson = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   LedgerRecurringTransactionsCompanion.insert({
     this.id = const Value.absent(),
@@ -9329,6 +10085,10 @@ class LedgerRecurringTransactionsCompanion
     this.metadataJson = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : name = Value(name);
   static Insertable<LedgerRecurringTransaction> custom({
     Expression<int>? id,
@@ -9349,6 +10109,10 @@ class LedgerRecurringTransactionsCompanion
     Expression<String>? metadataJson,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -9369,6 +10133,10 @@ class LedgerRecurringTransactionsCompanion
       if (metadataJson != null) 'metadata_json': metadataJson,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -9391,6 +10159,10 @@ class LedgerRecurringTransactionsCompanion
     Value<String>? metadataJson,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return LedgerRecurringTransactionsCompanion(
       id: id ?? this.id,
@@ -9411,6 +10183,10 @@ class LedgerRecurringTransactionsCompanion
       metadataJson: metadataJson ?? this.metadataJson,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -9479,6 +10255,18 @@ class LedgerRecurringTransactionsCompanion
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -9502,7 +10290,11 @@ class LedgerRecurringTransactionsCompanion
           ..write('autoApply: $autoApply, ')
           ..write('metadataJson: $metadataJson, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -13762,6 +14554,10 @@ typedef $$LedgerAccountsTableCreateCompanionBuilder =
       Value<double> initialBalance,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$LedgerAccountsTableUpdateCompanionBuilder =
     LedgerAccountsCompanion Function({
@@ -13773,6 +14569,10 @@ typedef $$LedgerAccountsTableUpdateCompanionBuilder =
       Value<double> initialBalance,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 class $$LedgerAccountsTableFilterComposer
@@ -13822,6 +14622,26 @@ class $$LedgerAccountsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -13874,6 +14694,26 @@ class $$LedgerAccountsTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LedgerAccountsTableAnnotationComposer
@@ -13917,6 +14757,20 @@ class $$LedgerAccountsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 }
 
 class $$LedgerAccountsTableTableManager
@@ -13960,6 +14814,10 @@ class $$LedgerAccountsTableTableManager
                 Value<double> initialBalance = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerAccountsCompanion(
                 id: id,
                 name: name,
@@ -13969,6 +14827,10 @@ class $$LedgerAccountsTableTableManager
                 initialBalance: initialBalance,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -13980,6 +14842,10 @@ class $$LedgerAccountsTableTableManager
                 Value<double> initialBalance = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerAccountsCompanion.insert(
                 id: id,
                 name: name,
@@ -13989,6 +14855,10 @@ class $$LedgerAccountsTableTableManager
                 initialBalance: initialBalance,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -14024,6 +14894,10 @@ typedef $$LedgerCategoriesTableCreateCompanionBuilder =
       Value<bool> isArchived,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$LedgerCategoriesTableUpdateCompanionBuilder =
     LedgerCategoriesCompanion Function({
@@ -14034,6 +14908,10 @@ typedef $$LedgerCategoriesTableUpdateCompanionBuilder =
       Value<bool> isArchived,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$LedgerCategoriesTableReferences
@@ -14112,6 +14990,26 @@ class $$LedgerCategoriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> ledgerBudgetsRefs(
     Expression<bool> Function($$LedgerBudgetsTableFilterComposer f) f,
   ) {
@@ -14181,6 +15079,26 @@ class $$LedgerCategoriesTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LedgerCategoriesTableAnnotationComposer
@@ -14217,6 +15135,20 @@ class $$LedgerCategoriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
   Expression<T> ledgerBudgetsRefs<T extends Object>(
     Expression<T> Function($$LedgerBudgetsTableAnnotationComposer a) f,
@@ -14281,6 +15213,10 @@ class $$LedgerCategoriesTableTableManager
                 Value<bool> isArchived = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerCategoriesCompanion(
                 id: id,
                 name: name,
@@ -14289,6 +15225,10 @@ class $$LedgerCategoriesTableTableManager
                 isArchived: isArchived,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -14299,6 +15239,10 @@ class $$LedgerCategoriesTableTableManager
                 Value<bool> isArchived = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerCategoriesCompanion.insert(
                 id: id,
                 name: name,
@@ -14307,6 +15251,10 @@ class $$LedgerCategoriesTableTableManager
                 isArchived: isArchived,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -14791,6 +15739,10 @@ typedef $$LedgerTransactionsTableCreateCompanionBuilder =
       Value<double?> feeAmount,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$LedgerTransactionsTableUpdateCompanionBuilder =
     LedgerTransactionsCompanion Function({
@@ -14811,6 +15763,10 @@ typedef $$LedgerTransactionsTableUpdateCompanionBuilder =
       Value<double?> feeAmount,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$LedgerTransactionsTableReferences
@@ -14994,6 +15950,26 @@ class $$LedgerTransactionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$LedgerAccountsTableFilterComposer get accountId {
     final $$LedgerAccountsTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -15161,6 +16137,26 @@ class $$LedgerTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$LedgerAccountsTableOrderingComposer get accountId {
     final $$LedgerAccountsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -15317,6 +16313,20 @@ class $$LedgerTransactionsTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
   $$LedgerAccountsTableAnnotationComposer get accountId {
     final $$LedgerAccountsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -15466,6 +16476,10 @@ class $$LedgerTransactionsTableTableManager
                 Value<double?> feeAmount = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerTransactionsCompanion(
                 id: id,
                 transactionKind: transactionKind,
@@ -15484,6 +16498,10 @@ class $$LedgerTransactionsTableTableManager
                 feeAmount: feeAmount,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -15505,6 +16523,10 @@ class $$LedgerTransactionsTableTableManager
                 Value<double?> feeAmount = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerTransactionsCompanion.insert(
                 id: id,
                 transactionKind: transactionKind,
@@ -15523,6 +16545,10 @@ class $$LedgerTransactionsTableTableManager
                 feeAmount: feeAmount,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -15669,6 +16695,10 @@ typedef $$LedgerRecurringTransactionsTableCreateCompanionBuilder =
       Value<String> metadataJson,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$LedgerRecurringTransactionsTableUpdateCompanionBuilder =
     LedgerRecurringTransactionsCompanion Function({
@@ -15690,6 +16720,10 @@ typedef $$LedgerRecurringTransactionsTableUpdateCompanionBuilder =
       Value<String> metadataJson,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$LedgerRecurringTransactionsTableReferences
@@ -15883,6 +16917,26 @@ class $$LedgerRecurringTransactionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$LedgerAccountsTableFilterComposer get accountId {
     final $$LedgerAccountsTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -16055,6 +17109,26 @@ class $$LedgerRecurringTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$LedgerAccountsTableOrderingComposer get accountId {
     final $$LedgerAccountsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -16212,6 +17286,20 @@ class $$LedgerRecurringTransactionsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
   $$LedgerAccountsTableAnnotationComposer get accountId {
     final $$LedgerAccountsTableAnnotationComposer composer = $composerBuilder(
@@ -16373,6 +17461,10 @@ class $$LedgerRecurringTransactionsTableTableManager
                 Value<String> metadataJson = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerRecurringTransactionsCompanion(
                 id: id,
                 name: name,
@@ -16392,6 +17484,10 @@ class $$LedgerRecurringTransactionsTableTableManager
                 metadataJson: metadataJson,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -16415,6 +17511,10 @@ class $$LedgerRecurringTransactionsTableTableManager
                 Value<String> metadataJson = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerRecurringTransactionsCompanion.insert(
                 id: id,
                 name: name,
@@ -16434,6 +17534,10 @@ class $$LedgerRecurringTransactionsTableTableManager
                 metadataJson: metadataJson,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
