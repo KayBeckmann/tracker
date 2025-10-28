@@ -2708,6 +2708,55 @@ class $JournalEntriesTable extends JournalEntries
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2715,6 +2764,10 @@ class $JournalEntriesTable extends JournalEntries
     content,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2757,6 +2810,33 @@ class $JournalEntriesTable extends JournalEntries
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -2786,6 +2866,22 @@ class $JournalEntriesTable extends JournalEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -2801,12 +2897,20 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   final String content;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const JournalEntry({
     required this.id,
     required this.entryDate,
     required this.content,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2816,6 +2920,14 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     map['content'] = Variable<String>(content);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -2826,6 +2938,14 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       content: Value(content),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -2840,6 +2960,10 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       content: serializer.fromJson<String>(json['content']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -2851,6 +2975,10 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       'content': serializer.toJson<String>(content),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -2860,12 +2988,20 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     String? content,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => JournalEntry(
     id: id ?? this.id,
     entryDate: entryDate ?? this.entryDate,
     content: content ?? this.content,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   JournalEntry copyWithCompanion(JournalEntriesCompanion data) {
     return JournalEntry(
@@ -2874,6 +3010,12 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       content: data.content.present ? data.content.value : this.content,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -2884,13 +3026,27 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
           ..write('entryDate: $entryDate, ')
           ..write('content: $content, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, entryDate, content, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    entryDate,
+    content,
+    createdAt,
+    updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2899,7 +3055,11 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
           other.entryDate == this.entryDate &&
           other.content == this.content &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
@@ -2908,12 +3068,20 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   final Value<String> content;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const JournalEntriesCompanion({
     this.id = const Value.absent(),
     this.entryDate = const Value.absent(),
     this.content = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   JournalEntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -2921,6 +3089,10 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     this.content = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : entryDate = Value(entryDate);
   static Insertable<JournalEntry> custom({
     Expression<int>? id,
@@ -2928,6 +3100,10 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     Expression<String>? content,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2935,6 +3111,10 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
       if (content != null) 'content': content,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -2944,6 +3124,10 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     Value<String>? content,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return JournalEntriesCompanion(
       id: id ?? this.id,
@@ -2951,6 +3135,10 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
       content: content ?? this.content,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -2972,6 +3160,18 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -2982,7 +3182,11 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
           ..write('entryDate: $entryDate, ')
           ..write('content: $content, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -3074,6 +3278,55 @@ class $JournalTrackersTable extends JournalTrackers
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3083,6 +3336,10 @@ class $JournalTrackersTable extends JournalTrackers
     sortOrder,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3134,6 +3391,33 @@ class $JournalTrackersTable extends JournalTrackers
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -3173,6 +3457,22 @@ class $JournalTrackersTable extends JournalTrackers
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -3193,6 +3493,10 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
   final int sortOrder;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const JournalTracker({
     required this.id,
     required this.name,
@@ -3201,6 +3505,10 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
     required this.sortOrder,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3216,6 +3524,14 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
     map['sort_order'] = Variable<int>(sortOrder);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -3228,6 +3544,14 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
       sortOrder: Value(sortOrder),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -3246,6 +3570,10 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -3261,6 +3589,10 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
       'sortOrder': serializer.toJson<int>(sortOrder),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -3272,6 +3604,10 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
     int? sortOrder,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => JournalTracker(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -3280,6 +3616,10 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
     sortOrder: sortOrder ?? this.sortOrder,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   JournalTracker copyWithCompanion(JournalTrackersCompanion data) {
     return JournalTracker(
@@ -3292,6 +3632,12 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -3304,14 +3650,29 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
           ..write('kind: $kind, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, description, kind, sortOrder, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    description,
+    kind,
+    sortOrder,
+    createdAt,
+    updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3322,7 +3683,11 @@ class JournalTracker extends DataClass implements Insertable<JournalTracker> {
           other.kind == this.kind &&
           other.sortOrder == this.sortOrder &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
@@ -3333,6 +3698,10 @@ class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
   final Value<int> sortOrder;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const JournalTrackersCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -3341,6 +3710,10 @@ class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
     this.sortOrder = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   JournalTrackersCompanion.insert({
     this.id = const Value.absent(),
@@ -3350,6 +3723,10 @@ class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
     this.sortOrder = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : name = Value(name);
   static Insertable<JournalTracker> custom({
     Expression<int>? id,
@@ -3359,6 +3736,10 @@ class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
     Expression<int>? sortOrder,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3368,6 +3749,10 @@ class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
       if (sortOrder != null) 'sort_order': sortOrder,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -3379,6 +3764,10 @@ class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
     Value<int>? sortOrder,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return JournalTrackersCompanion(
       id: id ?? this.id,
@@ -3388,6 +3777,10 @@ class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
       sortOrder: sortOrder ?? this.sortOrder,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -3417,6 +3810,18 @@ class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -3429,7 +3834,11 @@ class JournalTrackersCompanion extends UpdateCompanion<JournalTracker> {
           ..write('kind: $kind, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -3513,6 +3922,55 @@ class $JournalTrackerValuesTable extends JournalTrackerValues
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3521,6 +3979,10 @@ class $JournalTrackerValuesTable extends JournalTrackerValues
     value,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3571,6 +4033,33 @@ class $JournalTrackerValuesTable extends JournalTrackerValues
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -3604,6 +4093,22 @@ class $JournalTrackerValuesTable extends JournalTrackerValues
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -3621,6 +4126,10 @@ class JournalTrackerValue extends DataClass
   final int value;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const JournalTrackerValue({
     required this.id,
     required this.trackerId,
@@ -3628,6 +4137,10 @@ class JournalTrackerValue extends DataClass
     required this.value,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3638,6 +4151,14 @@ class JournalTrackerValue extends DataClass
     map['value'] = Variable<int>(value);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -3649,6 +4170,14 @@ class JournalTrackerValue extends DataClass
       value: Value(value),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -3664,6 +4193,10 @@ class JournalTrackerValue extends DataClass
       value: serializer.fromJson<int>(json['value']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -3676,6 +4209,10 @@ class JournalTrackerValue extends DataClass
       'value': serializer.toJson<int>(value),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -3686,6 +4223,10 @@ class JournalTrackerValue extends DataClass
     int? value,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => JournalTrackerValue(
     id: id ?? this.id,
     trackerId: trackerId ?? this.trackerId,
@@ -3693,6 +4234,10 @@ class JournalTrackerValue extends DataClass
     value: value ?? this.value,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   JournalTrackerValue copyWithCompanion(JournalTrackerValuesCompanion data) {
     return JournalTrackerValue(
@@ -3702,6 +4247,12 @@ class JournalTrackerValue extends DataClass
       value: data.value.present ? data.value.value : this.value,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -3713,14 +4264,28 @@ class JournalTrackerValue extends DataClass
           ..write('entryDate: $entryDate, ')
           ..write('value: $value, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, trackerId, entryDate, value, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    trackerId,
+    entryDate,
+    value,
+    createdAt,
+    updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3730,7 +4295,11 @@ class JournalTrackerValue extends DataClass
           other.entryDate == this.entryDate &&
           other.value == this.value &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class JournalTrackerValuesCompanion
@@ -3741,6 +4310,10 @@ class JournalTrackerValuesCompanion
   final Value<int> value;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const JournalTrackerValuesCompanion({
     this.id = const Value.absent(),
     this.trackerId = const Value.absent(),
@@ -3748,6 +4321,10 @@ class JournalTrackerValuesCompanion
     this.value = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   JournalTrackerValuesCompanion.insert({
     this.id = const Value.absent(),
@@ -3756,6 +4333,10 @@ class JournalTrackerValuesCompanion
     this.value = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : trackerId = Value(trackerId),
        entryDate = Value(entryDate);
   static Insertable<JournalTrackerValue> custom({
@@ -3765,6 +4346,10 @@ class JournalTrackerValuesCompanion
     Expression<int>? value,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3773,6 +4358,10 @@ class JournalTrackerValuesCompanion
       if (value != null) 'value': value,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -3783,6 +4372,10 @@ class JournalTrackerValuesCompanion
     Value<int>? value,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return JournalTrackerValuesCompanion(
       id: id ?? this.id,
@@ -3791,6 +4384,10 @@ class JournalTrackerValuesCompanion
       value: value ?? this.value,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -3815,6 +4412,18 @@ class JournalTrackerValuesCompanion
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -3826,7 +4435,11 @@ class JournalTrackerValuesCompanion
           ..write('entryDate: $entryDate, ')
           ..write('value: $value, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -3957,6 +4570,55 @@ class $HabitDefinitionsTable extends HabitDefinitions
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3969,6 +4631,10 @@ class $HabitDefinitionsTable extends HabitDefinitions
     archived,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4038,6 +4704,33 @@ class $HabitDefinitionsTable extends HabitDefinitions
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -4091,6 +4784,22 @@ class $HabitDefinitionsTable extends HabitDefinitions
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -4120,6 +4829,10 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
   final bool archived;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const HabitDefinition({
     required this.id,
     required this.name,
@@ -4131,6 +4844,10 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
     required this.archived,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4155,6 +4872,14 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
     map['archived'] = Variable<bool>(archived);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -4172,6 +4897,14 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
       archived: Value(archived),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -4194,6 +4927,10 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
       archived: serializer.fromJson<bool>(json['archived']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -4216,6 +4953,10 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
       'archived': serializer.toJson<bool>(archived),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -4230,6 +4971,10 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
     bool? archived,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => HabitDefinition(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -4241,6 +4986,10 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
     archived: archived ?? this.archived,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   HabitDefinition copyWithCompanion(HabitDefinitionsCompanion data) {
     return HabitDefinition(
@@ -4262,6 +5011,12 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
       archived: data.archived.present ? data.archived.value : this.archived,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -4277,7 +5032,11 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
           ..write('targetValue: $targetValue, ')
           ..write('archived: $archived, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -4294,6 +5053,10 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
     archived,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -4308,7 +5071,11 @@ class HabitDefinition extends DataClass implements Insertable<HabitDefinition> {
           other.targetValue == this.targetValue &&
           other.archived == this.archived &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
@@ -4322,6 +5089,10 @@ class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
   final Value<bool> archived;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const HabitDefinitionsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -4333,6 +5104,10 @@ class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
     this.archived = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   HabitDefinitionsCompanion.insert({
     this.id = const Value.absent(),
@@ -4345,6 +5120,10 @@ class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
     this.archived = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : name = Value(name);
   static Insertable<HabitDefinition> custom({
     Expression<int>? id,
@@ -4357,6 +5136,10 @@ class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
     Expression<bool>? archived,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4369,6 +5152,10 @@ class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
       if (archived != null) 'archived': archived,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -4383,6 +5170,10 @@ class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
     Value<bool>? archived,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return HabitDefinitionsCompanion(
       id: id ?? this.id,
@@ -4395,6 +5186,10 @@ class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
       archived: archived ?? this.archived,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -4437,6 +5232,18 @@ class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -4452,7 +5259,11 @@ class HabitDefinitionsCompanion extends UpdateCompanion<HabitDefinition> {
           ..write('targetValue: $targetValue, ')
           ..write('archived: $archived, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -4536,6 +5347,55 @@ class $HabitLogsTable extends HabitLogs
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -4544,6 +5404,10 @@ class $HabitLogsTable extends HabitLogs
     value,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4594,6 +5458,33 @@ class $HabitLogsTable extends HabitLogs
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -4627,6 +5518,22 @@ class $HabitLogsTable extends HabitLogs
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -4643,6 +5550,10 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
   final double value;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const HabitLog({
     required this.id,
     required this.habitId,
@@ -4650,6 +5561,10 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
     required this.value,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4660,6 +5575,14 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
     map['value'] = Variable<double>(value);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -4671,6 +5594,14 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
       value: Value(value),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -4686,6 +5617,10 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
       value: serializer.fromJson<double>(json['value']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -4698,6 +5633,10 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
       'value': serializer.toJson<double>(value),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -4708,6 +5647,10 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
     double? value,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => HabitLog(
     id: id ?? this.id,
     habitId: habitId ?? this.habitId,
@@ -4715,6 +5658,10 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
     value: value ?? this.value,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   HabitLog copyWithCompanion(HabitLogsCompanion data) {
     return HabitLog(
@@ -4726,6 +5673,12 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
       value: data.value.present ? data.value.value : this.value,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -4737,14 +5690,28 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
           ..write('occurredAt: $occurredAt, ')
           ..write('value: $value, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, habitId, occurredAt, value, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    habitId,
+    occurredAt,
+    value,
+    createdAt,
+    updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4754,7 +5721,11 @@ class HabitLog extends DataClass implements Insertable<HabitLog> {
           other.occurredAt == this.occurredAt &&
           other.value == this.value &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
@@ -4764,6 +5735,10 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
   final Value<double> value;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const HabitLogsCompanion({
     this.id = const Value.absent(),
     this.habitId = const Value.absent(),
@@ -4771,6 +5746,10 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
     this.value = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   HabitLogsCompanion.insert({
     this.id = const Value.absent(),
@@ -4779,6 +5758,10 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
     this.value = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : habitId = Value(habitId),
        occurredAt = Value(occurredAt);
   static Insertable<HabitLog> custom({
@@ -4788,6 +5771,10 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
     Expression<double>? value,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4796,6 +5783,10 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
       if (value != null) 'value': value,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -4806,6 +5797,10 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
     Value<double>? value,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return HabitLogsCompanion(
       id: id ?? this.id,
@@ -4814,6 +5809,10 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
       value: value ?? this.value,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -4838,6 +5837,18 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -4849,7 +5860,11 @@ class HabitLogsCompanion extends UpdateCompanion<HabitLog> {
           ..write('occurredAt: $occurredAt, ')
           ..write('value: $value, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -10703,6 +11718,10 @@ typedef $$JournalEntriesTableCreateCompanionBuilder =
       Value<String> content,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$JournalEntriesTableUpdateCompanionBuilder =
     JournalEntriesCompanion Function({
@@ -10711,6 +11730,10 @@ typedef $$JournalEntriesTableUpdateCompanionBuilder =
       Value<String> content,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 class $$JournalEntriesTableFilterComposer
@@ -10744,6 +11767,26 @@ class $$JournalEntriesTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -10781,6 +11824,26 @@ class $$JournalEntriesTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$JournalEntriesTableAnnotationComposer
@@ -10806,6 +11869,20 @@ class $$JournalEntriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 }
 
 class $$JournalEntriesTableTableManager
@@ -10846,12 +11923,20 @@ class $$JournalEntriesTableTableManager
                 Value<String> content = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => JournalEntriesCompanion(
                 id: id,
                 entryDate: entryDate,
                 content: content,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -10860,12 +11945,20 @@ class $$JournalEntriesTableTableManager
                 Value<String> content = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => JournalEntriesCompanion.insert(
                 id: id,
                 entryDate: entryDate,
                 content: content,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -10901,6 +11994,10 @@ typedef $$JournalTrackersTableCreateCompanionBuilder =
       Value<int> sortOrder,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$JournalTrackersTableUpdateCompanionBuilder =
     JournalTrackersCompanion Function({
@@ -10911,6 +12008,10 @@ typedef $$JournalTrackersTableUpdateCompanionBuilder =
       Value<int> sortOrder,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$JournalTrackersTableReferences
@@ -10996,6 +12097,26 @@ class $$JournalTrackersTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> journalTrackerValuesRefs(
     Expression<bool> Function($$JournalTrackerValuesTableFilterComposer f) f,
   ) {
@@ -11065,6 +12186,26 @@ class $$JournalTrackersTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$JournalTrackersTableAnnotationComposer
@@ -11098,6 +12239,20 @@ class $$JournalTrackersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
   Expression<T> journalTrackerValuesRefs<T extends Object>(
     Expression<T> Function($$JournalTrackerValuesTableAnnotationComposer a) f,
@@ -11163,6 +12318,10 @@ class $$JournalTrackersTableTableManager
                 Value<int> sortOrder = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => JournalTrackersCompanion(
                 id: id,
                 name: name,
@@ -11171,6 +12330,10 @@ class $$JournalTrackersTableTableManager
                 sortOrder: sortOrder,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -11181,6 +12344,10 @@ class $$JournalTrackersTableTableManager
                 Value<int> sortOrder = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => JournalTrackersCompanion.insert(
                 id: id,
                 name: name,
@@ -11189,6 +12356,10 @@ class $$JournalTrackersTableTableManager
                 sortOrder: sortOrder,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -11256,6 +12427,10 @@ typedef $$JournalTrackerValuesTableCreateCompanionBuilder =
       Value<int> value,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$JournalTrackerValuesTableUpdateCompanionBuilder =
     JournalTrackerValuesCompanion Function({
@@ -11265,6 +12440,10 @@ typedef $$JournalTrackerValuesTableUpdateCompanionBuilder =
       Value<int> value,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$JournalTrackerValuesTableReferences
@@ -11337,6 +12516,26 @@ class $$JournalTrackerValuesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$JournalTrackersTableFilterComposer get trackerId {
     final $$JournalTrackersTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -11395,6 +12594,26 @@ class $$JournalTrackerValuesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$JournalTrackersTableOrderingComposer get trackerId {
     final $$JournalTrackersTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -11442,6 +12661,20 @@ class $$JournalTrackerValuesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
   $$JournalTrackersTableAnnotationComposer get trackerId {
     final $$JournalTrackersTableAnnotationComposer composer = $composerBuilder(
@@ -11509,6 +12742,10 @@ class $$JournalTrackerValuesTableTableManager
                 Value<int> value = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => JournalTrackerValuesCompanion(
                 id: id,
                 trackerId: trackerId,
@@ -11516,6 +12753,10 @@ class $$JournalTrackerValuesTableTableManager
                 value: value,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -11525,6 +12766,10 @@ class $$JournalTrackerValuesTableTableManager
                 Value<int> value = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => JournalTrackerValuesCompanion.insert(
                 id: id,
                 trackerId: trackerId,
@@ -11532,6 +12777,10 @@ class $$JournalTrackerValuesTableTableManager
                 value: value,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -11614,6 +12863,10 @@ typedef $$HabitDefinitionsTableCreateCompanionBuilder =
       Value<bool> archived,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$HabitDefinitionsTableUpdateCompanionBuilder =
     HabitDefinitionsCompanion Function({
@@ -11627,6 +12880,10 @@ typedef $$HabitDefinitionsTableUpdateCompanionBuilder =
       Value<bool> archived,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$HabitDefinitionsTableReferences
@@ -11721,6 +12978,26 @@ class $$HabitDefinitionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> habitLogsRefs(
     Expression<bool> Function($$HabitLogsTableFilterComposer f) f,
   ) {
@@ -11805,6 +13082,26 @@ class $$HabitDefinitionsTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$HabitDefinitionsTableAnnotationComposer
@@ -11854,6 +13151,20 @@ class $$HabitDefinitionsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
   Expression<T> habitLogsRefs<T extends Object>(
     Expression<T> Function($$HabitLogsTableAnnotationComposer a) f,
@@ -11921,6 +13232,10 @@ class $$HabitDefinitionsTableTableManager
                 Value<bool> archived = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => HabitDefinitionsCompanion(
                 id: id,
                 name: name,
@@ -11932,6 +13247,10 @@ class $$HabitDefinitionsTableTableManager
                 archived: archived,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -11945,6 +13264,10 @@ class $$HabitDefinitionsTableTableManager
                 Value<bool> archived = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => HabitDefinitionsCompanion.insert(
                 id: id,
                 name: name,
@@ -11956,6 +13279,10 @@ class $$HabitDefinitionsTableTableManager
                 archived: archived,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -12021,6 +13348,10 @@ typedef $$HabitLogsTableCreateCompanionBuilder =
       Value<double> value,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$HabitLogsTableUpdateCompanionBuilder =
     HabitLogsCompanion Function({
@@ -12030,6 +13361,10 @@ typedef $$HabitLogsTableUpdateCompanionBuilder =
       Value<double> value,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$HabitLogsTableReferences
@@ -12087,6 +13422,26 @@ class $$HabitLogsTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -12148,6 +13503,26 @@ class $$HabitLogsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$HabitDefinitionsTableOrderingComposer get habitId {
     final $$HabitDefinitionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -12197,6 +13572,20 @@ class $$HabitLogsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 
   $$HabitDefinitionsTableAnnotationComposer get habitId {
     final $$HabitDefinitionsTableAnnotationComposer composer = $composerBuilder(
@@ -12256,6 +13645,10 @@ class $$HabitLogsTableTableManager
                 Value<double> value = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => HabitLogsCompanion(
                 id: id,
                 habitId: habitId,
@@ -12263,6 +13656,10 @@ class $$HabitLogsTableTableManager
                 value: value,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -12272,6 +13669,10 @@ class $$HabitLogsTableTableManager
                 Value<double> value = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => HabitLogsCompanion.insert(
                 id: id,
                 habitId: habitId,
@@ -12279,6 +13680,10 @@ class $$HabitLogsTableTableManager
                 value: value,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(

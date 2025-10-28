@@ -159,6 +159,14 @@ class JournalEntries extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class JournalTrackers extends Table {
@@ -177,6 +185,14 @@ class JournalTrackers extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class JournalTrackerValues extends Table {
@@ -192,6 +208,14 @@ class JournalTrackerValues extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 
   @override
   List<String> get customConstraints => const [
@@ -223,6 +247,14 @@ class HabitDefinitions extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class HabitLogs extends Table {
@@ -241,6 +273,14 @@ class HabitLogs extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class LedgerAccounts extends Table {
@@ -476,7 +516,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -528,6 +568,31 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(timeEntries, timeEntries.remoteVersion);
         await m.addColumn(timeEntries, timeEntries.needsSync);
         await m.addColumn(timeEntries, timeEntries.syncedAt);
+      }
+      if (from < 11) {
+        await m.addColumn(journalEntries, journalEntries.remoteId);
+        await m.addColumn(journalEntries, journalEntries.remoteVersion);
+        await m.addColumn(journalEntries, journalEntries.needsSync);
+        await m.addColumn(journalEntries, journalEntries.syncedAt);
+        await m.addColumn(journalTrackers, journalTrackers.remoteId);
+        await m.addColumn(journalTrackers, journalTrackers.remoteVersion);
+        await m.addColumn(journalTrackers, journalTrackers.needsSync);
+        await m.addColumn(journalTrackers, journalTrackers.syncedAt);
+        await m.addColumn(journalTrackerValues, journalTrackerValues.remoteId);
+        await m.addColumn(
+          journalTrackerValues,
+          journalTrackerValues.remoteVersion,
+        );
+        await m.addColumn(journalTrackerValues, journalTrackerValues.needsSync);
+        await m.addColumn(journalTrackerValues, journalTrackerValues.syncedAt);
+        await m.addColumn(habitDefinitions, habitDefinitions.remoteId);
+        await m.addColumn(habitDefinitions, habitDefinitions.remoteVersion);
+        await m.addColumn(habitDefinitions, habitDefinitions.needsSync);
+        await m.addColumn(habitDefinitions, habitDefinitions.syncedAt);
+        await m.addColumn(habitLogs, habitLogs.remoteId);
+        await m.addColumn(habitLogs, habitLogs.remoteVersion);
+        await m.addColumn(habitLogs, habitLogs.needsSync);
+        await m.addColumn(habitLogs, habitLogs.syncedAt);
       }
     },
   );
@@ -936,7 +1001,9 @@ class AppDatabase extends _$AppDatabase {
       remoteId: Value(resolvedRemoteId),
       remoteVersion: Value(remoteVersion),
       needsSync: Value(needsSync),
-      syncedAt: syncedAt == null ? const Value.absent() : Value(syncedAt.toUtc()),
+      syncedAt: syncedAt == null
+          ? const Value.absent()
+          : Value(syncedAt.toUtc()),
     );
     return into(timeEntries).insert(companion);
   }
@@ -1048,17 +1115,26 @@ class AppDatabase extends _$AppDatabase {
     final now = DateTime.now().toUtc();
     final existing = await getJournalEntryForDate(normalized);
     if (existing == null) {
+      final remoteId = _uuid.v4();
       final companion = JournalEntriesCompanion.insert(
         entryDate: normalized,
         content: Value(content),
         createdAt: Value(now),
         updatedAt: Value(now),
+        remoteId: Value(remoteId),
+        remoteVersion: const Value(0),
+        needsSync: const Value(true),
+        syncedAt: const Value.absent(),
       );
       return into(journalEntries).insert(companion);
+    }
+    if (existing.remoteId == null || existing.remoteId!.isEmpty) {
+      await assignJournalEntryRemoteId(id: existing.id, remoteId: _uuid.v4());
     }
     final companion = JournalEntriesCompanion(
       content: Value(content),
       updatedAt: Value(now),
+      needsSync: const Value(true),
     );
     await (update(
       journalEntries,
@@ -1071,6 +1147,46 @@ class AppDatabase extends _$AppDatabase {
     return (delete(
       journalEntries,
     )..where((tbl) => tbl.entryDate.equals(normalized))).go();
+  }
+
+  Future<JournalEntry?> getJournalEntryByRemoteId(String remoteId) {
+    return (select(
+      journalEntries,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<JournalEntry>> getJournalEntriesNeedingSync() {
+    return (select(
+      journalEntries,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignJournalEntryRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(journalEntries)..where((tbl) => tbl.id.equals(id))).write(
+      JournalEntriesCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markJournalEntrySynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(journalEntries)..where((tbl) => tbl.id.equals(id))).write(
+      JournalEntriesCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   Stream<List<JournalTracker>> watchJournalTrackers() {
@@ -1093,6 +1209,7 @@ class AppDatabase extends _$AppDatabase {
               ..limit(1))
             .getSingleOrNull();
     final int maxSortOrder = latest?.sortOrder ?? -1;
+    final remoteId = _uuid.v4();
     final companion = JournalTrackersCompanion.insert(
       name: name,
       description: Value(description),
@@ -1100,12 +1217,22 @@ class AppDatabase extends _$AppDatabase {
       sortOrder: Value(maxSortOrder + 1),
       createdAt: Value(now),
       updatedAt: Value(now),
+      remoteId: Value(remoteId),
+      remoteVersion: const Value(0),
+      needsSync: const Value(true),
+      syncedAt: const Value.absent(),
     );
     return into(journalTrackers).insert(companion);
   }
 
   Future<void> updateJournalTracker(JournalTracker tracker) async {
-    final updated = tracker.copyWith(updatedAt: DateTime.now().toUtc());
+    if (tracker.remoteId == null || tracker.remoteId!.isEmpty) {
+      await assignJournalTrackerRemoteId(id: tracker.id, remoteId: _uuid.v4());
+    }
+    final updated = tracker.copyWith(
+      updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
+    );
     await update(journalTrackers).replace(updated);
   }
 
@@ -1121,10 +1248,60 @@ class AppDatabase extends _$AppDatabase {
         await (update(
           journalTrackers,
         )..where((tbl) => tbl.id.equals(id))).write(
-          JournalTrackersCompanion(sortOrder: Value(i), updatedAt: Value(now)),
+          JournalTrackersCompanion(
+            sortOrder: Value(i),
+            updatedAt: Value(now),
+            needsSync: const Value(true),
+          ),
         );
       }
     });
+  }
+
+  Future<JournalTracker?> getJournalTrackerById(int id) {
+    return (select(
+      journalTrackers,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<JournalTracker?> getJournalTrackerByRemoteId(String remoteId) {
+    return (select(
+      journalTrackers,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<JournalTracker>> getJournalTrackersNeedingSync() {
+    return (select(
+      journalTrackers,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignJournalTrackerRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(journalTrackers)..where((tbl) => tbl.id.equals(id))).write(
+      JournalTrackersCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markJournalTrackerSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(journalTrackers)..where((tbl) => tbl.id.equals(id))).write(
+      JournalTrackersCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   Stream<List<JournalTrackerValue>> watchJournalTrackerValues() {
@@ -1172,9 +1349,19 @@ class AppDatabase extends _$AppDatabase {
         value: Value(sanitized),
         createdAt: Value(now),
         updatedAt: Value(now),
+        remoteId: Value(_uuid.v4()),
+        remoteVersion: const Value(0),
+        needsSync: const Value(true),
+        syncedAt: const Value.absent(),
       );
       await into(journalTrackerValues).insert(companion);
       return;
+    }
+    if (existing.remoteId == null || existing.remoteId!.isEmpty) {
+      await assignJournalTrackerValueRemoteId(
+        id: existing.id,
+        remoteId: _uuid.v4(),
+      );
     }
     await (update(
       journalTrackerValues,
@@ -1182,6 +1369,7 @@ class AppDatabase extends _$AppDatabase {
       JournalTrackerValuesCompanion(
         value: Value(sanitized),
         updatedAt: Value(now),
+        needsSync: const Value(true),
       ),
     );
   }
@@ -1197,6 +1385,58 @@ class AppDatabase extends _$AppDatabase {
               tbl.entryDate.equals(normalized),
         ))
         .go();
+  }
+
+  Future<void> deleteJournalTrackerValueById(int id) async {
+    await (delete(
+      journalTrackerValues,
+    )..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<JournalTrackerValue?> getJournalTrackerValueByRemoteId(
+    String remoteId,
+  ) {
+    return (select(
+      journalTrackerValues,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<JournalTrackerValue>> getJournalTrackerValuesNeedingSync() {
+    return (select(
+      journalTrackerValues,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignJournalTrackerValueRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(
+      journalTrackerValues,
+    )..where((tbl) => tbl.id.equals(id))).write(
+      JournalTrackerValuesCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markJournalTrackerValueSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(
+      journalTrackerValues,
+    )..where((tbl) => tbl.id.equals(id))).write(
+      JournalTrackerValuesCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   Stream<List<HabitDefinition>> watchHabits({bool includeArchived = false}) {
@@ -1220,6 +1460,7 @@ class AppDatabase extends _$AppDatabase {
     final Value<double?> resolvedTargetValue = targetValue == null
         ? const Value.absent()
         : Value(targetValue);
+    final remoteId = _uuid.v4();
     final companion = HabitDefinitionsCompanion.insert(
       name: name,
       description: Value(description),
@@ -1230,12 +1471,22 @@ class AppDatabase extends _$AppDatabase {
       archived: const Value(false),
       createdAt: Value(now),
       updatedAt: Value(now),
+      remoteId: Value(remoteId),
+      remoteVersion: const Value(0),
+      needsSync: const Value(true),
+      syncedAt: const Value.absent(),
     );
     return into(habitDefinitions).insert(companion);
   }
 
   Future<void> updateHabit(HabitDefinition habit) async {
-    final updated = habit.copyWith(updatedAt: DateTime.now().toUtc());
+    if (habit.remoteId == null || habit.remoteId!.isEmpty) {
+      await assignHabitRemoteId(id: habit.id, remoteId: _uuid.v4());
+    }
+    final updated = habit.copyWith(
+      updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
+    );
     await update(habitDefinitions).replace(updated);
   }
 
@@ -1243,16 +1494,68 @@ class AppDatabase extends _$AppDatabase {
     required int id,
     required bool archived,
   }) async {
+    final current = await getHabitById(id);
+    if (current != null &&
+        (current.remoteId == null || current.remoteId!.isEmpty)) {
+      await assignHabitRemoteId(id: id, remoteId: _uuid.v4());
+    }
     await (update(habitDefinitions)..where((tbl) => tbl.id.equals(id))).write(
       HabitDefinitionsCompanion(
         archived: Value(archived),
         updatedAt: Value(DateTime.now().toUtc()),
+        needsSync: const Value(true),
       ),
     );
   }
 
   Future<void> deleteHabit(int id) async {
     await (delete(habitDefinitions)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<HabitDefinition?> getHabitById(int id) {
+    return (select(
+      habitDefinitions,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<HabitDefinition?> getHabitByRemoteId(String remoteId) {
+    return (select(
+      habitDefinitions,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<HabitDefinition>> getHabitsNeedingSync() {
+    return (select(
+      habitDefinitions,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignHabitRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(habitDefinitions)..where((tbl) => tbl.id.equals(id))).write(
+      HabitDefinitionsCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markHabitSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(habitDefinitions)..where((tbl) => tbl.id.equals(id))).write(
+      HabitDefinitionsCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   Stream<List<HabitLog>> watchAllHabitLogs() {
@@ -1286,15 +1589,29 @@ class AppDatabase extends _$AppDatabase {
       value: Value(value),
       createdAt: Value(now),
       updatedAt: Value(now),
+      remoteId: Value(_uuid.v4()),
+      remoteVersion: const Value(0),
+      needsSync: const Value(true),
+      syncedAt: const Value.absent(),
     );
     final id = await into(habitLogs).insert(companion);
+    final habit = await getHabitById(habitId);
+    if (habit != null && (habit.remoteId == null || habit.remoteId!.isEmpty)) {
+      await assignHabitRemoteId(id: habit.id, remoteId: _uuid.v4());
+    }
     await (update(habitDefinitions)..where((tbl) => tbl.id.equals(habitId)))
         .write(HabitDefinitionsCompanion(updatedAt: Value(now)));
     return id;
   }
 
   Future<void> updateHabitLog(HabitLog log) async {
-    final updated = log.copyWith(updatedAt: DateTime.now().toUtc());
+    if (log.remoteId == null || log.remoteId!.isEmpty) {
+      await assignHabitLogRemoteId(id: log.id, remoteId: _uuid.v4());
+    }
+    final updated = log.copyWith(
+      updatedAt: DateTime.now().toUtc(),
+      needsSync: true,
+    );
     await update(habitLogs).replace(updated);
   }
 
@@ -1332,6 +1649,46 @@ class AppDatabase extends _$AppDatabase {
             (tbl) => OrderingTerm.asc(tbl.id),
           ]))
         .get();
+  }
+
+  Future<HabitLog?> getHabitLogByRemoteId(String remoteId) {
+    return (select(
+      habitLogs,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<HabitLog>> getHabitLogsNeedingSync() {
+    return (select(
+      habitLogs,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignHabitLogRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(habitLogs)..where((tbl) => tbl.id.equals(id))).write(
+      HabitLogsCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markHabitLogSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(habitLogs)..where((tbl) => tbl.id.equals(id))).write(
+      HabitLogsCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   Stream<List<LedgerAccount>> watchLedgerAccounts() {
