@@ -7370,6 +7370,55 @@ class $LedgerBudgetsTable extends LedgerBudgets
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remoteVersionMeta = const VerificationMeta(
+    'remoteVersion',
+  );
+  @override
+  late final GeneratedColumn<int> remoteVersion = GeneratedColumn<int>(
+    'remote_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -7381,6 +7430,10 @@ class $LedgerBudgetsTable extends LedgerBudgets
     currencyCode,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -7446,6 +7499,33 @@ class $LedgerBudgetsTable extends LedgerBudgets
         updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
       );
     }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    if (data.containsKey('remote_version')) {
+      context.handle(
+        _remoteVersionMeta,
+        remoteVersion.isAcceptableOrUnknown(
+          data['remote_version']!,
+          _remoteVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -7493,6 +7573,22 @@ class $LedgerBudgetsTable extends LedgerBudgets
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+      remoteVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remote_version'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -7517,6 +7613,10 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
   final String currencyCode;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? remoteId;
+  final int remoteVersion;
+  final bool needsSync;
+  final DateTime? syncedAt;
   const LedgerBudget({
     required this.id,
     required this.categoryId,
@@ -7527,6 +7627,10 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
     required this.currencyCode,
     required this.createdAt,
     required this.updatedAt,
+    this.remoteId,
+    required this.remoteVersion,
+    required this.needsSync,
+    this.syncedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -7546,6 +7650,14 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
     map['currency_code'] = Variable<String>(currencyCode);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    map['remote_version'] = Variable<int>(remoteVersion);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
+    }
     return map;
   }
 
@@ -7562,6 +7674,14 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
       currencyCode: Value(currencyCode),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+      remoteVersion: Value(remoteVersion),
+      needsSync: Value(needsSync),
+      syncedAt: syncedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncedAt),
     );
   }
 
@@ -7582,6 +7702,10 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
       currencyCode: serializer.fromJson<String>(json['currencyCode']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+      remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -7599,6 +7723,10 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
       'currencyCode': serializer.toJson<String>(currencyCode),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'remoteId': serializer.toJson<String?>(remoteId),
+      'remoteVersion': serializer.toJson<int>(remoteVersion),
+      'needsSync': serializer.toJson<bool>(needsSync),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -7612,6 +7740,10 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
     String? currencyCode,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<String?> remoteId = const Value.absent(),
+    int? remoteVersion,
+    bool? needsSync,
+    Value<DateTime?> syncedAt = const Value.absent(),
   }) => LedgerBudget(
     id: id ?? this.id,
     categoryId: categoryId ?? this.categoryId,
@@ -7622,6 +7754,10 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
     currencyCode: currencyCode ?? this.currencyCode,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+    remoteVersion: remoteVersion ?? this.remoteVersion,
+    needsSync: needsSync ?? this.needsSync,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
   );
   LedgerBudget copyWithCompanion(LedgerBudgetsCompanion data) {
     return LedgerBudget(
@@ -7640,6 +7776,12 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
           : this.currencyCode,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      remoteVersion: data.remoteVersion.present
+          ? data.remoteVersion.value
+          : this.remoteVersion,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -7654,7 +7796,11 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
           ..write('amount: $amount, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -7670,6 +7816,10 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
     currencyCode,
     createdAt,
     updatedAt,
+    remoteId,
+    remoteVersion,
+    needsSync,
+    syncedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -7683,7 +7833,11 @@ class LedgerBudget extends DataClass implements Insertable<LedgerBudget> {
           other.amount == this.amount &&
           other.currencyCode == this.currencyCode &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.remoteId == this.remoteId &&
+          other.remoteVersion == this.remoteVersion &&
+          other.needsSync == this.needsSync &&
+          other.syncedAt == this.syncedAt);
 }
 
 class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
@@ -7696,6 +7850,10 @@ class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
   final Value<String> currencyCode;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<String?> remoteId;
+  final Value<int> remoteVersion;
+  final Value<bool> needsSync;
+  final Value<DateTime?> syncedAt;
   const LedgerBudgetsCompanion({
     this.id = const Value.absent(),
     this.categoryId = const Value.absent(),
@@ -7706,6 +7864,10 @@ class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
     this.currencyCode = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   LedgerBudgetsCompanion.insert({
     this.id = const Value.absent(),
@@ -7717,6 +7879,10 @@ class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
     this.currencyCode = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.remoteVersion = const Value.absent(),
+    this.needsSync = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   }) : categoryId = Value(categoryId),
        year = Value(year);
   static Insertable<LedgerBudget> custom({
@@ -7729,6 +7895,10 @@ class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
     Expression<String>? currencyCode,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<String>? remoteId,
+    Expression<int>? remoteVersion,
+    Expression<bool>? needsSync,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -7740,6 +7910,10 @@ class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
       if (currencyCode != null) 'currency_code': currencyCode,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (remoteVersion != null) 'remote_version': remoteVersion,
+      if (needsSync != null) 'needs_sync': needsSync,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -7753,6 +7927,10 @@ class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
     Value<String>? currencyCode,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<String?>? remoteId,
+    Value<int>? remoteVersion,
+    Value<bool>? needsSync,
+    Value<DateTime?>? syncedAt,
   }) {
     return LedgerBudgetsCompanion(
       id: id ?? this.id,
@@ -7764,6 +7942,10 @@ class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
       currencyCode: currencyCode ?? this.currencyCode,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      remoteId: remoteId ?? this.remoteId,
+      remoteVersion: remoteVersion ?? this.remoteVersion,
+      needsSync: needsSync ?? this.needsSync,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -7799,6 +7981,18 @@ class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (remoteVersion.present) {
+      map['remote_version'] = Variable<int>(remoteVersion.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -7813,7 +8007,11 @@ class LedgerBudgetsCompanion extends UpdateCompanion<LedgerBudget> {
           ..write('amount: $amount, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('remoteVersion: $remoteVersion, ')
+          ..write('needsSync: $needsSync, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -10652,6 +10850,417 @@ class CryptoPriceEntriesCompanion extends UpdateCompanion<CryptoPriceEntry> {
   }
 }
 
+class $SyncTombstonesTable extends SyncTombstones
+    with TableInfo<$SyncTombstonesTable, SyncTombstone> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncTombstonesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _collectionMeta = const VerificationMeta(
+    'collection',
+  );
+  @override
+  late final GeneratedColumn<String> collection = GeneratedColumn<String>(
+    'collection',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _clientUpdatedAtMeta = const VerificationMeta(
+    'clientUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> clientUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'client_updated_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+        defaultValue: currentDateAndTime,
+      );
+  static const VerificationMeta _needsSyncMeta = const VerificationMeta(
+    'needsSync',
+  );
+  @override
+  late final GeneratedColumn<bool> needsSync = GeneratedColumn<bool>(
+    'needs_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    collection,
+    remoteId,
+    version,
+    clientUpdatedAt,
+    needsSync,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_tombstones';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncTombstone> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('collection')) {
+      context.handle(
+        _collectionMeta,
+        collection.isAcceptableOrUnknown(data['collection']!, _collectionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_collectionMeta);
+    }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_remoteIdMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('client_updated_at')) {
+      context.handle(
+        _clientUpdatedAtMeta,
+        clientUpdatedAt.isAcceptableOrUnknown(
+          data['client_updated_at']!,
+          _clientUpdatedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('needs_sync')) {
+      context.handle(
+        _needsSyncMeta,
+        needsSync.isAcceptableOrUnknown(data['needs_sync']!, _needsSyncMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SyncTombstone map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncTombstone(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      collection: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}collection'],
+      )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      )!,
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      clientUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}client_updated_at'],
+      )!,
+      needsSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_sync'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncTombstonesTable createAlias(String alias) {
+    return $SyncTombstonesTable(attachedDatabase, alias);
+  }
+}
+
+class SyncTombstone extends DataClass implements Insertable<SyncTombstone> {
+  final int id;
+  final String collection;
+  final String remoteId;
+  final int version;
+  final DateTime clientUpdatedAt;
+  final bool needsSync;
+  const SyncTombstone({
+    required this.id,
+    required this.collection,
+    required this.remoteId,
+    required this.version,
+    required this.clientUpdatedAt,
+    required this.needsSync,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['collection'] = Variable<String>(collection);
+    map['remote_id'] = Variable<String>(remoteId);
+    map['version'] = Variable<int>(version);
+    map['client_updated_at'] = Variable<DateTime>(clientUpdatedAt);
+    map['needs_sync'] = Variable<bool>(needsSync);
+    return map;
+  }
+
+  SyncTombstonesCompanion toCompanion(bool nullToAbsent) {
+    return SyncTombstonesCompanion(
+      id: Value(id),
+      collection: Value(collection),
+      remoteId: Value(remoteId),
+      version: Value(version),
+      clientUpdatedAt: Value(clientUpdatedAt),
+      needsSync: Value(needsSync),
+    );
+  }
+
+  factory SyncTombstone.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncTombstone(
+      id: serializer.fromJson<int>(json['id']),
+      collection: serializer.fromJson<String>(json['collection']),
+      remoteId: serializer.fromJson<String>(json['remoteId']),
+      version: serializer.fromJson<int>(json['version']),
+      clientUpdatedAt: serializer.fromJson<DateTime>(json['clientUpdatedAt']),
+      needsSync: serializer.fromJson<bool>(json['needsSync']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'collection': serializer.toJson<String>(collection),
+      'remoteId': serializer.toJson<String>(remoteId),
+      'version': serializer.toJson<int>(version),
+      'clientUpdatedAt': serializer.toJson<DateTime>(clientUpdatedAt),
+      'needsSync': serializer.toJson<bool>(needsSync),
+    };
+  }
+
+  SyncTombstone copyWith({
+    int? id,
+    String? collection,
+    String? remoteId,
+    int? version,
+    DateTime? clientUpdatedAt,
+    bool? needsSync,
+  }) => SyncTombstone(
+    id: id ?? this.id,
+    collection: collection ?? this.collection,
+    remoteId: remoteId ?? this.remoteId,
+    version: version ?? this.version,
+    clientUpdatedAt: clientUpdatedAt ?? this.clientUpdatedAt,
+    needsSync: needsSync ?? this.needsSync,
+  );
+  SyncTombstone copyWithCompanion(SyncTombstonesCompanion data) {
+    return SyncTombstone(
+      id: data.id.present ? data.id.value : this.id,
+      collection: data.collection.present
+          ? data.collection.value
+          : this.collection,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+      version: data.version.present ? data.version.value : this.version,
+      clientUpdatedAt: data.clientUpdatedAt.present
+          ? data.clientUpdatedAt.value
+          : this.clientUpdatedAt,
+      needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncTombstone(')
+          ..write('id: $id, ')
+          ..write('collection: $collection, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('version: $version, ')
+          ..write('clientUpdatedAt: $clientUpdatedAt, ')
+          ..write('needsSync: $needsSync')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    collection,
+    remoteId,
+    version,
+    clientUpdatedAt,
+    needsSync,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncTombstone &&
+          other.id == this.id &&
+          other.collection == this.collection &&
+          other.remoteId == this.remoteId &&
+          other.version == this.version &&
+          other.clientUpdatedAt == this.clientUpdatedAt &&
+          other.needsSync == this.needsSync);
+}
+
+class SyncTombstonesCompanion extends UpdateCompanion<SyncTombstone> {
+  final Value<int> id;
+  final Value<String> collection;
+  final Value<String> remoteId;
+  final Value<int> version;
+  final Value<DateTime> clientUpdatedAt;
+  final Value<bool> needsSync;
+  const SyncTombstonesCompanion({
+    this.id = const Value.absent(),
+    this.collection = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.version = const Value.absent(),
+    this.clientUpdatedAt = const Value.absent(),
+    this.needsSync = const Value.absent(),
+  });
+  SyncTombstonesCompanion.insert({
+    this.id = const Value.absent(),
+    required String collection,
+    required String remoteId,
+    this.version = const Value.absent(),
+    this.clientUpdatedAt = const Value.absent(),
+    this.needsSync = const Value.absent(),
+  }) : collection = Value(collection),
+       remoteId = Value(remoteId);
+  static Insertable<SyncTombstone> custom({
+    Expression<int>? id,
+    Expression<String>? collection,
+    Expression<String>? remoteId,
+    Expression<int>? version,
+    Expression<DateTime>? clientUpdatedAt,
+    Expression<bool>? needsSync,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (collection != null) 'collection': collection,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (version != null) 'version': version,
+      if (clientUpdatedAt != null) 'client_updated_at': clientUpdatedAt,
+      if (needsSync != null) 'needs_sync': needsSync,
+    });
+  }
+
+  SyncTombstonesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? collection,
+    Value<String>? remoteId,
+    Value<int>? version,
+    Value<DateTime>? clientUpdatedAt,
+    Value<bool>? needsSync,
+  }) {
+    return SyncTombstonesCompanion(
+      id: id ?? this.id,
+      collection: collection ?? this.collection,
+      remoteId: remoteId ?? this.remoteId,
+      version: version ?? this.version,
+      clientUpdatedAt: clientUpdatedAt ?? this.clientUpdatedAt,
+      needsSync: needsSync ?? this.needsSync,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (collection.present) {
+      map['collection'] = Variable<String>(collection.value);
+    }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (clientUpdatedAt.present) {
+      map['client_updated_at'] = Variable<DateTime>(clientUpdatedAt.value);
+    }
+    if (needsSync.present) {
+      map['needs_sync'] = Variable<bool>(needsSync.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncTombstonesCompanion(')
+          ..write('id: $id, ')
+          ..write('collection: $collection, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('version: $version, ')
+          ..write('clientUpdatedAt: $clientUpdatedAt, ')
+          ..write('needsSync: $needsSync')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -10682,6 +11291,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $LedgerRecurringTransactionsTable(this);
   late final $CryptoPriceEntriesTable cryptoPriceEntries =
       $CryptoPriceEntriesTable(this);
+  late final $SyncTombstonesTable syncTombstones = $SyncTombstonesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -10702,6 +11312,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ledgerTransactions,
     ledgerRecurringTransactions,
     cryptoPriceEntries,
+    syncTombstones,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -15325,6 +15936,10 @@ typedef $$LedgerBudgetsTableCreateCompanionBuilder =
       Value<String> currencyCode,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 typedef $$LedgerBudgetsTableUpdateCompanionBuilder =
     LedgerBudgetsCompanion Function({
@@ -15337,6 +15952,10 @@ typedef $$LedgerBudgetsTableUpdateCompanionBuilder =
       Value<String> currencyCode,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<String?> remoteId,
+      Value<int> remoteVersion,
+      Value<bool> needsSync,
+      Value<DateTime?> syncedAt,
     });
 
 final class $$LedgerBudgetsTableReferences
@@ -15424,6 +16043,26 @@ class $$LedgerBudgetsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$LedgerCategoriesTableFilterComposer get categoryId {
     final $$LedgerCategoriesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -15497,6 +16136,26 @@ class $$LedgerBudgetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$LedgerCategoriesTableOrderingComposer get categoryId {
     final $$LedgerCategoriesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -15559,6 +16218,20 @@ class $$LedgerBudgetsTableAnnotationComposer
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get remoteVersion => $composableBuilder(
+    column: $table.remoteVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
   $$LedgerCategoriesTableAnnotationComposer get categoryId {
     final $$LedgerCategoriesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -15620,6 +16293,10 @@ class $$LedgerBudgetsTableTableManager
                 Value<String> currencyCode = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerBudgetsCompanion(
                 id: id,
                 categoryId: categoryId,
@@ -15630,6 +16307,10 @@ class $$LedgerBudgetsTableTableManager
                 currencyCode: currencyCode,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           createCompanionCallback:
               ({
@@ -15642,6 +16323,10 @@ class $$LedgerBudgetsTableTableManager
                 Value<String> currencyCode = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> remoteVersion = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
               }) => LedgerBudgetsCompanion.insert(
                 id: id,
                 categoryId: categoryId,
@@ -15652,6 +16337,10 @@ class $$LedgerBudgetsTableTableManager
                 currencyCode: currencyCode,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                remoteId: remoteId,
+                remoteVersion: remoteVersion,
+                needsSync: needsSync,
+                syncedAt: syncedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -17876,6 +18565,225 @@ typedef $$CryptoPriceEntriesTableProcessedTableManager =
       CryptoPriceEntry,
       PrefetchHooks Function()
     >;
+typedef $$SyncTombstonesTableCreateCompanionBuilder =
+    SyncTombstonesCompanion Function({
+      Value<int> id,
+      required String collection,
+      required String remoteId,
+      Value<int> version,
+      Value<DateTime> clientUpdatedAt,
+      Value<bool> needsSync,
+    });
+typedef $$SyncTombstonesTableUpdateCompanionBuilder =
+    SyncTombstonesCompanion Function({
+      Value<int> id,
+      Value<String> collection,
+      Value<String> remoteId,
+      Value<int> version,
+      Value<DateTime> clientUpdatedAt,
+      Value<bool> needsSync,
+    });
+
+class $$SyncTombstonesTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncTombstonesTable> {
+  $$SyncTombstonesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get collection => $composableBuilder(
+    column: $table.collection,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get clientUpdatedAt => $composableBuilder(
+    column: $table.clientUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SyncTombstonesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncTombstonesTable> {
+  $$SyncTombstonesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get collection => $composableBuilder(
+    column: $table.collection,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get clientUpdatedAt => $composableBuilder(
+    column: $table.clientUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get needsSync => $composableBuilder(
+    column: $table.needsSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SyncTombstonesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncTombstonesTable> {
+  $$SyncTombstonesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get collection => $composableBuilder(
+    column: $table.collection,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get clientUpdatedAt => $composableBuilder(
+    column: $table.clientUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get needsSync =>
+      $composableBuilder(column: $table.needsSync, builder: (column) => column);
+}
+
+class $$SyncTombstonesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SyncTombstonesTable,
+          SyncTombstone,
+          $$SyncTombstonesTableFilterComposer,
+          $$SyncTombstonesTableOrderingComposer,
+          $$SyncTombstonesTableAnnotationComposer,
+          $$SyncTombstonesTableCreateCompanionBuilder,
+          $$SyncTombstonesTableUpdateCompanionBuilder,
+          (
+            SyncTombstone,
+            BaseReferences<_$AppDatabase, $SyncTombstonesTable, SyncTombstone>,
+          ),
+          SyncTombstone,
+          PrefetchHooks Function()
+        > {
+  $$SyncTombstonesTableTableManager(
+    _$AppDatabase db,
+    $SyncTombstonesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncTombstonesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncTombstonesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncTombstonesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> collection = const Value.absent(),
+                Value<String> remoteId = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<DateTime> clientUpdatedAt = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+              }) => SyncTombstonesCompanion(
+                id: id,
+                collection: collection,
+                remoteId: remoteId,
+                version: version,
+                clientUpdatedAt: clientUpdatedAt,
+                needsSync: needsSync,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String collection,
+                required String remoteId,
+                Value<int> version = const Value.absent(),
+                Value<DateTime> clientUpdatedAt = const Value.absent(),
+                Value<bool> needsSync = const Value.absent(),
+              }) => SyncTombstonesCompanion.insert(
+                id: id,
+                collection: collection,
+                remoteId: remoteId,
+                version: version,
+                clientUpdatedAt: clientUpdatedAt,
+                needsSync: needsSync,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncTombstonesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SyncTombstonesTable,
+      SyncTombstone,
+      $$SyncTombstonesTableFilterComposer,
+      $$SyncTombstonesTableOrderingComposer,
+      $$SyncTombstonesTableAnnotationComposer,
+      $$SyncTombstonesTableCreateCompanionBuilder,
+      $$SyncTombstonesTableUpdateCompanionBuilder,
+      (
+        SyncTombstone,
+        BaseReferences<_$AppDatabase, $SyncTombstonesTable, SyncTombstone>,
+      ),
+      SyncTombstone,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -17914,4 +18822,6 @@ class $AppDatabaseManager {
       );
   $$CryptoPriceEntriesTableTableManager get cryptoPriceEntries =>
       $$CryptoPriceEntriesTableTableManager(_db, _db.cryptoPriceEntries);
+  $$SyncTombstonesTableTableManager get syncTombstones =>
+      $$SyncTombstonesTableTableManager(_db, _db.syncTombstones);
 }

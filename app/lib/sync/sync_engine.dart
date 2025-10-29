@@ -25,6 +25,7 @@ const String lastSyncLedgerAccountsKey = 'sync_ledger_accounts_last';
 const String lastSyncLedgerCategoriesKey = 'sync_ledger_categories_last';
 const String lastSyncLedgerTransactionsKey = 'sync_ledger_transactions_last';
 const String lastSyncLedgerRecurringKey = 'sync_ledger_recurring_last';
+const String lastSyncLedgerBudgetsKey = 'sync_ledger_budgets_last';
 
 class SyncEngine {
   SyncEngine({
@@ -78,6 +79,9 @@ class SyncEngine {
   DateTime? get lastLedgerRecurringSync =>
       _readTimestamp(lastSyncLedgerRecurringKey);
 
+  DateTime? get lastLedgerBudgetsSync =>
+      _readTimestamp(lastSyncLedgerBudgetsKey);
+
   void loadStoredKey() {
     encryptionService.loadKeyFromStorage(
       storageBox.get(encryptionKeyStorageKey) as String?,
@@ -110,6 +114,8 @@ class SyncEngine {
     final token = authToken!;
     final conflicts = <SyncConflictData>[];
 
+    await _pushTombstones(token);
+
     final noteConflicts = await _pushNotes(token);
     conflicts.addAll(noteConflicts);
     final taskConflicts = await _pushTasks(token);
@@ -132,6 +138,8 @@ class SyncEngine {
     conflicts.addAll(ledgerAccountConflicts);
     final ledgerCategoryConflicts = await _pushLedgerCategories(token);
     conflicts.addAll(ledgerCategoryConflicts);
+    final ledgerBudgetConflicts = await _pushLedgerBudgets(token);
+    conflicts.addAll(ledgerBudgetConflicts);
     final ledgerTransactionConflicts = await _pushLedgerTransactions(token);
     conflicts.addAll(ledgerTransactionConflicts);
     final ledgerRecurringConflicts =
@@ -148,6 +156,7 @@ class SyncEngine {
     await _pullSettings(token);
     await _pullLedgerAccounts(token);
     await _pullLedgerCategories(token);
+    await _pullLedgerBudgets(token);
     await _pullLedgerTransactions(token);
     await _pullLedgerRecurringTransactions(token);
     await _pullJournalEntries(token);
@@ -169,6 +178,7 @@ class SyncEngine {
       ..put(lastSyncHabitLogsKey, now.toIso8601String())
       ..put(lastSyncLedgerAccountsKey, now.toIso8601String())
       ..put(lastSyncLedgerCategoriesKey, now.toIso8601String())
+      ..put(lastSyncLedgerBudgetsKey, now.toIso8601String())
       ..put(lastSyncLedgerTransactionsKey, now.toIso8601String())
       ..put(lastSyncLedgerRecurringKey, now.toIso8601String());
 
@@ -252,6 +262,7 @@ class SyncEngine {
     await storageBox.delete(lastSyncHabitLogsKey);
     await storageBox.delete(lastSyncLedgerAccountsKey);
     await storageBox.delete(lastSyncLedgerCategoriesKey);
+    await storageBox.delete(lastSyncLedgerBudgetsKey);
     await storageBox.delete(lastSyncLedgerTransactionsKey);
     await storageBox.delete(lastSyncLedgerRecurringKey);
     await storageBox.delete(settingsRemoteIdKey);
@@ -552,6 +563,64 @@ class SyncEngine {
         );
       }
       return conflicts;
+    }
+  }
+
+  Future<void> _pushTombstones(String token) async {
+    final tombstones = await database.getPendingTombstones();
+    if (tombstones.isEmpty) {
+      return;
+    }
+
+    final Map<String, List<_PendingTombstone>> grouped = <String, List<_PendingTombstone>>{};
+    for (final tombstone in tombstones) {
+      final ciphertext = await encryptionService.encryptMap(<String, Object?>{'deleted': true});
+      grouped
+          .putIfAbsent(tombstone.collection, () => <_PendingTombstone>[])
+          .add(_PendingTombstone(tombstone: tombstone, ciphertext: ciphertext));
+    }
+
+    for (final entry in grouped.entries) {
+      final collection = entry.key;
+      final attempts = entry.value;
+      if (attempts.isEmpty) {
+        continue;
+      }
+      final items = <Map<String, Object?>>[];
+      final tombstoneIds = <int>[];
+      for (final pending in attempts) {
+        items.add(<String, Object?>{
+          'id': pending.tombstone.remoteId,
+          'collection': collection,
+          'ciphertext': pending.ciphertext,
+          'version': pending.tombstone.version,
+          'clientUpdatedAt':
+              pending.tombstone.clientUpdatedAt.toUtc().toIso8601String(),
+          'deleted': true,
+        });
+        tombstoneIds.add(pending.tombstone.id);
+      }
+
+      try {
+        await apiClient.upsertItems(
+          token: token,
+          collection: collection,
+          items: items,
+        );
+        await database.deleteTombstonesByIds(tombstoneIds);
+      } on SyncConflictException catch (conflict) {
+        for (final entryConflict in conflict.conflicts) {
+          final payload = await encryptionService.decryptToMap(
+            entryConflict.server.ciphertext,
+          );
+          await _applyRemoteForCollection(
+            collection: collection,
+            item: entryConflict.server,
+            payload: payload,
+          );
+        }
+        await database.deleteTombstonesByIds(tombstoneIds);
+      }
     }
   }
 
@@ -1024,6 +1093,74 @@ class SyncEngine {
     return const [];
   }
 
+  Future<List<SyncConflictData>> _pushLedgerBudgets(String token) async {
+    final budgets = await database.getLedgerBudgetsNeedingSync();
+    if (budgets.isEmpty) {
+      return const [];
+    }
+
+    final outgoing = <Map<String, Object?>>[];
+    final budgetByRemoteId = <String, LedgerBudget>{};
+
+    for (var budget in budgets) {
+      if (budget.remoteId == null || budget.remoteId!.isEmpty) {
+        final generatedId = _uuid.v4();
+        await database.assignLedgerBudgetRemoteId(
+          id: budget.id,
+          remoteId: generatedId,
+        );
+        budget = budget.copyWith(remoteId: Value(generatedId));
+      }
+      final payload = await _serializeLedgerBudget(budget);
+      if (payload == null) {
+        continue;
+      }
+      final ciphertext = await encryptionService.encryptMap(payload);
+      final version = budget.remoteVersion + 1;
+      final remoteId = budget.remoteId!;
+      outgoing.add(<String, Object?>{
+        'id': remoteId,
+        'collection': 'ledger_budgets',
+        'ciphertext': ciphertext,
+        'version': version,
+        'clientUpdatedAt': budget.updatedAt.toUtc().toIso8601String(),
+        'deleted': false,
+      });
+      budgetByRemoteId[remoteId] = budget;
+    }
+
+    if (outgoing.isEmpty) {
+      return const [];
+    }
+
+    try {
+      final response = await apiClient.upsertItems(
+        token: token,
+        collection: 'ledger_budgets',
+        items: outgoing,
+      );
+      for (final item in response.items) {
+        final budget = budgetByRemoteId[item.id];
+        if (budget != null) {
+          await database.markLedgerBudgetSynced(
+            id: budget.id,
+            remoteVersion: item.version,
+            syncedAt: item.updatedAt,
+          );
+        }
+      }
+    } on SyncConflictException catch (conflict) {
+      for (final entry in conflict.conflicts) {
+        final payload = await encryptionService.decryptToMap(
+          entry.server.ciphertext,
+        );
+        await _applyRemoteLedgerBudget(entry.server, payload);
+      }
+    }
+
+    return const [];
+  }
+
   Future<List<SyncConflictData>> _pushLedgerTransactions(String token) async {
     final transactions = await database.getLedgerTransactionsNeedingSync();
     if (transactions.isEmpty) {
@@ -1328,7 +1465,10 @@ class SyncEngine {
       if (item.deleted) {
         final local = await database.getLedgerAccountByRemoteId(item.id);
         if (local != null) {
-          await database.deleteLedgerAccount(local.id);
+          await database.deleteLedgerAccount(
+            local.id,
+            recordTombstone: false,
+          );
         }
         continue;
       }
@@ -1348,12 +1488,38 @@ class SyncEngine {
       if (item.deleted) {
         final local = await database.getLedgerCategoryByRemoteId(item.id);
         if (local != null) {
-          await database.deleteLedgerCategory(local.id);
+          await database.deleteLedgerCategory(
+            local.id,
+            recordTombstone: false,
+          );
         }
         continue;
       }
       final payload = await encryptionService.decryptToMap(item.ciphertext);
       await _applyRemoteLedgerCategory(item, payload);
+    }
+  }
+
+  Future<void> _pullLedgerBudgets(String token) async {
+    final since = lastLedgerBudgetsSync;
+    final remoteItems = await apiClient.fetchItems(
+      token: token,
+      collection: 'ledger_budgets',
+      since: since,
+    );
+    for (final item in remoteItems) {
+      if (item.deleted) {
+        final local = await database.getLedgerBudgetByRemoteId(item.id);
+        if (local != null) {
+          await database.deleteLedgerBudget(
+            local.id,
+            recordTombstone: false,
+          );
+        }
+        continue;
+      }
+      final payload = await encryptionService.decryptToMap(item.ciphertext);
+      await _applyRemoteLedgerBudget(item, payload);
     }
   }
 
@@ -1368,7 +1534,10 @@ class SyncEngine {
       if (item.deleted) {
         final local = await database.getLedgerTransactionByRemoteId(item.id);
         if (local != null) {
-          await database.deleteLedgerTransaction(local.id);
+          await database.deleteLedgerTransaction(
+            local.id,
+            recordTombstone: false,
+          );
         }
         continue;
       }
@@ -1389,7 +1558,10 @@ class SyncEngine {
         final local =
             await database.getLedgerRecurringTransactionByRemoteId(item.id);
         if (local != null) {
-          await database.deleteLedgerRecurringTransaction(local.id);
+          await database.deleteLedgerRecurringTransaction(
+            local.id,
+            recordTombstone: false,
+          );
         }
         continue;
       }
@@ -1633,6 +1805,38 @@ class SyncEngine {
       'isArchived': category.isArchived,
       'createdAt': category.createdAt.toUtc().toIso8601String(),
       'updatedAt': category.updatedAt.toUtc().toIso8601String(),
+    };
+  }
+
+  Future<Map<String, Object?>?> _serializeLedgerBudget(
+    LedgerBudget budget,
+  ) async {
+    final category = await database.getLedgerCategoryById(budget.categoryId);
+    if (category == null) {
+      return null;
+    }
+    String? categoryRemoteId = category.remoteId;
+    if (categoryRemoteId == null || categoryRemoteId.isEmpty) {
+      await database.assignLedgerCategoryRemoteId(
+        id: category.id,
+        remoteId: _uuid.v4(),
+      );
+      final refreshed = await database.getLedgerCategoryById(category.id);
+      categoryRemoteId = refreshed?.remoteId;
+      if (categoryRemoteId == null || categoryRemoteId.isEmpty) {
+        return null;
+      }
+    }
+
+    return <String, Object?>{
+      'categoryRemoteId': categoryRemoteId,
+      'periodKind': budget.periodKind.name,
+      'year': budget.year,
+      'month': budget.month,
+      'amount': budget.amount,
+      'currencyCode': budget.currencyCode.toUpperCase(),
+      'createdAt': budget.createdAt.toUtc().toIso8601String(),
+      'updatedAt': budget.updatedAt.toUtc().toIso8601String(),
     };
   }
 
@@ -2222,6 +2426,32 @@ class SyncEngine {
     );
   }
 
+  Future<void> _applyRemoteForCollection({
+    required String collection,
+    required RemoteSyncItem item,
+    required Map<String, dynamic> payload,
+  }) async {
+    switch (collection) {
+      case 'ledger_accounts':
+        await _applyRemoteLedgerAccount(item, payload);
+        break;
+      case 'ledger_categories':
+        await _applyRemoteLedgerCategory(item, payload);
+        break;
+      case 'ledger_budgets':
+        await _applyRemoteLedgerBudget(item, payload);
+        break;
+      case 'ledger_transactions':
+        await _applyRemoteLedgerTransaction(item, payload);
+        break;
+      case 'ledger_recurring_transactions':
+        await _applyRemoteLedgerRecurringTransaction(item, payload);
+        break;
+      default:
+        break;
+    }
+  }
+
   Future<void> _applyRemoteLedgerAccount(
     RemoteSyncItem item,
     Map<String, dynamic> payload,
@@ -2338,6 +2568,81 @@ class SyncEngine {
         categoryKind: Value(kind),
         parentId: parentValue,
         isArchived: Value(isArchived),
+        createdAt: Value(createdAt.toUtc()),
+        updatedAt: Value(updatedAt.toUtc()),
+        remoteVersion: Value(item.version),
+        needsSync: const Value(false),
+        syncedAt: Value(updatedAt.toUtc()),
+      ),
+    );
+  }
+
+  Future<void> _applyRemoteLedgerBudget(
+    RemoteSyncItem item,
+    Map<String, dynamic> payload,
+  ) async {
+    final existing = await database.getLedgerBudgetByRemoteId(item.id);
+    final categoryRemoteId = payload['categoryRemoteId'] as String?;
+    if (categoryRemoteId == null || categoryRemoteId.isEmpty) {
+      return;
+    }
+    final category = await database.getLedgerCategoryByRemoteId(categoryRemoteId);
+    if (category == null) {
+      return;
+    }
+
+    final periodKindRaw = payload['periodKind'] as String? ??
+        LedgerBudgetPeriodKind.monthly.name;
+    final periodKind = LedgerBudgetPeriodKind.values.firstWhere(
+      (value) => value.name == periodKindRaw,
+      orElse: () => LedgerBudgetPeriodKind.monthly,
+    );
+    final year = (payload['year'] as num?)?.toInt() ?? DateTime.now().year;
+    final monthRaw = payload['month'];
+    final int? month = monthRaw is num ? monthRaw.toInt() : null;
+    final amount = (payload['amount'] as num?)?.toDouble() ?? 0;
+    final currencyCode =
+        (payload['currencyCode'] as String? ?? 'EUR').toUpperCase();
+    final createdAt =
+        _parseDate(payload['createdAt']) ?? item.updatedAt.toUtc();
+    final updatedAt =
+        _parseDate(payload['updatedAt']) ?? item.updatedAt.toUtc();
+
+    final Value<int?> monthValue = month == null
+        ? const Value<int?>.absent()
+        : Value<int?>(month);
+
+    if (existing == null) {
+      await database.into(database.ledgerBudgets).insert(
+        LedgerBudgetsCompanion.insert(
+          categoryId: category.id,
+          periodKind: Value(periodKind),
+          year: year,
+          month: monthValue,
+          amount: Value(amount),
+          currencyCode: Value(currencyCode),
+          createdAt: Value(createdAt.toUtc()),
+          updatedAt: Value(updatedAt.toUtc()),
+          remoteId: Value(item.id),
+          remoteVersion: Value(item.version),
+          needsSync: const Value(false),
+          syncedAt: Value(updatedAt.toUtc()),
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+      return;
+    }
+
+    await (database.update(
+      database.ledgerBudgets,
+    )..where((tbl) => tbl.id.equals(existing.id))).write(
+      LedgerBudgetsCompanion(
+        categoryId: Value(category.id),
+        periodKind: Value(periodKind),
+        year: Value(year),
+        month: monthValue,
+        amount: Value(amount),
+        currencyCode: Value(currencyCode),
         createdAt: Value(createdAt.toUtc()),
         updatedAt: Value(updatedAt.toUtc()),
         remoteVersion: Value(item.version),
@@ -3020,4 +3325,11 @@ class SyncStateException implements Exception {
   const SyncStateException(this.message);
 
   final String message;
+}
+
+class _PendingTombstone {
+  _PendingTombstone({required this.tombstone, required this.ciphertext});
+
+  final SyncTombstone tombstone;
+  final String ciphertext;
 }

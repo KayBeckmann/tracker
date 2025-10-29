@@ -367,6 +367,14 @@ class LedgerBudgets extends Table {
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
+  TextColumn get remoteId => text().nullable()();
+
+  IntColumn get remoteVersion => integer().withDefault(const Constant(0))();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get syncedAt => dateTime().nullable()();
+
   @override
   List<String> get customConstraints => const [
     'UNIQUE(category_id, period_kind, year, month)',
@@ -502,6 +510,26 @@ class LedgerRecurringTransactions extends Table {
   DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
+class SyncTombstones extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get collection => text()();
+
+  TextColumn get remoteId => text()();
+
+  IntColumn get version => integer().withDefault(const Constant(1))();
+
+  DateTimeColumn get clientUpdatedAt =>
+      dateTime().withDefault(currentDateAndTime)();
+
+  BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
+
+  @override
+  List<String> get customConstraints => const [
+    'UNIQUE(collection, remote_id)',
+  ];
+}
+
 class CryptoPriceEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -535,6 +563,7 @@ class CryptoPriceEntries extends Table {
     LedgerTransactions,
     LedgerRecurringTransactions,
     CryptoPriceEntries,
+    SyncTombstones,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -548,7 +577,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -656,6 +685,13 @@ class AppDatabase extends _$AppDatabase {
           ledgerRecurringTransactions.syncedAt,
         );
       }
+      if (from < 13) {
+        await m.addColumn(ledgerBudgets, ledgerBudgets.remoteId);
+        await m.addColumn(ledgerBudgets, ledgerBudgets.remoteVersion);
+        await m.addColumn(ledgerBudgets, ledgerBudgets.needsSync);
+        await m.addColumn(ledgerBudgets, ledgerBudgets.syncedAt);
+        await m.createTable(syncTombstones);
+      }
     },
   );
 
@@ -684,6 +720,58 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> clearGreetingEntries() {
     return delete(greetingEntries).go();
+  }
+
+  Future<void> upsertTombstone({
+    required String collection,
+    required String remoteId,
+    required int version,
+    required DateTime clientUpdatedAt,
+  }) async {
+    final existing = await (select(syncTombstones)
+          ..where(
+            (tbl) =>
+                tbl.collection.equals(collection) &
+                tbl.remoteId.equals(remoteId),
+          )
+          ..limit(1))
+        .getSingleOrNull();
+    final utc = clientUpdatedAt.toUtc();
+    if (existing == null) {
+      await into(syncTombstones).insert(
+        SyncTombstonesCompanion.insert(
+          collection: collection,
+          remoteId: remoteId,
+          version: Value(version),
+          clientUpdatedAt: Value(utc),
+          needsSync: const Value(true),
+        ),
+      );
+      return;
+    }
+    await (update(syncTombstones)
+          ..where((tbl) => tbl.id.equals(existing.id)))
+        .write(
+      SyncTombstonesCompanion(
+        version: Value(version),
+        clientUpdatedAt: Value(utc),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<List<SyncTombstone>> getPendingTombstones() {
+    return (select(
+      syncTombstones,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> deleteTombstonesByIds(Iterable<int> ids) async {
+    if (ids.isEmpty) {
+      return;
+    }
+    await (delete(syncTombstones)..where((tbl) => tbl.id.isIn(ids.toList())))
+        .go();
   }
 
   Selectable<NoteEntry> _baseNoteQuery({
@@ -1813,7 +1901,22 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
-  Future<void> deleteLedgerAccount(int id) async {
+  Future<void> deleteLedgerAccount(int id, {bool recordTombstone = true}) async {
+    final account = await getLedgerAccountById(id);
+    if (account == null) {
+      return;
+    }
+    if (recordTombstone &&
+        account.remoteId != null &&
+        account.remoteId!.isNotEmpty &&
+        account.remoteVersion > 0) {
+      await upsertTombstone(
+        collection: 'ledger_accounts',
+        remoteId: account.remoteId!,
+        version: account.remoteVersion + 1,
+        clientUpdatedAt: DateTime.now().toUtc(),
+      );
+    }
     await (delete(ledgerAccounts)..where((tbl) => tbl.id.equals(id))).go();
   }
 
@@ -1973,7 +2076,22 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
-  Future<void> deleteLedgerCategory(int id) async {
+  Future<void> deleteLedgerCategory(int id, {bool recordTombstone = true}) async {
+    final category = await getLedgerCategoryById(id);
+    if (category == null) {
+      return;
+    }
+    if (recordTombstone &&
+        category.remoteId != null &&
+        category.remoteId!.isNotEmpty &&
+        category.remoteVersion > 0) {
+      await upsertTombstone(
+        collection: 'ledger_categories',
+        remoteId: category.remoteId!,
+        version: category.remoteVersion + 1,
+        clientUpdatedAt: DateTime.now().toUtc(),
+      );
+    }
     await (delete(ledgerCategories)..where((tbl) => tbl.id.equals(id))).go();
   }
 
@@ -2050,21 +2168,126 @@ class AppDatabase extends _$AppDatabase {
     final Value<int?> resolvedMonth = month == null
         ? const Value.absent()
         : Value(month);
-    final entry = LedgerBudgetsCompanion.insert(
-      categoryId: categoryId,
-      periodKind: Value(periodKind),
-      year: year,
-      month: resolvedMonth,
-      amount: Value(amount),
-      currencyCode: Value(currencyCode.toUpperCase()),
-      createdAt: Value(now),
-      updatedAt: Value(now),
+    final existing = await (select(ledgerBudgets)
+          ..where(
+            (tbl) =>
+                tbl.categoryId.equals(categoryId) &
+                tbl.periodKind.equalsValue(periodKind) &
+                tbl.year.equals(year) &
+                (resolvedMonth.present
+                    ? tbl.month.equals(resolvedMonth.value!)
+                    : tbl.month.isNull()),
+          )
+          ..limit(1))
+        .getSingleOrNull();
+    if (existing == null) {
+      final remoteId = _uuid.v4();
+      final entry = LedgerBudgetsCompanion.insert(
+        categoryId: categoryId,
+        periodKind: Value(periodKind),
+        year: year,
+        month: resolvedMonth,
+        amount: Value(amount),
+        currencyCode: Value(currencyCode.toUpperCase()),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+        remoteId: Value(remoteId),
+        remoteVersion: const Value(0),
+        needsSync: const Value(true),
+        syncedAt: const Value.absent(),
+      );
+      return into(ledgerBudgets).insert(entry);
+    }
+
+    final remoteId = existing.remoteId;
+    if (remoteId == null || remoteId.isEmpty) {
+      await assignLedgerBudgetRemoteId(
+        id: existing.id,
+        remoteId: _uuid.v4(),
+      );
+    }
+    await (update(ledgerBudgets)..where((tbl) => tbl.id.equals(existing.id)))
+        .write(
+      LedgerBudgetsCompanion(
+        categoryId: Value(categoryId),
+        periodKind: Value(periodKind),
+        year: Value(year),
+        month: resolvedMonth,
+        amount: Value(amount),
+        currencyCode: Value(currencyCode.toUpperCase()),
+        updatedAt: Value(now),
+        needsSync: const Value(true),
+      ),
     );
-    return into(ledgerBudgets).insertOnConflictUpdate(entry);
+    return existing.id;
   }
 
-  Future<void> deleteLedgerBudget(int id) async {
+  Future<void> deleteLedgerBudget(int id, {bool recordTombstone = true}) async {
+    final budget = await (select(ledgerBudgets)
+          ..where((tbl) => tbl.id.equals(id))
+          ..limit(1))
+        .getSingleOrNull();
+    if (budget == null) {
+      return;
+    }
+    if (recordTombstone &&
+        budget.remoteId != null &&
+        budget.remoteId!.isNotEmpty &&
+        budget.remoteVersion > 0) {
+      await upsertTombstone(
+        collection: 'ledger_budgets',
+        remoteId: budget.remoteId!,
+        version: budget.remoteVersion + 1,
+        clientUpdatedAt: DateTime.now().toUtc(),
+      );
+    }
     await (delete(ledgerBudgets)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  Future<LedgerBudget?> getLedgerBudgetById(int id) {
+    return (select(
+      ledgerBudgets,
+    )..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<LedgerBudget?> getLedgerBudgetByRemoteId(String remoteId) {
+    return (select(
+      ledgerBudgets,
+    )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
+  }
+
+  Future<List<LedgerBudget>> getLedgerBudgetsNeedingSync() {
+    return (select(
+      ledgerBudgets,
+    )..where((tbl) => tbl.needsSync.equals(true))).get();
+  }
+
+  Future<void> assignLedgerBudgetRemoteId({
+    required int id,
+    required String remoteId,
+  }) async {
+    await (update(ledgerBudgets)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerBudgetsCompanion(
+        remoteId: Value(remoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> markLedgerBudgetSynced({
+    required int id,
+    required int remoteVersion,
+    required DateTime syncedAt,
+  }) async {
+    final utc = syncedAt.toUtc();
+    await (update(ledgerBudgets)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerBudgetsCompanion(
+        remoteVersion: Value(remoteVersion),
+        needsSync: const Value(false),
+        syncedAt: Value(utc),
+        updatedAt: Value(utc),
+      ),
+    );
   }
 
   Stream<List<LedgerTransaction>> watchLedgerTransactions({
@@ -2182,7 +2405,28 @@ class AppDatabase extends _$AppDatabase {
     await update(ledgerTransactions).replace(updated);
   }
 
-  Future<void> deleteLedgerTransaction(int id) async {
+  Future<void> deleteLedgerTransaction(
+    int id, {
+    bool recordTombstone = true,
+  }) async {
+    final transaction = await (select(ledgerTransactions)
+          ..where((tbl) => tbl.id.equals(id))
+          ..limit(1))
+        .getSingleOrNull();
+    if (transaction == null) {
+      return;
+    }
+    if (recordTombstone &&
+        transaction.remoteId != null &&
+        transaction.remoteId!.isNotEmpty &&
+        transaction.remoteVersion > 0) {
+      await upsertTombstone(
+        collection: 'ledger_transactions',
+        remoteId: transaction.remoteId!,
+        version: transaction.remoteVersion + 1,
+        clientUpdatedAt: DateTime.now().toUtc(),
+      );
+    }
     await (delete(ledgerTransactions)..where((tbl) => tbl.id.equals(id))).go();
   }
 
@@ -2332,7 +2576,28 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
-  Future<void> deleteLedgerRecurringTransaction(int id) async {
+  Future<void> deleteLedgerRecurringTransaction(
+    int id, {
+    bool recordTombstone = true,
+  }) async {
+    final entry = await (select(ledgerRecurringTransactions)
+          ..where((tbl) => tbl.id.equals(id))
+          ..limit(1))
+        .getSingleOrNull();
+    if (entry == null) {
+      return;
+    }
+    if (recordTombstone &&
+        entry.remoteId != null &&
+        entry.remoteId!.isNotEmpty &&
+        entry.remoteVersion > 0) {
+      await upsertTombstone(
+        collection: 'ledger_recurring_transactions',
+        remoteId: entry.remoteId!,
+        version: entry.remoteVersion + 1,
+        clientUpdatedAt: DateTime.now().toUtc(),
+      );
+    }
     await (delete(
       ledgerRecurringTransactions,
     )..where((tbl) => tbl.id.equals(id))).go();
