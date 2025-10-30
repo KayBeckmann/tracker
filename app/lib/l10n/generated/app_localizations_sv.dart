@@ -198,6 +198,12 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesSearchTagHint => 'Filtrera taggar';
 
   @override
+  String get notesTabActive => 'Anteckningar';
+
+  @override
+  String get notesTabArchive => 'Arkiv';
+
+  @override
   String get notesTagFilterLabel => 'Taggfilter';
 
   @override
@@ -209,6 +215,9 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get notesEmptyPlaceholder =>
       'Inga anteckningar ännu. Skapa din första anteckning för att samla idéer.';
+
+  @override
+  String get notesArchiveEmpty => 'Inga arkiverade anteckningar.';
 
   @override
   String get notesUntitled => 'Namnlös anteckning';
@@ -267,6 +276,12 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesDeleteDialogConfirm => 'Ta bort';
 
   @override
+  String get notesArchiveTooltip => 'Arkivera anteckning';
+
+  @override
+  String get notesUnarchiveTooltip => 'Återställ anteckning';
+
+  @override
   String get notesDrawingTitleNew => 'Ny teckning';
 
   @override
@@ -320,6 +335,9 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get tasksTabCalendar => 'Kalender';
+
+  @override
+  String get tasksTabArchive => 'Arkiv';
 
   @override
   String get tasksCreateButton => 'Ny uppgift';
@@ -415,6 +433,12 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get tasksHideFiltersTooltip => 'Dölj filter';
+
+  @override
+  String get tasksArchiveTooltip => 'Flytta till arkivet';
+
+  @override
+  String get tasksUnarchiveTooltip => 'Återställ från arkivet';
 
   @override
   String get tasksSortLabel => 'Sortera efter';

@@ -198,6 +198,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesSearchTagHint => 'Filter tags';
 
   @override
+  String get notesTabActive => 'Notes';
+
+  @override
+  String get notesTabArchive => 'Archive';
+
+  @override
   String get notesTagFilterLabel => 'Tag filter';
 
   @override
@@ -209,6 +215,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notesEmptyPlaceholder =>
       'No notes yet. Create the first one to start collecting ideas.';
+
+  @override
+  String get notesArchiveEmpty => 'No archived notes yet.';
 
   @override
   String get notesUntitled => 'Untitled note';
@@ -267,6 +276,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesDeleteDialogConfirm => 'Delete';
 
   @override
+  String get notesArchiveTooltip => 'Move note to archive';
+
+  @override
+  String get notesUnarchiveTooltip => 'Restore note';
+
+  @override
   String get notesDrawingTitleNew => 'New drawing';
 
   @override
@@ -320,6 +335,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksTabCalendar => 'Calendar';
+
+  @override
+  String get tasksTabArchive => 'Archive';
 
   @override
   String get tasksCreateButton => 'New task';
@@ -416,6 +434,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tasksHideFiltersTooltip => 'Hide filters';
+
+  @override
+  String get tasksArchiveTooltip => 'Move to archive';
+
+  @override
+  String get tasksUnarchiveTooltip => 'Restore from archive';
 
   @override
   String get tasksSortLabel => 'Sort by';

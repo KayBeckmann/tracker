@@ -436,6 +436,18 @@ abstract class AppLocalizations {
   /// **'Filter tags'**
   String get notesSearchTagHint;
 
+  /// No description provided for @notesTabActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notesTabActive;
+
+  /// No description provided for @notesTabArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get notesTabArchive;
+
   /// No description provided for @notesTagFilterLabel.
   ///
   /// In en, this message translates to:
@@ -459,6 +471,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No notes yet. Create the first one to start collecting ideas.'**
   String get notesEmptyPlaceholder;
+
+  /// No description provided for @notesArchiveEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived notes yet.'**
+  String get notesArchiveEmpty;
 
   /// No description provided for @notesUntitled.
   ///
@@ -568,6 +586,18 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get notesDeleteDialogConfirm;
 
+  /// No description provided for @notesArchiveTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Move note to archive'**
+  String get notesArchiveTooltip;
+
+  /// No description provided for @notesUnarchiveTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore note'**
+  String get notesUnarchiveTooltip;
+
   /// No description provided for @notesDrawingTitleNew.
   ///
   /// In en, this message translates to:
@@ -675,6 +705,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Calendar'**
   String get tasksTabCalendar;
+
+  /// No description provided for @tasksTabArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get tasksTabArchive;
 
   /// No description provided for @tasksCreateButton.
   ///
@@ -855,6 +891,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hide filters'**
   String get tasksHideFiltersTooltip;
+
+  /// No description provided for @tasksArchiveTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to archive'**
+  String get tasksArchiveTooltip;
+
+  /// No description provided for @tasksUnarchiveTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from archive'**
+  String get tasksUnarchiveTooltip;
 
   /// No description provided for @tasksSortLabel.
   ///

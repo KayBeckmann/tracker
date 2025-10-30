@@ -200,6 +200,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notesSearchTagHint => 'Nach Tags filtern';
 
   @override
+  String get notesTabActive => 'Notizen';
+
+  @override
+  String get notesTabArchive => 'Archiv';
+
+  @override
   String get notesTagFilterLabel => 'Tag-Filter';
 
   @override
@@ -211,6 +217,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get notesEmptyPlaceholder =>
       'Noch keine Notizen vorhanden. Lege deine erste Notiz an, um Ideen zu sammeln.';
+
+  @override
+  String get notesArchiveEmpty => 'Keine archivierten Notizen.';
 
   @override
   String get notesUntitled => 'Unbenannte Notiz';
@@ -270,6 +279,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notesDeleteDialogConfirm => 'Löschen';
 
   @override
+  String get notesArchiveTooltip => 'Notiz archivieren';
+
+  @override
+  String get notesUnarchiveTooltip => 'Notiz wiederherstellen';
+
+  @override
   String get notesDrawingTitleNew => 'Neue Zeichnung';
 
   @override
@@ -323,6 +338,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tasksTabCalendar => 'Kalender';
+
+  @override
+  String get tasksTabArchive => 'Archiv';
 
   @override
   String get tasksCreateButton => 'Neue Aufgabe';
@@ -420,6 +438,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tasksHideFiltersTooltip => 'Filter ausblenden';
+
+  @override
+  String get tasksArchiveTooltip => 'In Archiv verschieben';
+
+  @override
+  String get tasksUnarchiveTooltip => 'Aus Archiv wiederherstellen';
 
   @override
   String get tasksSortLabel => 'Sortieren nach';

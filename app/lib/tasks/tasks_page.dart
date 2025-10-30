@@ -42,7 +42,7 @@ class _TasksPageState extends State<TasksPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     final now = DateTime.now();
     _selectedDay = DateTime(now.year, now.month, now.day);
     _calendarMonth = DateTime(now.year, now.month, 1);
@@ -79,6 +79,10 @@ class _TasksPageState extends State<TasksPage>
     }
     final updated = task.copyWith(status: status);
     await widget.database.updateTaskEntry(updated);
+  }
+
+  Future<void> _setTaskArchived(TaskEntry task, bool archived) async {
+    await widget.database.setTaskArchived(id: task.id, archived: archived);
   }
 
   DateTime _normalizeDate(DateTime date) =>
@@ -283,22 +287,25 @@ class _TasksPageState extends State<TasksPage>
   Widget _buildTaskListView(
     AppLocalizations loc,
     List<TaskEntry> tasks,
-    Map<int, TaskTimeInfo> timeInfoByTask,
-  ) {
+    Map<int, TaskTimeInfo> timeInfoByTask, {
+    bool showFilters = true,
+    bool archivedList = false,
+  }) {
     return Column(
       children: [
-        AnimatedCrossFade(
-          alignment: Alignment.topCenter,
-          sizeCurve: Curves.easeInOut,
-          duration: const Duration(milliseconds: 200),
-          crossFadeState: _showFilters
-              ? CrossFadeState.showFirst
-              : CrossFadeState.showSecond,
-          firstChild: Column(
-            children: [_buildFilters(loc), const Divider(height: 1)],
+        if (showFilters)
+          AnimatedCrossFade(
+            alignment: Alignment.topCenter,
+            sizeCurve: Curves.easeInOut,
+            duration: const Duration(milliseconds: 200),
+            crossFadeState: _showFilters
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            firstChild: Column(
+              children: [_buildFilters(loc), const Divider(height: 1)],
+            ),
+            secondChild: const SizedBox.shrink(),
           ),
-          secondChild: const SizedBox.shrink(),
-        ),
         Expanded(
           child: tasks.isEmpty
               ? Center(
@@ -326,6 +333,9 @@ class _TasksPageState extends State<TasksPage>
                           _localizedStatus(loc, status),
                       priorityLabelBuilder: (priority) =>
                           _localizedPriority(loc, priority),
+                      isArchived: archivedList,
+                      onToggleArchive: () =>
+                          _setTaskArchived(task, !archivedList),
                       timeInfo: timeInfoByTask[task.id],
                     );
                   },
@@ -360,6 +370,7 @@ class _TasksPageState extends State<TasksPage>
           tabs: [
             Tab(text: loc.tasksTabList),
             Tab(text: loc.tasksTabCalendar),
+            Tab(text: loc.tasksTabArchive),
           ],
         ),
       ),
@@ -407,12 +418,32 @@ class _TasksPageState extends State<TasksPage>
                     highlightedDays,
                     timeInfoByTask,
                   ),
+                  _buildArchivedTasksTab(loc, timeInfoByTask),
                 ],
               );
             },
           );
         },
       ),
+    );
+  }
+
+  Widget _buildArchivedTasksTab(
+    AppLocalizations loc,
+    Map<int, TaskTimeInfo> timeInfoByTask,
+  ) {
+    return StreamBuilder<List<TaskEntry>>(
+      stream: widget.database.watchTaskEntries(archived: true),
+      builder: (context, snapshot) {
+        final archived = snapshot.data ?? const <TaskEntry>[];
+        return _buildTaskListView(
+          loc,
+          archived,
+          timeInfoByTask,
+          showFilters: false,
+          archivedList: true,
+        );
+      },
     );
   }
 
@@ -826,6 +857,8 @@ class _TaskListTile extends StatelessWidget {
     required this.onStatusChanged,
     required this.sortLabelBuilder,
     required this.priorityLabelBuilder,
+    required this.onToggleArchive,
+    required this.isArchived,
     this.timeInfo,
   });
 
@@ -835,6 +868,8 @@ class _TaskListTile extends StatelessWidget {
   final ValueChanged<TaskStatus> onStatusChanged;
   final String Function(TaskStatus) sortLabelBuilder;
   final String Function(TaskPriority) priorityLabelBuilder;
+  final VoidCallback onToggleArchive;
+  final bool isArchived;
   final TaskTimeInfo? timeInfo;
 
   @override
@@ -902,6 +937,13 @@ class _TaskListTile extends StatelessWidget {
               onPressed: onOpenNote,
               icon: const Icon(Icons.remove_red_eye_outlined),
             ),
+          IconButton(
+            tooltip: isArchived
+                ? loc.tasksUnarchiveTooltip
+                : loc.tasksArchiveTooltip,
+            onPressed: onToggleArchive,
+            icon: Icon(isArchived ? Icons.unarchive : Icons.archive_outlined),
+          ),
           PopupMenuButton<TaskStatus>(
             onSelected: onStatusChanged,
             itemBuilder: (context) => TaskStatus.values

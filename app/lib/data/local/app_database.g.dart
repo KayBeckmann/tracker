@@ -485,6 +485,21 @@ class $NoteEntriesTable extends NoteEntries
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _archivedMeta = const VerificationMeta(
+    'archived',
+  );
+  @override
+  late final GeneratedColumn<bool> archived = GeneratedColumn<bool>(
+    'archived',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("archived" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -499,6 +514,7 @@ class $NoteEntriesTable extends NoteEntries
     remoteVersion,
     needsSync,
     syncedAt,
+    archived,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -581,6 +597,12 @@ class $NoteEntriesTable extends NoteEntries
         syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
       );
     }
+    if (data.containsKey('archived')) {
+      context.handle(
+        _archivedMeta,
+        archived.isAcceptableOrUnknown(data['archived']!, _archivedMeta),
+      );
+    }
     return context;
   }
 
@@ -640,6 +662,10 @@ class $NoteEntriesTable extends NoteEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}synced_at'],
       ),
+      archived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}archived'],
+      )!,
     );
   }
 
@@ -665,6 +691,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
   final int remoteVersion;
   final bool needsSync;
   final DateTime? syncedAt;
+  final bool archived;
   const NoteEntry({
     required this.id,
     required this.title,
@@ -678,6 +705,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     required this.remoteVersion,
     required this.needsSync,
     this.syncedAt,
+    required this.archived,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -706,6 +734,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     if (!nullToAbsent || syncedAt != null) {
       map['synced_at'] = Variable<DateTime>(syncedAt);
     }
+    map['archived'] = Variable<bool>(archived);
     return map;
   }
 
@@ -731,6 +760,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       syncedAt: syncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(syncedAt),
+      archived: Value(archived),
     );
   }
 
@@ -754,6 +784,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
       needsSync: serializer.fromJson<bool>(json['needsSync']),
       syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      archived: serializer.fromJson<bool>(json['archived']),
     );
   }
   @override
@@ -774,6 +805,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
       'remoteVersion': serializer.toJson<int>(remoteVersion),
       'needsSync': serializer.toJson<bool>(needsSync),
       'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'archived': serializer.toJson<bool>(archived),
     };
   }
 
@@ -790,6 +822,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     int? remoteVersion,
     bool? needsSync,
     Value<DateTime?> syncedAt = const Value.absent(),
+    bool? archived,
   }) => NoteEntry(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -803,6 +836,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     remoteVersion: remoteVersion ?? this.remoteVersion,
     needsSync: needsSync ?? this.needsSync,
     syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    archived: archived ?? this.archived,
   );
   NoteEntry copyWithCompanion(NoteEntriesCompanion data) {
     return NoteEntry(
@@ -822,6 +856,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           : this.remoteVersion,
       needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
       syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      archived: data.archived.present ? data.archived.value : this.archived,
     );
   }
 
@@ -839,7 +874,8 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           ..write('remoteId: $remoteId, ')
           ..write('remoteVersion: $remoteVersion, ')
           ..write('needsSync: $needsSync, ')
-          ..write('syncedAt: $syncedAt')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('archived: $archived')
           ..write(')'))
         .toString();
   }
@@ -858,6 +894,7 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
     remoteVersion,
     needsSync,
     syncedAt,
+    archived,
   );
   @override
   bool operator ==(Object other) =>
@@ -874,7 +911,8 @@ class NoteEntry extends DataClass implements Insertable<NoteEntry> {
           other.remoteId == this.remoteId &&
           other.remoteVersion == this.remoteVersion &&
           other.needsSync == this.needsSync &&
-          other.syncedAt == this.syncedAt);
+          other.syncedAt == this.syncedAt &&
+          other.archived == this.archived);
 }
 
 class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
@@ -890,6 +928,7 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
   final Value<int> remoteVersion;
   final Value<bool> needsSync;
   final Value<DateTime?> syncedAt;
+  final Value<bool> archived;
   const NoteEntriesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -903,6 +942,7 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     this.remoteVersion = const Value.absent(),
     this.needsSync = const Value.absent(),
     this.syncedAt = const Value.absent(),
+    this.archived = const Value.absent(),
   });
   NoteEntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -917,6 +957,7 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     this.remoteVersion = const Value.absent(),
     this.needsSync = const Value.absent(),
     this.syncedAt = const Value.absent(),
+    this.archived = const Value.absent(),
   });
   static Insertable<NoteEntry> custom({
     Expression<int>? id,
@@ -931,6 +972,7 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     Expression<int>? remoteVersion,
     Expression<bool>? needsSync,
     Expression<DateTime>? syncedAt,
+    Expression<bool>? archived,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -945,6 +987,7 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
       if (remoteVersion != null) 'remote_version': remoteVersion,
       if (needsSync != null) 'needs_sync': needsSync,
       if (syncedAt != null) 'synced_at': syncedAt,
+      if (archived != null) 'archived': archived,
     });
   }
 
@@ -961,6 +1004,7 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     Value<int>? remoteVersion,
     Value<bool>? needsSync,
     Value<DateTime?>? syncedAt,
+    Value<bool>? archived,
   }) {
     return NoteEntriesCompanion(
       id: id ?? this.id,
@@ -975,6 +1019,7 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
       remoteVersion: remoteVersion ?? this.remoteVersion,
       needsSync: needsSync ?? this.needsSync,
       syncedAt: syncedAt ?? this.syncedAt,
+      archived: archived ?? this.archived,
     );
   }
 
@@ -1019,6 +1064,9 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
     if (syncedAt.present) {
       map['synced_at'] = Variable<DateTime>(syncedAt.value);
     }
+    if (archived.present) {
+      map['archived'] = Variable<bool>(archived.value);
+    }
     return map;
   }
 
@@ -1036,7 +1084,8 @@ class NoteEntriesCompanion extends UpdateCompanion<NoteEntry> {
           ..write('remoteId: $remoteId, ')
           ..write('remoteVersion: $remoteVersion, ')
           ..write('needsSync: $needsSync, ')
-          ..write('syncedAt: $syncedAt')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('archived: $archived')
           ..write(')'))
         .toString();
   }
@@ -1207,6 +1256,21 @@ class $TaskEntriesTable extends TaskEntries
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _archivedMeta = const VerificationMeta(
+    'archived',
+  );
+  @override
+  late final GeneratedColumn<bool> archived = GeneratedColumn<bool>(
+    'archived',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("archived" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1223,6 +1287,7 @@ class $TaskEntriesTable extends TaskEntries
     remoteVersion,
     needsSync,
     syncedAt,
+    archived,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1312,6 +1377,12 @@ class $TaskEntriesTable extends TaskEntries
         syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
       );
     }
+    if (data.containsKey('archived')) {
+      context.handle(
+        _archivedMeta,
+        archived.isAcceptableOrUnknown(data['archived']!, _archivedMeta),
+      );
+    }
     return context;
   }
 
@@ -1381,6 +1452,10 @@ class $TaskEntriesTable extends TaskEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}synced_at'],
       ),
+      archived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}archived'],
+      )!,
     );
   }
 
@@ -1410,6 +1485,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
   final int remoteVersion;
   final bool needsSync;
   final DateTime? syncedAt;
+  final bool archived;
   const TaskEntry({
     required this.id,
     required this.title,
@@ -1425,6 +1501,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     required this.remoteVersion,
     required this.needsSync,
     this.syncedAt,
+    required this.archived,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1459,6 +1536,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     if (!nullToAbsent || syncedAt != null) {
       map['synced_at'] = Variable<DateTime>(syncedAt);
     }
+    map['archived'] = Variable<bool>(archived);
     return map;
   }
 
@@ -1486,6 +1564,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
       syncedAt: syncedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(syncedAt),
+      archived: Value(archived),
     );
   }
 
@@ -1513,6 +1592,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
       remoteVersion: serializer.fromJson<int>(json['remoteVersion']),
       needsSync: serializer.fromJson<bool>(json['needsSync']),
       syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
+      archived: serializer.fromJson<bool>(json['archived']),
     );
   }
   @override
@@ -1537,6 +1617,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
       'remoteVersion': serializer.toJson<int>(remoteVersion),
       'needsSync': serializer.toJson<bool>(needsSync),
       'syncedAt': serializer.toJson<DateTime?>(syncedAt),
+      'archived': serializer.toJson<bool>(archived),
     };
   }
 
@@ -1555,6 +1636,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     int? remoteVersion,
     bool? needsSync,
     Value<DateTime?> syncedAt = const Value.absent(),
+    bool? archived,
   }) => TaskEntry(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -1570,6 +1652,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     remoteVersion: remoteVersion ?? this.remoteVersion,
     needsSync: needsSync ?? this.needsSync,
     syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+    archived: archived ?? this.archived,
   );
   TaskEntry copyWithCompanion(TaskEntriesCompanion data) {
     return TaskEntry(
@@ -1591,6 +1674,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
           : this.remoteVersion,
       needsSync: data.needsSync.present ? data.needsSync.value : this.needsSync,
       syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+      archived: data.archived.present ? data.archived.value : this.archived,
     );
   }
 
@@ -1610,7 +1694,8 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
           ..write('remoteId: $remoteId, ')
           ..write('remoteVersion: $remoteVersion, ')
           ..write('needsSync: $needsSync, ')
-          ..write('syncedAt: $syncedAt')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('archived: $archived')
           ..write(')'))
         .toString();
   }
@@ -1631,6 +1716,7 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
     remoteVersion,
     needsSync,
     syncedAt,
+    archived,
   );
   @override
   bool operator ==(Object other) =>
@@ -1649,7 +1735,8 @@ class TaskEntry extends DataClass implements Insertable<TaskEntry> {
           other.remoteId == this.remoteId &&
           other.remoteVersion == this.remoteVersion &&
           other.needsSync == this.needsSync &&
-          other.syncedAt == this.syncedAt);
+          other.syncedAt == this.syncedAt &&
+          other.archived == this.archived);
 }
 
 class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
@@ -1667,6 +1754,7 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
   final Value<int> remoteVersion;
   final Value<bool> needsSync;
   final Value<DateTime?> syncedAt;
+  final Value<bool> archived;
   const TaskEntriesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -1682,6 +1770,7 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     this.remoteVersion = const Value.absent(),
     this.needsSync = const Value.absent(),
     this.syncedAt = const Value.absent(),
+    this.archived = const Value.absent(),
   });
   TaskEntriesCompanion.insert({
     this.id = const Value.absent(),
@@ -1698,6 +1787,7 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     this.remoteVersion = const Value.absent(),
     this.needsSync = const Value.absent(),
     this.syncedAt = const Value.absent(),
+    this.archived = const Value.absent(),
   }) : title = Value(title),
        dueDate = Value(dueDate);
   static Insertable<TaskEntry> custom({
@@ -1715,6 +1805,7 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     Expression<int>? remoteVersion,
     Expression<bool>? needsSync,
     Expression<DateTime>? syncedAt,
+    Expression<bool>? archived,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1731,6 +1822,7 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
       if (remoteVersion != null) 'remote_version': remoteVersion,
       if (needsSync != null) 'needs_sync': needsSync,
       if (syncedAt != null) 'synced_at': syncedAt,
+      if (archived != null) 'archived': archived,
     });
   }
 
@@ -1749,6 +1841,7 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     Value<int>? remoteVersion,
     Value<bool>? needsSync,
     Value<DateTime?>? syncedAt,
+    Value<bool>? archived,
   }) {
     return TaskEntriesCompanion(
       id: id ?? this.id,
@@ -1765,6 +1858,7 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
       remoteVersion: remoteVersion ?? this.remoteVersion,
       needsSync: needsSync ?? this.needsSync,
       syncedAt: syncedAt ?? this.syncedAt,
+      archived: archived ?? this.archived,
     );
   }
 
@@ -1817,6 +1911,9 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
     if (syncedAt.present) {
       map['synced_at'] = Variable<DateTime>(syncedAt.value);
     }
+    if (archived.present) {
+      map['archived'] = Variable<bool>(archived.value);
+    }
     return map;
   }
 
@@ -1836,7 +1933,8 @@ class TaskEntriesCompanion extends UpdateCompanion<TaskEntry> {
           ..write('remoteId: $remoteId, ')
           ..write('remoteVersion: $remoteVersion, ')
           ..write('needsSync: $needsSync, ')
-          ..write('syncedAt: $syncedAt')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('archived: $archived')
           ..write(')'))
         .toString();
   }
@@ -11628,6 +11726,7 @@ typedef $$NoteEntriesTableCreateCompanionBuilder =
       Value<int> remoteVersion,
       Value<bool> needsSync,
       Value<DateTime?> syncedAt,
+      Value<bool> archived,
     });
 typedef $$NoteEntriesTableUpdateCompanionBuilder =
     NoteEntriesCompanion Function({
@@ -11643,6 +11742,7 @@ typedef $$NoteEntriesTableUpdateCompanionBuilder =
       Value<int> remoteVersion,
       Value<bool> needsSync,
       Value<DateTime?> syncedAt,
+      Value<bool> archived,
     });
 
 final class $$NoteEntriesTableReferences
@@ -11735,6 +11835,11 @@ class $$NoteEntriesTableFilterComposer
 
   ColumnFilters<DateTime> get syncedAt => $composableBuilder(
     column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get archived => $composableBuilder(
+    column: $table.archived,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -11832,6 +11937,11 @@ class $$NoteEntriesTableOrderingComposer
     column: $table.syncedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get archived => $composableBuilder(
+    column: $table.archived,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$NoteEntriesTableAnnotationComposer
@@ -11882,6 +11992,9 @@ class $$NoteEntriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get syncedAt =>
       $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get archived =>
+      $composableBuilder(column: $table.archived, builder: (column) => column);
 
   Expression<T> taskEntriesRefs<T extends Object>(
     Expression<T> Function($$TaskEntriesTableAnnotationComposer a) f,
@@ -11949,6 +12062,7 @@ class $$NoteEntriesTableTableManager
                 Value<int> remoteVersion = const Value.absent(),
                 Value<bool> needsSync = const Value.absent(),
                 Value<DateTime?> syncedAt = const Value.absent(),
+                Value<bool> archived = const Value.absent(),
               }) => NoteEntriesCompanion(
                 id: id,
                 title: title,
@@ -11962,6 +12076,7 @@ class $$NoteEntriesTableTableManager
                 remoteVersion: remoteVersion,
                 needsSync: needsSync,
                 syncedAt: syncedAt,
+                archived: archived,
               ),
           createCompanionCallback:
               ({
@@ -11977,6 +12092,7 @@ class $$NoteEntriesTableTableManager
                 Value<int> remoteVersion = const Value.absent(),
                 Value<bool> needsSync = const Value.absent(),
                 Value<DateTime?> syncedAt = const Value.absent(),
+                Value<bool> archived = const Value.absent(),
               }) => NoteEntriesCompanion.insert(
                 id: id,
                 title: title,
@@ -11990,6 +12106,7 @@ class $$NoteEntriesTableTableManager
                 remoteVersion: remoteVersion,
                 needsSync: needsSync,
                 syncedAt: syncedAt,
+                archived: archived,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -12063,6 +12180,7 @@ typedef $$TaskEntriesTableCreateCompanionBuilder =
       Value<int> remoteVersion,
       Value<bool> needsSync,
       Value<DateTime?> syncedAt,
+      Value<bool> archived,
     });
 typedef $$TaskEntriesTableUpdateCompanionBuilder =
     TaskEntriesCompanion Function({
@@ -12080,6 +12198,7 @@ typedef $$TaskEntriesTableUpdateCompanionBuilder =
       Value<int> remoteVersion,
       Value<bool> needsSync,
       Value<DateTime?> syncedAt,
+      Value<bool> archived,
     });
 
 final class $$TaskEntriesTableReferences
@@ -12197,6 +12316,11 @@ class $$TaskEntriesTableFilterComposer
 
   ColumnFilters<DateTime> get syncedAt => $composableBuilder(
     column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get archived => $composableBuilder(
+    column: $table.archived,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -12323,6 +12447,11 @@ class $$TaskEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get archived => $composableBuilder(
+    column: $table.archived,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$NoteEntriesTableOrderingComposer get noteId {
     final $$NoteEntriesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -12398,6 +12527,9 @@ class $$TaskEntriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get syncedAt =>
       $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get archived =>
+      $composableBuilder(column: $table.archived, builder: (column) => column);
 
   $$NoteEntriesTableAnnotationComposer get noteId {
     final $$NoteEntriesTableAnnotationComposer composer = $composerBuilder(
@@ -12490,6 +12622,7 @@ class $$TaskEntriesTableTableManager
                 Value<int> remoteVersion = const Value.absent(),
                 Value<bool> needsSync = const Value.absent(),
                 Value<DateTime?> syncedAt = const Value.absent(),
+                Value<bool> archived = const Value.absent(),
               }) => TaskEntriesCompanion(
                 id: id,
                 title: title,
@@ -12505,6 +12638,7 @@ class $$TaskEntriesTableTableManager
                 remoteVersion: remoteVersion,
                 needsSync: needsSync,
                 syncedAt: syncedAt,
+                archived: archived,
               ),
           createCompanionCallback:
               ({
@@ -12522,6 +12656,7 @@ class $$TaskEntriesTableTableManager
                 Value<int> remoteVersion = const Value.absent(),
                 Value<bool> needsSync = const Value.absent(),
                 Value<DateTime?> syncedAt = const Value.absent(),
+                Value<bool> archived = const Value.absent(),
               }) => TaskEntriesCompanion.insert(
                 id: id,
                 title: title,
@@ -12537,6 +12672,7 @@ class $$TaskEntriesTableTableManager
                 remoteVersion: remoteVersion,
                 needsSync: needsSync,
                 syncedAt: syncedAt,
+                archived: archived,
               ),
           withReferenceMapper: (p0) => p0
               .map(
