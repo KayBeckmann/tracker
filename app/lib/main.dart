@@ -3041,9 +3041,19 @@ class _HomePageState extends State<HomePage> {
             Text(statusText, style: theme.textTheme.titleMedium),
             if (remainingDays != null) ...[
               const SizedBox(height: 8),
-              Text(
-                loc.membershipDaysRemaining(remainingDays),
-                style: theme.textTheme.bodyMedium,
+              Row(
+                children: [
+                  Icon(
+                    Icons.hourglass_bottom,
+                    size: 20,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    loc.membershipDaysRemaining(remainingDays),
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ],
               ),
             ],
             const SizedBox(height: 8),
