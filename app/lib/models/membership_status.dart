@@ -38,6 +38,24 @@ class MembershipStatus {
   final double priceMonthly;
   final double priceYearly;
 
+  int? get remainingDays {
+    final expiry = membershipExpiresAt;
+    if (expiry == null) {
+      return null;
+    }
+    final nowUtc = DateTime.now().toUtc();
+    final expiryUtc = expiry.toUtc();
+    final duration = expiryUtc.difference(nowUtc);
+    if (duration.isNegative) {
+      return 0;
+    }
+    const int secondsPerDay = 24 * 60 * 60;
+    final int totalSeconds = duration.inSeconds;
+    final int fullDays = totalSeconds ~/ secondsPerDay;
+    final bool hasRemainder = totalSeconds % secondsPerDay != 0;
+    return hasRemainder ? fullDays + 1 : fullDays;
+  }
+
   bool get isActive =>
       membershipLevel != 'none' &&
       membershipExpiresAt != null &&

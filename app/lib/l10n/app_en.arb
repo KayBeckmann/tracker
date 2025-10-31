@@ -862,6 +862,14 @@
       }
     }
   },
+  "membershipDaysRemaining": "Remaining days: {days}",
+  "@membershipDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "membershipStatusInactive": "No active membership.",
   "membershipSyncEnabled": "Sync is enabled.",
   "membershipSyncDisabled": "Sync is disabled.",

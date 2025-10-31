@@ -779,6 +779,7 @@
   "membershipStatusUnknown": "Mitgliedschaftsstatus unbekannt.",
   "membershipStatusActive": "Mitgliedschaft aktiv bis {date}.",
   "membershipStatusActiveShort": "Aktiv bis {date}",
+  "membershipDaysRemaining": "Restlaufzeit: {days} Tage",
   "membershipStatusInactive": "Keine aktive Mitgliedschaft.",
   "membershipSyncEnabled": "Synchronisierung ist aktiviert.",
   "membershipSyncDisabled": "Synchronisierung ist deaktiviert.",

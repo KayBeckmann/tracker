@@ -1315,7 +1315,10 @@ def subscribe_membership(
     delta = _membership_delta(request.plan)
     now = _now_utc()
     current_user.membership_level = request.plan
-    current_user.membership_expires_at = now + delta
+    base_expiry = current_user.membership_expires_at
+    if base_expiry is None or base_expiry <= now:
+        base_expiry = now
+    current_user.membership_expires_at = base_expiry + delta
     current_user.sync_enabled = True
     current_user.last_payment_method = request.payment_method
     current_user.sync_retention_until = None

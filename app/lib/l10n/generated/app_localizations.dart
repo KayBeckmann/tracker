@@ -2660,6 +2660,12 @@ abstract class AppLocalizations {
   /// **'Active until {date}'**
   String membershipStatusActiveShort(String date);
 
+  /// No description provided for @membershipDaysRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining days: {days}'**
+  String membershipDaysRemaining(int days);
+
   /// No description provided for @membershipStatusInactive.
   ///
   /// In en, this message translates to:

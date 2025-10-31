@@ -782,6 +782,60 @@ class AppDatabase extends _$AppDatabase {
     )..where((tbl) => tbl.id.isIn(ids.toList()))).go();
   }
 
+  Stream<int> watchPendingSyncCount() {
+    const String query = '''
+SELECT
+  COALESCE((SELECT COUNT(*) FROM note_entries WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM task_entries WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM time_entries WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM journal_entries WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM journal_trackers WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM journal_tracker_values WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM habit_definitions WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM habit_logs WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM ledger_accounts WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM ledger_categories WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM ledger_transactions WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM ledger_recurring_transactions WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM ledger_budgets WHERE needs_sync = 1), 0) +
+  COALESCE((SELECT COUNT(*) FROM sync_tombstones WHERE needs_sync = 1), 0)
+    AS pending_count
+''';
+
+    final pendingCountStream = customSelect(
+      query,
+      readsFrom: {
+        noteEntries,
+        taskEntries,
+        timeEntries,
+        journalEntries,
+        journalTrackers,
+        journalTrackerValues,
+        habitDefinitions,
+        habitLogs,
+        ledgerAccounts,
+        ledgerCategories,
+        ledgerTransactions,
+        ledgerRecurringTransactions,
+        ledgerBudgets,
+        syncTombstones,
+      },
+    ).watch();
+
+    return pendingCountStream.map((rows) {
+      if (rows.isEmpty) {
+        return 0;
+      }
+      final row = rows.first;
+      try {
+        return row.read<int>('pending_count');
+      } catch (_) {
+        final num fallback = row.read<num>('pending_count');
+        return fallback.toInt();
+      }
+    });
+  }
+
   Selectable<NoteEntry> _baseNoteQuery({
     String contentFilter = '',
     String tagFilter = '',

@@ -1454,6 +1454,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String membershipDaysRemaining(int days) {
+    return 'Restlaufzeit: $days Tage';
+  }
+
+  @override
   String get membershipStatusInactive => 'Keine aktive Mitgliedschaft.';
 
   @override

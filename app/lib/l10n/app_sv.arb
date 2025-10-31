@@ -779,6 +779,7 @@
   "membershipStatusUnknown": "Medlemsstatus okänd.",
   "membershipStatusActive": "Medlemskapet är aktivt till {date}.",
   "membershipStatusActiveShort": "Aktivt till {date}",
+  "membershipDaysRemaining": "Återstående dagar: {days}",
   "membershipStatusInactive": "Inget aktivt medlemskap.",
   "membershipSyncEnabled": "Synkronisering är aktiverad.",
   "membershipSyncDisabled": "Synkronisering är inaktiverad.",

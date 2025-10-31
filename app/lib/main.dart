@@ -301,6 +301,14 @@ class _HomePageState extends State<HomePage> {
   bool _isSyncInProgress = false;
   bool _isHabitCreationInProgress = false;
   StreamSubscription<List<TaskEntry>>? _taskReminderSubscription;
+  StreamSubscription<int>? _pendingSyncSubscription;
+  ValueListenable<Box<dynamic>>? _settingsDirtyListenable;
+  bool _hasPendingSyncChanges = false;
+  bool _hasPendingSettingsSync = false;
+  bool _autoSyncScheduled = false;
+  bool _autoSyncForce = false;
+  bool _autoSyncAfterCurrent = false;
+  bool _hasTriggeredInitialSync = false;
 
   bool get _hasJournalPin =>
       _journalPinHash != null &&
@@ -325,6 +333,13 @@ class _HomePageState extends State<HomePage> {
       storageBox: _trackerBox,
     );
     _syncEngine.loadStoredKey();
+    _pendingSyncSubscription = _database
+        .watchPendingSyncCount()
+        .listen(_handlePendingSyncCount);
+    _settingsDirtyListenable =
+        _trackerBox.listenable(keys: const <String>[settingsDirtyKey]);
+    _settingsDirtyListenable!.addListener(_handleSettingsDirtyChanged);
+    _handleSettingsDirtyChanged();
     _pendingLocale = widget.currentLocale;
     _moduleOrder = List<_AppSection>.from(_defaultModuleOrder);
     _enabledModules = _defaultModuleOrder.toSet();
@@ -404,6 +419,11 @@ class _HomePageState extends State<HomePage> {
     _dailyTargetController.dispose();
     _weeklyTargetController.dispose();
     _taskReminderSubscription?.cancel();
+    _pendingSyncSubscription?.cancel();
+    if (_settingsDirtyListenable != null) {
+      _settingsDirtyListenable!.removeListener(_handleSettingsDirtyChanged);
+      _settingsDirtyListenable = null;
+    }
     super.dispose();
   }
 
@@ -423,7 +443,14 @@ class _HomePageState extends State<HomePage> {
       _authErrorMessage = null;
       _membershipStatus = null;
       _selectedSection = _AppSection.dashboard;
+      _hasPendingSyncChanges = false;
+      _hasPendingSettingsSync = false;
+      _autoSyncScheduled = false;
+      _autoSyncForce = false;
+      _autoSyncAfterCurrent = false;
+      _hasTriggeredInitialSync = false;
     });
+    _handleMembershipStatusChanged(null);
   }
 
   void _loadModuleSettings() {
@@ -772,6 +799,7 @@ class _HomePageState extends State<HomePage> {
 
     if (mounted) {
       await _refreshMembershipStatus();
+      _requestAutoSync(force: true);
     }
   }
 
@@ -949,6 +977,95 @@ class _HomePageState extends State<HomePage> {
     return raw is String ? raw : null;
   }
 
+  void _handlePendingSyncCount(int count) {
+    final bool hasChanges = count > 0;
+    _hasPendingSyncChanges = hasChanges;
+    if (hasChanges) {
+      _requestAutoSync();
+    }
+  }
+
+  void _handleSettingsDirtyChanged() {
+    final Object? raw = _trackerBox.get(settingsDirtyKey);
+    final bool isDirty = raw is bool ? raw : false;
+    _hasPendingSettingsSync = isDirty;
+    if (isDirty) {
+      _requestAutoSync();
+    }
+  }
+
+  void _handleMembershipStatusChanged(MembershipStatus? status) {
+    final bool canSync =
+        status != null && status.isActive && status.syncEnabled;
+    if (canSync) {
+      if (!_hasTriggeredInitialSync) {
+        _hasTriggeredInitialSync = true;
+        _requestAutoSync(force: true);
+      } else {
+        _requestAutoSync();
+      }
+    } else {
+      _hasTriggeredInitialSync = false;
+    }
+  }
+
+  void _requestAutoSync({bool force = false}) {
+    if (force) {
+      _autoSyncForce = true;
+    }
+    if (_isSyncInProgress) {
+      _autoSyncAfterCurrent = true;
+      return;
+    }
+    if (_autoSyncScheduled) {
+      return;
+    }
+    _autoSyncScheduled = true;
+    Future.microtask(_maybeRunAutoSync);
+  }
+
+  Future<void> _maybeRunAutoSync() async {
+    if (!_autoSyncScheduled) {
+      return;
+    }
+    if (!mounted) {
+      _autoSyncScheduled = false;
+      return;
+    }
+    if (_isSyncInProgress) {
+      _autoSyncScheduled = false;
+      _autoSyncAfterCurrent = true;
+      return;
+    }
+    final bool forceSync = _autoSyncForce;
+    if (!_canAutoSync(forceSync: forceSync)) {
+      _autoSyncScheduled = false;
+      return;
+    }
+    _autoSyncScheduled = false;
+    _autoSyncForce = false;
+    await _performSync(showFeedback: false);
+  }
+
+  bool _canAutoSync({required bool forceSync}) {
+    final status = _membershipStatus;
+    if (status == null || !status.isActive || !status.syncEnabled) {
+      return false;
+    }
+    if (!_syncEngine.isReady) {
+      return false;
+    }
+    if (_currentAuthToken() == null) {
+      return false;
+    }
+    if (!forceSync &&
+        !_hasPendingSyncChanges &&
+        !_hasPendingSettingsSync) {
+      return false;
+    }
+    return true;
+  }
+
   Future<void> _refreshMembershipStatus() async {
     final String? token = _currentAuthToken();
     if (token == null) {
@@ -958,6 +1075,7 @@ class _HomePageState extends State<HomePage> {
           _isMembershipLoading = false;
         });
       }
+      _handleMembershipStatusChanged(null);
       return;
     }
     if (!mounted) {
@@ -985,6 +1103,7 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _membershipStatus = status;
         });
+        _handleMembershipStatusChanged(status);
       } else {
         final message = _extractBackendError(
           loc,
@@ -1040,6 +1159,7 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _membershipStatus = status;
         });
+        _handleMembershipStatusChanged(status);
         _showSnackBar(loc.membershipSubscribeSuccess);
       } else {
         final message = _extractBackendError(
@@ -1089,6 +1209,7 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _membershipStatus = status;
         });
+        _handleMembershipStatusChanged(status);
         _showSnackBar(loc.membershipCancelSuccess);
       } else {
         final message = _extractBackendError(
@@ -1138,6 +1259,7 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _membershipStatus = status;
         });
+        _handleMembershipStatusChanged(status);
         _showSnackBar(loc.membershipDeleteSuccess);
       } else {
         final message = _extractBackendError(
@@ -1162,46 +1284,63 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _handleSyncNow() async {
+    await _performSync(showFeedback: true);
+  }
+
+  Future<bool> _performSync({required bool showFeedback}) async {
+    if (!mounted) {
+      return false;
+    }
+
     final loc = AppLocalizations.of(context);
     if (!_syncEngine.isReady) {
-      _showSnackBar(loc.syncNotReady);
-      return;
+      if (showFeedback) {
+        _showSnackBar(loc.syncNotReady);
+      }
+      return false;
     }
     if (_isSyncInProgress) {
-      return;
+      return false;
     }
     setState(() {
       _isSyncInProgress = true;
     });
 
     bool appliedRemoteUpdates = false;
+    bool syncCompleted = false;
     try {
       final result = await _syncEngine.synchronize();
       if (!mounted) {
-        return;
+        return false;
       }
       if (result.hasConflicts) {
         final resolved = await _resolveConflicts(result.conflicts);
         if (!resolved) {
-          return;
+          return false;
         }
         final retryResult = await _syncEngine.synchronize();
         if (!mounted) {
-          return;
+          return false;
         }
         if (retryResult.hasConflicts) {
           _showSnackBar(loc.syncConflictMessage);
         } else {
           appliedRemoteUpdates = true;
-          _showSnackBar(loc.syncSuccess);
+          syncCompleted = true;
+          if (showFeedback) {
+            _showSnackBar(loc.syncSuccess);
+          }
         }
       } else {
         appliedRemoteUpdates = true;
-        _showSnackBar(loc.syncSuccess);
+        syncCompleted = true;
+        if (showFeedback) {
+          _showSnackBar(loc.syncSuccess);
+        }
       }
     } catch (error) {
       if (!mounted) {
-        return;
+        return false;
       }
       _showSnackBar(loc.authErrorGeneric('$error'));
     } finally {
@@ -1212,8 +1351,17 @@ class _HomePageState extends State<HomePage> {
         if (appliedRemoteUpdates) {
           _reloadSettingsFromStorage();
         }
+        final bool shouldRequeue =
+            _autoSyncAfterCurrent ||
+            _hasPendingSyncChanges ||
+            _hasPendingSettingsSync;
+        _autoSyncAfterCurrent = false;
+        if (shouldRequeue) {
+          _requestAutoSync();
+        }
       }
     }
+    return syncCompleted;
   }
 
   Future<bool> _resolveConflicts(List<SyncConflictData> conflicts) async {
@@ -2833,6 +2981,8 @@ class _HomePageState extends State<HomePage> {
     final status = _membershipStatus;
     final bool isActive = status?.isActive ?? false;
     final bool syncEnabled = status?.syncEnabled ?? false;
+    final int? remainingDays =
+        isActive ? status?.remainingDays : null;
 
     String statusText;
     if (status == null) {
@@ -2888,6 +3038,13 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
             Text(statusText, style: theme.textTheme.titleMedium),
+            if (remainingDays != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                loc.membershipDaysRemaining(remainingDays),
+                style: theme.textTheme.bodyMedium,
+              ),
+            ],
             const SizedBox(height: 8),
             Text(syncText, style: theme.textTheme.bodyMedium),
             const SizedBox(height: 8),
