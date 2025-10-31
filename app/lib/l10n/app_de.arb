@@ -534,6 +534,44 @@
   "journalTemplateLabel": "Tagesvorlage",
   "journalTemplateHint": "Vorlagentext, der für neue Tage vorausgefüllt wird.",
   "journalTemplateClear": "Vorlage löschen",
+  "journalCategoriesTitle": "Bereiche",
+  "journalCategoriesDescription": "Wähle, welche Journalbereiche du nutzen möchtest.",
+  "journalCategorySelectionLabel": "Journalbereich",
+  "journalCategoryPersonal": "Privat",
+  "journalCategoryWork": "Beruflich",
+  "journalCategoryPersonalDescription": "Notiere persönliche Gedanken und Reflexionen.",
+  "journalCategoryWorkDescription": "Halte berufliche Notizen und Entscheidungen fest.",
+  "journalCategoryDisableLastError": "Mindestens ein Journalbereich muss aktiviert bleiben.",
+  "journalTemplateSectionTitle": "Vorlage für {category}",
+  "@journalTemplateSectionTitle": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateLabelFor": "Vorlage ({category})",
+  "@journalTemplateLabelFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateHintFor": "Standardinhalt für {category}-Einträge.",
+  "@journalTemplateHintFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateSavedFor": "Vorlage für {category} gespeichert.",
+  "@journalTemplateSavedFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateClearedFor": "Vorlage für {category} gelöscht.",
+  "@journalTemplateClearedFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
   "journalPinStatusSet": "PIN-Schutz aktiviert",
   "journalPinStatusUnset": "PIN-Schutz deaktiviert",
   "journalPinStatusDescription": "Zum Öffnen des Journals wird eine PIN benötigt.",

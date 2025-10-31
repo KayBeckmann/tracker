@@ -13,13 +13,17 @@ class JournalPage extends StatefulWidget {
   const JournalPage({
     super.key,
     required this.database,
-    required this.dailyTemplate,
+    required this.templates,
+    required this.enabledCategories,
+    this.initialCategory,
     this.onLock,
     this.showLockButton = false,
   });
 
   final AppDatabase database;
-  final String dailyTemplate;
+  final Map<JournalCategory, String> templates;
+  final List<JournalCategory> enabledCategories;
+  final JournalCategory? initialCategory;
   final VoidCallback? onLock;
   final bool showLockButton;
 
@@ -41,10 +45,31 @@ class _JournalPageState extends State<JournalPage>
   List<JournalTracker> _trackers = const [];
   List<JournalTrackerValue> _values = const [];
 
+  late JournalCategory _activeCategory;
   late DateTime _selectedDay;
   late DateTime _calendarMonth;
   bool _isDirty = false;
   bool _isApplyingControllerValue = false;
+
+  List<JournalCategory> _effectiveCategories() {
+    if (widget.enabledCategories.isEmpty) {
+      return const [JournalCategory.personal];
+    }
+    return List<JournalCategory>.from(widget.enabledCategories);
+  }
+
+  String _templateForCategory(JournalCategory category) {
+    return widget.templates[category] ?? '';
+  }
+
+  String _categoryLabel(AppLocalizations loc, JournalCategory category) {
+    switch (category) {
+      case JournalCategory.personal:
+        return loc.journalCategoryPersonal;
+      case JournalCategory.work:
+        return loc.journalCategoryWork;
+    }
+  }
 
   @override
   void initState() {
@@ -52,15 +77,16 @@ class _JournalPageState extends State<JournalPage>
     final now = DateTime.now();
     _selectedDay = DateTime(now.year, now.month, now.day);
     _calendarMonth = DateTime(now.year, now.month, 1);
+    final categories = _effectiveCategories();
+    final initial = widget.initialCategory;
+    if (initial != null && categories.contains(initial)) {
+      _activeCategory = initial;
+    } else {
+      _activeCategory = categories.first;
+    }
     _tabController = TabController(length: 2, vsync: this);
     _entryController.addListener(_handleControllerChanged);
-    _entriesSub = widget.database.watchJournalEntries().listen((entries) {
-      if (!mounted) return;
-      setState(() {
-        _entries = entries;
-      });
-      _syncCurrentEntry();
-    });
+    _subscribeEntries();
     _trackersSub = widget.database.watchJournalTrackers().listen((trackers) {
       if (!mounted) return;
       setState(() {
@@ -75,14 +101,54 @@ class _JournalPageState extends State<JournalPage>
     });
   }
 
+  void _subscribeEntries() {
+    _entriesSub?.cancel();
+    _entriesSub = widget.database
+        .watchJournalEntries(_activeCategory)
+        .listen((entries) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _entries = entries;
+      });
+      _syncCurrentEntry();
+    });
+  }
+
   @override
   void didUpdateWidget(covariant JournalPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.dailyTemplate != oldWidget.dailyTemplate && !_isDirty) {
+    final oldCategories = oldWidget.enabledCategories.isEmpty
+        ? const [JournalCategory.personal]
+        : List<JournalCategory>.from(oldWidget.enabledCategories);
+    final newCategories = _effectiveCategories();
+    bool categoriesChanged = oldCategories.length != newCategories.length;
+    if (!categoriesChanged) {
+      for (var i = 0; i < newCategories.length; i++) {
+        if (oldCategories[i] != newCategories[i]) {
+          categoriesChanged = true;
+          break;
+        }
+      }
+    }
+    if (!newCategories.contains(_activeCategory)) {
+      _activeCategory = newCategories.first;
+      _subscribeEntries();
+      if (!_isDirty) {
+        _applyControllerText(_templateForCategory(_activeCategory));
+      }
+    } else if (categoriesChanged) {
+      _subscribeEntries();
+    }
+
+    final oldTemplate = oldWidget.templates[_activeCategory] ?? '';
+    final newTemplate = _templateForCategory(_activeCategory);
+    if (newTemplate != oldTemplate && !_isDirty) {
       final current = _currentEntry;
       if (current == null ||
           _normalizeToDay(current.entryDate) != _normalizeToDay(_selectedDay)) {
-        _applyControllerText(widget.dailyTemplate);
+        _applyControllerText(newTemplate);
       }
     }
   }
@@ -125,7 +191,7 @@ class _JournalPageState extends State<JournalPage>
     final entry = _currentEntry;
     if (entry == null) {
       if (!_isDirty) {
-        _applyControllerText(widget.dailyTemplate);
+        _applyControllerText(_templateForCategory(_activeCategory));
       }
       return;
     }
@@ -199,6 +265,34 @@ class _JournalPageState extends State<JournalPage>
     _syncCurrentEntry();
   }
 
+  Future<void> _changeCategory(JournalCategory category) async {
+    if (_activeCategory == category) {
+      return;
+    }
+    if (_isDirty) {
+      final action = await _promptPendingChanges();
+      if (!mounted || action == _PendingChangeAction.cancel) {
+        return;
+      }
+      if (action == _PendingChangeAction.save) {
+        final success = await _saveEntry(showFeedback: false);
+        if (!success || !mounted) {
+          return;
+        }
+      } else if (action == _PendingChangeAction.discard) {
+        setState(() {
+          _isDirty = false;
+        });
+      }
+    }
+    setState(() {
+      _activeCategory = category;
+      _entries = const [];
+    });
+    _applyControllerText(_templateForCategory(category));
+    _subscribeEntries();
+  }
+
   Future<_PendingChangeAction> _promptPendingChanges() async {
     final loc = AppLocalizations.of(context);
     final result = await showDialog<_PendingChangeAction>(
@@ -237,6 +331,7 @@ class _JournalPageState extends State<JournalPage>
       await widget.database.upsertJournalEntry(
         date: _selectedDay,
         content: content,
+        category: _activeCategory,
       );
       if (!mounted) {
         return true;
@@ -285,18 +380,22 @@ class _JournalPageState extends State<JournalPage>
     if (!confirmed) {
       return;
     }
-    await widget.database.deleteJournalEntry(_selectedDay);
+    await widget.database.deleteJournalEntry(
+      _selectedDay,
+      _activeCategory,
+    );
     if (!mounted) {
       return;
     }
-    _applyControllerText(widget.dailyTemplate);
+    _applyControllerText(_templateForCategory(_activeCategory));
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(loc.journalEntryDeleted)));
   }
 
   Future<void> _applyTemplate() async {
-    if (_entryController.text.trim() == widget.dailyTemplate.trim()) {
+    final template = _templateForCategory(_activeCategory);
+    if (_entryController.text.trim() == template.trim()) {
       return;
     }
     if (_isDirty) {
@@ -324,7 +423,7 @@ class _JournalPageState extends State<JournalPage>
         return;
       }
     }
-    _applyControllerText(widget.dailyTemplate);
+    _applyControllerText(template);
   }
 
   JournalTrackerValue? _valueForTracker(int trackerId) {
@@ -831,6 +930,8 @@ class _JournalPageState extends State<JournalPage>
               loc.localeName,
             ).add_Hm().format(entry.updatedAt.toLocal()),
           );
+    final categories = _effectiveCategories();
+    final hasMultipleCategories = categories.length > 1;
     final bool canSave = _isDirty || entry == null;
     final actions = <Widget>[
       FilledButton.icon(
@@ -874,7 +975,34 @@ class _JournalPageState extends State<JournalPage>
             ),
             const SizedBox(height: 4),
             Text(subtitle, style: theme.textTheme.bodySmall),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
+            if (hasMultipleCategories) ...[
+              Text(
+                loc.journalCategorySelectionLabel,
+                style: theme.textTheme.labelLarge,
+              ),
+              const SizedBox(height: 8),
+              SegmentedButton<JournalCategory>(
+                segments: categories
+                    .map(
+                      (category) => ButtonSegment(
+                        value: category,
+                        label: Text(_categoryLabel(loc, category)),
+                      ),
+                    )
+                    .toList(),
+                selected: <JournalCategory>{_activeCategory},
+                onSelectionChanged: (selection) {
+                  if (selection.isEmpty) {
+                    return;
+                  }
+                  final category = selection.first;
+                  _changeCategory(category);
+                },
+              ),
+              const SizedBox(height: 16),
+            ] else
+              const SizedBox(height: 16),
             SizedBox(
               height: 48,
               child: Row(

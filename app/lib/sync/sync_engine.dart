@@ -1584,7 +1584,7 @@ class SyncEngine {
       if (item.deleted) {
         final local = await database.getJournalEntryByRemoteId(item.id);
         if (local != null) {
-          await database.deleteJournalEntry(local.entryDate);
+          await database.deleteJournalEntry(local.entryDate, local.category);
         }
         continue;
       }
@@ -1729,6 +1729,7 @@ class SyncEngine {
     return <String, Object?>{
       'entryDate': entry.entryDate.toUtc().toIso8601String(),
       'content': entry.content,
+      'category': entry.category.name,
       'createdAt': entry.createdAt.toUtc().toIso8601String(),
       'updatedAt': entry.updatedAt.toUtc().toIso8601String(),
     };
@@ -2113,6 +2114,11 @@ class SyncEngine {
       entryDateRaw.day,
     );
     final content = payload['content'] as String? ?? '';
+    final categoryRaw = payload['category'] as String?;
+    final category = JournalCategory.values.firstWhere(
+      (value) => value.name == categoryRaw,
+      orElse: () => JournalCategory.personal,
+    );
     final createdAt =
         _parseDate(payload['createdAt']) ?? item.updatedAt.toUtc();
     final updatedAt =
@@ -2124,6 +2130,7 @@ class SyncEngine {
           .insert(
             JournalEntriesCompanion.insert(
               entryDate: normalized,
+              category: Value(category),
               content: Value(content),
               createdAt: Value(createdAt.toUtc()),
               updatedAt: Value(updatedAt.toUtc()),
@@ -2142,6 +2149,7 @@ class SyncEngine {
     )..where((tbl) => tbl.id.equals(existing.id))).write(
       JournalEntriesCompanion(
         entryDate: Value(normalized),
+        category: Value(category),
         content: Value(content),
         createdAt: Value(createdAt.toUtc()),
         updatedAt: Value(updatedAt.toUtc()),
@@ -3047,10 +3055,27 @@ class SyncEngine {
       storageKey: timeTrackingWeeklyTargetMinutesKey,
       raw: payload['timeTrackingWeeklyTargetMinutes'],
     );
+    final Object? personalTemplateRaw = payload.containsKey('journalTemplatePersonal')
+        ? payload['journalTemplatePersonal']
+        : payload['journalTemplate'];
+    _writeStringPreference(
+      storageKey: journalTemplatePersonalKey,
+      raw: personalTemplateRaw,
+      allowEmpty: true,
+    );
     _writeStringPreference(
       storageKey: journalTemplateKey,
-      raw: payload['journalTemplate'],
+      raw: personalTemplateRaw,
       allowEmpty: true,
+    );
+    _writeStringPreference(
+      storageKey: journalTemplateWorkKey,
+      raw: payload['journalTemplateWork'],
+      allowEmpty: true,
+    );
+    _writeStringListPreference(
+      storageKey: journalEnabledCategoriesKey,
+      raw: payload['journalEnabledCategories'],
     );
     _writeStringPreference(
       storageKey: journalPinHashKey,
@@ -3108,7 +3133,14 @@ class SyncEngine {
       return raw is bool ? raw : null;
     }
 
-    final Object? templateRaw = storageBox.get(journalTemplateKey);
+    String? readTemplate(String key) {
+      final raw = storageBox.get(key);
+      return raw is String && raw.isNotEmpty ? raw : raw is String ? '' : null;
+    }
+
+    final String? personalTemplate =
+        readTemplate(journalTemplatePersonalKey) ?? readTemplate(journalTemplateKey);
+    final String? workTemplate = readTemplate(journalTemplateWorkKey);
     final Object? pinHashRaw = storageBox.get(journalPinHashKey);
     final Object? pinSaltRaw = storageBox.get(journalPinSaltKey);
 
@@ -3128,10 +3160,13 @@ class SyncEngine {
       'timeTrackingWeeklyTargetMinutes': readInt(
         timeTrackingWeeklyTargetMinutesKey,
       ),
-      'journalTemplate': templateRaw is String ? templateRaw : null,
+      'journalTemplate': personalTemplate,
+      'journalTemplatePersonal': personalTemplate,
+      'journalTemplateWork': workTemplate,
       'journalPinHash': pinHashRaw is String ? pinHashRaw : null,
       'journalPinSalt': pinSaltRaw is String ? pinSaltRaw : null,
       'journalBiometricEnabled': readBool(journalBiometricEnabledKey),
+      'journalEnabledCategories': readList(journalEnabledCategoriesKey),
       'updatedAt': updatedAt.toIso8601String(),
     };
   }

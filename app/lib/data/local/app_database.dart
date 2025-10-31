@@ -14,6 +14,8 @@ enum TaskPriority { low, medium, high }
 
 enum JournalTrackerKind { checkbox, rating }
 
+enum JournalCategory { personal, work }
+
 enum HabitIntervalKind { daily, multiplePerDay, weekly, multiplePerWeek }
 
 enum HabitValueKind { boolean, integer, decimal }
@@ -156,7 +158,11 @@ class TimeEntries extends Table {
 class JournalEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  DateTimeColumn get entryDate => dateTime().unique()();
+  DateTimeColumn get entryDate => dateTime()();
+
+  TextColumn get category => textEnum<JournalCategory>().withDefault(
+        Constant(JournalCategory.personal.name),
+      )();
 
   TextColumn get content => text().withDefault(const Constant(''))();
 
@@ -171,6 +177,11 @@ class JournalEntries extends Table {
   BoolColumn get needsSync => boolean().withDefault(const Constant(true))();
 
   DateTimeColumn get syncedAt => dateTime().nullable()();
+
+  @override
+  Set<Set<Column<Object>>>? get uniqueKeys => {
+        {entryDate, category},
+      };
 }
 
 class JournalTrackers extends Table {
@@ -579,7 +590,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 14;
+  int get schemaVersion => 15;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -697,6 +708,17 @@ class AppDatabase extends _$AppDatabase {
       if (from < 14) {
         await m.addColumn(noteEntries, noteEntries.archived);
         await m.addColumn(taskEntries, taskEntries.archived);
+      }
+      if (from < 15) {
+        await customStatement(
+          'ALTER TABLE journal_entries RENAME TO journal_entries_old;',
+        );
+        await m.createTable(journalEntries);
+        await customStatement(
+          'INSERT INTO journal_entries (id, entry_date, category, content, created_at, updated_at, remote_id, remote_version, needs_sync, synced_at) '
+          "SELECT id, entry_date, 'personal', content, created_at, updated_at, remote_id, remote_version, needs_sync, synced_at FROM journal_entries_old;",
+        );
+        await customStatement('DROP TABLE journal_entries_old;');
       }
     },
   );
@@ -1341,26 +1363,42 @@ SELECT
   DateTime _normalizeDate(DateTime date) =>
       DateTime.utc(date.year, date.month, date.day);
 
-  Stream<List<JournalEntry>> watchJournalEntries() {
-    return (select(journalEntries)..orderBy([
+  Stream<List<JournalEntry>> watchJournalEntries(JournalCategory category) {
+    return (select(journalEntries)
+          ..where((tbl) => tbl.category.equalsValue(category))
+          ..orderBy([
           (tbl) => OrderingTerm.desc(tbl.entryDate),
           (tbl) => OrderingTerm.desc(tbl.id),
         ]))
         .watch();
   }
 
-  Stream<JournalEntry?> watchJournalEntryForDate(DateTime date) {
+  Stream<JournalEntry?> watchJournalEntryForDate(
+    DateTime date,
+    JournalCategory category,
+  ) {
     final normalized = _normalizeDate(date);
     return (select(journalEntries)
-          ..where((tbl) => tbl.entryDate.equals(normalized))
+          ..where(
+            (tbl) =>
+                tbl.entryDate.equals(normalized) &
+                tbl.category.equalsValue(category),
+          )
           ..limit(1))
         .watchSingleOrNull();
   }
 
-  Future<JournalEntry?> getJournalEntryForDate(DateTime date) {
+  Future<JournalEntry?> getJournalEntryForDate(
+    DateTime date,
+    JournalCategory category,
+  ) {
     final normalized = _normalizeDate(date);
     return (select(journalEntries)
-          ..where((tbl) => tbl.entryDate.equals(normalized))
+          ..where(
+            (tbl) =>
+                tbl.entryDate.equals(normalized) &
+                tbl.category.equalsValue(category),
+          )
           ..limit(1))
         .getSingleOrNull();
   }
@@ -1368,14 +1406,16 @@ SELECT
   Future<int> upsertJournalEntry({
     required DateTime date,
     required String content,
+    required JournalCategory category,
   }) async {
     final normalized = _normalizeDate(date);
     final now = DateTime.now().toUtc();
-    final existing = await getJournalEntryForDate(normalized);
+    final existing = await getJournalEntryForDate(normalized, category);
     if (existing == null) {
       final remoteId = _uuid.v4();
       final companion = JournalEntriesCompanion.insert(
         entryDate: normalized,
+        category: Value(category),
         content: Value(content),
         createdAt: Value(now),
         updatedAt: Value(now),
@@ -1396,15 +1436,24 @@ SELECT
     );
     await (update(
       journalEntries,
-    )..where((tbl) => tbl.entryDate.equals(normalized))).write(companion);
+    )..where(
+        (tbl) =>
+            tbl.entryDate.equals(normalized) &
+            tbl.category.equalsValue(category),
+      )).write(companion);
     return existing.id;
   }
 
-  Future<int> deleteJournalEntry(DateTime date) {
+  Future<int> deleteJournalEntry(DateTime date, JournalCategory category) {
     final normalized = _normalizeDate(date);
     return (delete(
       journalEntries,
-    )..where((tbl) => tbl.entryDate.equals(normalized))).go();
+    )..where(
+        (tbl) =>
+            tbl.entryDate.equals(normalized) &
+            tbl.category.equalsValue(category),
+      ))
+        .go();
   }
 
   Future<JournalEntry?> getJournalEntryByRemoteId(String remoteId) {

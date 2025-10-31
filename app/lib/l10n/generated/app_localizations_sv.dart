@@ -1010,6 +1010,59 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalTemplateClear => 'Rensa mall';
 
   @override
+  String get journalCategoriesTitle => 'Områden';
+
+  @override
+  String get journalCategoriesDescription =>
+      'Välj vilka journalområden du vill använda.';
+
+  @override
+  String get journalCategorySelectionLabel => 'Journalområde';
+
+  @override
+  String get journalCategoryPersonal => 'Privat';
+
+  @override
+  String get journalCategoryWork => 'Arbete';
+
+  @override
+  String get journalCategoryPersonalDescription =>
+      'Skriv ner personliga anteckningar och reflektioner.';
+
+  @override
+  String get journalCategoryWorkDescription =>
+      'Följ upp arbetsrelaterade anteckningar och beslut.';
+
+  @override
+  String get journalCategoryDisableLastError =>
+      'Minst ett journalområde måste vara aktiverat.';
+
+  @override
+  String journalTemplateSectionTitle(String category) {
+    return 'Mall för $category';
+  }
+
+  @override
+  String journalTemplateLabelFor(String category) {
+    return 'Mall ($category)';
+  }
+
+  @override
+  String journalTemplateHintFor(String category) {
+    return 'Standardinnehåll för $category-anteckningar.';
+  }
+
+  @override
+  String journalTemplateSavedFor(String category) {
+    return 'Mall för $category sparad.';
+  }
+
+  @override
+  String journalTemplateClearedFor(String category) {
+    return 'Mall för $category rensad.';
+  }
+
+  @override
   String get journalPinStatusSet => 'PIN-skydd aktiverat';
 
   @override

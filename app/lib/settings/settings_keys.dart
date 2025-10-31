@@ -10,7 +10,10 @@ const String timeTrackingDailyTargetMinutesKey =
     'time_tracking_daily_target_minutes';
 const String timeTrackingWeeklyTargetMinutesKey =
     'time_tracking_weekly_target_minutes';
-const String journalTemplateKey = 'journal_template';
+const String journalTemplateKey = 'journal_template'; // legacy, maps to privat
+const String journalTemplatePersonalKey = 'journal_template_personal';
+const String journalTemplateWorkKey = 'journal_template_work';
+const String journalEnabledCategoriesKey = 'journal_enabled_categories';
 const String journalPinHashKey = 'journal_pin_hash';
 const String journalPinSaltKey = 'journal_pin_salt';
 const String journalBiometricEnabledKey = 'journal_biometric_enabled';

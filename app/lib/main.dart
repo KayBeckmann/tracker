@@ -266,7 +266,8 @@ class _HomePageState extends State<HomePage> {
       TextEditingController();
   final TextEditingController _registerDisplayNameController =
       TextEditingController();
-  late final TextEditingController _journalTemplateController;
+  late final TextEditingController _journalTemplatePersonalController;
+  late final TextEditingController _journalTemplateWorkController;
   late final TextEditingController _dailyTargetController;
   late final TextEditingController _weeklyTargetController;
 
@@ -294,7 +295,11 @@ class _HomePageState extends State<HomePage> {
   late final EncryptionService _encryptionService;
   late final SyncEngine _syncEngine;
   final LocalAuthentication _localAuth = LocalAuthentication();
-  String _journalTemplate = '';
+  String _journalTemplatePersonal = '';
+  String _journalTemplateWork = '';
+  Set<JournalCategory> _journalEnabledCategories = {
+    JournalCategory.personal,
+  };
   String? _journalPinHash;
   String? _journalPinSalt;
   bool _journalBiometricEnabled = false;
@@ -345,8 +350,19 @@ class _HomePageState extends State<HomePage> {
     _moduleOrder = List<_AppSection>.from(_defaultModuleOrder);
     _enabledModules = _defaultModuleOrder.toSet();
     _loadModuleSettings();
-    _journalTemplateController = TextEditingController(text: _journalTemplate);
-    _journalTemplateController.addListener(() {
+    _journalTemplatePersonalController = TextEditingController(
+      text: _journalTemplatePersonal,
+    );
+    _journalTemplatePersonalController.addListener(() {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    });
+    _journalTemplateWorkController = TextEditingController(
+      text: _journalTemplateWork,
+    );
+    _journalTemplateWorkController.addListener(() {
       if (!mounted) {
         return;
       }
@@ -416,7 +432,8 @@ class _HomePageState extends State<HomePage> {
     _registerEmailController.dispose();
     _registerPasswordController.dispose();
     _registerDisplayNameController.dispose();
-    _journalTemplateController.dispose();
+    _journalTemplatePersonalController.dispose();
+    _journalTemplateWorkController.dispose();
     _dailyTargetController.dispose();
     _weeklyTargetController.dispose();
     _taskReminderSubscription?.cancel();
@@ -508,11 +525,40 @@ class _HomePageState extends State<HomePage> {
     if (storedWeekly is int && storedWeekly >= 0) {
       _timeTrackingWeeklyTargetMinutes = storedWeekly;
     }
-    final Object? storedTemplate = _trackerBox.get(journalTemplateKey);
-    if (storedTemplate is String) {
-      _journalTemplate = storedTemplate;
+    final Object? storedPersonal =
+        _trackerBox.get(journalTemplatePersonalKey);
+    final Object? legacyTemplate = _trackerBox.get(journalTemplateKey);
+    if (storedPersonal is String) {
+      _journalTemplatePersonal = storedPersonal;
+    } else if (legacyTemplate is String) {
+      _journalTemplatePersonal = legacyTemplate;
     } else {
-      _journalTemplate = '';
+      _journalTemplatePersonal = '';
+    }
+
+    final Object? storedWork = _trackerBox.get(journalTemplateWorkKey);
+    _journalTemplateWork =
+        storedWork is String ? storedWork : '';
+
+    final Object? storedCategories =
+        _trackerBox.get(journalEnabledCategoriesKey);
+    if (storedCategories is List) {
+      final parsed = storedCategories
+          .whereType<String>()
+          .map(
+            (name) => JournalCategory.values.firstWhere(
+              (value) => value.name == name,
+              orElse: () => JournalCategory.personal,
+            ),
+          )
+          .toSet();
+      if (parsed.isNotEmpty) {
+        _journalEnabledCategories = parsed;
+      } else {
+        _journalEnabledCategories = {JournalCategory.personal};
+      }
+    } else {
+      _journalEnabledCategories = {JournalCategory.personal};
     }
     final Object? storedPinHash = _trackerBox.get(journalPinHashKey);
     _journalPinHash = storedPinHash is String && storedPinHash.isNotEmpty
@@ -595,8 +641,11 @@ class _HomePageState extends State<HomePage> {
     if (_weeklyTargetController.text != weeklyText) {
       _weeklyTargetController.text = weeklyText;
     }
-    if (_journalTemplateController.text != _journalTemplate) {
-      _journalTemplateController.text = _journalTemplate;
+    if (_journalTemplatePersonalController.text != _journalTemplatePersonal) {
+      _journalTemplatePersonalController.text = _journalTemplatePersonal;
+    }
+    if (_journalTemplateWorkController.text != _journalTemplateWork) {
+      _journalTemplateWorkController.text = _journalTemplateWork;
     }
   }
 
@@ -1961,8 +2010,15 @@ class _HomePageState extends State<HomePage> {
       return buildLockedCard();
     }
 
+    final categories = _journalEnabledCategories.isEmpty
+        ? <JournalCategory>[JournalCategory.personal]
+        : _journalEnabledCategories
+            .toList()
+              ..sort((a, b) => a.index.compareTo(b.index));
+    final JournalCategory activeCategory = categories.first;
+
     return StreamBuilder<JournalEntry?>(
-      stream: _database.watchJournalEntryForDate(today),
+      stream: _database.watchJournalEntryForDate(today, activeCategory),
       builder: (context, snapshot) {
         final entry = snapshot.data;
         final String? content = entry?.content;
@@ -1998,8 +2054,8 @@ class _HomePageState extends State<HomePage> {
                         Icon(icon, size: 32, color: iconColor),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: Text(
-                            loc.navJournal,
+                        child: Text(
+                            '${loc.navJournal} • ${_journalCategoryLabel(loc, activeCategory)}',
                             style: theme.textTheme.titleMedium,
                           ),
                         ),
@@ -2892,9 +2948,19 @@ class _HomePageState extends State<HomePage> {
         },
       );
     }
+    final enabledCategories = _journalEnabledCategories.isEmpty
+        ? <JournalCategory>[JournalCategory.personal]
+        : _journalEnabledCategories
+            .toList()
+              ..sort((a, b) => a.index.compareTo(b.index));
     return JournalPage(
       database: _database,
-      dailyTemplate: _journalTemplate,
+      templates: {
+        JournalCategory.personal: _journalTemplatePersonal,
+        JournalCategory.work: _journalTemplateWork,
+      },
+      enabledCategories: enabledCategories,
+      initialCategory: enabledCategories.first,
       showLockButton: _journalProtectionEnabled,
       onLock: _journalProtectionEnabled ? _lockJournal : null,
     );
@@ -3518,34 +3584,129 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _saveJournalTemplate(BuildContext context) async {
-    final template = _journalTemplateController.text;
-    final messenger = ScaffoldMessenger.of(context);
-    final loc = AppLocalizations.of(context);
-    await _trackerBox.put(journalTemplateKey, template);
-    _markSettingsDirty();
-    if (!mounted) {
-      return;
+  TextEditingController _journalTemplateControllerFor(
+    JournalCategory category,
+  ) {
+    switch (category) {
+      case JournalCategory.personal:
+        return _journalTemplatePersonalController;
+      case JournalCategory.work:
+        return _journalTemplateWorkController;
     }
-    setState(() {
-      _journalTemplate = template;
-    });
-    messenger.showSnackBar(SnackBar(content: Text(loc.journalTemplateSaved)));
   }
 
-  Future<void> _clearJournalTemplate(BuildContext context) async {
-    _journalTemplateController.clear();
-    final messenger = ScaffoldMessenger.of(context);
-    final loc = AppLocalizations.of(context);
-    await _trackerBox.put(journalTemplateKey, '');
+  Future<void> _persistJournalTemplate({
+    required JournalCategory category,
+    required String value,
+  }) async {
+    final String storageKey = switch (category) {
+      JournalCategory.personal => journalTemplatePersonalKey,
+      JournalCategory.work => journalTemplateWorkKey,
+    };
+    await _trackerBox.put(storageKey, value);
+    if (category == JournalCategory.personal) {
+      await _trackerBox.put(journalTemplateKey, value);
+    }
     _markSettingsDirty();
     if (!mounted) {
+      if (category == JournalCategory.personal) {
+        _journalTemplatePersonal = value;
+      } else {
+        _journalTemplateWork = value;
+      }
       return;
     }
     setState(() {
-      _journalTemplate = '';
+      if (category == JournalCategory.personal) {
+        _journalTemplatePersonal = value;
+      } else {
+        _journalTemplateWork = value;
+      }
     });
-    messenger.showSnackBar(SnackBar(content: Text(loc.journalTemplateCleared)));
+  }
+
+  Future<void> _persistJournalCategories(
+    Set<JournalCategory> categories,
+  ) async {
+    await _trackerBox.put(
+      journalEnabledCategoriesKey,
+      categories.map((category) => category.name).toList(),
+    );
+    _markSettingsDirty();
+    if (!mounted) {
+      _journalEnabledCategories = categories;
+      return;
+    }
+    setState(() {
+      _journalEnabledCategories = categories;
+    });
+  }
+
+  Future<void> _setJournalCategoryEnabled(
+    BuildContext context,
+    JournalCategory category,
+    bool enabled,
+  ) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final loc = AppLocalizations.of(context);
+    final updated = Set<JournalCategory>.from(_journalEnabledCategories);
+    if (enabled) {
+      if (updated.add(category)) {
+        await _persistJournalCategories(updated);
+      }
+      return;
+    }
+    if (!updated.contains(category)) {
+      return;
+    }
+    if (updated.length == 1) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(loc.journalCategoryDisableLastError)),
+      );
+      return;
+    }
+    updated.remove(category);
+    await _persistJournalCategories(updated);
+  }
+
+  Future<void> _saveJournalTemplate(
+    BuildContext context,
+    JournalCategory category,
+  ) async {
+    final controller = _journalTemplateControllerFor(category);
+    final template = controller.text;
+    final messenger = ScaffoldMessenger.of(context);
+    final loc = AppLocalizations.of(context);
+    await _persistJournalTemplate(category: category, value: template);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          loc.journalTemplateSavedFor(
+            _journalCategoryLabel(loc, category),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _clearJournalTemplate(
+    BuildContext context,
+    JournalCategory category,
+  ) async {
+    final controller = _journalTemplateControllerFor(category);
+    controller.clear();
+    final messenger = ScaffoldMessenger.of(context);
+    final loc = AppLocalizations.of(context);
+    await _persistJournalTemplate(category: category, value: '');
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          loc.journalTemplateClearedFor(
+            _journalCategoryLabel(loc, category),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _promptSetJournalPin(BuildContext context) async {
@@ -3841,10 +4002,62 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildJournalSettingsCard(BuildContext context, AppLocalizations loc) {
     final theme = Theme.of(context);
-    final templateEmpty = _journalTemplateController.text.trim().isEmpty;
     final hasPin = _hasJournalPin;
     final protectionEnabled = _journalProtectionEnabled;
     final locked = protectionEnabled && !_journalUnlocked;
+    final personalEnabled =
+        _journalEnabledCategories.contains(JournalCategory.personal);
+    final workEnabled =
+        _journalEnabledCategories.contains(JournalCategory.work);
+
+    Widget buildTemplateEditor(JournalCategory category, bool enabled) {
+      final controller = _journalTemplateControllerFor(category);
+      final label = _journalCategoryLabel(loc, category);
+      final templateEmpty = controller.text.trim().isEmpty;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            loc.journalTemplateSectionTitle(label),
+            style: theme.textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            minLines: 4,
+            maxLines: 8,
+            enabled: enabled,
+            decoration: InputDecoration(
+              labelText: loc.journalTemplateLabelFor(label),
+              hintText: loc.journalTemplateHintFor(label),
+              border: const OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              FilledButton.icon(
+                onPressed: enabled
+                    ? () => _saveJournalTemplate(context, category)
+                    : null,
+                icon: const Icon(Icons.save),
+                label: Text(loc.commonSave),
+              ),
+              OutlinedButton.icon(
+                onPressed: enabled && !templateEmpty
+                    ? () => _clearJournalTemplate(context, category)
+                    : null,
+                icon: const Icon(Icons.clear),
+                label: Text(loc.journalTemplateClear),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -3861,35 +4074,42 @@ class _HomePageState extends State<HomePage> {
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: _journalTemplateController,
-              minLines: 4,
-              maxLines: 8,
-              decoration: InputDecoration(
-                labelText: loc.journalTemplateLabel,
-                hintText: loc.journalTemplateHint,
-                border: const OutlineInputBorder(),
-              ),
+            Text(
+              loc.journalCategoriesTitle,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              loc.journalCategoriesDescription,
+              style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                FilledButton.icon(
-                  onPressed: () => _saveJournalTemplate(context),
-                  icon: const Icon(Icons.save),
-                  label: Text(loc.commonSave),
-                ),
-                OutlinedButton.icon(
-                  onPressed: templateEmpty
-                      ? null
-                      : () => _clearJournalTemplate(context),
-                  icon: const Icon(Icons.clear),
-                  label: Text(loc.journalTemplateClear),
-                ),
-              ],
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: personalEnabled,
+              onChanged: (value) => _setJournalCategoryEnabled(
+                context,
+                JournalCategory.personal,
+                value,
+              ),
+              title: Text(loc.journalCategoryPersonal),
+              subtitle: Text(loc.journalCategoryPersonalDescription),
             ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: workEnabled,
+              onChanged: (value) => _setJournalCategoryEnabled(
+                context,
+                JournalCategory.work,
+                value,
+              ),
+              title: Text(loc.journalCategoryWork),
+              subtitle: Text(loc.journalCategoryWorkDescription),
+            ),
+            const SizedBox(height: 16),
+            buildTemplateEditor(JournalCategory.personal, personalEnabled),
+            const SizedBox(height: 24),
+            buildTemplateEditor(JournalCategory.work, workEnabled),
             const SizedBox(height: 24),
             ListTile(
               contentPadding: EdgeInsets.zero,
@@ -4438,6 +4658,18 @@ class _HomePageState extends State<HomePage> {
         return loc.navLedger;
       case _AppSection.settings:
         return loc.navSettings;
+    }
+  }
+
+  String _journalCategoryLabel(
+    AppLocalizations loc,
+    JournalCategory category,
+  ) {
+    switch (category) {
+      case JournalCategory.personal:
+        return loc.journalCategoryPersonal;
+      case JournalCategory.work:
+        return loc.journalCategoryWork;
     }
   }
 

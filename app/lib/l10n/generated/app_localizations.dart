@@ -1912,6 +1912,84 @@ abstract class AppLocalizations {
   /// **'Clear template'**
   String get journalTemplateClear;
 
+  /// No description provided for @journalCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Areas'**
+  String get journalCategoriesTitle;
+
+  /// No description provided for @journalCategoriesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which journal areas you want to use.'**
+  String get journalCategoriesDescription;
+
+  /// No description provided for @journalCategorySelectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal area'**
+  String get journalCategorySelectionLabel;
+
+  /// No description provided for @journalCategoryPersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get journalCategoryPersonal;
+
+  /// No description provided for @journalCategoryWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get journalCategoryWork;
+
+  /// No description provided for @journalCategoryPersonalDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep personal notes and reflections.'**
+  String get journalCategoryPersonalDescription;
+
+  /// No description provided for @journalCategoryWorkDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Track work-related notes and decisions.'**
+  String get journalCategoryWorkDescription;
+
+  /// No description provided for @journalCategoryDisableLastError.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one journal area must stay enabled.'**
+  String get journalCategoryDisableLastError;
+
+  /// No description provided for @journalTemplateSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Template for {category}'**
+  String journalTemplateSectionTitle(String category);
+
+  /// No description provided for @journalTemplateLabelFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Template ({category})'**
+  String journalTemplateLabelFor(String category);
+
+  /// No description provided for @journalTemplateHintFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Default content for your {category} journal entries.'**
+  String journalTemplateHintFor(String category);
+
+  /// No description provided for @journalTemplateSavedFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved template for {category}.'**
+  String journalTemplateSavedFor(String category);
+
+  /// No description provided for @journalTemplateClearedFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleared template for {category}.'**
+  String journalTemplateClearedFor(String category);
+
   /// No description provided for @journalPinStatusSet.
   ///
   /// In en, this message translates to:

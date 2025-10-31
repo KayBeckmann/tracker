@@ -2768,8 +2768,22 @@ class $JournalEntriesTable extends JournalEntries
     false,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<JournalCategory, String>
+      category = GeneratedColumn<String>(
+        'category',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: Constant(JournalCategory.personal.name),
+      ).withConverter<JournalCategory>(
+        $JournalEntriesTable.$convertercategory,
+      );
   static const VerificationMeta _contentMeta = const VerificationMeta(
     'content',
   );
@@ -2859,6 +2873,7 @@ class $JournalEntriesTable extends JournalEntries
   List<GeneratedColumn> get $columns => [
     id,
     entryDate,
+    category,
     content,
     createdAt,
     updatedAt,
@@ -2889,6 +2904,12 @@ class $JournalEntriesTable extends JournalEntries
       );
     } else if (isInserting) {
       context.missing(_entryDateMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
     }
     if (data.containsKey('content')) {
       context.handle(
@@ -2952,6 +2973,9 @@ class $JournalEntriesTable extends JournalEntries
         DriftSqlType.dateTime,
         data['${effectivePrefix}entry_date'],
       )!,
+      category: $JournalEntriesTable.$convertercategory.fromSql(
+        data['${effectivePrefix}category'],
+      ),
       content: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}content'],
@@ -2987,11 +3011,21 @@ class $JournalEntriesTable extends JournalEntries
   $JournalEntriesTable createAlias(String alias) {
     return $JournalEntriesTable(attachedDatabase, alias);
   }
+
+  @override
+  Set<Set<GeneratedColumn>> get $uniqueKeys => {
+        {entryDate, category},
+      };
+
+  static JsonTypeConverter2<JournalCategory, String, String>
+      $convertercategory =
+      const EnumNameConverter<JournalCategory>(JournalCategory.values);
 }
 
 class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   final int id;
   final DateTime entryDate;
+  final JournalCategory category;
   final String content;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -3002,6 +3036,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   const JournalEntry({
     required this.id,
     required this.entryDate,
+    required this.category,
     required this.content,
     required this.createdAt,
     required this.updatedAt,
@@ -3015,6 +3050,11 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['entry_date'] = Variable<DateTime>(entryDate);
+    {
+      map['category'] = Variable<String>(
+        $JournalEntriesTable.$convertercategory.toSql(category),
+      );
+    }
     map['content'] = Variable<String>(content);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -3033,6 +3073,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     return JournalEntriesCompanion(
       id: Value(id),
       entryDate: Value(entryDate),
+      category: Value(category),
       content: Value(content),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -3052,9 +3093,13 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
+    final categoryValue = serializer.fromJson<String?>(json['category']);
     return JournalEntry(
       id: serializer.fromJson<int>(json['id']),
       entryDate: serializer.fromJson<DateTime>(json['entryDate']),
+      category: categoryValue == null
+          ? JournalCategory.personal
+          : $JournalEntriesTable.$convertercategory.fromJson(categoryValue),
       content: serializer.fromJson<String>(json['content']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -3070,6 +3115,9 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'entryDate': serializer.toJson<DateTime>(entryDate),
+      'category': serializer.toJson<String>(
+        $JournalEntriesTable.$convertercategory.toJson(category),
+      ),
       'content': serializer.toJson<String>(content),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -3083,6 +3131,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   JournalEntry copyWith({
     int? id,
     DateTime? entryDate,
+    JournalCategory? category,
     String? content,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -3093,6 +3142,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   }) => JournalEntry(
     id: id ?? this.id,
     entryDate: entryDate ?? this.entryDate,
+    category: category ?? this.category,
     content: content ?? this.content,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -3105,6 +3155,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     return JournalEntry(
       id: data.id.present ? data.id.value : this.id,
       entryDate: data.entryDate.present ? data.entryDate.value : this.entryDate,
+      category: data.category.present ? data.category.value : this.category,
       content: data.content.present ? data.content.value : this.content,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -3122,6 +3173,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     return (StringBuffer('JournalEntry(')
           ..write('id: $id, ')
           ..write('entryDate: $entryDate, ')
+          ..write('category: $category, ')
           ..write('content: $content, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -3137,6 +3189,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
   int get hashCode => Object.hash(
     id,
     entryDate,
+    category,
     content,
     createdAt,
     updatedAt,
@@ -3151,6 +3204,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
       (other is JournalEntry &&
           other.id == this.id &&
           other.entryDate == this.entryDate &&
+          other.category == this.category &&
           other.content == this.content &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
@@ -3163,6 +3217,7 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
 class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   final Value<int> id;
   final Value<DateTime> entryDate;
+  final Value<JournalCategory> category;
   final Value<String> content;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
@@ -3173,6 +3228,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   const JournalEntriesCompanion({
     this.id = const Value.absent(),
     this.entryDate = const Value.absent(),
+    this.category = const Value.absent(),
     this.content = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -3184,6 +3240,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   JournalEntriesCompanion.insert({
     this.id = const Value.absent(),
     required DateTime entryDate,
+    Value<JournalCategory> category = const Value.absent(),
     this.content = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -3191,10 +3248,12 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     this.remoteVersion = const Value.absent(),
     this.needsSync = const Value.absent(),
     this.syncedAt = const Value.absent(),
-  }) : entryDate = Value(entryDate);
+  })  : entryDate = Value(entryDate),
+        category = category;
   static Insertable<JournalEntry> custom({
     Expression<int>? id,
     Expression<DateTime>? entryDate,
+    Expression<String>? category,
     Expression<String>? content,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -3206,6 +3265,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (entryDate != null) 'entry_date': entryDate,
+      if (category != null) 'category': category,
       if (content != null) 'content': content,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -3219,6 +3279,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   JournalEntriesCompanion copyWith({
     Value<int>? id,
     Value<DateTime>? entryDate,
+    Value<JournalCategory>? category,
     Value<String>? content,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
@@ -3230,6 +3291,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     return JournalEntriesCompanion(
       id: id ?? this.id,
       entryDate: entryDate ?? this.entryDate,
+      category: category ?? this.category,
       content: content ?? this.content,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -3248,6 +3310,11 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     }
     if (entryDate.present) {
       map['entry_date'] = Variable<DateTime>(entryDate.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(
+        $JournalEntriesTable.$convertercategory.toSql(category.value),
+      );
     }
     if (content.present) {
       map['content'] = Variable<String>(content.value);
@@ -3278,6 +3345,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     return (StringBuffer('JournalEntriesCompanion(')
           ..write('id: $id, ')
           ..write('entryDate: $entryDate, ')
+          ..write('category: $category, ')
           ..write('content: $content, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')

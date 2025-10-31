@@ -1020,6 +1020,59 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalTemplateClear => 'Vorlage löschen';
 
   @override
+  String get journalCategoriesTitle => 'Bereiche';
+
+  @override
+  String get journalCategoriesDescription =>
+      'Wähle, welche Journalbereiche du nutzen möchtest.';
+
+  @override
+  String get journalCategorySelectionLabel => 'Journalbereich';
+
+  @override
+  String get journalCategoryPersonal => 'Privat';
+
+  @override
+  String get journalCategoryWork => 'Beruflich';
+
+  @override
+  String get journalCategoryPersonalDescription =>
+      'Notiere persönliche Gedanken und Reflexionen.';
+
+  @override
+  String get journalCategoryWorkDescription =>
+      'Halte berufliche Notizen und Entscheidungen fest.';
+
+  @override
+  String get journalCategoryDisableLastError =>
+      'Mindestens ein Journalbereich muss aktiviert bleiben.';
+
+  @override
+  String journalTemplateSectionTitle(String category) {
+    return 'Vorlage für $category';
+  }
+
+  @override
+  String journalTemplateLabelFor(String category) {
+    return 'Vorlage ($category)';
+  }
+
+  @override
+  String journalTemplateHintFor(String category) {
+    return 'Standardinhalt für $category-Einträge.';
+  }
+
+  @override
+  String journalTemplateSavedFor(String category) {
+    return 'Vorlage für $category gespeichert.';
+  }
+
+  @override
+  String journalTemplateClearedFor(String category) {
+    return 'Vorlage für $category gelöscht.';
+  }
+
+  @override
   String get journalPinStatusSet => 'PIN-Schutz aktiviert';
 
   @override

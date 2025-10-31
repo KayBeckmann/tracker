@@ -534,6 +534,44 @@
   "journalTemplateLabel": "Daglig mall",
   "journalTemplateHint": "Malltext som fylls i för nya dagar.",
   "journalTemplateClear": "Rensa mall",
+  "journalCategoriesTitle": "Områden",
+  "journalCategoriesDescription": "Välj vilka journalområden du vill använda.",
+  "journalCategorySelectionLabel": "Journalområde",
+  "journalCategoryPersonal": "Privat",
+  "journalCategoryWork": "Arbete",
+  "journalCategoryPersonalDescription": "Skriv ner personliga anteckningar och reflektioner.",
+  "journalCategoryWorkDescription": "Följ upp arbetsrelaterade anteckningar och beslut.",
+  "journalCategoryDisableLastError": "Minst ett journalområde måste vara aktiverat.",
+  "journalTemplateSectionTitle": "Mall för {category}",
+  "@journalTemplateSectionTitle": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateLabelFor": "Mall ({category})",
+  "@journalTemplateLabelFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateHintFor": "Standardinnehåll för {category}-anteckningar.",
+  "@journalTemplateHintFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateSavedFor": "Mall för {category} sparad.",
+  "@journalTemplateSavedFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateClearedFor": "Mall för {category} rensad.",
+  "@journalTemplateClearedFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
   "journalPinStatusSet": "PIN-skydd aktiverat",
   "journalPinStatusUnset": "PIN-skydd inaktiverat",
   "journalPinStatusDescription": "En PIN-kod krävs för att öppna journalen.",

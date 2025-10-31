@@ -569,6 +569,44 @@
   "journalTemplateLabel": "Daily template",
   "journalTemplateHint": "Template text that will be pre-filled for new days.",
   "journalTemplateClear": "Clear template",
+  "journalCategoriesTitle": "Areas",
+  "journalCategoriesDescription": "Choose which journal areas you want to use.",
+  "journalCategorySelectionLabel": "Journal area",
+  "journalCategoryPersonal": "Private",
+  "journalCategoryWork": "Work",
+  "journalCategoryPersonalDescription": "Keep personal notes and reflections.",
+  "journalCategoryWorkDescription": "Track work-related notes and decisions.",
+  "journalCategoryDisableLastError": "At least one journal area must stay enabled.",
+  "journalTemplateSectionTitle": "Template for {category}",
+  "@journalTemplateSectionTitle": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateLabelFor": "Template ({category})",
+  "@journalTemplateLabelFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateHintFor": "Default content for your {category} journal entries.",
+  "@journalTemplateHintFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateSavedFor": "Saved template for {category}.",
+  "@journalTemplateSavedFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
+  "journalTemplateClearedFor": "Cleared template for {category}.",
+  "@journalTemplateClearedFor": {
+    "placeholders": {
+      "category": {}
+    }
+  },
   "journalPinStatusSet": "PIN protection enabled",
   "journalPinStatusUnset": "PIN protection disabled",
   "journalPinStatusDescription": "A PIN is required to open the journal.",
