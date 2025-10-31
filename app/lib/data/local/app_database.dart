@@ -179,9 +179,9 @@ class JournalEntries extends Table {
   DateTimeColumn get syncedAt => dateTime().nullable()();
 
   @override
-  Set<Set<Column<Object>>>? get uniqueKeys => {
+  List<Set<Column>> get uniqueKeys => [
         {entryDate, category},
-      };
+      ];
 }
 
 class JournalTrackers extends Table {

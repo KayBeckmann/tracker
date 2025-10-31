@@ -3013,9 +3013,9 @@ class $JournalEntriesTable extends JournalEntries
   }
 
   @override
-  Set<Set<GeneratedColumn>> get $uniqueKeys => {
+  List<Set<GeneratedColumn>> get $uniqueKeys => [
         {entryDate, category},
-      };
+      ];
 
   static JsonTypeConverter2<JournalCategory, String, String>
       $convertercategory =
