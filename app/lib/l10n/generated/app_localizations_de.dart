@@ -91,7 +91,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dashboardQuickActionTitle => 'Schnelle Aktion';
 
   @override
-  String get dashboardQuickActionDescription => 'Hole eine neue Begrüßung vom Backend und speichere sie lokal.';
+  String get dashboardQuickActionDescription =>
+      'Hole eine neue Begrüßung vom Backend und speichere sie lokal.';
 
   @override
   String get dashboardQuickActionButton => 'Backend kontaktieren';
@@ -103,7 +104,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dashboardLatestEntriesTitle => 'Aktuelle Antworten';
 
   @override
-  String get dashboardLatestEntriesEmpty => 'Es sind noch keine Antworten gespeichert.';
+  String get dashboardLatestEntriesEmpty =>
+      'Es sind noch keine Antworten gespeichert.';
 
   @override
   String dashboardNotesCount(int count) {
@@ -176,7 +178,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get communicationButton => 'Backend kontaktieren';
 
   @override
-  String get notesPlaceholder => 'Hier werden demnächst deine Notizen erscheinen.';
+  String get notesPlaceholder =>
+      'Hier werden demnächst deine Notizen erscheinen.';
 
   @override
   String get notesCreateButtonLabel => 'Neue Notiz';
@@ -212,7 +215,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notesTagSuggestionsLabel => 'Vorschläge';
 
   @override
-  String get notesEmptyPlaceholder => 'Noch keine Notizen vorhanden. Lege deine erste Notiz an, um Ideen zu sammeln.';
+  String get notesEmptyPlaceholder =>
+      'Noch keine Notizen vorhanden. Lege deine erste Notiz an, um Ideen zu sammeln.';
 
   @override
   String get notesArchiveEmpty => 'Keine archivierten Notizen.';
@@ -224,7 +228,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notesTitleLabel => 'Titel';
 
   @override
-  String get notesTitleHint => 'Optionaler Titel (erste Zeile wird sonst verwendet)';
+  String get notesTitleHint =>
+      'Optionaler Titel (erste Zeile wird sonst verwendet)';
 
   @override
   String get notesTagLabel => 'Tags';
@@ -248,7 +253,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notesMarkdownPreviewEmpty => 'Noch nichts zum Anzeigen vorhanden.';
 
   @override
-  String get notesMarkdownEmptyWarning => 'Bitte füge Inhalt hinzu, bevor du die Notiz speicherst.';
+  String get notesMarkdownEmptyWarning =>
+      'Bitte füge Inhalt hinzu, bevor du die Notiz speicherst.';
 
   @override
   String get notesEditorTitleNew => 'Neue Notiz';
@@ -266,7 +272,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notesDeleteDialogTitle => 'Notiz löschen?';
 
   @override
-  String get notesDeleteDialogMessage => 'Diese Notiz wird auf diesem Gerät entfernt. Dieser Vorgang kann nicht rückgängig gemacht werden.';
+  String get notesDeleteDialogMessage =>
+      'Diese Notiz wird auf diesem Gerät entfernt. Dieser Vorgang kann nicht rückgängig gemacht werden.';
 
   @override
   String get notesDeleteDialogConfirm => 'Löschen';
@@ -287,7 +294,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notesDrawingTitleHint => 'Optionaler Titel für diese Zeichnung';
 
   @override
-  String get notesDrawingEmptyWarning => 'Füge mindestens einen Strich hinzu, bevor du speicherst.';
+  String get notesDrawingEmptyWarning =>
+      'Füge mindestens einen Strich hinzu, bevor du speicherst.';
 
   @override
   String get notesDrawingUndo => 'Letzten Strich rückgängig';
@@ -338,7 +346,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksCreateButton => 'Neue Aufgabe';
 
   @override
-  String get tasksEmptyPlaceholder => 'Noch keine Aufgaben. Erstelle deine erste Aufgabe, um den Überblick zu behalten.';
+  String get tasksEmptyPlaceholder =>
+      'Noch keine Aufgaben. Erstelle deine erste Aufgabe, um den Überblick zu behalten.';
 
   @override
   String get tasksCalendarEmpty => 'Für diesen Tag sind keine Aufgaben fällig.';
@@ -359,7 +368,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksTitleHint => 'Was soll erledigt werden?';
 
   @override
-  String get tasksTitleValidationError => 'Bitte gib einen Titel für die Aufgabe ein.';
+  String get tasksTitleValidationError =>
+      'Bitte gib einen Titel für die Aufgabe ein.';
 
   @override
   String get tasksStatusLabel => 'Status';
@@ -371,7 +381,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksDueDateLabel => 'Fälligkeitsdatum';
 
   @override
-  String get tasksDueDateHelper => 'Aufgaben werden im Kalender anhand ihres Fälligkeitsdatums angezeigt.';
+  String get tasksDueDateHelper =>
+      'Aufgaben werden im Kalender anhand ihres Fälligkeitsdatums angezeigt.';
 
   @override
   String get tasksPickDateButton => 'Datum wählen';
@@ -380,13 +391,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksReminderToggleLabel => 'Erinnerung aktivieren';
 
   @override
-  String get tasksReminderToggleDescription => 'Zeigt zum gewählten Zeitpunkt eine Gerätebenachrichtigung an.';
+  String get tasksReminderToggleDescription =>
+      'Zeigt zum gewählten Zeitpunkt eine Gerätebenachrichtigung an.';
 
   @override
   String get tasksReminderScheduleLabel => 'Erinnerungszeit';
 
   @override
-  String get tasksReminderScheduleHelper => 'Lege fest, wann das Gerät dich erinnern soll.';
+  String get tasksReminderScheduleHelper =>
+      'Lege fest, wann das Gerät dich erinnern soll.';
 
   @override
   String get tasksReminderUnset => 'Noch keine Erinnerung festgelegt.';
@@ -401,10 +414,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksReminderClearButton => 'Erinnerung entfernen';
 
   @override
-  String get tasksReminderValidationMissing => 'Bitte wähle Datum und Uhrzeit für die Erinnerung.';
+  String get tasksReminderValidationMissing =>
+      'Bitte wähle Datum und Uhrzeit für die Erinnerung.';
 
   @override
-  String get tasksReminderValidationPast => 'Die Erinnerung muss in der Zukunft liegen.';
+  String get tasksReminderValidationPast =>
+      'Die Erinnerung muss in der Zukunft liegen.';
 
   @override
   String get tasksTagsLabel => 'Tags';
@@ -561,10 +576,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get timeTrackingSettingsWeeklyHoursLabel => 'Soll pro Woche (HH:MM)';
 
   @override
-  String get timeTrackingSettingsDurationHint => 'Verwende das Format HH:MM, z. B. 08:00 oder 37:30.';
+  String get timeTrackingSettingsDurationHint =>
+      'Verwende das Format HH:MM, z. B. 08:00 oder 37:30.';
 
   @override
-  String get timeTrackingSettingsInvalidDuration => 'Bitte gib eine gültige Dauer im Format HH:MM ein.';
+  String get timeTrackingSettingsInvalidDuration =>
+      'Bitte gib eine gültige Dauer im Format HH:MM ein.';
 
   @override
   String timeTrackingSummaryDay(String date, String duration) {
@@ -602,7 +619,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get timeTrackingAddManualButton => 'Zeit nachtragen';
 
   @override
-  String get timeTrackingNoEntriesForDay => 'Keine Einträge für den ausgewählten Tag.';
+  String get timeTrackingNoEntriesForDay =>
+      'Keine Einträge für den ausgewählten Tag.';
 
   @override
   String get timeTrackingManualEntrySaved => 'Zeiteintrag gespeichert.';
@@ -611,7 +629,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get timeTrackingDeleteEntryTitle => 'Zeiteintrag löschen';
 
   @override
-  String get timeTrackingDeleteEntryMessage => 'Möchtest du diesen Zeiteintrag löschen?';
+  String get timeTrackingDeleteEntryMessage =>
+      'Möchtest du diesen Zeiteintrag löschen?';
 
   @override
   String get timeTrackingDeleteEntryConfirm => 'Löschen';
@@ -685,7 +704,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get timeTrackingFormSave => 'Speichern';
 
   @override
-  String get timeTrackingFormInvalidDuration => 'Bitte ein Ende nach dem Start auswählen.';
+  String get timeTrackingFormInvalidDuration =>
+      'Bitte ein Ende nach dem Start auswählen.';
 
   @override
   String get timeTrackingDashboardTitle => 'Zeiterfassung';
@@ -731,13 +751,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get journalPlaceholder => 'Halte deine Einträge hier fest und verbinde sie über Tags mit Notizen, Aufgaben und der Zeiterfassung.';
+  String get journalPlaceholder =>
+      'Halte deine Einträge hier fest und verbinde sie über Tags mit Notizen, Aufgaben und der Zeiterfassung.';
 
   @override
   String get journalUnsavedChangesTitle => 'Ungespeicherte Änderungen';
 
   @override
-  String get journalUnsavedChangesMessage => 'Du hast ungespeicherte Änderungen für diesen Tag. Wie möchtest du fortfahren?';
+  String get journalUnsavedChangesMessage =>
+      'Du hast ungespeicherte Änderungen für diesen Tag. Wie möchtest du fortfahren?';
 
   @override
   String get journalDiscardChanges => 'Verwerfen';
@@ -746,13 +768,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalEntrySaved => 'Tagebucheintrag gespeichert.';
 
   @override
-  String get journalEntrySaveError => 'Der Eintrag konnte nicht gespeichert werden. Bitte versuche es erneut.';
+  String get journalEntrySaveError =>
+      'Der Eintrag konnte nicht gespeichert werden. Bitte versuche es erneut.';
 
   @override
   String get journalDeleteEntryTitle => 'Eintrag löschen';
 
   @override
-  String get journalDeleteEntryMessage => 'Den Tagebucheintrag für diesen Tag löschen?';
+  String get journalDeleteEntryMessage =>
+      'Den Tagebucheintrag für diesen Tag löschen?';
 
   @override
   String get journalEntryDeleted => 'Tagebucheintrag gelöscht.';
@@ -761,13 +785,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalApplyTemplateTitle => 'Tagesvorlage übernehmen';
 
   @override
-  String get journalApplyTemplateMessage => 'Den aktuellen Inhalt durch deine Tagesvorlage ersetzen?';
+  String get journalApplyTemplateMessage =>
+      'Den aktuellen Inhalt durch deine Tagesvorlage ersetzen?';
 
   @override
   String get journalApplyTemplateButton => 'Vorlage anwenden';
 
   @override
-  String get journalNoEntryForDay => 'Für diesen Tag gibt es noch keinen Eintrag.';
+  String get journalNoEntryForDay =>
+      'Für diesen Tag gibt es noch keinen Eintrag.';
 
   @override
   String journalLastUpdated(String timestamp) {
@@ -781,7 +807,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalTabPreview => 'Vorschau';
 
   @override
-  String get journalEditorHint => 'Schreibe deinen Eintrag mit Markdown-Formatierung.';
+  String get journalEditorHint =>
+      'Schreibe deinen Eintrag mit Markdown-Formatierung.';
 
   @override
   String get journalPreviewEmpty => 'Noch nichts zum Anzeigen vorhanden.';
@@ -810,13 +837,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalTrendLegendRating => 'Bereich 0-5';
 
   @override
-  String get journalDashboardEntryDone => 'Für heute ist bereits ein Eintrag vorhanden.';
+  String get journalDashboardEntryDone =>
+      'Für heute ist bereits ein Eintrag vorhanden.';
 
   @override
-  String get journalDashboardEntryMissing => 'Heute wurde noch nichts eingetragen.';
+  String get journalDashboardEntryMissing =>
+      'Heute wurde noch nichts eingetragen.';
 
   @override
-  String get journalDashboardLocked => 'Entsperre das Journal, um den heutigen Status zu sehen.';
+  String get journalDashboardLocked =>
+      'Entsperre das Journal, um den heutigen Status zu sehen.';
 
   @override
   String get journalDashboardOpenButton => 'Journal öffnen';
@@ -828,7 +858,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalAddTrackerButton => 'Tracker hinzufügen';
 
   @override
-  String get journalTrackersEmpty => 'Es sind noch keine Tracker vorhanden. Lege einen an, um Routinen zu verfolgen.';
+  String get journalTrackersEmpty =>
+      'Es sind noch keine Tracker vorhanden. Lege einen an, um Routinen zu verfolgen.';
 
   @override
   String get journalAddTrackerTitle => 'Tracker hinzufügen';
@@ -883,7 +914,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalLockedTitle => 'Journal gesperrt';
 
   @override
-  String get journalLockedMessage => 'Entsperre das Journal mit deiner PIN oder Biometrie, um die Einträge zu sehen.';
+  String get journalLockedMessage =>
+      'Entsperre das Journal mit deiner PIN oder Biometrie, um die Einträge zu sehen.';
 
   @override
   String get journalPinLabel => 'PIN';
@@ -904,16 +936,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalUnlockFailed => 'Falsche PIN. Bitte erneut versuchen.';
 
   @override
-  String get journalNoProtectionConfigured => 'Für das Journal ist kein Schutz konfiguriert.';
+  String get journalNoProtectionConfigured =>
+      'Für das Journal ist kein Schutz konfiguriert.';
 
   @override
-  String get journalBiometricUnavailable => 'Biometrische Authentifizierung ist auf diesem Gerät nicht verfügbar.';
+  String get journalBiometricUnavailable =>
+      'Biometrische Authentifizierung ist auf diesem Gerät nicht verfügbar.';
 
   @override
-  String get journalBiometricPrompt => 'Authentifiziere dich, um das Journal zu entsperren.';
+  String get journalBiometricPrompt =>
+      'Authentifiziere dich, um das Journal zu entsperren.';
 
   @override
-  String get journalBiometricError => 'Biometrische Authentifizierung fehlgeschlagen.';
+  String get journalBiometricError =>
+      'Biometrische Authentifizierung fehlgeschlagen.';
 
   @override
   String get journalTemplateSaved => 'Tagesvorlage gespeichert.';
@@ -946,7 +982,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalRemovePinTitle => 'PIN entfernen';
 
   @override
-  String get journalRemovePinDescription => 'Gib deine aktuelle PIN ein, um sie zu entfernen.';
+  String get journalRemovePinDescription =>
+      'Gib deine aktuelle PIN ein, um sie zu entfernen.';
 
   @override
   String get journalCurrentPinLabel => 'Aktuelle PIN';
@@ -958,22 +995,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalPinRemoved => 'PIN entfernt.';
 
   @override
-  String get journalBiometricEnabledMessage => 'Biometrische Entsperrung aktiviert.';
+  String get journalBiometricEnabledMessage =>
+      'Biometrische Entsperrung aktiviert.';
 
   @override
-  String get journalBiometricDisabledMessage => 'Biometrische Entsperrung deaktiviert.';
+  String get journalBiometricDisabledMessage =>
+      'Biometrische Entsperrung deaktiviert.';
 
   @override
   String get journalSettingsTitle => 'Journal';
 
   @override
-  String get journalSettingsDescription => 'Konfiguriere Tagesvorlage und Sicherheit deines Journals.';
+  String get journalSettingsDescription =>
+      'Konfiguriere Tagesvorlage und Sicherheit deines Journals.';
 
   @override
   String get journalTemplateLabel => 'Tagesvorlage';
 
   @override
-  String get journalTemplateHint => 'Vorlagentext, der für neue Tage vorausgefüllt wird.';
+  String get journalTemplateHint =>
+      'Vorlagentext, der für neue Tage vorausgefüllt wird.';
 
   @override
   String get journalTemplateClear => 'Vorlage löschen';
@@ -982,7 +1023,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalCategoriesTitle => 'Bereiche';
 
   @override
-  String get journalCategoriesDescription => 'Wähle, welche Journalbereiche du nutzen möchtest.';
+  String get journalCategoriesDescription =>
+      'Wähle, welche Journalbereiche du nutzen möchtest.';
 
   @override
   String get journalCategorySelectionLabel => 'Journalbereich';
@@ -994,13 +1036,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalCategoryWork => 'Beruflich';
 
   @override
-  String get journalCategoryPersonalDescription => 'Notiere persönliche Gedanken und Reflexionen.';
+  String get journalCategoryPersonalDescription =>
+      'Notiere persönliche Gedanken und Reflexionen.';
 
   @override
-  String get journalCategoryWorkDescription => 'Halte berufliche Notizen und Entscheidungen fest.';
+  String get journalCategoryWorkDescription =>
+      'Halte berufliche Notizen und Entscheidungen fest.';
 
   @override
-  String get journalCategoryDisableLastError => 'Mindestens ein Journalbereich muss aktiviert bleiben.';
+  String get journalCategoryDisableLastError =>
+      'Mindestens ein Journalbereich muss aktiviert bleiben.';
 
   @override
   String journalTemplateSectionTitle(Object category) {
@@ -1034,10 +1079,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalPinStatusUnset => 'PIN-Schutz deaktiviert';
 
   @override
-  String get journalPinStatusDescription => 'Zum Öffnen des Journals wird eine PIN benötigt.';
+  String get journalPinStatusDescription =>
+      'Zum Öffnen des Journals wird eine PIN benötigt.';
 
   @override
-  String get journalPinStatusDescriptionUnset => 'Lege eine PIN fest, um dein Journal zu schützen.';
+  String get journalPinStatusDescriptionUnset =>
+      'Lege eine PIN fest, um dein Journal zu schützen.';
 
   @override
   String get journalChangePinButton => 'PIN ändern';
@@ -1052,7 +1099,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalBiometricToggleTitle => 'Mit Biometrie entsperren';
 
   @override
-  String get journalBiometricToggleSubtitle => 'Fingerabdruck oder Gesichtserkennung zum Entsperren verwenden.';
+  String get journalBiometricToggleSubtitle =>
+      'Fingerabdruck oder Gesichtserkennung zum Entsperren verwenden.';
 
   @override
   String get journalLockNowButton => 'Journal jetzt sperren';
@@ -1064,7 +1112,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalUnlockedStatus => 'Journal ist entsperrt.';
 
   @override
-  String get journalProtectionDisabledHint => 'Aktiviere eine PIN oder Biometrie, um dein Journal zu schützen.';
+  String get journalProtectionDisabledHint =>
+      'Aktiviere eine PIN oder Biometrie, um dein Journal zu schützen.';
 
   @override
   String get journalLockedNotice => 'Journal gesperrt. Entsperre es im Modul.';
@@ -1159,7 +1208,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get habitsEmptyTitle => 'Verfolge deine Gewohnheiten';
 
   @override
-  String get habitsEmptyDescription => 'Lege deine erste Gewohnheit an, um Routinen zu verfolgen und Fortschritte zu sehen.';
+  String get habitsEmptyDescription =>
+      'Lege deine erste Gewohnheit an, um Routinen zu verfolgen und Fortschritte zu sehen.';
 
   @override
   String get habitsOpenDetails => 'Details anzeigen';
@@ -1180,7 +1230,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String habitsSubtitleNumericTarget(String interval, String measurement, String target) {
+  String habitsSubtitleNumericTarget(
+    String interval,
+    String measurement,
+    String target,
+  ) {
     return '$interval · $measurement · Ziel $target';
   }
 
@@ -1238,7 +1292,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get habitsChartTitle => 'Verlauf';
 
   @override
-  String get habitsChartEmpty => 'Füge einige Tage hinzu, um den Verlauf zu sehen.';
+  String get habitsChartEmpty =>
+      'Füge einige Tage hinzu, um den Verlauf zu sehen.';
 
   @override
   String get habitsLogBooleanValue => 'Erledigt';
@@ -1252,7 +1307,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get dashboardHabitsEmpty => 'Lege deine erste Gewohnheit an, um hier Fortschritte zu sehen.';
+  String get dashboardHabitsEmpty =>
+      'Lege deine erste Gewohnheit an, um hier Fortschritte zu sehen.';
 
   @override
   String get ledgerPlaceholder => 'Verwalte hier dein Haushaltsbudget.';
@@ -1263,7 +1319,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get historyEmpty => 'Es sind noch keine gespeicherten Antworten vorhanden.';
+  String get historyEmpty =>
+      'Es sind noch keine gespeicherten Antworten vorhanden.';
 
   @override
   String get loginTabSignIn => 'Anmelden';
@@ -1272,7 +1329,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginTabRegister => 'Registrieren';
 
   @override
-  String get loginHeading => 'Melde dich mit deiner E-Mail-Adresse und deinem Passwort an.';
+  String get loginHeading =>
+      'Melde dich mit deiner E-Mail-Adresse und deinem Passwort an.';
 
   @override
   String get loginEmailLabel => 'E-Mail-Adresse';
@@ -1287,7 +1345,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginGoogleButton => 'Mit Google anmelden (bald verfügbar)';
 
   @override
-  String get registerHeading => 'Erstelle ein neues Konto mit E-Mail-Adresse und Passwort.';
+  String get registerHeading =>
+      'Erstelle ein neues Konto mit E-Mail-Adresse und Passwort.';
 
   @override
   String get registerDisplayNameLabel => 'Anzeigename (optional)';
@@ -1302,13 +1361,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerGoogleButton => 'Mit Google registrieren (bald verfügbar)';
 
   @override
-  String get authErrorInvalidEmailPassword => 'Bitte gib eine gültige E-Mail-Adresse und ein Passwort mit mindestens 8 Zeichen an.';
+  String get authErrorInvalidEmailPassword =>
+      'Bitte gib eine gültige E-Mail-Adresse und ein Passwort mit mindestens 8 Zeichen an.';
 
   @override
-  String get authErrorMissingCredentials => 'Bitte gib E-Mail-Adresse und Passwort ein.';
+  String get authErrorMissingCredentials =>
+      'Bitte gib E-Mail-Adresse und Passwort ein.';
 
   @override
-  String get authErrorEmailExists => 'Diese E-Mail-Adresse ist bereits registriert.';
+  String get authErrorEmailExists =>
+      'Diese E-Mail-Adresse ist bereits registriert.';
 
   @override
   String authErrorGeneric(String description) {
@@ -1386,19 +1448,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsModulesSectionTitle => 'Module';
 
   @override
-  String get settingsModulesDescription => 'Lege fest, welche Module im Menü sichtbar sind.';
+  String get settingsModulesDescription =>
+      'Lege fest, welche Module im Menü sichtbar sind.';
 
   @override
-  String get settingsModulesDragHint => 'Ziehe am Griff, um die Reihenfolge zu ändern.';
+  String get settingsModulesDragHint =>
+      'Ziehe am Griff, um die Reihenfolge zu ändern.';
 
   @override
   String get settingsSyncInfoTitle => 'Verschlüsselte Synchronisierung';
 
   @override
-  String get settingsSyncInfoDescription => 'Melde dich nur an, wenn du deine Daten mit dem Backend synchronisieren möchtest. Ohne Anmeldung bleiben alle Daten auf diesem Gerät.';
+  String get settingsSyncInfoDescription =>
+      'Melde dich nur an, wenn du deine Daten mit dem Backend synchronisieren möchtest. Ohne Anmeldung bleiben alle Daten auf diesem Gerät.';
 
   @override
-  String get settingsSyncMembershipInfo => 'Die Synchronisierung wird freigeschaltet, sobald eine Mitgliedschaft aktiv ist.';
+  String get settingsSyncMembershipInfo =>
+      'Die Synchronisierung wird freigeschaltet, sobald eine Mitgliedschaft aktiv ist.';
 
   @override
   String get guestUserName => 'Gast';
@@ -1407,16 +1473,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get guestUserEmail => 'Lokales Gerät';
 
   @override
-  String get dashboardStatusGuest => 'Synchronisation steht erst nach Anmeldung zur Verfügung.';
+  String get dashboardStatusGuest =>
+      'Synchronisation steht erst nach Anmeldung zur Verfügung.';
 
   @override
-  String get dashboardGuestIntro => 'Nutze die App offline oder melde dich an, um Synchronisation und Mitgliedschaften freizuschalten.';
+  String get dashboardGuestIntro =>
+      'Nutze die App offline oder melde dich an, um Synchronisation und Mitgliedschaften freizuschalten.';
 
   @override
   String get dashboardGuestSyncTitle => 'Synchronisierung freischalten';
 
   @override
-  String get dashboardGuestSyncDescription => 'Erstelle ein kostenloses Konto, um nach Abschluss einer Mitgliedschaft die verschlüsselte Synchronisierung zu aktivieren.';
+  String get dashboardGuestSyncDescription =>
+      'Erstelle ein kostenloses Konto, um nach Abschluss einer Mitgliedschaft die verschlüsselte Synchronisierung zu aktivieren.';
 
   @override
   String get dashboardGuestSyncButton => 'Zu den Einstellungen';
@@ -1484,7 +1553,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get membershipCancelButton => 'Mitgliedschaft kündigen';
 
   @override
-  String get membershipDeleteDataButton => 'Synchronisierte Daten jetzt löschen';
+  String get membershipDeleteDataButton =>
+      'Synchronisierte Daten jetzt löschen';
 
   @override
   String get membershipSubscribeSuccess => 'Mitgliedschaft wurde aktualisiert.';
@@ -1493,7 +1563,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get membershipCancelSuccess => 'Mitgliedschaft wurde beendet.';
 
   @override
-  String get membershipDeleteSuccess => 'Synchronisierte Daten wurden gelöscht.';
+  String get membershipDeleteSuccess =>
+      'Synchronisierte Daten wurden gelöscht.';
 
   @override
   String get membershipPlanMonthlyLabel => 'Monatliche Mitgliedschaft';
@@ -1511,7 +1582,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get membershipPaymentMethodBitcoin => 'Bitcoin';
 
   @override
-  String get settingsSignInPrompt => 'Melde dich an, um deine Daten zwischen Geräten zu synchronisieren.';
+  String get settingsSignInPrompt =>
+      'Melde dich an, um deine Daten zwischen Geräten zu synchronisieren.';
 
   @override
   String get settingsOpenLogin => 'Login öffnen';
@@ -1532,7 +1604,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get syncConflictTitle => 'Synchronisationskonflikt';
 
   @override
-  String get syncConflictMessage => 'Wähle, welche Version behalten werden soll.';
+  String get syncConflictMessage =>
+      'Wähle, welche Version behalten werden soll.';
 
   @override
   String get syncConflictKeepLocal => 'Geräteversion behalten';
@@ -1571,13 +1644,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerAccountCurrencyLabel => 'Währung';
 
   @override
-  String get ledgerValidationCurrencyCode => 'Bitte gib einen dreistelligen Währungscode ein.';
+  String get ledgerValidationCurrencyCode =>
+      'Bitte gib einen dreistelligen Währungscode ein.';
 
   @override
   String get ledgerAccountInitialBalanceLabel => 'Anfangssaldo';
 
   @override
-  String get ledgerAccountIncludeInNetWorthLabel => 'In Gesamtsumme berücksichtigen';
+  String get ledgerAccountIncludeInNetWorthLabel =>
+      'In Gesamtsumme berücksichtigen';
 
   @override
   String get ledgerAccountCreateButton => 'Konto hinzufügen';
@@ -1624,7 +1699,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerAccountEmptyTitle => 'Lege dein erstes Konto an';
 
   @override
-  String get ledgerAccountEmptyDescription => 'Verwalte Bargeld, Bankkonten, Depots, Anlagewerte oder Kryptos.';
+  String get ledgerAccountEmptyDescription =>
+      'Verwalte Bargeld, Bankkonten, Depots, Anlagewerte oder Kryptos.';
 
   @override
   String get ledgerAccountKindCash => 'Bargeld';
@@ -1660,7 +1736,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerTransactionTargetAccountLabel => 'Zielkonto';
 
   @override
-  String get ledgerValidationDifferentAccounts => 'Wähle zwei unterschiedliche Konten.';
+  String get ledgerValidationDifferentAccounts =>
+      'Wähle zwei unterschiedliche Konten.';
 
   @override
   String get ledgerTransactionCategoryLabel => 'Kategorie';
@@ -1701,13 +1778,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerTransactionCreateButton => 'Buchung hinzufügen';
 
   @override
-  String get ledgerTransactionNoAccountsWarning => 'Lege zuerst ein Konto an, bevor du Buchungen erfasst.';
+  String get ledgerTransactionNoAccountsWarning =>
+      'Lege zuerst ein Konto an, bevor du Buchungen erfasst.';
 
   @override
   String get ledgerTransactionDeleteTitle => 'Buchung löschen?';
 
   @override
-  String get ledgerTransactionDeleteMessage => 'Soll diese Buchung von diesem Gerät entfernt werden?';
+  String get ledgerTransactionDeleteMessage =>
+      'Soll diese Buchung von diesem Gerät entfernt werden?';
 
   @override
   String get ledgerTransactionMarkExecuted => 'Als ausgeführt markieren';
@@ -1737,7 +1816,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerTransactionEmptyTitle => 'Noch keine Buchungen';
 
   @override
-  String get ledgerTransactionEmptyDescription => 'Erfasse Einnahmen, Ausgaben oder Umbuchungen, um deine Finanzen zu verfolgen.';
+  String get ledgerTransactionEmptyDescription =>
+      'Erfasse Einnahmen, Ausgaben oder Umbuchungen, um deine Finanzen zu verfolgen.';
 
   @override
   String get ledgerTransactionKindIncome => 'Einnahme';
@@ -1767,7 +1847,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String ledgerCryptoCurrentPriceLabel(String price, String currency, String symbol) {
+  String ledgerCryptoCurrentPriceLabel(
+    String price,
+    String currency,
+    String symbol,
+  ) {
     return 'Aktueller Kurs $price $currency ($symbol)';
   }
 
@@ -1805,13 +1889,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerBudgetDeleteTitle => 'Budget löschen?';
 
   @override
-  String get ledgerBudgetDeleteMessage => 'Soll dieses Budget von diesem Gerät entfernt werden?';
+  String get ledgerBudgetDeleteMessage =>
+      'Soll dieses Budget von diesem Gerät entfernt werden?';
 
   @override
   String get ledgerBudgetUnknownCategory => 'Unbekannte Kategorie';
 
   @override
-  String ledgerBudgetUsageSummary(String actual, String total, String currency) {
+  String ledgerBudgetUsageSummary(
+    String actual,
+    String total,
+    String currency,
+  ) {
     return '$actual von $total $currency ausgegeben';
   }
 
@@ -1824,7 +1913,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerBudgetEmptyTitle => 'Keine Budgets vorhanden';
 
   @override
-  String get ledgerBudgetEmptyDescription => 'Lege Budgets für Kategorien und Unterkategorien fest, um deine Ausgaben im Blick zu behalten.';
+  String get ledgerBudgetEmptyDescription =>
+      'Lege Budgets für Kategorien und Unterkategorien fest, um deine Ausgaben im Blick zu behalten.';
 
   @override
   String get ledgerBudgetPeriodMonthly => 'Monatlich';
@@ -1943,7 +2033,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerRecurringDeleteTitle => 'Dauerauftrag löschen?';
 
   @override
-  String get ledgerRecurringDeleteMessage => 'Soll dieser Dauerauftrag entfernt werden?';
+  String get ledgerRecurringDeleteMessage =>
+      'Soll dieser Dauerauftrag entfernt werden?';
 
   @override
   String get ledgerRecurringApplyNow => 'Buchung jetzt erstellen';
@@ -1952,7 +2043,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerRecurringEmptyTitle => 'Noch keine Daueraufträge';
 
   @override
-  String get ledgerRecurringEmptyDescription => 'Erstelle Vorlagen für wiederkehrende Einnahmen, Ausgaben oder Umbuchungen.';
+  String get ledgerRecurringEmptyDescription =>
+      'Erstelle Vorlagen für wiederkehrende Einnahmen, Ausgaben oder Umbuchungen.';
 
   @override
   String get ledgerRecurringIntervalDaily => 'Täglich';
@@ -1988,7 +2080,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerTabCategories => 'Kategorien';
 
   @override
-  String get ledgerDashboardNoAccounts => 'Lege ein Konto an, um deine Finanzen hier zu sehen.';
+  String get ledgerDashboardNoAccounts =>
+      'Lege ein Konto an, um deine Finanzen hier zu sehen.';
 
   @override
   String get ledgerDashboardNoNetWorth => 'Noch keine Salden vorhanden.';
@@ -2007,5 +2100,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ledgerDashboardBudgetsTitle => 'Budgetübersicht';
 
   @override
-  String get ledgerDashboardNoBudgets => 'Keine Budgets für den aktuellen Zeitraum.';
+  String get ledgerDashboardNoBudgets =>
+      'Keine Budgets für den aktuellen Zeitraum.';
 }
