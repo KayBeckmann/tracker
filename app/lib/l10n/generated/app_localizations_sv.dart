@@ -9,7 +9,7 @@ class AppLocalizationsSv extends AppLocalizations {
   AppLocalizationsSv([String locale = 'sv']) : super(locale);
 
   @override
-  String get appTitle => 'Tracker';
+  String get appTitle => 'Personal Tracker';
 
   @override
   String get navDashboard => 'Instrumentpanel';
@@ -91,8 +91,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get dashboardQuickActionTitle => 'Snabb åtgärd';
 
   @override
-  String get dashboardQuickActionDescription =>
-      'Hämta en ny hälsning från backend och spara den lokalt.';
+  String get dashboardQuickActionDescription => 'Hämta en ny hälsning från backend och spara den lokalt.';
 
   @override
   String get dashboardQuickActionButton => 'Kontakta backend';
@@ -213,8 +212,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesTagSuggestionsLabel => 'Förslag';
 
   @override
-  String get notesEmptyPlaceholder =>
-      'Inga anteckningar ännu. Skapa din första anteckning för att samla idéer.';
+  String get notesEmptyPlaceholder => 'Inga anteckningar ännu. Skapa din första anteckning för att samla idéer.';
 
   @override
   String get notesArchiveEmpty => 'Inga arkiverade anteckningar.';
@@ -250,8 +248,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesMarkdownPreviewEmpty => 'Inget att visa ännu.';
 
   @override
-  String get notesMarkdownEmptyWarning =>
-      'Lägg till innehåll innan du sparar anteckningen.';
+  String get notesMarkdownEmptyWarning => 'Lägg till innehåll innan du sparar anteckningen.';
 
   @override
   String get notesEditorTitleNew => 'Ny anteckning';
@@ -269,8 +266,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesDeleteDialogTitle => 'Ta bort anteckning?';
 
   @override
-  String get notesDeleteDialogMessage =>
-      'Den här anteckningen tas bort från den här enheten. Åtgärden kan inte ångras.';
+  String get notesDeleteDialogMessage => 'Den här anteckningen tas bort från den här enheten. Åtgärden kan inte ångras.';
 
   @override
   String get notesDeleteDialogConfirm => 'Ta bort';
@@ -291,8 +287,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesDrawingTitleHint => 'Valfri titel för teckningen';
 
   @override
-  String get notesDrawingEmptyWarning =>
-      'Lägg till minst ett streck innan du sparar.';
+  String get notesDrawingEmptyWarning => 'Lägg till minst ett streck innan du sparar.';
 
   @override
   String get notesDrawingUndo => 'Ångra senaste streck';
@@ -343,8 +338,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get tasksCreateButton => 'Ny uppgift';
 
   @override
-  String get tasksEmptyPlaceholder =>
-      'Inga uppgifter ännu. Skapa din första uppgift för att hålla koll.';
+  String get tasksEmptyPlaceholder => 'Inga uppgifter ännu. Skapa din första uppgift för att hålla koll.';
 
   @override
   String get tasksCalendarEmpty => 'Inga uppgifter förfaller den här dagen.';
@@ -377,8 +371,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get tasksDueDateLabel => 'Förfallodatum';
 
   @override
-  String get tasksDueDateHelper =>
-      'Uppgifter visas i kalendern baserat på förfallodatum.';
+  String get tasksDueDateHelper => 'Uppgifter visas i kalendern baserat på förfallodatum.';
 
   @override
   String get tasksPickDateButton => 'Välj datum';
@@ -387,8 +380,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get tasksReminderToggleLabel => 'Aktivera påminnelse';
 
   @override
-  String get tasksReminderToggleDescription =>
-      'Visa en enhetspåminnelse vid en tid du väljer.';
+  String get tasksReminderToggleDescription => 'Visa en enhetspåminnelse vid en tid du väljer.';
 
   @override
   String get tasksReminderScheduleLabel => 'Tid för påminnelse';
@@ -409,12 +401,10 @@ class AppLocalizationsSv extends AppLocalizations {
   String get tasksReminderClearButton => 'Ta bort påminnelsen';
 
   @override
-  String get tasksReminderValidationMissing =>
-      'Välj datum och tid för påminnelsen.';
+  String get tasksReminderValidationMissing => 'Välj datum och tid för påminnelsen.';
 
   @override
-  String get tasksReminderValidationPast =>
-      'Påminnelsen måste ligga i framtiden.';
+  String get tasksReminderValidationPast => 'Påminnelsen måste ligga i framtiden.';
 
   @override
   String get tasksTagsLabel => 'Taggar';
@@ -571,12 +561,10 @@ class AppLocalizationsSv extends AppLocalizations {
   String get timeTrackingSettingsWeeklyHoursLabel => 'Mål per vecka (HH:MM)';
 
   @override
-  String get timeTrackingSettingsDurationHint =>
-      'Ange i formatet HH:MM, till exempel 08:00 eller 37:30.';
+  String get timeTrackingSettingsDurationHint => 'Ange i formatet HH:MM, till exempel 08:00 eller 37:30.';
 
   @override
-  String get timeTrackingSettingsInvalidDuration =>
-      'Ange en giltig tid i formatet HH:MM.';
+  String get timeTrackingSettingsInvalidDuration => 'Ange en giltig tid i formatet HH:MM.';
 
   @override
   String timeTrackingSummaryDay(String date, String duration) {
@@ -623,8 +611,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get timeTrackingDeleteEntryTitle => 'Ta bort tidspost';
 
   @override
-  String get timeTrackingDeleteEntryMessage =>
-      'Vill du ta bort den här posten?';
+  String get timeTrackingDeleteEntryMessage => 'Vill du ta bort den här posten?';
 
   @override
   String get timeTrackingDeleteEntryConfirm => 'Ta bort';
@@ -698,8 +685,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get timeTrackingFormSave => 'Spara';
 
   @override
-  String get timeTrackingFormInvalidDuration =>
-      'Välj en sluttid efter starttiden.';
+  String get timeTrackingFormInvalidDuration => 'Välj en sluttid efter starttiden.';
 
   @override
   String get timeTrackingDashboardTitle => 'Tidrapportering';
@@ -745,15 +731,13 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
-  String get journalPlaceholder =>
-      'Samla dina journalanteckningar här och länka dem till alla moduler via delade taggar.';
+  String get journalPlaceholder => 'Samla dina journalanteckningar här och länka dem till alla moduler via delade taggar.';
 
   @override
   String get journalUnsavedChangesTitle => 'Osparade ändringar';
 
   @override
-  String get journalUnsavedChangesMessage =>
-      'Du har osparade ändringar för den här dagen. Hur vill du gå vidare?';
+  String get journalUnsavedChangesMessage => 'Du har osparade ändringar för den här dagen. Hur vill du gå vidare?';
 
   @override
   String get journalDiscardChanges => 'Ignorera';
@@ -762,15 +746,13 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalEntrySaved => 'Dagboksinlägget sparades.';
 
   @override
-  String get journalEntrySaveError =>
-      'Det gick inte att spara inlägget. Försök igen.';
+  String get journalEntrySaveError => 'Det gick inte att spara inlägget. Försök igen.';
 
   @override
   String get journalDeleteEntryTitle => 'Ta bort inlägg';
 
   @override
-  String get journalDeleteEntryMessage =>
-      'Vill du ta bort dagboksinlägget för den här dagen?';
+  String get journalDeleteEntryMessage => 'Vill du ta bort dagboksinlägget för den här dagen?';
 
   @override
   String get journalEntryDeleted => 'Dagboksinlägget har tagits bort.';
@@ -779,8 +761,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalApplyTemplateTitle => 'Använd dagmall';
 
   @override
-  String get journalApplyTemplateMessage =>
-      'Vill du ersätta innehållet med din dagliga mall?';
+  String get journalApplyTemplateMessage => 'Vill du ersätta innehållet med din dagliga mall?';
 
   @override
   String get journalApplyTemplateButton => 'Använd mall';
@@ -809,8 +790,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalTrendsTitle => 'Senaste trender';
 
   @override
-  String get journalTrendsDescription =>
-      'Tracker-värden för de senaste 30 dagarna.';
+  String get journalTrendsDescription => 'Tracker-värden för de senaste 30 dagarna.';
 
   @override
   String get journalTrendsEmpty => 'Lägg till tracker för att se trender.';
@@ -833,12 +813,10 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalDashboardEntryDone => 'Dagens inlägg är klart.';
 
   @override
-  String get journalDashboardEntryMissing =>
-      'Du har inte skrivit något i dag ännu.';
+  String get journalDashboardEntryMissing => 'Du har inte skrivit något i dag ännu.';
 
   @override
-  String get journalDashboardLocked =>
-      'Lås upp journalen för att se dagens status.';
+  String get journalDashboardLocked => 'Lås upp journalen för att se dagens status.';
 
   @override
   String get journalDashboardOpenButton => 'Öppna journal';
@@ -850,8 +828,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalAddTrackerButton => 'Lägg till tracker';
 
   @override
-  String get journalTrackersEmpty =>
-      'Inga tracker ännu. Skapa en för att följa dina rutiner.';
+  String get journalTrackersEmpty => 'Inga tracker ännu. Skapa en för att följa dina rutiner.';
 
   @override
   String get journalAddTrackerTitle => 'Lägg till tracker';
@@ -906,8 +883,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalLockedTitle => 'Journalen är låst';
 
   @override
-  String get journalLockedMessage =>
-      'Lås upp journalen med din PIN-kod eller biometrik för att visa inläggen.';
+  String get journalLockedMessage => 'Lås upp journalen med din PIN-kod eller biometrik för att visa inläggen.';
 
   @override
   String get journalPinLabel => 'PIN-kod';
@@ -928,16 +904,13 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalUnlockFailed => 'Fel PIN-kod. Försök igen.';
 
   @override
-  String get journalNoProtectionConfigured =>
-      'Journalen har inget skydd konfigurerat.';
+  String get journalNoProtectionConfigured => 'Journalen har inget skydd konfigurerat.';
 
   @override
-  String get journalBiometricUnavailable =>
-      'Biometrisk autentisering är inte tillgänglig på den här enheten.';
+  String get journalBiometricUnavailable => 'Biometrisk autentisering är inte tillgänglig på den här enheten.';
 
   @override
-  String get journalBiometricPrompt =>
-      'Autentisera dig för att låsa upp journalen.';
+  String get journalBiometricPrompt => 'Autentisera dig för att låsa upp journalen.';
 
   @override
   String get journalBiometricError => 'Biometrisk autentisering misslyckades.';
@@ -973,8 +946,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalRemovePinTitle => 'Ta bort PIN-kod';
 
   @override
-  String get journalRemovePinDescription =>
-      'Ange din nuvarande PIN-kod för att ta bort den.';
+  String get journalRemovePinDescription => 'Ange din nuvarande PIN-kod för att ta bort den.';
 
   @override
   String get journalCurrentPinLabel => 'Nuvarande PIN-kod';
@@ -986,19 +958,16 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalPinRemoved => 'PIN-koden har tagits bort.';
 
   @override
-  String get journalBiometricEnabledMessage =>
-      'Biometrisk upplåsning har aktiverats.';
+  String get journalBiometricEnabledMessage => 'Biometrisk upplåsning har aktiverats.';
 
   @override
-  String get journalBiometricDisabledMessage =>
-      'Biometrisk upplåsning har inaktiverats.';
+  String get journalBiometricDisabledMessage => 'Biometrisk upplåsning har inaktiverats.';
 
   @override
   String get journalSettingsTitle => 'Journal';
 
   @override
-  String get journalSettingsDescription =>
-      'Konfigurera daglig mall och säkerhet för din journal.';
+  String get journalSettingsDescription => 'Konfigurera daglig mall och säkerhet för din journal.';
 
   @override
   String get journalTemplateLabel => 'Daglig mall';
@@ -1013,8 +982,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalCategoriesTitle => 'Områden';
 
   @override
-  String get journalCategoriesDescription =>
-      'Välj vilka journalområden du vill använda.';
+  String get journalCategoriesDescription => 'Välj vilka journalområden du vill använda.';
 
   @override
   String get journalCategorySelectionLabel => 'Journalområde';
@@ -1026,39 +994,36 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalCategoryWork => 'Arbete';
 
   @override
-  String get journalCategoryPersonalDescription =>
-      'Skriv ner personliga anteckningar och reflektioner.';
+  String get journalCategoryPersonalDescription => 'Skriv ner personliga anteckningar och reflektioner.';
 
   @override
-  String get journalCategoryWorkDescription =>
-      'Följ upp arbetsrelaterade anteckningar och beslut.';
+  String get journalCategoryWorkDescription => 'Följ upp arbetsrelaterade anteckningar och beslut.';
 
   @override
-  String get journalCategoryDisableLastError =>
-      'Minst ett journalområde måste vara aktiverat.';
+  String get journalCategoryDisableLastError => 'Minst ett journalområde måste vara aktiverat.';
 
   @override
-  String journalTemplateSectionTitle(String category) {
+  String journalTemplateSectionTitle(Object category) {
     return 'Mall för $category';
   }
 
   @override
-  String journalTemplateLabelFor(String category) {
+  String journalTemplateLabelFor(Object category) {
     return 'Mall ($category)';
   }
 
   @override
-  String journalTemplateHintFor(String category) {
+  String journalTemplateHintFor(Object category) {
     return 'Standardinnehåll för $category-anteckningar.';
   }
 
   @override
-  String journalTemplateSavedFor(String category) {
+  String journalTemplateSavedFor(Object category) {
     return 'Mall för $category sparad.';
   }
 
   @override
-  String journalTemplateClearedFor(String category) {
+  String journalTemplateClearedFor(Object category) {
     return 'Mall för $category rensad.';
   }
 
@@ -1069,12 +1034,10 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalPinStatusUnset => 'PIN-skydd inaktiverat';
 
   @override
-  String get journalPinStatusDescription =>
-      'En PIN-kod krävs för att öppna journalen.';
+  String get journalPinStatusDescription => 'En PIN-kod krävs för att öppna journalen.';
 
   @override
-  String get journalPinStatusDescriptionUnset =>
-      'Ställ in en PIN-kod för att skydda journalen.';
+  String get journalPinStatusDescriptionUnset => 'Ställ in en PIN-kod för att skydda journalen.';
 
   @override
   String get journalChangePinButton => 'Ändra PIN-kod';
@@ -1089,8 +1052,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalBiometricToggleTitle => 'Lås upp med biometrik';
 
   @override
-  String get journalBiometricToggleSubtitle =>
-      'Tillåt fingeravtryck eller ansiktsigenkänning för att låsa upp journalen.';
+  String get journalBiometricToggleSubtitle => 'Tillåt fingeravtryck eller ansiktsigenkänning för att låsa upp journalen.';
 
   @override
   String get journalLockNowButton => 'Lås journalen nu';
@@ -1102,8 +1064,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get journalUnlockedStatus => 'Journalen är upplåst.';
 
   @override
-  String get journalProtectionDisabledHint =>
-      'Aktivera PIN-kod eller biometrik för att skydda journalen.';
+  String get journalProtectionDisabledHint => 'Aktivera PIN-kod eller biometrik för att skydda journalen.';
 
   @override
   String get journalLockedNotice => 'Journalen är låst. Lås upp den i modulen.';
@@ -1198,8 +1159,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get habitsEmptyTitle => 'Följ dina vanor';
 
   @override
-  String get habitsEmptyDescription =>
-      'Skapa din första vana för att följa rutiner och se dina framsteg.';
+  String get habitsEmptyDescription => 'Skapa din första vana för att följa rutiner och se dina framsteg.';
 
   @override
   String get habitsOpenDetails => 'Visa detaljer';
@@ -1220,11 +1180,7 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
-  String habitsSubtitleNumericTarget(
-    String interval,
-    String measurement,
-    String target,
-  ) {
+  String habitsSubtitleNumericTarget(String interval, String measurement, String target) {
     return '$interval · $measurement · Mål $target';
   }
 
@@ -1282,8 +1238,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get habitsChartTitle => 'Utveckling över tid';
 
   @override
-  String get habitsChartEmpty =>
-      'Lägg till några dagar för att se utvecklingskurvan.';
+  String get habitsChartEmpty => 'Lägg till några dagar för att se utvecklingskurvan.';
 
   @override
   String get habitsLogBooleanValue => 'Genomfört';
@@ -1297,8 +1252,7 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
-  String get dashboardHabitsEmpty =>
-      'Skapa din första vana för att se utveckling här.';
+  String get dashboardHabitsEmpty => 'Skapa din första vana för att se utveckling här.';
 
   @override
   String get ledgerPlaceholder => 'Hantera hushållsbudgeten här.';
@@ -1333,8 +1287,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get loginGoogleButton => 'Logga in med Google (kommer snart)';
 
   @override
-  String get registerHeading =>
-      'Skapa ett nytt konto med e-postadress och lösenord.';
+  String get registerHeading => 'Skapa ett nytt konto med e-postadress och lösenord.';
 
   @override
   String get registerDisplayNameLabel => 'Visningsnamn (valfritt)';
@@ -1349,15 +1302,13 @@ class AppLocalizationsSv extends AppLocalizations {
   String get registerGoogleButton => 'Registrera med Google (kommer snart)';
 
   @override
-  String get authErrorInvalidEmailPassword =>
-      'Ange en giltig e-postadress och ett lösenord med minst 8 tecken.';
+  String get authErrorInvalidEmailPassword => 'Ange en giltig e-postadress och ett lösenord med minst 8 tecken.';
 
   @override
   String get authErrorMissingCredentials => 'Ange e-postadress och lösenord.';
 
   @override
-  String get authErrorEmailExists =>
-      'Den här e-postadressen är redan registrerad.';
+  String get authErrorEmailExists => 'Den här e-postadressen är redan registrerad.';
 
   @override
   String authErrorGeneric(String description) {
@@ -1388,8 +1339,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settingsLanguageSectionTitle => 'Språk';
 
   @override
-  String get settingsLanguageDescription =>
-      'Välj vilket språk appen ska använda.';
+  String get settingsLanguageDescription => 'Välj vilket språk appen ska använda.';
 
   @override
   String get settingsLanguageEnglish => 'Engelska';
@@ -1436,23 +1386,19 @@ class AppLocalizationsSv extends AppLocalizations {
   String get settingsModulesSectionTitle => 'Moduler';
 
   @override
-  String get settingsModulesDescription =>
-      'Välj vilka moduler som ska visas i menyn.';
+  String get settingsModulesDescription => 'Välj vilka moduler som ska visas i menyn.';
 
   @override
-  String get settingsModulesDragHint =>
-      'Dra i handtaget för att ändra ordningen.';
+  String get settingsModulesDragHint => 'Dra i handtaget för att ändra ordningen.';
 
   @override
   String get settingsSyncInfoTitle => 'Krypterad synkronisering';
 
   @override
-  String get settingsSyncInfoDescription =>
-      'Logga bara in om du vill synkronisera dina data med backend. Utan inloggning stannar allt på den här enheten.';
+  String get settingsSyncInfoDescription => 'Logga bara in om du vill synkronisera dina data med backend. Utan inloggning stannar allt på den här enheten.';
 
   @override
-  String get settingsSyncMembershipInfo =>
-      'Synkningen blir tillgänglig när du har ett aktivt medlemskap.';
+  String get settingsSyncMembershipInfo => 'Synkningen blir tillgänglig när du har ett aktivt medlemskap.';
 
   @override
   String get guestUserName => 'Gäst';
@@ -1461,19 +1407,16 @@ class AppLocalizationsSv extends AppLocalizations {
   String get guestUserEmail => 'Lokal enhet';
 
   @override
-  String get dashboardStatusGuest =>
-      'Synkronisering är endast tillgänglig efter inloggning.';
+  String get dashboardStatusGuest => 'Synkronisering är endast tillgänglig efter inloggning.';
 
   @override
-  String get dashboardGuestIntro =>
-      'Använd appen offline eller logga in för att låsa upp synkronisering och medlemsförmåner.';
+  String get dashboardGuestIntro => 'Använd appen offline eller logga in för att låsa upp synkronisering och medlemsförmåner.';
 
   @override
   String get dashboardGuestSyncTitle => 'Lås upp synkronisering';
 
   @override
-  String get dashboardGuestSyncDescription =>
-      'Skapa ett kostnadsfritt konto för att aktivera krypterad synkronisering när du startar ett medlemskap.';
+  String get dashboardGuestSyncDescription => 'Skapa ett kostnadsfritt konto för att aktivera krypterad synkronisering när du startar ett medlemskap.';
 
   @override
   String get dashboardGuestSyncButton => 'Gå till inställningar';
@@ -1568,8 +1511,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get membershipPaymentMethodBitcoin => 'Bitcoin';
 
   @override
-  String get settingsSignInPrompt =>
-      'Logga in för att synka dina data mellan enheter.';
+  String get settingsSignInPrompt => 'Logga in för att synka dina data mellan enheter.';
 
   @override
   String get settingsOpenLogin => 'Öppna inloggning';
@@ -1682,8 +1624,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerAccountEmptyTitle => 'Skapa ditt första konto';
 
   @override
-  String get ledgerAccountEmptyDescription =>
-      'Hantera kontanter, bankkonton, depåer, tillgångar eller kryptoplånböcker.';
+  String get ledgerAccountEmptyDescription => 'Hantera kontanter, bankkonton, depåer, tillgångar eller kryptoplånböcker.';
 
   @override
   String get ledgerAccountKindCash => 'Kontanter';
@@ -1760,15 +1701,13 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerTransactionCreateButton => 'Lägg till transaktion';
 
   @override
-  String get ledgerTransactionNoAccountsWarning =>
-      'Skapa ett konto innan du registrerar transaktioner.';
+  String get ledgerTransactionNoAccountsWarning => 'Skapa ett konto innan du registrerar transaktioner.';
 
   @override
   String get ledgerTransactionDeleteTitle => 'Ta bort transaktion?';
 
   @override
-  String get ledgerTransactionDeleteMessage =>
-      'Vill du ta bort den här transaktionen från enheten?';
+  String get ledgerTransactionDeleteMessage => 'Vill du ta bort den här transaktionen från enheten?';
 
   @override
   String get ledgerTransactionMarkExecuted => 'Markera som utförd';
@@ -1798,8 +1737,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerTransactionEmptyTitle => 'Inga transaktioner ännu';
 
   @override
-  String get ledgerTransactionEmptyDescription =>
-      'Lägg till inkomster, utgifter eller överföringar för att börja följa din ekonomi.';
+  String get ledgerTransactionEmptyDescription => 'Lägg till inkomster, utgifter eller överföringar för att börja följa din ekonomi.';
 
   @override
   String get ledgerTransactionKindIncome => 'Inkomst';
@@ -1829,11 +1767,7 @@ class AppLocalizationsSv extends AppLocalizations {
   }
 
   @override
-  String ledgerCryptoCurrentPriceLabel(
-    String price,
-    String currency,
-    String symbol,
-  ) {
+  String ledgerCryptoCurrentPriceLabel(String price, String currency, String symbol) {
     return 'Aktuellt pris $price $currency ($symbol)';
   }
 
@@ -1871,18 +1805,13 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerBudgetDeleteTitle => 'Ta bort budget?';
 
   @override
-  String get ledgerBudgetDeleteMessage =>
-      'Vill du ta bort den här budgeten från enheten?';
+  String get ledgerBudgetDeleteMessage => 'Vill du ta bort den här budgeten från enheten?';
 
   @override
   String get ledgerBudgetUnknownCategory => 'Okänd kategori';
 
   @override
-  String ledgerBudgetUsageSummary(
-    String actual,
-    String total,
-    String currency,
-  ) {
+  String ledgerBudgetUsageSummary(String actual, String total, String currency) {
     return '$actual av $total $currency har använts';
   }
 
@@ -1895,8 +1824,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerBudgetEmptyTitle => 'Inga budgetar';
 
   @override
-  String get ledgerBudgetEmptyDescription =>
-      'Skapa budgetar för kategorier och underkategorier för att hålla koll på utgifterna.';
+  String get ledgerBudgetEmptyDescription => 'Skapa budgetar för kategorier och underkategorier för att hålla koll på utgifterna.';
 
   @override
   String get ledgerBudgetPeriodMonthly => 'Månadsvis';
@@ -2015,8 +1943,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerRecurringDeleteTitle => 'Ta bort stående transaktion?';
 
   @override
-  String get ledgerRecurringDeleteMessage =>
-      'Vill du ta bort den här stående transaktionen?';
+  String get ledgerRecurringDeleteMessage => 'Vill du ta bort den här stående transaktionen?';
 
   @override
   String get ledgerRecurringApplyNow => 'Skapa transaktion nu';
@@ -2025,8 +1952,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerRecurringEmptyTitle => 'Inga stående transaktioner ännu';
 
   @override
-  String get ledgerRecurringEmptyDescription =>
-      'Skapa mallar för återkommande inkomster, utgifter eller överföringar.';
+  String get ledgerRecurringEmptyDescription => 'Skapa mallar för återkommande inkomster, utgifter eller överföringar.';
 
   @override
   String get ledgerRecurringIntervalDaily => 'Dagligen';
@@ -2062,8 +1988,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerTabCategories => 'Kategorier';
 
   @override
-  String get ledgerDashboardNoAccounts =>
-      'Skapa ett konto för att se din ekonomi här.';
+  String get ledgerDashboardNoAccounts => 'Skapa ett konto för att se din ekonomi här.';
 
   @override
   String get ledgerDashboardNoNetWorth => 'Inga saldon ännu.';
@@ -2082,6 +2007,5 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerDashboardBudgetsTitle => 'Budgetöversikt';
 
   @override
-  String get ledgerDashboardNoBudgets =>
-      'Inga budgetar för den aktuella perioden.';
+  String get ledgerDashboardNoBudgets => 'Inga budgetar för den aktuella perioden.';
 }

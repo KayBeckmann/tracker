@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Tracker';
+  String get appTitle => 'Personal Tracker';
 
   @override
   String get navDashboard => 'Dashboard';
@@ -91,8 +91,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardQuickActionTitle => 'Quick action';
 
   @override
-  String get dashboardQuickActionDescription =>
-      'Fetch a new greeting from the backend and store it locally.';
+  String get dashboardQuickActionDescription => 'Fetch a new greeting from the backend and store it locally.';
 
   @override
   String get dashboardQuickActionButton => 'Contact backend';
@@ -213,8 +212,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesTagSuggestionsLabel => 'Suggestions';
 
   @override
-  String get notesEmptyPlaceholder =>
-      'No notes yet. Create the first one to start collecting ideas.';
+  String get notesEmptyPlaceholder => 'No notes yet. Create the first one to start collecting ideas.';
 
   @override
   String get notesArchiveEmpty => 'No archived notes yet.';
@@ -250,8 +248,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesMarkdownPreviewEmpty => 'Nothing to preview yet.';
 
   @override
-  String get notesMarkdownEmptyWarning =>
-      'Add some content before saving the note.';
+  String get notesMarkdownEmptyWarning => 'Add some content before saving the note.';
 
   @override
   String get notesEditorTitleNew => 'New note';
@@ -269,8 +266,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesDeleteDialogTitle => 'Delete note?';
 
   @override
-  String get notesDeleteDialogMessage =>
-      'This note will be removed from this device. This action cannot be undone.';
+  String get notesDeleteDialogMessage => 'This note will be removed from this device. This action cannot be undone.';
 
   @override
   String get notesDeleteDialogConfirm => 'Delete';
@@ -291,8 +287,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesDrawingTitleHint => 'Optional title for this drawing';
 
   @override
-  String get notesDrawingEmptyWarning =>
-      'Add at least one stroke before saving.';
+  String get notesDrawingEmptyWarning => 'Add at least one stroke before saving.';
 
   @override
   String get notesDrawingUndo => 'Undo last stroke';
@@ -343,8 +338,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksCreateButton => 'New task';
 
   @override
-  String get tasksEmptyPlaceholder =>
-      'No tasks yet. Create your first task to stay organised.';
+  String get tasksEmptyPlaceholder => 'No tasks yet. Create your first task to stay organised.';
 
   @override
   String get tasksCalendarEmpty => 'No tasks are due on this day.';
@@ -377,8 +371,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksDueDateLabel => 'Due date';
 
   @override
-  String get tasksDueDateHelper =>
-      'Tasks are shown in the calendar by their due date.';
+  String get tasksDueDateHelper => 'Tasks are shown in the calendar by their due date.';
 
   @override
   String get tasksPickDateButton => 'Select date';
@@ -387,15 +380,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksReminderToggleLabel => 'Enable reminder';
 
   @override
-  String get tasksReminderToggleDescription =>
-      'Show a device notification at a custom time.';
+  String get tasksReminderToggleDescription => 'Show a device notification at a custom time.';
 
   @override
   String get tasksReminderScheduleLabel => 'Reminder time';
 
   @override
-  String get tasksReminderScheduleHelper =>
-      'Choose when the device should notify you.';
+  String get tasksReminderScheduleHelper => 'Choose when the device should notify you.';
 
   @override
   String get tasksReminderUnset => 'No reminder selected yet.';
@@ -410,12 +401,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksReminderClearButton => 'Remove reminder';
 
   @override
-  String get tasksReminderValidationMissing =>
-      'Please choose a reminder date and time.';
+  String get tasksReminderValidationMissing => 'Please choose a reminder date and time.';
 
   @override
-  String get tasksReminderValidationPast =>
-      'Reminder time must be in the future.';
+  String get tasksReminderValidationPast => 'Reminder time must be in the future.';
 
   @override
   String get tasksTagsLabel => 'Tags';
@@ -572,12 +561,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeTrackingSettingsWeeklyHoursLabel => 'Target per week (HH:MM)';
 
   @override
-  String get timeTrackingSettingsDurationHint =>
-      'Use HH:MM format, for example 08:00 or 37:30.';
+  String get timeTrackingSettingsDurationHint => 'Use HH:MM format, for example 08:00 or 37:30.';
 
   @override
-  String get timeTrackingSettingsInvalidDuration =>
-      'Please enter a valid duration in HH:MM.';
+  String get timeTrackingSettingsInvalidDuration => 'Please enter a valid duration in HH:MM.';
 
   @override
   String timeTrackingSummaryDay(String date, String duration) {
@@ -624,8 +611,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeTrackingDeleteEntryTitle => 'Delete time entry';
 
   @override
-  String get timeTrackingDeleteEntryMessage =>
-      'Do you want to delete this time entry?';
+  String get timeTrackingDeleteEntryMessage => 'Do you want to delete this time entry?';
 
   @override
   String get timeTrackingDeleteEntryConfirm => 'Delete';
@@ -699,8 +685,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeTrackingFormSave => 'Save';
 
   @override
-  String get timeTrackingFormInvalidDuration =>
-      'Please choose an end after the start time.';
+  String get timeTrackingFormInvalidDuration => 'Please choose an end after the start time.';
 
   @override
   String get timeTrackingDashboardTitle => 'Time tracking';
@@ -746,15 +731,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get journalPlaceholder =>
-      'Capture your journal entries here and connect them with every module through shared tags.';
+  String get journalPlaceholder => 'Capture your journal entries here and connect them with every module through shared tags.';
 
   @override
   String get journalUnsavedChangesTitle => 'Unsaved changes';
 
   @override
-  String get journalUnsavedChangesMessage =>
-      'You have unsaved changes for this day. What would you like to do?';
+  String get journalUnsavedChangesMessage => 'You have unsaved changes for this day. What would you like to do?';
 
   @override
   String get journalDiscardChanges => 'Discard';
@@ -763,15 +746,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalEntrySaved => 'Journal entry saved.';
 
   @override
-  String get journalEntrySaveError =>
-      'Could not save the entry. Please try again.';
+  String get journalEntrySaveError => 'Could not save the entry. Please try again.';
 
   @override
   String get journalDeleteEntryTitle => 'Delete entry';
 
   @override
-  String get journalDeleteEntryMessage =>
-      'Delete the journal entry for this day?';
+  String get journalDeleteEntryMessage => 'Delete the journal entry for this day?';
 
   @override
   String get journalEntryDeleted => 'Journal entry deleted.';
@@ -780,8 +761,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalApplyTemplateTitle => 'Apply daily template';
 
   @override
-  String get journalApplyTemplateMessage =>
-      'Replace the current content with your daily template?';
+  String get journalApplyTemplateMessage => 'Replace the current content with your daily template?';
 
   @override
   String get journalApplyTemplateButton => 'Apply template';
@@ -801,8 +781,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalTabPreview => 'Preview';
 
   @override
-  String get journalEditorHint =>
-      'Write your journal entry using Markdown formatting.';
+  String get journalEditorHint => 'Write your journal entry using Markdown formatting.';
 
   @override
   String get journalPreviewEmpty => 'Nothing to preview yet.';
@@ -834,12 +813,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalDashboardEntryDone => 'Today\'s entry is complete.';
 
   @override
-  String get journalDashboardEntryMissing =>
-      'You haven\'t written anything today yet.';
+  String get journalDashboardEntryMissing => 'You haven\'t written anything today yet.';
 
   @override
-  String get journalDashboardLocked =>
-      'Unlock the journal to view today\'s status.';
+  String get journalDashboardLocked => 'Unlock the journal to view today\'s status.';
 
   @override
   String get journalDashboardOpenButton => 'Open journal';
@@ -851,8 +828,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalAddTrackerButton => 'Add tracker';
 
   @override
-  String get journalTrackersEmpty =>
-      'No trackers yet. Create one to start tracking your routines.';
+  String get journalTrackersEmpty => 'No trackers yet. Create one to start tracking your routines.';
 
   @override
   String get journalAddTrackerTitle => 'Add tracker';
@@ -907,8 +883,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalLockedTitle => 'Journal locked';
 
   @override
-  String get journalLockedMessage =>
-      'Unlock the journal with your PIN or biometrics to view your entries.';
+  String get journalLockedMessage => 'Unlock the journal with your PIN or biometrics to view your entries.';
 
   @override
   String get journalPinLabel => 'PIN';
@@ -929,12 +904,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalUnlockFailed => 'Incorrect PIN. Try again.';
 
   @override
-  String get journalNoProtectionConfigured =>
-      'No protection is configured for the journal.';
+  String get journalNoProtectionConfigured => 'No protection is configured for the journal.';
 
   @override
-  String get journalBiometricUnavailable =>
-      'Biometric authentication is not available on this device.';
+  String get journalBiometricUnavailable => 'Biometric authentication is not available on this device.';
 
   @override
   String get journalBiometricPrompt => 'Authenticate to unlock the journal.';
@@ -973,8 +946,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalRemovePinTitle => 'Remove PIN';
 
   @override
-  String get journalRemovePinDescription =>
-      'Enter your current PIN to remove it from the journal.';
+  String get journalRemovePinDescription => 'Enter your current PIN to remove it from the journal.';
 
   @override
   String get journalCurrentPinLabel => 'Current PIN';
@@ -995,15 +967,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalSettingsTitle => 'Journal';
 
   @override
-  String get journalSettingsDescription =>
-      'Configure the daily template and security options for your journal.';
+  String get journalSettingsDescription => 'Configure the daily template and security options for your journal.';
 
   @override
   String get journalTemplateLabel => 'Daily template';
 
   @override
-  String get journalTemplateHint =>
-      'Template text that will be pre-filled for new days.';
+  String get journalTemplateHint => 'Template text that will be pre-filled for new days.';
 
   @override
   String get journalTemplateClear => 'Clear template';
@@ -1012,8 +982,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalCategoriesTitle => 'Areas';
 
   @override
-  String get journalCategoriesDescription =>
-      'Choose which journal areas you want to use.';
+  String get journalCategoriesDescription => 'Choose which journal areas you want to use.';
 
   @override
   String get journalCategorySelectionLabel => 'Journal area';
@@ -1025,39 +994,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalCategoryWork => 'Work';
 
   @override
-  String get journalCategoryPersonalDescription =>
-      'Keep personal notes and reflections.';
+  String get journalCategoryPersonalDescription => 'Keep personal notes and reflections.';
 
   @override
-  String get journalCategoryWorkDescription =>
-      'Track work-related notes and decisions.';
+  String get journalCategoryWorkDescription => 'Track work-related notes and decisions.';
 
   @override
-  String get journalCategoryDisableLastError =>
-      'At least one journal area must stay enabled.';
+  String get journalCategoryDisableLastError => 'At least one journal area must stay enabled.';
 
   @override
-  String journalTemplateSectionTitle(String category) {
+  String journalTemplateSectionTitle(Object category) {
     return 'Template for $category';
   }
 
   @override
-  String journalTemplateLabelFor(String category) {
+  String journalTemplateLabelFor(Object category) {
     return 'Template ($category)';
   }
 
   @override
-  String journalTemplateHintFor(String category) {
+  String journalTemplateHintFor(Object category) {
     return 'Default content for your $category journal entries.';
   }
 
   @override
-  String journalTemplateSavedFor(String category) {
+  String journalTemplateSavedFor(Object category) {
     return 'Saved template for $category.';
   }
 
   @override
-  String journalTemplateClearedFor(String category) {
+  String journalTemplateClearedFor(Object category) {
     return 'Cleared template for $category.';
   }
 
@@ -1068,12 +1034,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalPinStatusUnset => 'PIN protection disabled';
 
   @override
-  String get journalPinStatusDescription =>
-      'A PIN is required to open the journal.';
+  String get journalPinStatusDescription => 'A PIN is required to open the journal.';
 
   @override
-  String get journalPinStatusDescriptionUnset =>
-      'Set a PIN to protect your journal entries.';
+  String get journalPinStatusDescriptionUnset => 'Set a PIN to protect your journal entries.';
 
   @override
   String get journalChangePinButton => 'Change PIN';
@@ -1088,8 +1052,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalBiometricToggleTitle => 'Unlock with biometrics';
 
   @override
-  String get journalBiometricToggleSubtitle =>
-      'Allow fingerprint or face recognition to unlock the journal.';
+  String get journalBiometricToggleSubtitle => 'Allow fingerprint or face recognition to unlock the journal.';
 
   @override
   String get journalLockNowButton => 'Lock journal now';
@@ -1101,12 +1064,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalUnlockedStatus => 'Journal is unlocked.';
 
   @override
-  String get journalProtectionDisabledHint =>
-      'Enable a PIN or biometrics to protect your journal.';
+  String get journalProtectionDisabledHint => 'Enable a PIN or biometrics to protect your journal.';
 
   @override
-  String get journalLockedNotice =>
-      'Journal locked. Unlock it from the module.';
+  String get journalLockedNotice => 'Journal locked. Unlock it from the module.';
 
   @override
   String get habitsAddHabitButton => 'Add habit';
@@ -1198,8 +1159,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get habitsEmptyTitle => 'Track your habits';
 
   @override
-  String get habitsEmptyDescription =>
-      'Create your first habit to follow your routines and see your progress.';
+  String get habitsEmptyDescription => 'Create your first habit to follow your routines and see your progress.';
 
   @override
   String get habitsOpenDetails => 'View details';
@@ -1220,11 +1180,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String habitsSubtitleNumericTarget(
-    String interval,
-    String measurement,
-    String target,
-  ) {
+  String habitsSubtitleNumericTarget(String interval, String measurement, String target) {
     return '$interval · $measurement · Target $target';
   }
 
@@ -1282,8 +1238,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get habitsChartTitle => 'Progress over time';
 
   @override
-  String get habitsChartEmpty =>
-      'Add a few days of data to see your progress curve.';
+  String get habitsChartEmpty => 'Add a few days of data to see your progress curve.';
 
   @override
   String get habitsLogBooleanValue => 'Completed';
@@ -1297,8 +1252,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get dashboardHabitsEmpty =>
-      'Create your first habit to start tracking progress here.';
+  String get dashboardHabitsEmpty => 'Create your first habit to start tracking progress here.';
 
   @override
   String get ledgerPlaceholder => 'Manage your household budget here.';
@@ -1348,16 +1302,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerGoogleButton => 'Register with Google (coming soon)';
 
   @override
-  String get authErrorInvalidEmailPassword =>
-      'Please enter a valid email address and a password with at least 8 characters.';
+  String get authErrorInvalidEmailPassword => 'Please enter a valid email address and a password with at least 8 characters.';
 
   @override
-  String get authErrorMissingCredentials =>
-      'Please enter an email address and password.';
+  String get authErrorMissingCredentials => 'Please enter an email address and password.';
 
   @override
-  String get authErrorEmailExists =>
-      'This email address is already registered.';
+  String get authErrorEmailExists => 'This email address is already registered.';
 
   @override
   String authErrorGeneric(String description) {
@@ -1388,8 +1339,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLanguageSectionTitle => 'Language';
 
   @override
-  String get settingsLanguageDescription =>
-      'Select the language used in the app.';
+  String get settingsLanguageDescription => 'Select the language used in the app.';
 
   @override
   String get settingsLanguageEnglish => 'English';
@@ -1430,15 +1380,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSeedColorLabel => 'Accent color';
 
   @override
-  String get settingsSeedColorDescription =>
-      'Pick a highlight color for the app.';
+  String get settingsSeedColorDescription => 'Pick a highlight color for the app.';
 
   @override
   String get settingsModulesSectionTitle => 'Modules';
 
   @override
-  String get settingsModulesDescription =>
-      'Choose which modules are visible in the menu.';
+  String get settingsModulesDescription => 'Choose which modules are visible in the menu.';
 
   @override
   String get settingsModulesDragHint => 'Drag the handle to reorder.';
@@ -1447,12 +1395,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSyncInfoTitle => 'Encrypted synchronisation';
 
   @override
-  String get settingsSyncInfoDescription =>
-      'Sign in only if you want to synchronise your data with the backend. Without sign-in, everything stays on this device.';
+  String get settingsSyncInfoDescription => 'Sign in only if you want to synchronise your data with the backend. Without sign-in, everything stays on this device.';
 
   @override
-  String get settingsSyncMembershipInfo =>
-      'Sync becomes available after you start a membership.';
+  String get settingsSyncMembershipInfo => 'Sync becomes available after you start a membership.';
 
   @override
   String get guestUserName => 'Guest';
@@ -1464,15 +1410,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardStatusGuest => 'Sync is only available after sign-in.';
 
   @override
-  String get dashboardGuestIntro =>
-      'Use the app offline or sign in to unlock sync and membership benefits.';
+  String get dashboardGuestIntro => 'Use the app offline or sign in to unlock sync and membership benefits.';
 
   @override
   String get dashboardGuestSyncTitle => 'Unlock sync and backup';
 
   @override
-  String get dashboardGuestSyncDescription =>
-      'Create a free account to enable encrypted sync once you start a membership.';
+  String get dashboardGuestSyncDescription => 'Create a free account to enable encrypted sync once you start a membership.';
 
   @override
   String get dashboardGuestSyncButton => 'Go to settings';
@@ -1567,8 +1511,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get membershipPaymentMethodBitcoin => 'Bitcoin';
 
   @override
-  String get settingsSignInPrompt =>
-      'Sign in to sync your notes across devices.';
+  String get settingsSignInPrompt => 'Sign in to sync your notes across devices.';
 
   @override
   String get settingsOpenLogin => 'Open login';
@@ -1628,8 +1571,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerAccountCurrencyLabel => 'Currency';
 
   @override
-  String get ledgerValidationCurrencyCode =>
-      'Enter a three-letter currency code.';
+  String get ledgerValidationCurrencyCode => 'Enter a three-letter currency code.';
 
   @override
   String get ledgerAccountInitialBalanceLabel => 'Starting balance';
@@ -1682,8 +1624,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerAccountEmptyTitle => 'Create your first account';
 
   @override
-  String get ledgerAccountEmptyDescription =>
-      'Track your cash, bank accounts, depots, investments or crypto wallets.';
+  String get ledgerAccountEmptyDescription => 'Track your cash, bank accounts, depots, investments or crypto wallets.';
 
   @override
   String get ledgerAccountKindCash => 'Cash';
@@ -1719,8 +1660,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerTransactionTargetAccountLabel => 'Target account';
 
   @override
-  String get ledgerValidationDifferentAccounts =>
-      'Choose two different accounts.';
+  String get ledgerValidationDifferentAccounts => 'Choose two different accounts.';
 
   @override
   String get ledgerTransactionCategoryLabel => 'Category';
@@ -1761,15 +1701,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerTransactionCreateButton => 'Add transaction';
 
   @override
-  String get ledgerTransactionNoAccountsWarning =>
-      'Create an account before recording transactions.';
+  String get ledgerTransactionNoAccountsWarning => 'Create an account before recording transactions.';
 
   @override
   String get ledgerTransactionDeleteTitle => 'Delete transaction?';
 
   @override
-  String get ledgerTransactionDeleteMessage =>
-      'Delete this transaction from this device?';
+  String get ledgerTransactionDeleteMessage => 'Delete this transaction from this device?';
 
   @override
   String get ledgerTransactionMarkExecuted => 'Mark as executed';
@@ -1799,8 +1737,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerTransactionEmptyTitle => 'No transactions yet';
 
   @override
-  String get ledgerTransactionEmptyDescription =>
-      'Add income, expenses or transfers to start tracking your finances.';
+  String get ledgerTransactionEmptyDescription => 'Add income, expenses or transfers to start tracking your finances.';
 
   @override
   String get ledgerTransactionKindIncome => 'Income';
@@ -1830,11 +1767,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String ledgerCryptoCurrentPriceLabel(
-    String price,
-    String currency,
-    String symbol,
-  ) {
+  String ledgerCryptoCurrentPriceLabel(String price, String currency, String symbol) {
     return 'Current price $price $currency ($symbol)';
   }
 
@@ -1872,18 +1805,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerBudgetDeleteTitle => 'Delete budget?';
 
   @override
-  String get ledgerBudgetDeleteMessage =>
-      'Remove this budget from this device?';
+  String get ledgerBudgetDeleteMessage => 'Remove this budget from this device?';
 
   @override
   String get ledgerBudgetUnknownCategory => 'Unknown category';
 
   @override
-  String ledgerBudgetUsageSummary(
-    String actual,
-    String total,
-    String currency,
-  ) {
+  String ledgerBudgetUsageSummary(String actual, String total, String currency) {
     return 'Spent $actual of $total $currency';
   }
 
@@ -1896,8 +1824,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerBudgetEmptyTitle => 'No budgets defined';
 
   @override
-  String get ledgerBudgetEmptyDescription =>
-      'Create budgets for categories and subcategories to keep an eye on spending.';
+  String get ledgerBudgetEmptyDescription => 'Create budgets for categories and subcategories to keep an eye on spending.';
 
   @override
   String get ledgerBudgetPeriodMonthly => 'Monthly';
@@ -2004,8 +1931,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get ledgerRecurringAutoApplyLabel =>
-      'Automatically create transactions';
+  String get ledgerRecurringAutoApplyLabel => 'Automatically create transactions';
 
   @override
   String get ledgerRecurringMetadataLabel => 'Notes';
@@ -2026,8 +1952,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerRecurringEmptyTitle => 'No standing orders yet';
 
   @override
-  String get ledgerRecurringEmptyDescription =>
-      'Create templates for recurring income, expenses or transfers.';
+  String get ledgerRecurringEmptyDescription => 'Create templates for recurring income, expenses or transfers.';
 
   @override
   String get ledgerRecurringIntervalDaily => 'Daily';
@@ -2063,8 +1988,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerTabCategories => 'Categories';
 
   @override
-  String get ledgerDashboardNoAccounts =>
-      'Create an account to see your finances here.';
+  String get ledgerDashboardNoAccounts => 'Create an account to see your finances here.';
 
   @override
   String get ledgerDashboardNoNetWorth => 'No balances recorded yet.';
