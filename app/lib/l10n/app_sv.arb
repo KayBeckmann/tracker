@@ -769,18 +769,29 @@
   "loginEmailLabel": "E-postadress",
   "loginPasswordLabel": "Lösenord",
   "loginButton": "Logga in",
-  "loginGoogleButton": "Logga in med Google (kommer snart)",
+  "loginGoogleButton": "Logga in med Google",
   "registerHeading": "Skapa ett nytt konto med e-postadress och lösenord.",
   "registerDisplayNameLabel": "Visningsnamn (valfritt)",
   "registerPasswordLabel": "Lösenord (minst 8 tecken)",
   "registerButton": "Skapa konto",
-  "registerGoogleButton": "Registrera med Google (kommer snart)",
+  "registerGoogleButton": "Registrera dig med Google",
   "authErrorInvalidEmailPassword": "Ange en giltig e-postadress och ett lösenord med minst 8 tecken.",
   "authErrorMissingCredentials": "Ange e-postadress och lösenord.",
   "authErrorEmailExists": "Den här e-postadressen är redan registrerad.",
   "authErrorGeneric": "Autentiseringsfel: {description}",
   "authStatusSubmitting": "Skickar...",
-  "googlePlaceholder": "Google-inloggning läggs till snart.",
+  "googleSignInNotSupported": "Google-inloggning är inte tillgänglig på den här plattformen.",
+  "googleSignInConfigurationMissing": "Google-inloggning är inte konfigurerad för den här plattformen.",
+  "googleSignInCancelled": "Google-inloggningen avbröts.",
+  "googleSignInMissingToken": "Google-inloggningen returnerade inget ID-token.",
+  "googleSignInFailed": "Google-inloggning misslyckades: {error}",
+  "@googleSignInFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorBadRequest": "Förfrågan var inte giltig.",
   "errorUnauthorized": "Ogiltiga inloggningsuppgifter.",
   "errorConflict": "Den här e-postadressen är redan registrerad.",

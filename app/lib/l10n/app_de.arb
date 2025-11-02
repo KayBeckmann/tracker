@@ -769,18 +769,29 @@
   "loginEmailLabel": "E-Mail-Adresse",
   "loginPasswordLabel": "Passwort",
   "loginButton": "Anmelden",
-  "loginGoogleButton": "Mit Google anmelden (bald verfügbar)",
+  "loginGoogleButton": "Mit Google anmelden",
   "registerHeading": "Erstelle ein neues Konto mit E-Mail-Adresse und Passwort.",
   "registerDisplayNameLabel": "Anzeigename (optional)",
   "registerPasswordLabel": "Passwort (mind. 8 Zeichen)",
   "registerButton": "Konto erstellen",
-  "registerGoogleButton": "Mit Google registrieren (bald verfügbar)",
+  "registerGoogleButton": "Mit Google registrieren",
   "authErrorInvalidEmailPassword": "Bitte gib eine gültige E-Mail-Adresse und ein Passwort mit mindestens 8 Zeichen an.",
   "authErrorMissingCredentials": "Bitte gib E-Mail-Adresse und Passwort ein.",
   "authErrorEmailExists": "Diese E-Mail-Adresse ist bereits registriert.",
   "authErrorGeneric": "Authentifizierungsfehler: {description}",
   "authStatusSubmitting": "Wird gesendet...",
-  "googlePlaceholder": "Google Sign-In wird demnächst hinzugefügt.",
+  "googleSignInNotSupported": "Google-Anmeldung ist auf dieser Plattform nicht verfügbar.",
+  "googleSignInConfigurationMissing": "Google-Anmeldung ist für diese Plattform nicht konfiguriert.",
+  "googleSignInCancelled": "Die Google-Anmeldung wurde abgebrochen.",
+  "googleSignInMissingToken": "Bei der Google-Anmeldung wurde kein ID-Token zurückgegeben.",
+  "googleSignInFailed": "Google-Anmeldung fehlgeschlagen: {error}",
+  "@googleSignInFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "errorBadRequest": "Die Anfrage war nicht gültig.",
   "errorUnauthorized": "Ungültige Zugangsdaten.",
   "errorConflict": "Diese E-Mail-Adresse ist bereits registriert.",

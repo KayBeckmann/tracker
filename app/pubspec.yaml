@@ -50,6 +50,7 @@ dependencies:
   cryptography: ^2.5.0
   uuid: ^4.4.0
   local_auth: ^2.3.0
+  google_sign_in: ^6.2.1
   fl_chart: ^0.68.0
   collection: ^1.18.0
 

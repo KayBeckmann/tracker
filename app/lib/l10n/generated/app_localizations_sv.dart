@@ -1330,7 +1330,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get loginButton => 'Logga in';
 
   @override
-  String get loginGoogleButton => 'Logga in med Google (kommer snart)';
+  String get loginGoogleButton => 'Logga in med Google';
 
   @override
   String get registerHeading =>
@@ -1346,7 +1346,7 @@ class AppLocalizationsSv extends AppLocalizations {
   String get registerButton => 'Skapa konto';
 
   @override
-  String get registerGoogleButton => 'Registrera med Google (kommer snart)';
+  String get registerGoogleButton => 'Registrera dig med Google';
 
   @override
   String get authErrorInvalidEmailPassword =>
@@ -1368,7 +1368,24 @@ class AppLocalizationsSv extends AppLocalizations {
   String get authStatusSubmitting => 'Skickar...';
 
   @override
-  String get googlePlaceholder => 'Google-inloggning läggs till snart.';
+  String get googleSignInNotSupported =>
+      'Google-inloggning är inte tillgänglig på den här plattformen.';
+
+  @override
+  String get googleSignInConfigurationMissing =>
+      'Google-inloggning är inte konfigurerad för den här plattformen.';
+
+  @override
+  String get googleSignInCancelled => 'Google-inloggningen avbröts.';
+
+  @override
+  String get googleSignInMissingToken =>
+      'Google-inloggningen returnerade inget ID-token.';
+
+  @override
+  String googleSignInFailed(String error) {
+    return 'Google-inloggning misslyckades: $error';
+  }
 
   @override
   String get errorBadRequest => 'Förfrågan var inte giltig.';

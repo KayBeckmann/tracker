@@ -2453,7 +2453,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginGoogleButton.
   ///
   /// In en, this message translates to:
-  /// **'Sign in with Google (coming soon)'**
+  /// **'Sign in with Google'**
   String get loginGoogleButton;
 
   /// No description provided for @registerHeading.
@@ -2483,7 +2483,7 @@ abstract class AppLocalizations {
   /// No description provided for @registerGoogleButton.
   ///
   /// In en, this message translates to:
-  /// **'Register with Google (coming soon)'**
+  /// **'Register with Google'**
   String get registerGoogleButton;
 
   /// No description provided for @authErrorInvalidEmailPassword.
@@ -2516,11 +2516,35 @@ abstract class AppLocalizations {
   /// **'Submitting...'**
   String get authStatusSubmitting;
 
-  /// No description provided for @googlePlaceholder.
+  /// No description provided for @googleSignInNotSupported.
   ///
   /// In en, this message translates to:
-  /// **'Google Sign-In will be added soon.'**
-  String get googlePlaceholder;
+  /// **'Google Sign-In is not available on this platform.'**
+  String get googleSignInNotSupported;
+
+  /// No description provided for @googleSignInConfigurationMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In is not configured for this platform.'**
+  String get googleSignInConfigurationMissing;
+
+  /// No description provided for @googleSignInCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In was cancelled.'**
+  String get googleSignInCancelled;
+
+  /// No description provided for @googleSignInMissingToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In didn\'t return an ID token.'**
+  String get googleSignInMissingToken;
+
+  /// No description provided for @googleSignInFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In failed: {error}'**
+  String googleSignInFailed(String error);
 
   /// No description provided for @errorBadRequest.
   ///

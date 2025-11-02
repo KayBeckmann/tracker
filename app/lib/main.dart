@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -36,6 +37,26 @@ import 'ledger/ledger_utils.dart';
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
   defaultValue: 'https://api.personal-tracker.life',
+);
+
+const String googleServerClientId = String.fromEnvironment(
+  'GOOGLE_SERVER_CLIENT_ID',
+  defaultValue: '',
+);
+
+const String googleWebClientId = String.fromEnvironment(
+  'GOOGLE_WEB_CLIENT_ID',
+  defaultValue: '',
+);
+
+const String googleIosClientId = String.fromEnvironment(
+  'GOOGLE_IOS_CLIENT_ID',
+  defaultValue: '',
+);
+
+const String googleMacosClientId = String.fromEnvironment(
+  'GOOGLE_MACOS_CLIENT_ID',
+  defaultValue: '',
 );
 
 const List<Locale> supportedAppLocales = <Locale>[
@@ -257,6 +278,7 @@ class _HomePageState extends State<HomePage> {
     _AppSection.habits,
     _AppSection.ledger,
   ];
+  GoogleSignIn? _googleSignIn;
   final TextEditingController _loginEmailController = TextEditingController();
   final TextEditingController _loginPasswordController =
       TextEditingController();
@@ -442,6 +464,10 @@ class _HomePageState extends State<HomePage> {
       _settingsDirtyListenable!.removeListener(_handleSettingsDirtyChanged);
       _settingsDirtyListenable = null;
     }
+    final GoogleSignIn? signIn = _googleSignIn;
+    if (signIn != null) {
+      unawaited(signIn.disconnect());
+    }
     super.dispose();
   }
 
@@ -453,6 +479,14 @@ class _HomePageState extends State<HomePage> {
     await _trackerBox.delete('auth_token');
     await _trackerBox.delete('auth_user');
     await _syncEngine.clearState();
+    final GoogleSignIn? signIn = _googleSignIn;
+    if (signIn != null) {
+      try {
+        await signIn.signOut();
+      } catch (_) {
+        // Ignore sign-out errors from Google Sign-In.
+      }
+    }
     if (!mounted) {
       return;
     }
@@ -1015,11 +1049,189 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _showGooglePlaceholder(BuildContext context) {
+  bool get _isGoogleSignInSupported {
+    if (kIsWeb) {
+      return true;
+    }
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+        return true;
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+      case TargetPlatform.fuchsia:
+        return false;
+    }
+  }
+
+  bool get _hasGoogleSignInConfiguration {
+    if (!_isGoogleSignInSupported) {
+      return false;
+    }
+    if (kIsWeb) {
+      return googleWebClientId.isNotEmpty || googleServerClientId.isNotEmpty;
+    }
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return googleServerClientId.isNotEmpty;
+      case TargetPlatform.iOS:
+        return googleIosClientId.isNotEmpty || googleServerClientId.isNotEmpty;
+      case TargetPlatform.macOS:
+        return googleMacosClientId.isNotEmpty ||
+            googleIosClientId.isNotEmpty ||
+            googleServerClientId.isNotEmpty;
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+      case TargetPlatform.fuchsia:
+        return false;
+    }
+  }
+
+  String? _googleClientIdForCurrentPlatform() {
+    if (kIsWeb) {
+      if (googleWebClientId.isNotEmpty) {
+        return googleWebClientId;
+      }
+      if (googleServerClientId.isNotEmpty) {
+        return googleServerClientId;
+      }
+      return null;
+    }
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+        if (googleIosClientId.isNotEmpty) {
+          return googleIosClientId;
+        }
+        return googleServerClientId.isNotEmpty ? googleServerClientId : null;
+      case TargetPlatform.macOS:
+        if (googleMacosClientId.isNotEmpty) {
+          return googleMacosClientId;
+        }
+        if (googleIosClientId.isNotEmpty) {
+          return googleIosClientId;
+        }
+        return googleServerClientId.isNotEmpty ? googleServerClientId : null;
+      case TargetPlatform.android:
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+      case TargetPlatform.fuchsia:
+        return null;
+    }
+  }
+
+  GoogleSignIn _createGoogleSignIn() {
+    final String? clientId = _googleClientIdForCurrentPlatform();
+    final String? serverClientId =
+        googleServerClientId.isNotEmpty ? googleServerClientId : null;
+    return GoogleSignIn(
+      scopes: const <String>['email'],
+      clientId: clientId,
+      serverClientId: serverClientId,
+    );
+  }
+
+  Future<void> _handleGoogleSignIn() async {
     final loc = AppLocalizations.of(context);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(loc.googlePlaceholder)));
+    if (!_isGoogleSignInSupported) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _authErrorMessage = loc.googleSignInNotSupported;
+      });
+      return;
+    }
+    if (!_hasGoogleSignInConfiguration) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _authErrorMessage = loc.googleSignInConfigurationMissing;
+      });
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _isAuthInProgress = true;
+      _authErrorMessage = null;
+    });
+
+    bool submitted = false;
+    try {
+      final GoogleSignIn signIn = _googleSignIn ??= _createGoogleSignIn();
+      GoogleSignInAccount? account = signIn.currentUser;
+      account ??= await signIn.signInSilently();
+      account ??= await signIn.signIn();
+
+      if (account == null) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _authErrorMessage = loc.googleSignInCancelled;
+        });
+        return;
+      }
+
+      final GoogleSignInAuthentication authentication =
+          await account.authentication;
+      final String? idToken = authentication.idToken;
+      if (idToken == null || idToken.isEmpty) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _authErrorMessage = loc.googleSignInMissingToken;
+        });
+        await signIn.signOut();
+        return;
+      }
+
+      submitted = true;
+      await _submitAuthRequest(
+        context: context,
+        loc: loc,
+        uri: Uri.parse('$backendBaseUrl/api/auth/google'),
+        payload: <String, dynamic>{'id_token': idToken},
+        expectsCreated: false,
+      );
+    } on MissingPluginException {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _authErrorMessage = loc.googleSignInNotSupported;
+      });
+    } on PlatformException catch (error) {
+      if (!mounted) {
+        return;
+      }
+      final String? rawMessage = error.message?.trim();
+      final String details = (rawMessage != null && rawMessage.isNotEmpty)
+          ? rawMessage
+          : error.code;
+      setState(() {
+        _authErrorMessage = loc.googleSignInFailed(details);
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _authErrorMessage = loc.googleSignInFailed('$error');
+      });
+    } finally {
+      if (!submitted && mounted) {
+        setState(() {
+          _isAuthInProgress = false;
+        });
+      }
+    }
   }
 
   String? _currentAuthToken() {
@@ -4405,7 +4617,7 @@ class _HomePageState extends State<HomePage> {
           OutlinedButton.icon(
             onPressed: _isAuthInProgress
                 ? null
-                : () => _showGooglePlaceholder(context),
+                : () => _handleGoogleSignIn(),
             icon: const Icon(Icons.g_translate),
             label: Text(loc.loginGoogleButton),
           ),
@@ -4490,7 +4702,7 @@ class _HomePageState extends State<HomePage> {
           OutlinedButton.icon(
             onPressed: _isAuthInProgress
                 ? null
-                : () => _showGooglePlaceholder(context),
+                : () => _handleGoogleSignIn(),
             icon: const Icon(Icons.g_translate),
             label: Text(loc.registerGoogleButton),
           ),

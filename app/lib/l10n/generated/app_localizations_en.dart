@@ -1330,7 +1330,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginButton => 'Sign in';
 
   @override
-  String get loginGoogleButton => 'Sign in with Google (coming soon)';
+  String get loginGoogleButton => 'Sign in with Google';
 
   @override
   String get registerHeading => 'Create a new account with email and password.';
@@ -1345,7 +1345,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerButton => 'Create account';
 
   @override
-  String get registerGoogleButton => 'Register with Google (coming soon)';
+  String get registerGoogleButton => 'Register with Google';
 
   @override
   String get authErrorInvalidEmailPassword =>
@@ -1368,7 +1368,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authStatusSubmitting => 'Submitting...';
 
   @override
-  String get googlePlaceholder => 'Google Sign-In will be added soon.';
+  String get googleSignInNotSupported =>
+      'Google Sign-In is not available on this platform.';
+
+  @override
+  String get googleSignInConfigurationMissing =>
+      'Google Sign-In is not configured for this platform.';
+
+  @override
+  String get googleSignInCancelled => 'Google Sign-In was cancelled.';
+
+  @override
+  String get googleSignInMissingToken =>
+      'Google Sign-In didn\'t return an ID token.';
+
+  @override
+  String googleSignInFailed(String error) {
+    return 'Google Sign-In failed: $error';
+  }
 
   @override
   String get errorBadRequest => 'The request was not valid.';
