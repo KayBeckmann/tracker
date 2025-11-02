@@ -100,8 +100,8 @@
                 - [x] Integrate with backend authentication API.
             - [ ] Implement Backend Subscription Management:
                 - [ ] Dokumentiere das kostenpflichtige Sync-Angebot (1 € pro Monat / 10 € pro Jahr).
-                - [ ] UI for displaying subscription status.
-                - [ ] UI for initiating subscription (monthly/yearly).
+                - [x] UI for displaying subscription status.
+                - [x] UI for initiating subscription (monthly/yearly).
                 - [ ] Integrate with payment gateway (PayPal, Bitcoin).
                 - [ ] Beschränke Backend-Synchronisation auf angemeldete Nutzer (Google, Apple ID, E-Mail+Passwort).
 - [ ] Backend Development:
@@ -112,7 +112,7 @@
     - [ ] Implement User Authentication:
         - [x] Develop API for email/password registration and login.
         - [ ] Integrate Apple ID authentication.
-        - [ ] Integrate Google authentication.
+        - [x] Integrate Google authentication.
     - [ ] Implement Data Synchronization API:
         - [ ] Design and implement synchronization logic for all modules (Dashboard, Tasks, Notes, Habits, Household Book, Settings).
             - [x] Notes
@@ -124,8 +124,14 @@
         - [x] Handle conflict resolution for synchronized entities.
     - [ ] Implement Payment Gateway:
         - [ ] Integrate PayPal payment processing.
+            - [ ] Wähle Checkout-/Subscriptions-Produkt aus und richte PayPal Sandbox-/Live-Credentials ein.
+            - [ ] Implementiere Backend-Endpunkte zum Erstellen von PayPal Orders/Subscriptions und liefere Approval-Links.
+            - [ ] Ergänze Frontend-Flow für PayPal Checkout (Redirect/WebView) inkl. Abschluss-Callback.
+            - [ ] Verarbeite PayPal-Webhooks (Order Approved/Capture Completed) mit Signaturprüfung.
+            - [ ] Speichere PayPal-Transaktionsdaten im Payment-Modul und gleiche sie mit Memberships ab.
+            - [ ] Dokumentiere Setup und Tests für die PayPal-Integration.
         - [ ] Integrate Bitcoin payment processing.
-        - [ ] Develop subscription management logic (monthly/yearly).
+        - [x] Develop subscription management logic (monthly/yearly).
 - [ ] Cross-Platform Adaptation:
     - [ ] Ensure UI/UX responsiveness across Android, iOS, Windows, Linux, and Web.
     - [ ] Address platform-specific considerations (e.g., notifications, file system access).
