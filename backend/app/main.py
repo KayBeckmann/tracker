@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import json
+import logging
 import os
+import secrets
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any, Generator, Literal
 
@@ -10,9 +14,31 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, create_engine, func, select
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    create_engine,
+    func,
+    select,
+)
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
+
+try:
+    from google.oauth2 import id_token as google_id_token
+    from google.auth.transport import requests as google_requests
+except ImportError:  # pragma: no cover - optional dependency
+    google_id_token = None
+    google_requests = None
+
+
+logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase):
@@ -53,6 +79,108 @@ class User(Base):
     sync_retention_until: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
+    )
+
+
+class ExternalIdentity(Base):
+    """Link between a user account and an external identity provider."""
+
+    __tablename__ = "external_identities"
+    __table_args__ = (UniqueConstraint("provider", "subject", name="uq_external_provider_subject"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    provider: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
+    subject: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    email: Mapped[str] = mapped_column(String(320), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+
+class AdminUser(Base):
+    """Administrative user with elevated privileges."""
+
+    __tablename__ = "admin_users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String(320), unique=True, nullable=False, index=True)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    display_name: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=True,
+        server_default="1",
+    )
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+
+class Payment(Base):
+    """Recorded membership payment."""
+
+    __tablename__ = "payments"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    payment_uuid: Mapped[str] = mapped_column(
+        String(36),
+        unique=True,
+        nullable=False,
+        default=lambda: str(uuid.uuid4()),
+    )
+    user_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    plan: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
+    payment_method: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
+    status: Mapped[str] = mapped_column(
+        String(16),
+        nullable=False,
+        default="pending",
+        server_default="pending",
+    )
+    amount: Mapped[float] = mapped_column(Float, nullable=False, default=0.0, server_default="0")
+    currency_code: Mapped[str] = mapped_column(String(3), nullable=False, default="EUR", server_default="EUR")
+    external_reference: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    metadata: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
     )
 
 
@@ -557,6 +685,19 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./tracker.db")
 SECRET_KEY = os.getenv("AUTH_SECRET_KEY", "change-this-secret")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "4320"))
 ALGORITHM = "HS256"
+GOOGLE_CLIENT_IDS = [
+    value.strip()
+    for value in os.getenv("GOOGLE_CLIENT_IDS", "").split(",")
+    if value.strip()
+]
+PAYPAL_BUSINESS_ACCOUNT = os.getenv("PAYPAL_BUSINESS_ACCOUNT", "")
+ADMIN_DEFAULT_EMAIL = os.getenv("ADMIN_DEFAULT_EMAIL", "")
+ADMIN_DEFAULT_PASSWORD = os.getenv("ADMIN_DEFAULT_PASSWORD", "")
+ADMIN_DEFAULT_DISPLAY_NAME = os.getenv("ADMIN_DEFAULT_DISPLAY_NAME", "Administrator")
+PLAN_PRICING = {
+    "monthly": float(os.getenv("MEMBERSHIP_PRICE_MONTHLY", "1.0")),
+    "yearly": float(os.getenv("MEMBERSHIP_PRICE_YEARLY", "10.0")),
+}
 
 engine = create_engine(
     DATABASE_URL,
@@ -568,12 +709,35 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, futu
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+admin_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/admin/auth/login", scheme_name="admin_oauth2")
 
 
 def create_database() -> None:
     """Create database schema if it does not exist."""
 
     Base.metadata.create_all(bind=engine, checkfirst=True)
+
+
+def seed_default_admin() -> None:
+    """Ensure an initial admin user exists when configured via environment variables."""
+
+    if not ADMIN_DEFAULT_EMAIL or not ADMIN_DEFAULT_PASSWORD:
+        return
+
+    with SessionLocal() as db:
+        email = normalize_email(ADMIN_DEFAULT_EMAIL)
+        statement = select(AdminUser).where(AdminUser.email == email)
+        admin = db.execute(statement).scalar_one_or_none()
+        if admin is not None:
+            return
+        admin = AdminUser(
+            email=email,
+            password_hash=get_password_hash(ADMIN_DEFAULT_PASSWORD),
+            display_name=ADMIN_DEFAULT_DISPLAY_NAME,
+        )
+        db.add(admin)
+        db.commit()
+        logger.info("Default admin user created", extra={"email": email})
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -630,6 +794,119 @@ def _ensure_membership_state(user: User) -> None:
         pass
 
 
+def _generate_random_password() -> str:
+    """Generate a random password placeholder for accounts managed via external identity providers."""
+
+    return secrets.token_urlsafe(48)
+
+
+def _verify_google_token(id_token_value: str) -> dict[str, Any]:
+    """Validate a Google ID token and return its claims."""
+
+    if google_id_token is None or google_requests is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Google-Authentifizierung ist derzeit nicht verfügbar.",
+        )
+
+    request_adapter = google_requests.Request()
+    errors: list[str] = []
+
+    if GOOGLE_CLIENT_IDS:
+        for audience in GOOGLE_CLIENT_IDS:
+            try:
+                claims = google_id_token.verify_oauth2_token(id_token_value, request_adapter, audience)
+            except ValueError as exc:  # pragma: no cover - depends on external library
+                errors.append(str(exc))
+                continue
+            return claims
+    else:
+        try:
+            return google_id_token.verify_oauth2_token(id_token_value, request_adapter)
+        except ValueError as exc:  # pragma: no cover - depends on external library
+            errors.append(str(exc))
+
+    if errors:
+        logger.info("Google token verification failed", extra={"errors": errors})
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Ungültiges Google-Token.",
+    )
+
+
+def _serialize_metadata(metadata: dict[str, Any] | None) -> str | None:
+    """Serialize payment metadata to a JSON string."""
+
+    if not metadata:
+        return None
+    try:
+        return json.dumps(metadata)
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Metadaten konnten nicht serialisiert werden.",
+        ) from exc
+
+
+def _deserialize_metadata(raw_metadata: str | None) -> dict[str, Any] | None:
+    """Return structured metadata from a serialized JSON string."""
+
+    if not raw_metadata:
+        return None
+    try:
+        data = json.loads(raw_metadata)
+    except json.JSONDecodeError:
+        return {"raw": raw_metadata}
+    if isinstance(data, dict):
+        return data
+    return {"value": data}
+
+
+def _payment_to_response(payment: Payment) -> PaymentResponse:
+    """Map a Payment ORM entity to the API response schema."""
+
+    return PaymentResponse(
+        id=payment.id,
+        payment_uuid=payment.payment_uuid,
+        user_id=payment.user_id,
+        plan=payment.plan,
+        payment_method=payment.payment_method,
+        status=payment.status,
+        amount=payment.amount,
+        currency_code=payment.currency_code,
+        external_reference=payment.external_reference,
+        notes=payment.notes,
+        metadata=_deserialize_metadata(payment.metadata),
+        created_at=payment.created_at,
+        updated_at=payment.updated_at,
+    )
+
+
+def _payment_by_uuid(db: Session, payment_uuid: str) -> Payment:
+    """Return a payment by its UUID or raise HTTP 404."""
+
+    statement = select(Payment).where(Payment.payment_uuid == payment_uuid)
+    payment = db.execute(statement).scalar_one_or_none()
+    if payment is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Zahlung nicht gefunden.",
+        )
+    return payment
+
+
+def _latest_payment_uuid(db: Session, user_id: int) -> str | None:
+    """Return the most recent payment UUID for a user, if available."""
+
+    statement = (
+        select(Payment.payment_uuid)
+        .where(Payment.user_id == user_id)
+        .order_by(Payment.created_at.desc(), Payment.id.desc())
+        .limit(1)
+    )
+    return db.execute(statement).scalar_one_or_none()
+
+
 def _membership_delta(plan: str) -> timedelta:
     if plan == "monthly":
         return timedelta(days=30)
@@ -638,13 +915,15 @@ def _membership_delta(plan: str) -> timedelta:
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unbekannter Tarif.")
 
 
-def _membership_status_from_user(user: User) -> MembershipStatusResponse:
+def _membership_status_from_user(user: User, last_payment_uuid: str | None = None) -> MembershipStatusResponse:
     return MembershipStatusResponse(
         membership_level=user.membership_level,
         membership_expires_at=user.membership_expires_at,
         sync_enabled=user.sync_enabled,
         last_payment_method=user.last_payment_method,
         sync_retention_until=user.sync_retention_until,
+        last_payment_uuid=last_payment_uuid,
+        paypal_business_account=PAYPAL_BUSINESS_ACCOUNT or None,
     )
 
 
@@ -655,6 +934,15 @@ class RegisterRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class GoogleAuthRequest(BaseModel):
+    id_token: str = Field(min_length=10, max_length=4096)
+
+
+class AdminLoginRequest(BaseModel):
     email: EmailStr
     password: str
 
@@ -677,10 +965,30 @@ class AuthResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserOut
+    role: Literal["user"] = "user"
 
 
 class TokenData(BaseModel):
     sub: str | None = None
+    role: Literal["user", "admin"] | None = None
+
+
+class AdminUserOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    email: EmailStr
+    display_name: str | None = None
+    is_active: bool
+    created_at: datetime
+    last_login_at: datetime | None = None
+
+
+class AdminAuthResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    role: Literal["admin"] = "admin"
+    admin: AdminUserOut
 
 
 class MembershipStatusResponse(BaseModel):
@@ -689,13 +997,49 @@ class MembershipStatusResponse(BaseModel):
     sync_enabled: bool
     last_payment_method: str | None = None
     sync_retention_until: datetime | None = None
-    price_monthly: float = 1.0
-    price_yearly: float = 10.0
+    last_payment_uuid: str | None = None
+    paypal_business_account: str | None = None
+    price_monthly: float = Field(default=PLAN_PRICING["monthly"])
+    price_yearly: float = Field(default=PLAN_PRICING["yearly"])
+
+
+PaymentStatusLiteral = Literal["pending", "completed", "failed", "refunded"]
 
 
 class SubscribeRequest(BaseModel):
     plan: Literal["monthly", "yearly"]
-    payment_method: Literal["paypal", "bitcoin", "manual"] = "manual"
+    payment_method: Literal["paypal", "google", "manual"] = "manual"
+    amount: float | None = None
+    currency_code: str = "EUR"
+    external_reference: str | None = Field(default=None, max_length=128)
+    notes: str | None = Field(default=None, max_length=500)
+    metadata: dict[str, Any] | None = None
+    status: PaymentStatusLiteral | None = None
+
+
+class PaymentResponse(BaseModel):
+    id: int
+    payment_uuid: str
+    user_id: int
+    plan: str
+    payment_method: str
+    status: str
+    amount: float
+    currency_code: str
+    external_reference: str | None = None
+    notes: str | None = None
+    metadata: dict[str, Any] | None = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class PaymentUpdateRequest(BaseModel):
+    status: PaymentStatusLiteral | None = None
+    notes: str | None = Field(default=None, max_length=500)
+    external_reference: str | None = Field(default=None, max_length=128)
+    metadata: dict[str, Any] | None = None
+    amount: float | None = None
+    currency_code: str | None = None
 
 
 class NoteBase(BaseModel):
@@ -1156,6 +1500,9 @@ async def get_current_user(
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        role = payload.get("role", "user")
+        if role != "user":
+            raise credentials_exception
         user_id: str | None = payload.get("sub")
         if user_id is None:
             raise credentials_exception
@@ -1177,6 +1524,34 @@ async def get_current_user(
         db.commit()
         db.refresh(user)
     return user
+
+
+async def get_current_admin(
+    token: Annotated[str, Depends(admin_oauth2_scheme)],
+    db: Annotated[Session, Depends(get_db)],
+) -> AdminUser:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Admin-Anmeldung erforderlich.",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        role = payload.get("role")
+        if role != "admin":
+            raise credentials_exception
+        subject = payload.get("sub")
+        if subject is None or not str(subject).startswith("admin:"):
+            raise credentials_exception
+        _, admin_id_str = str(subject).split(":", 1)
+        admin_id = int(admin_id_str)
+    except (JWTError, ValueError) as exc:
+        raise credentials_exception from exc
+
+    admin = db.get(AdminUser, admin_id)
+    if admin is None or not admin.is_active:
+        raise credentials_exception
+    return admin
 
 
 ALLOWED_ORIGINS = [
@@ -1203,6 +1578,7 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup() -> None:
     create_database()
+    seed_default_admin()
 
 
 @app.get("/api/health")
@@ -1248,7 +1624,7 @@ def register_user(payload: RegisterRequest, db: Annotated[Session, Depends(get_d
 
     db.refresh(user)
 
-    token = create_access_token({"sub": str(user.id)})
+    token = create_access_token({"sub": str(user.id), "role": "user"})
     return AuthResponse(access_token=token, user=UserOut.model_validate(user))
 
 
@@ -1276,8 +1652,195 @@ def login_user(payload: LoginRequest, db: Annotated[Session, Depends(get_db)]) -
         db.commit()
         db.refresh(user)
 
-    token = create_access_token({"sub": str(user.id)})
+    token = create_access_token({"sub": str(user.id), "role": "user"})
     return AuthResponse(access_token=token, user=UserOut.model_validate(user))
+
+
+@app.post("/api/auth/google", response_model=AuthResponse)
+def authenticate_with_google(payload: GoogleAuthRequest, db: Annotated[Session, Depends(get_db)]) -> AuthResponse:
+    claims = _verify_google_token(payload.id_token)
+    email = claims.get("email")
+    subject = claims.get("sub")
+
+    if not email or not subject:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Google-Token unvollständig.",
+        )
+
+    if claims.get("email_verified") is False:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Die Google-E-Mail-Adresse ist nicht verifiziert.",
+        )
+
+    email_normalized = normalize_email(email)
+    statement = select(ExternalIdentity).where(
+        ExternalIdentity.provider == "google",
+        ExternalIdentity.subject == subject,
+    )
+    identity = db.execute(statement).scalar_one_or_none()
+
+    if identity is not None:
+        user = db.get(User, identity.user_id)
+        if user is None:
+            db.delete(identity)
+            db.commit()
+            identity = None
+        else:
+            if identity.email != email_normalized:
+                identity.email = email_normalized
+            db.add(identity)
+    else:
+        statement = select(User).where(User.email == email_normalized)
+        user = db.execute(statement).scalar_one_or_none()
+        if user is None:
+            user = User(
+                email=email_normalized,
+                password_hash=get_password_hash(_generate_random_password()),
+                display_name=claims.get("name"),
+            )
+            db.add(user)
+            db.flush()
+        identity = ExternalIdentity(
+            user_id=user.id,
+            provider="google",
+            subject=subject,
+            email=email_normalized,
+        )
+        db.add(identity)
+
+    if identity is None:
+        # Retry once more now that the stale identity has been removed
+        statement = select(User).where(User.email == email_normalized)
+        user = db.execute(statement).scalar_one_or_none()
+        if user is None:
+            user = User(
+                email=email_normalized,
+                password_hash=get_password_hash(_generate_random_password()),
+                display_name=claims.get("name"),
+            )
+            db.add(user)
+            db.flush()
+        identity = ExternalIdentity(
+            user_id=user.id,
+            provider="google",
+            subject=subject,
+            email=email_normalized,
+        )
+        db.add(identity)
+
+    user = db.get(User, identity.user_id)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Verknüpfter Benutzer wurde nicht gefunden.",
+        )
+
+    display_name = claims.get("name")
+    if display_name and not user.display_name:
+        user.display_name = display_name
+        db.add(user)
+
+    db.commit()
+    db.refresh(user)
+
+    token = create_access_token({"sub": str(user.id), "role": "user"})
+    return AuthResponse(access_token=token, user=UserOut.model_validate(user))
+
+
+@app.post("/api/admin/auth/login", response_model=AdminAuthResponse)
+def admin_login(payload: AdminLoginRequest, db: Annotated[Session, Depends(get_db)]) -> AdminAuthResponse:
+    email = normalize_email(payload.email)
+    statement = select(AdminUser).where(AdminUser.email == email)
+    admin = db.execute(statement).scalar_one_or_none()
+
+    if admin is None or not verify_password(payload.password, admin.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Ungültige Admin-Zugangsdaten.",
+        )
+
+    if not admin.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Das Admin-Konto ist deaktiviert.",
+        )
+
+    admin.last_login_at = _now_utc()
+    db.add(admin)
+    db.commit()
+    db.refresh(admin)
+
+    token = create_access_token({"sub": f"admin:{admin.id}", "role": "admin"})
+    return AdminAuthResponse(access_token=token, admin=AdminUserOut.model_validate(admin))
+
+
+@app.get("/api/admin/payments", response_model=list[PaymentResponse])
+def admin_list_payments(
+    admin: Annotated[AdminUser, Depends(get_current_admin)],
+    db: Annotated[Session, Depends(get_db)],
+    status_filter: PaymentStatusLiteral | None = None,
+    user_id: int | None = None,
+    plan: str | None = None,
+    payment_method: str | None = None,
+) -> list[PaymentResponse]:
+    _ = admin  # touch dependency to satisfy linters
+    statement = select(Payment).order_by(Payment.created_at.desc(), Payment.id.desc())
+    if status_filter is not None:
+        statement = statement.where(Payment.status == status_filter)
+    if user_id is not None:
+        statement = statement.where(Payment.user_id == user_id)
+    if plan is not None:
+        statement = statement.where(Payment.plan == plan)
+    if payment_method is not None:
+        statement = statement.where(Payment.payment_method == payment_method)
+
+    payments = db.execute(statement).scalars().all()
+    return [_payment_to_response(payment) for payment in payments]
+
+
+@app.get("/api/admin/payments/{payment_uuid}", response_model=PaymentResponse)
+def admin_get_payment(
+    payment_uuid: str,
+    admin: Annotated[AdminUser, Depends(get_current_admin)],
+    db: Annotated[Session, Depends(get_db)],
+) -> PaymentResponse:
+    _ = admin
+    payment = _payment_by_uuid(db, payment_uuid)
+    return _payment_to_response(payment)
+
+
+@app.patch("/api/admin/payments/{payment_uuid}", response_model=PaymentResponse)
+def admin_update_payment(
+    payment_uuid: str,
+    payload: PaymentUpdateRequest,
+    admin: Annotated[AdminUser, Depends(get_current_admin)],
+    db: Annotated[Session, Depends(get_db)],
+) -> PaymentResponse:
+    _ = admin
+    payment = _payment_by_uuid(db, payment_uuid)
+    update_data = payload.model_dump(exclude_unset=True)
+
+    if "status" in update_data:
+        payment.status = update_data["status"]
+    if "notes" in update_data:
+        payment.notes = update_data["notes"]
+    if "external_reference" in update_data:
+        payment.external_reference = update_data["external_reference"]
+    if "metadata" in update_data:
+        payment.metadata = _serialize_metadata(update_data["metadata"])
+    if "amount" in update_data and update_data["amount"] is not None:
+        payment.amount = update_data["amount"]
+    if "currency_code" in update_data and update_data["currency_code"]:
+        payment.currency_code = _normalize_currency(update_data["currency_code"])
+
+    payment.updated_at = _now_utc()
+
+    db.add(payment)
+    db.commit()
+    db.refresh(payment)
+    return _payment_to_response(payment)
 
 
 @app.get("/api/auth/me", response_model=UserOut)
@@ -1303,7 +1866,8 @@ def get_membership_status(
         or current_user.sync_retention_until != before_retention
     ):
         db.commit()
-    return _membership_status_from_user(current_user)
+    last_payment_uuid = _latest_payment_uuid(db, current_user.id)
+    return _membership_status_from_user(current_user, last_payment_uuid=last_payment_uuid)
 
 
 @app.post("/api/membership/subscribe", response_model=MembershipStatusResponse)
@@ -1312,6 +1876,15 @@ def subscribe_membership(
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[Session, Depends(get_db)],
 ) -> MembershipStatusResponse:
+    amount = request.amount if request.amount is not None else PLAN_PRICING[request.plan]
+    currency_code = _normalize_currency(request.currency_code)
+    payment_status: PaymentStatusLiteral = request.status or (
+        "completed" if request.payment_method in {"paypal", "google"} else "pending"
+    )
+    metadata = dict(request.metadata or {})
+    if request.payment_method == "paypal" and PAYPAL_BUSINESS_ACCOUNT:
+        metadata.setdefault("paypal_business_account", PAYPAL_BUSINESS_ACCOUNT)
+
     delta = _membership_delta(request.plan)
     now = _now_utc()
     current_user.membership_level = request.plan
@@ -1322,10 +1895,23 @@ def subscribe_membership(
     current_user.sync_enabled = True
     current_user.last_payment_method = request.payment_method
     current_user.sync_retention_until = None
+    payment = Payment(
+        user_id=current_user.id,
+        plan=request.plan,
+        payment_method=request.payment_method,
+        status=payment_status,
+        amount=amount,
+        currency_code=currency_code,
+        external_reference=request.external_reference,
+        notes=request.notes,
+        metadata=_serialize_metadata(metadata),
+    )
+    db.add(payment)
     db.add(current_user)
     db.commit()
     db.refresh(current_user)
-    return _membership_status_from_user(current_user)
+    db.refresh(payment)
+    return _membership_status_from_user(current_user, last_payment_uuid=payment.payment_uuid)
 
 
 @app.post("/api/membership/cancel", response_model=MembershipStatusResponse)
@@ -1341,7 +1927,8 @@ def cancel_membership(
     db.add(current_user)
     db.commit()
     db.refresh(current_user)
-    return _membership_status_from_user(current_user)
+    last_payment_uuid = _latest_payment_uuid(db, current_user.id)
+    return _membership_status_from_user(current_user, last_payment_uuid=last_payment_uuid)
 
 
 @app.post("/api/membership/delete_synced_data", response_model=MembershipStatusResponse)
@@ -1356,7 +1943,8 @@ def delete_synced_data(
     db.add(current_user)
     db.commit()
     db.refresh(current_user)
-    return _membership_status_from_user(current_user)
+    last_payment_uuid = _latest_payment_uuid(db, current_user.id)
+    return _membership_status_from_user(current_user, last_payment_uuid=last_payment_uuid)
 
 
 # Notes ---------------------------------------------------------------------#
