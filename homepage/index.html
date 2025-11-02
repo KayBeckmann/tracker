@@ -149,6 +149,35 @@
           </div>
         </div>
       </section>
+      <section id="gallery" class="section">
+        <div class="section__inner">
+          <h2 data-i18n="homepage.gallery.heading">Peek inside the workspace</h2>
+          <p data-i18n="homepage.gallery.body">
+            Each module runs locally, renders instantly, and syncs only when you decide to connect. These mock-ups show the layout of the
+            current Android and desktop builds.
+          </p>
+          <div class="screenshot-gallery">
+            <figure class="screenshot-frame">
+              <div class="screenshot-frame__placeholder" data-i18n="homepage.gallery.dashboardPlaceholder">Dashboard preview</div>
+              <figcaption data-i18n="homepage.gallery.dashboard">
+                Dashboard with live habit streaks, current tasks, and ledger balance in one glance.
+              </figcaption>
+            </figure>
+            <figure class="screenshot-frame">
+              <div class="screenshot-frame__placeholder" data-i18n="homepage.gallery.tasksPlaceholder">Tasks preview</div>
+              <figcaption data-i18n="homepage.gallery.tasks">
+                Calendar-backed task board with inline timers and notification scheduling.
+              </figcaption>
+            </figure>
+            <figure class="screenshot-frame">
+              <div class="screenshot-frame__placeholder" data-i18n="homepage.gallery.ledgerPlaceholder">Ledger preview</div>
+              <figcaption data-i18n="homepage.gallery.ledger">
+                Ledger analytics summarising budgets, recurring payments, and account transfers.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
       <section id="sync" class="section">
         <div class="section__inner">
           <h2 data-i18n="homepage.sync.heading">Local first or encrypted cloud</h2>
@@ -170,6 +199,41 @@
                 <li>End-to-end encryption with per-device keys</li>
                 <li>Access your workspace on mobile, desktop, and web</li>
                 <li>Membership planned at €2/month or €20/year</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section id="architecture" class="section section--alt">
+        <div class="section__inner">
+          <h2 data-i18n="homepage.architecture.heading">Architecture &amp; security insights</h2>
+          <p data-i18n="homepage.architecture.body">
+            Tracker follows a local-first architecture: Drift keeps an encrypted SQLite database on every device, while the server only
+            stores ciphertext. Sync endpoints speak REST/JSON over TLS&nbsp;1.3, and authentication relies on short-lived JWTs.
+          </p>
+          <div class="grid grid--cols2 architecture-grid">
+            <article class="card">
+              <h3 data-i18n="homepage.architecture.storage.title">On-device vault</h3>
+              <ul data-i18n-html="homepage.architecture.storage.list">
+                <li>Drift + SQLite for structured data, Hive for settings.</li>
+                <li>Automatic backups and history snapshots (beta).</li>
+                <li>Granular module exports for compliance workflows.</li>
+              </ul>
+            </article>
+            <article class="card">
+              <h3 data-i18n="homepage.architecture.security.title">Encryption pipeline</h3>
+              <ul data-i18n-html="homepage.architecture.security.list">
+                <li>PBKDF2-HMAC-SHA256 derives 256-bit keys per account.</li>
+                <li>AES-256-GCM envelopes every sync payload.</li>
+                <li>Per-device salts and rekey rotation after membership changes.</li>
+              </ul>
+            </article>
+            <article class="card">
+              <h3 data-i18n="homepage.architecture.protocols.title">Protocols &amp; APIs</h3>
+              <ul data-i18n-html="homepage.architecture.protocols.list">
+                <li>FastAPI backend with typed responses and optimistic locking.</li>
+                <li>Background sync via incremental changelog endpoints.</li>
+                <li>OAuth (Google) plus password auth with Argon2id hashing roadmap.</li>
               </ul>
             </article>
           </div>
@@ -279,7 +343,9 @@
           <ul>
             <li><a href="#vision" data-i18n="common.nav.vision">Vision</a></li>
             <li><a href="#module" data-i18n="common.nav.modules">Modules</a></li>
+            <li><a href="#gallery" data-i18n="common.nav.gallery">Gallery</a></li>
             <li><a href="#sync" data-i18n="common.nav.sync">Sync Modes</a></li>
+            <li><a href="#architecture" data-i18n="common.nav.architecture">Architecture</a></li>
             <li><a href="#roadmap" data-i18n="common.nav.roadmap">Roadmap</a></li>
             <li><a href="wiki/index.html" data-i18n="common.nav.wiki">Wiki</a></li>
             <li><a href="impressum.html" data-i18n="common.nav.imprint">Imprint</a></li>

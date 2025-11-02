@@ -232,6 +232,44 @@ a:hover {
   border: 1px dashed rgba(255, 255, 255, 0.15);
 }
 
+.screenshot-gallery {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.screenshot-frame {
+  background: linear-gradient(160deg, rgba(37, 99, 235, 0.2), rgba(15, 23, 42, 0.6));
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 220px;
+  justify-content: space-between;
+}
+
+.screenshot-frame__placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: calc(var(--radius) - 8px);
+  padding: 16px;
+}
+
+.screenshot-frame figcaption {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
 .roadmap-grid {
   display: grid;
   gap: 24px;
@@ -380,6 +418,10 @@ a:hover {
 .wiki-card h2 {
   margin: 0 0 8px;
   font-size: 1.4rem;
+}
+
+.architecture-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .legal-page {

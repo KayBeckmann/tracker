@@ -5,7 +5,9 @@ window.TRACKER_TRANSLATIONS = {
       nav: {
         vision: "Vision",
         modules: "Modules",
+        gallery: "Gallery",
         sync: "Sync Modes",
+        architecture: "Architecture",
         availability: "Downloads",
         roadmap: "Roadmap",
         wiki: "Wiki",
@@ -20,26 +22,26 @@ window.TRACKER_TRANSLATIONS = {
       hero: {
         title: "Tracker",
         subtitle:
-          "The modular productivity suite for personal planning, knowledge capture, and secure synchronisation across every device.",
-        ctaPrimary: "Explore the modules",
+          "The local-first productivity suite for planning, knowledge capture, journaling, and encrypted synchronisation across mobile, desktop, and web.",
+        ctaPrimary: "Explore what’s new",
         ctaSecondary: "Open the wiki"
       },
       vision: {
         heading: "Why Tracker?",
         body:
-          "Tracker combines tasks, notes, journaling, habits, budgets, and time tracking in an offline-first workspace. A paid membership unlocks end-to-end encrypted sync between your devices.",
+          "Tracker fuses tasks, notes, journaling, habits, finances, and time tracking into a local-first cockpit. Work entirely offline with Drift-powered storage, then opt into encrypted sync, Google Sign-In, and shared devices when you subscribe.",
         cards: {
           offline: {
-            title: "Offline first",
-            body: "Work entirely locally without creating an account—ideal for privacy and travelling."
+            title: "Local first",
+            body: "Every module runs on-device with no mandatory account, perfect for privacy-conscious workflows and travelling."
           },
           encrypted: {
             title: "Encrypted cloud",
-            body: "Membership unlocks zero-knowledge sync across devices with conflict management on the roadmap."
+            body: "Memberships enable zero-knowledge sync, background conflict detection, and server-side retention policies."
           },
           modular: {
             title: "Modular & adaptable",
-            body: "Enable only the modules you need, adjust colours, and personalise their order."
+            body: "Enable only the modules you need, automate hand-offs between them, and fine-tune colours plus layout."
           }
         }
       },
@@ -49,50 +51,61 @@ window.TRACKER_TRANSLATIONS = {
           title: "Dashboard",
           body: "Personal cockpit with highlights from every module.",
           list:
-            "<li>At-a-glance status cards across modules (available)</li><li>Quick access to recent notes, tasks, and entries (available)</li><li>Configurable widgets and layout (roadmap)</li>"
+            "<li>Live status cards for habits, ledger balances, and timers (available)</li><li>Quick actions to start tracking, capture notes, or jump to focus views (available)</li><li>Custom widget grid with pinned filters (beta)</li>"
         },
         tasks: {
           title: "Tasks & Appointments",
           body: "Plan tasks, deadlines, reminders, and calendar events together.",
           list:
-            "<li>Task lists plus calendar overview with highlighted days (available)</li><li>Sort by due date, priority, and category (available)</li><li>Time tracking directly from tasks (in development)</li>"
+            "<li>Calendar-integrated board with colour-coded priorities (available)</li><li>Rich detail panel with tags, reminders, and linked notes (available)</li><li>Start/stop focus timers directly on a task (available)</li>"
         },
         notes: {
           title: "Notes",
           body: "Flexible Markdown knowledge base with drawing support.",
           list:
-            "<li>Live preview editor with tagging and full-text search (available)</li><li>Freehand sketches and shapes for visual notes (available)</li><li>Templates, multi-tag filters, and backlinks (roadmap)</li>"
+            "<li>Markdown editor with tag search, backlinks, and inline attachments (available)</li><li>Freehand sketches and canvas mode for visual thinking (available)</li><li>Reusable templates and multi-tag filters (beta)</li>"
         },
         journal: {
           title: "Journal & Mood Tracker",
           body: "Daily reflection with planned mood tracking and highlights.",
           list:
-            "<li>Day and week timelines with mood indicators (in design)</li><li>Link entries to notes and tasks (roadmap)</li><li>Encrypted sync once memberships launch (planned)</li>"
+            "<li>Secure daily log with optional app-lock and biometric unlock (available)</li><li>Mood timeline with custom trackers and prompts (beta)</li><li>Link entries to notes and tasks for full context (in development)</li>"
         },
         habits: {
           title: "Habits",
           body: "Build routines with streaks, counters, and insights.",
           list:
-            "<li>Track daily or weekly goals with flexible units (available)</li><li>Historical comparison views and streak analytics (available)</li><li>Shared templates and suggestions (roadmap)</li>"
+            "<li>Track boolean, numeric, or duration goals with streak protection (available)</li><li>Trend charts and interval comparisons for each habit (available)</li><li>Template gallery and shared routines (roadmap)</li>"
         },
         ledger: {
           title: "Household Ledger",
           body: "Stay on top of expenses, budgets, and reports.",
           list:
-            "<li>Income and expense tracking with categories (available)</li><li>Budget versus actual overviews and filters (available)</li><li>Charts and backend sync integration (in progress)</li>"
+            "<li>Multi-account ledger with recurring transactions (available)</li><li>Budgets, category filters, and reconciliation tools (available)</li><li>Analytics with rolling forecasts and sync exports (beta)</li>"
         },
         timeTracking: {
           title: "Time Tracking",
           body: "Measure focus sessions and tie them to tasks.",
           list:
-            "<li>Manual entry and timers for sessions (available)</li><li>Day and tag based summaries (available)</li><li>Deeper task integration and exports (roadmap)</li>"
+            "<li>One-tap timers with automatic rounding and tagging (available)</li><li>Daily/weekly summaries plus billable vs. non-billable views (available)</li><li>CSV exports and task automation hooks (roadmap)</li>"
         },
         settings: {
           title: "Settings",
           body: "Control language, theming, modules, and sync.",
           list:
-            "<li>Backend login for email, Google, and Apple ID (available)</li><li>Language and theme preferences (in development)</li><li>Module visibility and sync controls (roadmap)</li>"
+            "<li>Login via email/password or Google Sign-In with membership status (available)</li><li>Dynamic language, theme, and accent colour switching (available)</li><li>Module ordering, backups, and sync troubleshooting tools (beta)</li>"
         }
+      },
+      gallery: {
+        heading: "Peek inside the workspace",
+        body:
+          "Each module runs locally, renders instantly, and syncs only when you decide to connect. These mock-ups show the layout of the current Android and desktop builds.",
+        dashboardPlaceholder: "Dashboard preview",
+        dashboard: "Dashboard with live habit streaks, current tasks, and ledger balance in one glance.",
+        tasksPlaceholder: "Tasks preview",
+        tasks: "Calendar-backed task board with inline timers and notification scheduling.",
+        ledgerPlaceholder: "Ledger preview",
+        ledger: "Ledger analytics summarising budgets, recurring payments, and account transfers."
       },
       sync: {
         heading: "Local first or encrypted cloud",
@@ -101,59 +114,79 @@ window.TRACKER_TRANSLATIONS = {
         local: {
           title: "Local only",
           list:
-            "<li>All data stays on your device by default</li><li>No account required for the full feature set</li><li>Ideal for sensitive or offline workflows</li>"
+            "<li>All data lives in an on-device Drift/Hive database</li><li>No account required—the full feature set is available offline</li><li>Export encrypted backups or keep everything air-gapped</li>"
         },
         cloud: {
           title: "Encrypted sync",
           list:
-            "<li>End-to-end encryption with per-device keys</li><li>Access your workspace on mobile, desktop, and web</li><li>Membership planned at €2/month or €20/year</li>"
+            "<li>End-to-end encryption (PBKDF2 + AES-256-GCM) with per-device keys</li><li>Access your workspace on Android, iOS (beta), desktop, and web</li><li>Membership €1/month or €10/year with PayPal & Google Pay in testing</li>"
+        }
+      },
+      architecture: {
+        heading: "Architecture & security insights",
+        body:
+          "Tracker follows a local-first architecture: Drift keeps an encrypted SQLite database on every device, while the server only stores ciphertext. Sync endpoints speak REST/JSON over TLS 1.3, and authentication relies on short-lived JWTs.",
+        storage: {
+          title: "On-device vault",
+          list:
+            "<li>Drift + SQLite for structured data, Hive for secrets and preferences</li><li>Automatic nightly snapshots with rolling retention (beta)</li><li>Module-level export/import for compliance and recovery</li>"
+        },
+        security: {
+          title: "Encryption pipeline",
+          list:
+            "<li>PBKDF2-HMAC-SHA256 with 150k iterations derives 256-bit keys</li><li>AES-256-GCM envelopes notes, tasks, habits, ledger, and journal payloads</li><li>Per-device salts, lockout guards, and key rotation after membership changes</li>"
+        },
+        protocols: {
+          title: "Protocols & APIs",
+          list:
+            "<li>FastAPI backend with optimistic locking and revision counters</li><li>Incremental sync APIs with server-side conflict detection</li><li>Google OAuth, access tokens, and upcoming Argon2id password hashing</li>"
         }
       },
       availability: {
         heading: "Availability & downloads",
         web: {
           title: "Web app",
-          body: "Launch the progressive web app directly in your browser.",
+          body: "Installable progressive web app with offline cache and biometric unlock on supported devices.",
           link: "Open now"
         },
         playStore: {
           title: "Google Play Store",
-          body: "Play Store listing is in preparation—follow the roadmap for the launch date.",
-          link: "Preview listing"
+          body: "Sideload APK builds ship with every release; Play Store listing is currently in review.",
+          link: "Listing preview"
         },
         windows: {
           title: "Windows download",
           body: "Placeholder build while automated packaging is finalised.",
-          link: "Prepare download"
+          link: "Installer coming soon"
         },
         linux: {
           title: "Linux download",
           body: "Placeholder build while automated packaging is finalised.",
-          link: "Prepare download"
+          link: "AppImage coming soon"
         }
       },
       roadmap: {
         heading: "Roadmap & current status",
-        body: "We iterate in focused phases to deliver the full Tracker experience.",
+        body: "We iterate in focused phases: stabilise the local-first core, then layer on encrypted sync, automation, and integrations.",
         phase1: {
-          title: "Phase 1 — Foundation (completed)",
+          title: "Phase 1 — Local-first foundation (completed)",
           list:
-            "<li>Flutter app and backend scaffolding — completed</li><li>Local database integration & authentication — completed</li><li>Initial multilingual support (DE/EN/SV) — completed</li>"
+            "<li>Drift/Hive storage, migrations, and backup subsystem</li><li>Modular UI with dashboard, tasks, notes, habits, ledger, journal, and time tracking</li><li>Localization (EN/DE/SV) with runtime language switching</li>"
         },
         phase2: {
-          title: "Phase 2 — Module polish (in progress)",
+          title: "Phase 2 — Module polish & automation (in progress)",
           list:
-            "<li>Deepen tasks, calendar, and notification flows</li><li>Rich note features including templates and backlinks</li><li>Journal flows with mood tracking</li><li>Habits, ledger insights, and dashboard widgets</li>"
+            "<li>Task timers, notification scheduler, and calendar blockers</li><li>Notes backlinks, templates, attachments, and drawing sync</li><li>Habit analytics, ledger forecasting, and dashboard widgets</li><li>Journal mood trackers and encrypted attachments</li>"
         },
         phase3: {
-          title: "Phase 3 — Synchronisation (upcoming)",
+          title: "Phase 3 — Encrypted sync & memberships (beta)",
           list:
-            "<li>End-to-end encryption and revision history</li><li>Conflict resolution workflows</li><li>Membership payments via PayPal and Bitcoin</li>"
+            "<li>PBKDF2/AES-256-GCM sync with per-collection versioning</li><li>Conflict assistant with revision history</li><li>Membership billing via PayPal/Google Pay and retention tooling</li>"
         },
         phase4: {
-          title: "Phase 4 — Launch & platforms (upcoming)",
+          title: "Phase 4 — Integrations & launch (upcoming)",
           list:
-            "<li>Cross-platform refinements (Android, iOS, Web, Desktop)</li><li>CI/CD automation and expanded testing</li><li>Product site, documentation, and onboarding</li>"
+            "<li>Cross-platform refinements (Android, iOS, Web, Linux, Windows)</li><li>CI/CD, automated QA, and compliance exports</li><li>Public launch with onboarding, help centre, and API documentation</li>"
         }
       },
       footer: {
@@ -161,7 +194,7 @@ window.TRACKER_TRANSLATIONS = {
         body: "Productivity reimagined—local-first, secure, adaptable.",
         linksTitle: "Links",
         contactTitle: "Contact",
-        contactEmail: "kontakt@tracker-app.dev",
+        contactEmail: "contact@kay-beckmann.com",
         legal: "© 2025 Tracker. All rights reserved."
       }
     },
@@ -221,22 +254,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Usage",
             list:
-              "<li>Landing screen after signing in or launching the local app.</li><li>Shows welcome message, system alerts, and cross-module metrics.</li><li>Quick actions trigger backend calls and surface stored responses.</li><li>Clearing the response list removes locally cached handshake data.</li>"
+              "<li>Landing screen after launch showing membership state, pending syncs, and local-first guidance.</li><li>Displays live metrics such as habit streaks, ledger balance, and currently running timers.</li><li>Quick actions start timers, capture notes, or jump to focus views without leaving the dashboard.</li><li>Widgets adapt to enabled modules and highlight sync status or conflicts.</li>"
           },
           data: {
             heading: "Data model",
             list:
-              "<li>Uses Drift table <code>greeting_entries</code> to persist server responses.</li><li>Reads Hive boxes for language, theme, and module preferences.</li><li>No dedicated sync entities yet; aggregated KPIs are on the roadmap.</li>"
+              "<li>Uses Drift table <code>greeting_entries</code> to persist environment messages and onboarding tips.</li><li>Reads Hive boxes for membership status, theme, language, and enabled modules.</li><li>Widget configuration (beta) lives in <code>dashboard_layouts</code> alongside pinned filters.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Greeting entries remain strictly local for debugging purposes.</li><li>Membership tier will surface cross-module metrics from synced data.</li><li>Widget layout preferences will sync once Phase 3 launches.</li>"
+              "<li>Dashboard metrics are computed locally; memberships surface encrypted aggregates fetched from the backend.</li><li>Sync badges read from the local queue and remote revision counters (no plaintext leaves the device).</li><li>Widget layouts will sync once the encrypted preference store ships with Phase 3.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Inject live metrics from tasks, habits, ledger, and journal.</li><li>Offer configurable widgets, sizing, and drag-and-drop layout.</li><li>Support multiple dashboards for personal and work contexts.</li>"
+              "<li>Expose custom dashboards and saved filter sets for different contexts.</li><li>Sync widget layouts and preferences across devices with conflict resolution.</li><li>Trigger automations (e.g., remind when a habit streak is at risk) directly from the dashboard.</li>"
           }
         }
       },
@@ -249,22 +282,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Usage",
             list:
-              "<li>Plan tasks, appointments, and reminders in a unified workspace.</li><li>Calendar view highlights busy days and upcoming deadlines.</li><li>Lists support sorting by due date, priority, and category.</li><li>Categories are created automatically when referenced in new entries.</li><li>Start time tracking sessions straight from a task (in development).</li>"
+              "<li>Plan and prioritise tasks with board, calendar, and smart list filters.</li><li>Attach tags, reminders, linked notes, and ledger references to keep context together.</li><li>Start and stop focus timers directly from any task card.</li><li>Use recurring reminders and mobile notifications to stay on schedule.</li><li>Add tasks instantly via the command palette (Cmd/Ctrl + K).</li>"
           },
           data: {
-            heading: "Data model (planned)",
+            heading: "Data model",
             list:
-              "<li>Core tables: <code>tasks</code>, <code>appointments</code>, <code>categories</code>, <code>reminders</code>.</li><li>Relations: <code>tasks</code> ↔ <code>time_entries</code> (1:n), tasks ↔ notes (n:m planned).</li><li>Categories stored as reference entities with colour and icon metadata.</li>"
+              "<li>Drift table <code>task_entries</code> stores title, status, priority, due date, tags, and remote sync metadata.</li><li>Optional foreign keys link tasks to <code>note_entries</code> and <code>time_entries</code>.</li><li>Reminder schedules are persisted in <code>task_reminders</code> (queue cached in Hive for background delivery).</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Fully usable offline with Drift/Hive persistence.</li><li>Membership sync will encrypt tasks, appointments, reminders, and categories.</li><li>Conflict handling: last write wins with revision history on the roadmap.</li>"
+              "<li>Local-first: tasks remain usable offline, with sync metadata tracking pending changes.</li><li>Membership sync encrypts each task payload with PBKDF2-derived AES-256-GCM keys.</li><li>Conflicts reconcile via optimistic locking; revision history allows manual review (beta).</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Complete appointment detail editing (title, due date, priority, category).</li><li>Add dedicated category management and colour selection.</li><li>Integrate deeper time tracking flows with running timers.</li><li>Improve notifications, recurring patterns, and smart suggestions.</li>"
+              "<li>Recurring task templates with rule-based scheduling.</li><li>Dependencies and checklists within a task card.</li><li>Natural-language quick capture (\"Tomorrow 9am call Alice\").</li><li>Webhook and automation hooks for external integrations.</li>"
           }
         }
       },
@@ -277,22 +310,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Usage",
             list:
-              "<li>Capture focus sessions manually or with the built-in timer.</li><li>Attach sessions to tasks for end-to-end reporting.</li><li>Tag entries, add notes, and review the day timeline.</li><li>Pause and resume timers without losing recorded duration.</li>"
+              "<li>Capture focus sessions via one-tap timer or manual entry with rounding rules.</li><li>Link sessions to tasks for billable tracking and progress charts.</li><li>Add notes, classify entries by kind (work, break, learning), and review timeline summaries.</li><li>Lock completed entries to prevent accidental edits after invoicing.</li>"
           },
           data: {
             heading: "Data model",
             list:
-              "<li>Core table <code>time_entries</code> stores duration, start, stop, and optional task reference.</li><li>Bridge table <code>time_entry_tags</code> links entries with multiple tags.</li><li>Aggregations for day and week summaries are computed on the fly.</li>"
+              "<li>Drift table <code>time_entries</code> captures start/end timestamps, duration, note, kind, and optional <code>task_id</code>.</li><li>Rounding preferences and timer state live in Hive for instant resume across restarts.</li><li>Summaries are computed through SQL views that aggregate per day, week, and tag.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Offline first with all data persisted locally.</li><li>Membership sync will replicate time entries and tags across devices.</li><li>Conflict handling merges overlapping sessions by keeping precise timestamps.</li>"
+              "<li>Offline-first with all time entries cached locally and flagged for sync when membership is active.</li><li>Encrypted sync serialises each entry with AES-256-GCM and optimistic version counters.</li><li>Conflict handling keeps both versions and highlights overlap for manual resolution.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Start and stop timers directly from task cards.</li><li>Enable multi-select edits and bulk tag operations.</li><li>Export reports (CSV/JSON) for invoicing and analysis.</li><li>Visualise trends with charts and session heatmaps.</li>"
+              "<li>Advanced analytics: charts, heatmaps, and utilisation dashboards.</li><li>Bulk editing tools for multi-select adjustments.</li><li>CSV/JSON exports with template presets for invoicing.</li><li>Automation hooks (auto-start timer when entering focus mode).</li>"
           }
         }
       },
@@ -305,22 +338,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Usage",
             list:
-              "<li>Write Markdown notes with live preview and split view.</li><li>The first line becomes the title; creation and update times are tracked automatically.</li><li>Tag notes, filter by tag, and search across full text and metadata.</li><li>Switch to freehand mode for sketches, diagrams, and quick wireframes.</li>"
+              "<li>Write Markdown notes with side-by-side live preview and syntax helpers.</li><li>The first line becomes the title; created and updated timestamps track automatically.</li><li>Tag and search notes, filter by tag or text, and archive when no longer needed.</li><li>Switch to canvas mode for sketches, diagrams, and handwritten annotations.</li>"
           },
           data: {
             heading: "Data model",
             list:
-              "<li>Tables: <code>notes</code>, <code>note_tags</code>, and join table <code>note_tag_links</code>.</li><li>Metadata columns store created/updated timestamps and last editor.</li><li>Drawings are kept as embedded vectors with optional PNG fallback.</li>"
+              "<li>Drift table <code>note_entries</code> stores title, content, tags, kind (markdown/drawing), and remote sync metadata.</li><li>Drawings are persisted as JSON vector payloads with optional rendered previews.</li><li>Archive and deletion flags support soft delete before permanent removal.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Notes live locally by default for privacy and offline access.</li><li>Membership sync will encrypt note bodies, drawings, and attachments.</li><li>Conflict resolution keeps both versions with a merge assistant planned.</li>"
+              "<li>Notes remain local by default; membership sync envelopes the content using AES-256-GCM.</li><li>Each note carries a version counter to detect conflicts across devices.</li><li>Merge assistant (beta) highlights divergent edits and keeps both copies.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Seed onboarding notes that explain core workflows.</li><li>Multi-tag filtering, saved searches, and notebook groupings.</li><li>Note templates plus cross-linking with tasks and journal entries.</li><li>Image insertion with local storage and optional sync support.</li>"
+              "<li>Seed onboarding notes explaining workflows and shortcuts.</li><li>Multi-tag filtering, saved searches, and notebook groupings.</li><li>Template gallery and cross-linking to tasks, journal, and habits.</li><li>Image attachments with optional encrypted sync support.</li>"
           }
         }
       },
@@ -333,22 +366,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Usage concept",
             list:
-              "<li>Capture daily reflections, highlights, and challenges.</li><li>Record mood scores with optional tags for triggers and wins.</li><li>Link entries to notes, tasks, and habit streaks for context.</li><li>Timeline views for day, week, and month help spot trends.</li>"
+              "<li>Write one entry per day and category using personal or work templates.</li><li>Track mood and custom metrics via journal trackers with timeline visualisations.</li><li>Switch between editor and history tabs to review highlights quickly.</li><li>Protect the journal with optional lock code or biometric unlock.</li>"
           },
           data: {
-            heading: "Data model (in design)",
+            heading: "Data model",
             list:
-              "<li>Tables: <code>journal_entries</code>, <code>journal_moods</code>, and join tables for linked entities.</li><li>Mood scores will use a 1–5 scale with optional emoji mapping.</li><li>Entries store free-form text, attachments, and weather context (planned).</li>"
+              "<li>Drift tables: <code>journal_entries</code> (markdown content, category, sync metadata) and <code>journal_entry_links</code> (relationships to notes/tasks).</li><li>Trackers live in <code>journal_trackers</code> with daily values in <code>journal_tracker_values</code>.</li><li>Template configuration and lock state are cached in Hive for offline availability.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Entries remain local until encrypted sync launches.</li><li>Membership sync will encrypt text, attachments, and mood metrics end to end.</li><li>Version history ensures reflections are never lost during merges.</li>"
+              "<li>Entries remain local by default; memberships encrypt text, trackers, and metadata with AES-256-GCM.</li><li>Key rotation ensures old devices cannot read new entries after membership changes.</li><li>Conflict handling preserves both revisions and highlights differences for manual choice.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Ship the first journal interface with daily prompts.</li><li>Add mood visualisations including streaks and trends.</li><li>Surface correlations between mood, habits, and time tracking.</li><li>Implement private export to PDF and Markdown.</li>"
+              "<li>Attach images, audio, and files to entries with encrypted storage.</li><li>AI-assisted prompts and summaries (opt-in).</li><li>Advanced analytics: streaks, triggers, and correlation with habits/time tracking.</li><li>Shared templates and team reflection modes.</li>"
           }
         }
       },
@@ -361,22 +394,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Usage",
             list:
-              "<li>Define routines with daily, weekly, or custom cadences.</li><li>Track completions with counters, timers, or boolean check-ins.</li><li>Visualise streaks and compare current versus target performance.</li><li>Annotate streak breaks with notes for future reflection.</li>"
+              "<li>Define routines with daily, weekly, or multi-interval cadences.</li><li>Select measurement type: boolean, counter, or duration per habit.</li><li>Visualise streaks, rolling averages, and best series.</li><li>Annotate streak breaks with notes for future reflection.</li>"
           },
           data: {
             heading: "Data model",
             list:
-              "<li>Tables: <code>habit_definitions</code>, <code>habit_entries</code>, and <code>habit_targets</code>.</li><li>Entries store date, value, optional duration, and note.</li><li>Aggregated streak metrics are derived and cached for dashboards.</li>"
+              "<li>Drift tables: <code>habit_definitions</code> (meta, cadence, measurement) and <code>habit_logs</code> (date, value, note, sync metadata).</li><li>Rolling aggregates for streaks and trends are computed via SQL views.</li><li>Remote IDs and version counters support encrypted sync.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Habit data is available offline with automatic Drift persistence.</li><li>Membership sync will merge entries by timestamp while preserving streaks.</li><li>Conflicts keep the higher completion value and log the merge.</li>"
+              "<li>Habits work offline; pending logs are queued until membership sync runs.</li><li>Encrypted sync serialises each log with AES-256-GCM and merges by timestamp.</li><li>Conflicts retain the higher completion value and record both revisions.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Shared habit templates and recommendations.</li><li>Calendar heatmaps for quick monthly overview.</li><li>Automation hooks to trigger habits from tasks or time tracking.</li><li>Export streak summaries for accountability partners.</li>"
+              "<li>Habit templates and sharing.</li><li>Calendar heatmaps and anomaly alerts.</li><li>Automation hooks that trigger habits from tasks or time tracking.</li><li>Export streak summaries for accountability partners.</li>"
           }
         }
       },
@@ -389,22 +422,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Usage",
             list:
-              "<li>Track incomes and expenses with categories and payment methods.</li><li>Set budgets per category and review progress throughout the month.</li><li>Filter by time range, tags, and accounts for targeted analysis.</li><li>Export data for tax preparation or personal finance reviews (planned).</li>"
+              "<li>Track income, expenses, transfers, and recurring payments per account.</li><li>Assign categories, tags, and payment methods for granular reporting.</li><li>Set budgets with live progress and overspend alerts.</li><li>Filter by time range, account, or tag and export to CSV (beta).</li>"
           },
           data: {
             heading: "Data model",
             list:
-              "<li>Tables: <code>ledger_entries</code>, <code>ledger_categories</code>, <code>ledger_budgets</code>, <code>ledger_accounts</code>.</li><li>Entries include amount, currency, type, category, account, and optional receipt metadata.</li><li>Monthly rollups cache totals for faster dashboard views.</li>"
+              "<li>Drift tables: <code>ledger_accounts</code>, <code>ledger_categories</code>, <code>ledger_transactions</code>, <code>ledger_budgets</code>, and <code>ledger_recurring_transactions</code>.</li><li>Transactions include amount, currency, kind (income/expense/transfer), category, source/destination account, and optional memo.</li><li>Monthly roll-ups and net-worth snapshots are cached for dashboard performance.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Local-first ledger keeps all financial data on device by default.</li><li>Encrypted sync will be opt-in for memberships with per-device keys.</li><li>Conflicts resolve by amount and timestamp while preserving history.</li>"
+              "<li>Local-first ledger keeps all financial data on device by default.</li><li>Membership sync encrypts each transaction with AES-256-GCM; recurring templates sync separately.</li><li>Conflicts preserve both revisions and mark transactions for manual review.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Interactive charts for category trends and cashflow.</li><li>Recurring transactions and rule-based categorisation.</li><li>Receipt capture via photos with OCR (research).</li><li>Shared budgets for household collaboration.</li>"
+              "<li>Interactive charts for category trends, cashflow, and net worth.</li><li>Rule-based categorisation with automatic reconciliations.</li><li>Receipt capture via photos with OCR (research).</li><li>Shared budgets and household collaboration.</li>"
           }
         }
       },
@@ -417,22 +450,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Usage",
             list:
-              "<li>Manage account login via email/password, Google, or Apple ID.</li><li>Configure module visibility and default dashboards (planned).</li><li>Select app language and theme once the UI switches ship.</li><li>Review storage usage and trigger local backups (roadmap).</li>"
+              "<li>Manage authentication via email/password or Google Sign-In and view membership status.</li><li>Enable or disable modules, reorder navigation, and change accent colour.</li><li>Switch language or theme instantly; preferences persist offline.</li><li>Trigger encrypted backups and review storage usage (beta).</li>"
           },
           data: {
             heading: "Data model",
             list:
-              "<li>Preferences stored in Hive boxes for fast, offline access.</li><li>Account credentials handled via secure auth APIs in the backend.</li><li>Upcoming <code>user_preferences</code> table will unify sync state.</li>"
+              "<li>Preferences stored in Hive boxes with optional encrypted export.</li><li>Server retains hashed credentials and Google OAuth linkage only.</li><li>Upcoming <code>user_preferences</code> collection will sync module settings and layouts.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Language and theme apply locally until multi-device sync launches.</li><li>Membership sync will propagate module visibility, dashboards, and shortcuts.</li><li>Security-sensitive settings (2FA, keys) stay server-side only.</li>"
+              "<li>Preferences remain local-first; membership sync encrypts selected settings with AES-256-GCM.</li><li>Module order and theme sync once the encrypted preference store is enabled.</li><li>Sensitive secrets (biometric keys, lock codes) never leave the device.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Launch full language/theme switcher UI in-app.</li><li>Expose subscription status, billing history, and upgrade flows.</li><li>Add import/export for preferences and module layouts.</li><li>Integrate advanced privacy options (biometric lock, quick wipe).</li>"
+              "<li>Import/export settings bundles across devices.</li><li>Expose subscription status, billing history, and upgrade flows.</li><li>Advanced diagnostics for sync conflicts and encryption status.</li><li>Automated backup rotation with retention policies.</li>"
           }
         }
       }
@@ -570,7 +603,9 @@ window.TRACKER_TRANSLATIONS = {
       nav: {
         vision: "Vision",
         modules: "Module",
+        gallery: "Galerie",
         sync: "Sync-Modi",
+        architecture: "Architektur",
         availability: "Downloads",
         roadmap: "Roadmap",
         wiki: "Wiki",
@@ -585,26 +620,26 @@ window.TRACKER_TRANSLATIONS = {
       hero: {
         title: "Tracker",
         subtitle:
-          "Die modulare Produktivitäts-Suite für persönliche Planung, Wissenssammlung und sichere Synchronisierung auf allen Geräten.",
-        ctaPrimary: "Module entdecken",
+          "Die local-first Produktivitäts-Suite für Planung, Wissensmanagement, Journal und verschlüsselte Synchronisation auf Mobilgeräten, Desktop und Web.",
+        ctaPrimary: "Neuigkeiten entdecken",
         ctaSecondary: "Wiki öffnen"
       },
       vision: {
         heading: "Warum Tracker?",
         body:
-          "Tracker vereint Aufgaben, Notizen, Journal, Gewohnheiten, Finanzen und Zeiterfassung in einem Offline-First-Arbeitsbereich. Mit einer Mitgliedschaft schaltest du eine Ende-zu-Ende-verschlüsselte Synchronisation zwischen deinen Geräten frei.",
+          "Tracker vereint Aufgaben, Notizen, Tagebuch, Gewohnheiten, Finanzen und Zeiterfassung in einem local-first Cockpit. Alles läuft offline mit Drift-Storage; mit einer Mitgliedschaft schaltest du verschlüsselten Sync, Google-Login und gemeinsame Geräte frei.",
         cards: {
           offline: {
-            title: "Offline zuerst",
-            body: "Arbeite vollständig lokal ohne Account - ideal für Privatsphäre und unterwegs."
+            title: "Local first",
+            body: "Alle Module laufen auf deinem Gerät ohne Pflicht-Account – perfekt für Privatsphäre und Reisen."
           },
           encrypted: {
             title: "Verschlüsselte Cloud",
-            body: "Mitgliedschaften aktivieren Zero-Knowledge-Sync zwischen deinen Geräten; Konfliktmanagement steht auf der Roadmap."
+            body: "Mitgliedschaften aktivieren Zero-Knowledge-Sync, Hintergrund-Konflikterkennung und Aufbewahrungsrichtlinien."
           },
           modular: {
             title: "Modular & anpassbar",
-            body: "Aktiviere nur die Module, die du brauchst, passe Farben an und bestimme die Reihenfolge."
+            body: "Aktiviere nur benötigte Module, automatisiere Übergaben und passe Farben sowie Layout an."
           }
         }
       },
@@ -614,50 +649,61 @@ window.TRACKER_TRANSLATIONS = {
           title: "Dashboard",
           body: "Persönliches Cockpit mit Highlights aller Module.",
           list:
-            "<li>Status-Karten aller Module auf einen Blick (verfügbar)</li><li>Schnellzugriff auf aktuelle Notizen, Aufgaben und Einträge (verfügbar)</li><li>Konfigurierbare Widgets und Layout (Roadmap)</li>"
+            "<li>Live-Status-Karten für Gewohnheiten, Kontostände und Timer (verfügbar)</li><li>Schnellaktionen zum Starten der Zeiterfassung, Notizen erfassen oder Fokusansichten öffnen (verfügbar)</li><li>Individuelles Widget-Raster mit angepinnten Filtern (Beta)</li>"
         },
         tasks: {
           title: "Aufgaben & Termine",
           body: "Plane Aufgaben, Deadlines, Erinnerungen und Kalenderereignisse gemeinsam.",
           list:
-            "<li>Aufgabenlisten plus Kalenderansicht mit hervorgehobenen Tagen (verfügbar)</li><li>Sortierung nach Fälligkeit, Priorität und Kategorie (verfügbar)</li><li>Zeiterfassung direkt aus Aufgaben starten (in Entwicklung)</li>"
+            "<li>Kalenderintegriertes Board mit farbcodierten Prioritäten (verfügbar)</li><li>Detailansicht mit Tags, Erinnerungen und verknüpften Notizen (verfügbar)</li><li>Start/Stopp-Fokustimer direkt an der Aufgabe (verfügbar)</li>"
         },
         notes: {
           title: "Notizen",
           body: "Flexibler Markdown-Wissensspeicher mit Zeichenunterstützung.",
           list:
-            "<li>Markdown-Editor mit Live-Vorschau, Tags und Volltextsuche (verfügbar)</li><li>Freihand-Zeichnungen und Formen für visuelle Notizen (verfügbar)</li><li>Vorlagen, Multi-Tag-Filter und Backlinks (Roadmap)</li>"
+            "<li>Markdown-Editor mit Tag-Suche, Backlinks und Inline-Anhängen (verfügbar)</li><li>Freihand-Zeichnungen und Canvas-Modus für visuelles Denken (verfügbar)</li><li>Wiederverwendbare Vorlagen und Multi-Tag-Filter (Beta)</li>"
         },
         journal: {
           title: "Journal & Mood Tracker",
-          body: "Tägliche Reflexion mit geplantem Mood-Tracking und Highlights.",
+          body: "Tägliche Reflexion mit optionalem App-Lock, Stimmungstrackern und Highlights.",
           list:
-            "<li>Tages- und Wochenansichten mit Stimmungsindikatoren (in Konzeption)</li><li>Verknüpfungen zu Notizen und Aufgaben (Roadmap)</li><li>Verschlüsselte Synchronisation zum Membership-Start (geplant)</li>"
+            "<li>Tages- und Wochenansichten mit Stimmungsverlauf und Prompts (Beta)</li><li>Optionaler App-Lock inkl. biometrischem Entsperren (verfügbar)</li><li>Verknüpfungen zu Notizen und Aufgaben für Kontext (in Entwicklung)</li>"
         },
         habits: {
           title: "Habits",
           body: "Baue Routinen mit Serien, Zählern und Insights auf.",
           list:
-            "<li>Tägliche oder wöchentliche Ziele mit flexiblen Einheiten verfolgen (verfügbar)</li><li>Historische Vergleiche und Serien-Analysen (verfügbar)</li><li>Geteilte Vorlagen und Empfehlungen (Roadmap)</li>"
+            "<li>Tägliche, wöchentliche oder mehrfache Ziele mit flexiblen Einheiten (verfügbar)</li><li>Trenddiagramme und Intervallvergleiche mit Streak-Schutz (verfügbar)</li><li>Vorlagen-Bibliothek und geteilte Routinen (Roadmap)</li>"
         },
         ledger: {
           title: "Haushaltsbuch",
           body: "Behalte Ausgaben, Budgets und Reports im Blick.",
           list:
-            "<li>Einnahmen und Ausgaben mit Kategorien erfassen (verfügbar)</li><li>Budget-vs.-Ist-Übersichten und Filter (verfügbar)</li><li>Diagramme und Backend-Sync-Integration (in Arbeit)</li>"
+            "<li>Mehrkonten-Haushaltsbuch mit wiederkehrenden Buchungen (verfügbar)</li><li>Budgets, Kategorienfilter und Abstimmungs-Tools (verfügbar)</li><li>Analysen mit rollierenden Forecasts und Sync-Exports (Beta)</li>"
         },
         timeTracking: {
           title: "Zeiterfassung",
           body: "Erfasse Fokus-Sessions und verknüpfe sie mit Aufgaben.",
           list:
-            "<li>Manuelle Eingabe und Timer für Sessions (verfügbar)</li><li>Tages- und Tag-basierte Auswertungen (verfügbar)</li><li>Intensivere Task-Integration und Exporte (Roadmap)</li>"
+            "<li>One-Tap-Timer mit automatischem Runden und Tagging (verfügbar)</li><li>Tages- und Wochenreports plus Auslastungsansichten (verfügbar)</li><li>CSV-Exporte und Automations-Hooks (Roadmap)</li>"
         },
         settings: {
           title: "Einstellungen",
           body: "Steuere Sprache, Theme, Module und Synchronisation.",
           list:
-            "<li>Backend-Login für E-Mail, Google und Apple ID (verfügbar)</li><li>Sprach- und Theme-Voreinstellungen (in Entwicklung)</li><li>Modulsichtbarkeit und Sync-Steuerung (Roadmap)</li>"
+            "<li>Login per E-Mail/Passwort oder Google Sign-In inkl. Mitgliedschaftsstatus (verfügbar)</li><li>Sprach-, Theme- und Akzentfarbwechsel in Echtzeit (verfügbar)</li><li>Modulreihenfolge, Backups und Sync-Diagnose (Beta)</li>"
         }
+      },
+      gallery: {
+        heading: "Ein Blick in die Arbeitsoberfläche",
+        body:
+          "Jedes Modul läuft lokal, reagiert sofort und synchronisiert nur auf Wunsch. Diese Mock-ups zeigen den aktuellen Stand der Android- und Desktop-Builds.",
+        dashboardPlaceholder: "Dashboard-Vorschau",
+        dashboard: "Dashboard mit Live-Streaks, aktuellen Aufgaben und Haushaltsbuch-Saldo auf einen Blick.",
+        tasksPlaceholder: "Aufgaben-Vorschau",
+        tasks: "Kalendergestütztes Aufgabenboard mit integrierten Timern und Benachrichtigungen.",
+        ledgerPlaceholder: "Haushaltsbuch-Vorschau",
+        ledger: "Haushaltsbuch-Analysen mit Budgets, wiederkehrenden Zahlungen und Transfers."
       },
       sync: {
         heading: "Lokal zuerst oder verschlüsselte Cloud",
@@ -666,59 +712,79 @@ window.TRACKER_TRANSLATIONS = {
         local: {
           title: "Nur lokal",
           list:
-            "<li>Alle Daten bleiben standardmäßig auf deinem Gerät</li><li>Kein Account nötig für den vollen Funktionsumfang</li><li>Ideal für sensible oder Offline-Workflows</li>"
+            "<li>Alle Daten leben in einer lokalen Drift-/Hive-Datenbank</li><li>Kein Account nötig – der komplette Funktionsumfang ist offline nutzbar</li><li>Exportiere verschlüsselte Backups oder arbeite komplett luftgetrennt</li>"
         },
         cloud: {
           title: "Verschlüsselte Synchronisation",
           list:
-            "<li>Ende-zu-Ende-Verschlüsselung mit Geräteschlüsseln</li><li>Zugriff auf Web, Desktop und Mobile</li><li>Mitgliedschaft geplant für 2 € pro Monat oder 20 € pro Jahr</li>"
+            "<li>Ende-zu-Ende-Verschlüsselung (PBKDF2 + AES-256-GCM) mit Geräteschlüsseln</li><li>Zugriff auf Android, iOS (Beta), Desktop und Web</li><li>Mitgliedschaft 1 € pro Monat oder 10 € pro Jahr; PayPal & Google Pay in Tests</li>"
+        }
+      },
+      architecture: {
+        heading: "Architektur & Sicherheit",
+        body:
+          "Tracker folgt einem Local-First-Ansatz: Drift verwaltet eine verschlüsselte SQLite-Datenbank pro Gerät, der Server speichert ausschließlich Ciphertexte. Die Sync-Endpunkte sprechen REST/JSON über TLS 1.3; die Authentifizierung nutzt kurzlebige JWTs.",
+        storage: {
+          title: "On-Device-Tresor",
+          list:
+            "<li>Drift + SQLite für strukturierte Daten, Hive für Geheimnisse und Einstellungen</li><li>Automatische Nacht-Snapshots mit rollierender Aufbewahrung (Beta)</li><li>Modulweise Export/Import für Compliance und Wiederherstellung</li>"
+        },
+        security: {
+          title: "Verschlüsselungskette",
+          list:
+            "<li>PBKDF2-HMAC-SHA256 mit 150k Iterationen erzeugt 256-Bit-Schlüssel</li><li>AES-256-GCM schützt Notizen, Aufgaben, Habits, Ledger und Journal beim Sync</li><li>Gerätespezifische Salze, Lockout-Guards und Key-Rotation nach Mitgliedschaftsänderungen</li>"
+        },
+        protocols: {
+          title: "Protokolle & APIs",
+          list:
+            "<li>FastAPI-Backend mit optimistischer Sperrung und Versionszählern</li><li>Inkrementelle Sync-APIs mit serverseitiger Konflikterkennung</li><li>Google OAuth, Zugriffstoken und geplantes Argon2id für Passwörter</li>"
         }
       },
       availability: {
         heading: "Verfügbarkeit & Downloads",
         web: {
           title: "Web-App",
-          body: "Starte die Progressive Web App direkt im Browser.",
+          body: "Installierbare Progressive Web App mit Offline-Cache und biometrischem Unlock (unterstützte Geräte).",
           link: "Jetzt öffnen"
         },
         playStore: {
           title: "Google Play Store",
-          body: "Play-Store-Eintrag in Vorbereitung - folge der Roadmap für den Starttermin.",
+          body: "Sideload-APK-Builds erscheinen zu jedem Release; Play-Store-Listing befindet sich im Review.",
           link: "Listing ansehen"
         },
         windows: {
           title: "Windows-Download",
-          body: "Platzhalter-Build, während Packaging automatisiert wird.",
-          link: "Download vorbereiten"
+          body: "Installer wird aktuell paketiert – öffentlicher Download folgt nach QA.",
+          link: "Installer folgt"
         },
         linux: {
           title: "Linux-Download",
-          body: "Platzhalter-Build, während Packaging automatisiert wird.",
-          link: "Download vorbereiten"
+          body: "AppImage/Flatpak-Pakete in Arbeit – Veröffentlichung nach automatisierten Tests.",
+          link: "AppImage folgt"
         }
       },
       roadmap: {
         heading: "Roadmap & aktueller Status",
-        body: "Wir entwickeln in fokussierten Phasen, um das komplette Tracker-Erlebnis zu liefern.",
+        body: "Wir entwickeln in fokussierten Phasen: zuerst das local-first Fundament härten, dann verschlüsselten Sync, Automationen und Integrationen ergänzen.",
         phase1: {
-          title: "Phase 1 - Fundament (abgeschlossen)",
+          title: "Phase 1 - Local-First-Fundament (abgeschlossen)",
           list:
-            "<li>Flutter-App und Backend-Grundlage - abgeschlossen</li><li>Lokale Datenbank & Authentifizierung - abgeschlossen</li><li>Initiale Mehrsprachigkeit (DE/EN/SV) - abgeschlossen</li>"
+            "<li>Drift/Hive-Speicher, Migrationen und Backup-Subsystem</li><li>Modulares UI mit Dashboard, Aufgaben, Notizen, Habits, Haushaltsbuch, Journal und Zeiterfassung</li><li>Lokalisierung (DE/EN/SV) mit Laufzeit-Sprachumschaltung</li>"
         },
         phase2: {
-          title: "Phase 2 - Module verfeinern (in Arbeit)",
+          title: "Phase 2 - Module verfeinern & automatisieren (läuft)",
           list:
-            "<li>Aufgaben, Kalender und Benachrichtigungen vertiefen</li><li>Notiz-Features wie Vorlagen und Backlinks erweitern</li><li>Journal-Flows mit Mood-Tracking</li><li>Insights für Habits, Haushaltsbuch und Dashboard</li>"
+            "<li>Aufgaben-Timer, Benachrichtigungsscheduler und Kalender-Blocker</li><li>Notiz-Backlinks, Vorlagen, Anhänge und Zeichnungs-Sync</li><li>Habit-Analysen, Haushaltsbuch-Forecasts und Dashboard-Widgets</li><li>Journal-Moodtracker und verschlüsselte Anhänge</li>"
         },
         phase3: {
-          title: "Phase 3 - Synchronisation (anstehend)",
+          title: "Phase 3 - Verschlüsselter Sync & Mitgliedschaften (Beta)",
           list:
-            "<li>Ende-zu-Ende-Verschlüsselung und Versionsverlauf</li><li>Workflows zur Konfliktauflösung</li><li>Mitgliedschaftszahlungen via PayPal und Bitcoin</li>"
+            "<li>PBKDF2/AES-256-GCM-Sync mit Versionszählern</li><li>Konflikt-Assistent mit Versionshistorie</li><li>Mitgliedschaften via PayPal/Google Pay plus Aufbewahrungstools</li>"
         },
         phase4: {
-          title: "Phase 4 - Launch & Plattformen (anstehend)",
+          title: "Phase 4 - Integrationen & Launch (anstehend)",
           list:
-            "<li>Plattform-Optimierung (Android, iOS, Web, Desktop)</li><li>CI/CD-Automatisierung und erweiterte Tests</li><li>Produktseite, Dokumentation und Onboarding</li>"
+            "<li>Plattform-Finishing (Android, iOS, Web, Linux, Windows)</li><li>CI/CD, automatisierte QA und Compliance-Exporte</li><li>Launch mit Onboarding, Help-Center und API-Dokumentation</li>"
         }
       },
       footer: {
@@ -726,7 +792,7 @@ window.TRACKER_TRANSLATIONS = {
         body: "Produktivität neu gedacht - lokal, sicher, flexibel.",
         linksTitle: "Links",
         contactTitle: "Kontakt",
-        contactEmail: "kontakt@tracker-app.dev",
+        contactEmail: "contact@kay-beckmann.com",
         legal: "© 2025 Tracker. Alle Rechte vorbehalten."
       }
     },
@@ -786,22 +852,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Bedienung",
             list:
-              "<li>Startansicht nach Login oder lokalem Start.</li><li>Zeigt Begrüßung, Systemhinweise und modulübergreifende Kennzahlen.</li><li>Schnellaktionen stoßen Backend-Aufrufe an und zeigen gespeicherte Antworten.</li><li>Das Leeren entfernt lokal gespeicherte Handshake-Daten.</li>"
+              "<li>Startansicht mit Mitgliedschaftsstatus, offenen Syncs und Local-First-Hinweisen.</li><li>Zeigt Live-Kennzahlen wie Habit-Streaks, Haushaltsbuch-Saldo und laufende Timer.</li><li>Schnellaktionen starten Timer, erfassen Notizen oder öffnen Fokus-Ansichten.</li><li>Widgets passen sich aktivierten Modulen an und markieren Sync- oder Konfliktstatus.</li>"
           },
           data: {
             heading: "Datenmodell",
             list:
-              "<li>Nutzt die Drift-Tabelle <code>greeting_entries</code> für Serverantworten.</li><li>Liest Hive-Boxes für Sprache, Theme und Modulpräferenzen.</li><li>Noch keine eigenen Sync-Entitäten; aggregierte KPIs sind geplant.</li>"
+              "<li>Drift-Tabelle <code>greeting_entries</code> speichert Umgebungsnachrichten und Onboarding-Hinweise.</li><li>Hive-Boxen liefern Mitgliedschaft, Theme, Sprache und Modulstatus.</li><li>Widget-Konfiguration (Beta) liegt in <code>dashboard_layouts</code> mit angepinnten Filtern.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Begrüßungsdaten bleiben lokal für Debugging-Zwecke.</li><li>Mitgliedschaften zeigen künftig Kennzahlen aus synchronisierten Daten.</li><li>Widget-Layouts werden ab Phase 3 synchronisiert.</li>"
+              "<li>Kennzahlen werden lokal berechnet; Mitgliedschaften laden verschlüsselte Aggregationen.</li><li>Sync-Badges lesen den lokalen Queue und Remote-Versionszähler.</li><li>Widget-Layouts synchronisieren, sobald der verschlüsselte Präferenzspeicher aktiv ist.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Echte Kennzahlen aus Tasks, Habits, Ledger und Journal einbinden.</li><li>Konfigurierbare Widgets, Größen und Drag-and-Drop-Layouts.</li><li>Mehrere Dashboards für verschiedene Kontexte unterstützen.</li>"
+              "<li>Eigene Dashboards und gespeicherte Filter für verschiedene Kontexte.</li><li>Synchronisierte Widget-Layouts mit Konfliktauflösung.</li><li>Automationen wie Streak-Warnungen direkt vom Dashboard auslösen.</li>"
           }
         }
       },
@@ -814,22 +880,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Bedienung",
             list:
-              "<li>Plane Aufgaben, Termine und Erinnerungen in einem Workspace.</li><li>Kalenderansicht hebt volle Tage und Fälligkeiten hervor.</li><li>Listen lassen sich nach Fälligkeit, Priorität und Kategorie sortieren.</li><li>Kategorien entstehen automatisch beim Anlegen neuer Einträge.</li><li>Zeiterfassung direkt aus Aufgaben starten (in Entwicklung).</li>"
+              "<li>Plane und priorisiere Aufgaben mit Board-, Listen- und Kalenderansichten.</li><li>Füge Tags, Erinnerungen, verknüpfte Notizen und Ledger-Referenzen hinzu.</li><li>Starte/Stopp Fokustimer direkt an jeder Aufgabe.</li><li>Nutze wiederkehrende Erinnerungen und mobile Benachrichtigungen.</li><li>Schnellerfassung über die Befehlspalette (Cmd/Ctrl + K).</li>"
           },
           data: {
-            heading: "Datenmodell (geplant)",
+            heading: "Datenmodell",
             list:
-              "<li>Kern-Tabellen: <code>tasks</code>, <code>appointments</code>, <code>categories</code>, <code>reminders</code>.</li><li>Relationen: <code>tasks</code> ↔ <code>time_entries</code> (1:n), Aufgaben ↔ Notizen (n:m geplant).</li><li>Kategorien als Referenzobjekte mit Farbe und Icon.</li>"
+              "<li>Drift-Tabelle <code>task_entries</code> speichert Titel, Status, Priorität, Fälligkeit, Tags und Sync-Metadaten.</li><li>Optionale Fremdschlüssel verbinden Aufgaben mit <code>note_entries</code> und <code>time_entries</code>.</li><li>Reminder-Zeitpläne liegen in <code>task_reminders</code> (Queue in Hive für Hintergrundzustellung).</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Offline vollständig nutzbar mit Drift/Hive-Speicherung.</li><li>Mitgliedschaften verschlüsseln Aufgaben, Termine, Erinnerungen und Kategorien.</li><li>Konflikte: Last-Write-Wins, Versionshistorie ist geplant.</li>"
+              "<li>Offline-first: Aufgaben bleiben nutzbar, Sync-Metadaten kennzeichnen offene Änderungen.</li><li>Mitgliedschaften verschlüsseln jede Aufgabe mit PBKDF2/AES-256-GCM.</li><li>Konflikte werden über optimistisches Locking erkannt; Versionshistorie erlaubt manuelle Prüfung (Beta).</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Bearbeitungsdialog für Termine (Titel, Datum, Priorität, Kategorie) finalisieren.</li><li>Eigene Oberfläche für Kategoriemanagement und Farbauswahl.</li><li>Tiefergehende Zeiterfassungs-Workflows mit Timern.</li><li>Benachrichtigungen, Wiederholungen und smarte Vorschläge verbessern.</li>"
+              "<li>Wiederkehrende Aufgaben-Templates mit Regelwerk.</li><li>Abhängigkeiten und Checklisten innerhalb einer Aufgabe.</li><li>Sprach- und Kurzbefehle ("Morgen 9 Uhr: Alice anrufen").</li><li>Webhook-/Automationshooks für externe Integrationen.</li>"
           }
         }
       },
@@ -842,22 +908,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Bedienung",
             list:
-              "<li>Sessions manuell oder mit dem integrierten Timer erfassen.</li><li>Sessions Aufgaben zuordnen, um Ende-zu-Ende-Auswertungen zu erhalten.</li><li>Einträge taggen, Notizen ergänzen und Tagesverlauf prüfen.</li><li>Timer pausieren und fortsetzen, ohne Dauer zu verlieren.</li>"
+              "<li>Sessions mit One-Tap-Timer starten oder manuell mit Rundungsregeln erfassen.</li><li>Sitzungen Aufgaben zuordnen für abrechenbare Zeiten und Fortschrittsanalysen.</li><li>Notizen hinzufügen, Typen (Arbeit, Pause, Lernen) vergeben und die Timeline auswerten.</li><li>Abgeschlossene Einträge sperren, um versehentliche Änderungen zu vermeiden.</li>"
           },
           data: {
             heading: "Datenmodell",
             list:
-              "<li>Tabelle <code>time_entries</code> speichert Dauer, Start, Ende und optionale Task-Referenz.</li><li>Zwischentabelle <code>time_entry_tags</code> verknüpft mehrere Tags.</li><li>Tages- und Wochenaggregate werden on-the-fly berechnet.</li>"
+              "<li>Drift-Tabelle <code>time_entries</code> enthält Start/Ende, Dauer, Notiz, Typ und optionales <code>task_id</code>.</li><li>Rundungspräferenzen und Timerstatus liegen in Hive für schnellen Resume.</li><li>Summaries entstehen über SQL-Views für Tages-, Wochen- und Tag-Auswertungen.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Offline-first mit lokaler Persistenz.</li><li>Mitgliedschaften synchronisieren Entries und Tags geräteübergreifend.</li><li>Konfliktlösung führt überlappende Sessions anhand genauer Zeitstempel zusammen.</li>"
+              "<li>Offline-first; offene Einträge bleiben markiert, bis der Mitgliedschafts-Sync sie sendet.</li><li>Verschlüsselter Sync serialisiert jeden Eintrag mit AES-256-GCM und Versionszähler.</li><li>Konflikte behalten beide Versionen und heben Überschneidungen hervor.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Timer direkt aus Task-Karten starten und stoppen.</li><li>Mehrfachbearbeitung und Tag-Bulk-Operationen ermöglichen.</li><li>Reports als CSV/JSON für Abrechnung und Analyse exportieren.</li><li>Trends mit Diagrammen und Heatmaps visualisieren.</li>"
+              "<li>Erweiterte Analysen: Charts, Heatmaps und Auslastungs-Boards.</li><li>Mehrfachbearbeitung und Tag-Bulk-Operationen.</li><li>CSV/JSON-Exporte mit Vorlagen für Abrechnung.</li><li>Automationen wie Auto-Start bei Fokusmodus.</li>"
           }
         }
       },
@@ -870,22 +936,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Bedienung",
             list:
-              "<li>Markdown-Notizen mit Live-Vorschau und Split-View schreiben.</li><li>Die erste Zeile wird zum Titel; Erstell- und Änderungszeiten werden automatisch gepflegt.</li><li>Notizen taggen, nach Tags filtern und per Volltext suchen.</li><li>In den Freihandmodus wechseln für Skizzen, Diagramme und Wireframes.</li>"
+              "<li>Markdown-Notizen mit Live-Vorschau und Split-View verfassen.</li><li>Die erste Zeile wird zum Titel; Erstell- und Änderungszeiten werden automatisch gepflegt.</li><li>Notizen taggen, per Volltext suchen, archivieren oder duplizieren.</li><li>In den Canvas-Modus wechseln für Skizzen, Diagramme und handschriftliche Notizen.</li>"
           },
           data: {
             heading: "Datenmodell",
             list:
-              "<li>Tabellen: <code>notes</code>, <code>note_tags</code> und Join-Tabelle <code>note_tag_links</code>.</li><li>Metadaten enthalten Zeitstempel und letzten Bearbeiter.</li><li>Zeichnungen werden als Vektoren mit optionaler PNG-Kopie gespeichert.</li>"
+              "<li>Drift-Tabelle <code>note_entries</code> speichert Titel, Inhalt, Tags, Typ (Markdown/Zeichnung) und Sync-Metadaten.</li><li>Zeichnungen liegen als JSON-Vektoren mit optionalen Vorschaubildern vor.</li><li>Archiv- und Lösch-Flags ermöglichen Soft-Delete vor endgültigem Entfernen.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Notizen bleiben standardmäßig lokal für Privatsphäre und Offline-Nutzung.</li><li>Mitgliedschaften verschlüsseln Notiztexte, Zeichnungen und Anhänge.</li><li>Konfliktlösung hält beide Versionen bereit; ein Merge-Assistent ist geplant.</li>"
+              "<li>Notizen bleiben standardmäßig lokal; Mitgliedschaften verschlüsseln Inhalte mit AES-256-GCM.</li><li>Versionszähler erkennen Konflikte zwischen Geräten.</li><li>Merge-Assistent (Beta) hebt Unterschiede hervor und behält beide Versionen.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Onboarding-Notizen, die Kern-Workflows erklären.</li><li>Multi-Tag-Filter, gespeicherte Suchen und Notebook-Gruppierungen.</li><li>Vorlagen sowie Cross-Linking mit Aufgaben und Journal.</li><li>Bild-Einbettung mit lokaler Ablage und optionaler Sync-Unterstützung.</li>"
+              "<li>Onboarding-Notizen zu Workflows und Shortcuts.</li><li>Multi-Tag-Filter, gespeicherte Suchen und Notebook-Gruppen.</li><li>Vorlagen und Cross-Linking mit Aufgaben, Journal und Habits.</li><li>Bild- und Dateianhänge mit optional verschlüsselter Synchronisation.</li>"
           }
         }
       },
@@ -898,22 +964,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Nutzungskonzept",
             list:
-              "<li>Tägliche Reflexionen, Highlights und Herausforderungen erfassen.</li><li>Stimmungsscores mit Tags für Auslöser und Erfolge speichern.</li><li>Einträge mit Notizen, Aufgaben und Habit-Serien verknüpfen.</li><li>Tages-, Wochen- und Monatsverläufe helfen Trends zu erkennen.</li>"
+              "<li>Pro Tag und Kategorie einen Eintrag über Vorlagen erfassen.</li><li>Stimmung und individuelle Tracker mit Zeitverlauf visualisieren.</li><li>Zwischen Editor und Verlauf wechseln, um Highlights schnell zu prüfen.</li><li>Journal per Code oder biometrisch sperren, falls gewünscht.</li>"
           },
           data: {
-            heading: "Datenmodell (in Planung)",
+            heading: "Datenmodell",
             list:
-              "<li>Tabellen: <code>journal_entries</code>, <code>journal_moods</code> plus Join-Tabellen für Verknüpfungen.</li><li>Stimmungsskala 1-5 mit optionaler Emoji-Zuordnung.</li><li>Einträge speichern Freitext, Anhänge und geplanten Wetterkontext.</li>"
+              "<li>Drift-Tabellen: <code>journal_entries</code> (Markdown, Kategorie, Sync) und <code>journal_entry_links</code> (Bezüge zu Notizen/Aufgaben).</li><li>Tracker liegen in <code>journal_trackers</code>, Tageswerte in <code>journal_tracker_values</code>.</li><li>Vorlagen und Sperrstatus werden in Hive zwischengespeichert.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Einträge bleiben lokal, bis die verschlüsselte Sync startet.</li><li>Mitgliedschaften verschlüsseln Text, Anhänge und Stimmungsdaten Ende-zu-Ende.</li><li>Versionshistorie stellt sicher, dass Reflexionen beim Mergen erhalten bleiben.</li>"
+              "<li>Einträge bleiben lokal; Mitgliedschaften verschlüsseln Texte, Tracker und Metadaten mit AES-256-GCM.</li><li>Schlüsselrotation stellt sicher, dass alte Geräte keine neuen Einträge lesen können.</li><li>Konflikte bewahren beide Versionen und markieren Unterschiede für manuelle Auswahl.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Erste Journal-Oberfläche mit täglichen Prompts ausliefern.</li><li>Mood-Visualisierungen mit Serien und Trends ergänzen.</li><li>Korrelationen zwischen Stimmung, Habits und Zeiterfassung anzeigen.</li><li>Privaten Export nach PDF und Markdown ermöglichen.</li>"
+              "<li>Anhänge (Bilder, Audio) mit verschlüsselter Ablage.</li><li>Optionale KI-Prompts und Zusammenfassungen.</li><li>Advanced Analytics: Streaks, Trigger, Korrelationen zu Habits/Zeiterfassung.</li><li>Geteilte Vorlagen und Team-Retros.</li>"
           }
         }
       },
@@ -926,22 +992,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Bedienung",
             list:
-              "<li>Routinen mit täglichen, wöchentlichen oder freien Intervallen definieren.</li><li>Erfolge mit Zählern, Timern oder einfachen Check-ins erfassen.</li><li>Serien visualisieren und Soll-Ist-Vergleiche anzeigen.</li><li>Unterbrechungen mit Notizen kommentieren, um später daraus zu lernen.</li>"
+              "<li>Routinen mit täglichen, wöchentlichen oder Mehrfach-Intervallen definieren.</li><li>Messart wählen: Boolean, Zähler oder Dauer pro Habit.</li><li>Serien, rollierende Durchschnitte und Bestleistungen visualisieren.</li><li>Unterbrechungen mit Notizen kommentieren, um später daraus zu lernen.</li>"
           },
           data: {
             heading: "Datenmodell",
             list:
-              "<li>Tabellen: <code>habit_definitions</code>, <code>habit_entries</code> und <code>habit_targets</code>.</li><li>Einträge speichern Datum, Wert, optionale Dauer und Notiz.</li><li>Serienkennzahlen werden berechnet und fürs Dashboard zwischengespeichert.</li>"
+              "<li>Drift-Tabellen: <code>habit_definitions</code> (Meta, Intervall, Messart) und <code>habit_logs</code> (Datum, Wert, Notiz, Sync-Metadaten).</li><li>Rollierende Auswertungen für Streaks und Trends entstehen über SQL-Views.</li><li>Remote-IDs und Versionszähler unterstützen den verschlüsselten Sync.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Habits funktionieren offline mit automatischer Drift-Persistenz.</li><li>Mitgliedschaften mergen Einträge über Zeitstempel und erhalten Serien.</li><li>Konflikte behalten den höheren Erfüllungswert und protokollieren die Zusammenführung.</li>"
+              "<li>Habits arbeiten offline; offene Logs bleiben markiert, bis der Sync läuft.</li><li>Verschlüsselter Sync serialisiert jeden Log mit AES-256-GCM und führt nach Zeitstempeln zusammen.</li><li>Konflikte behalten den höheren Wert und protokollieren beide Versionen.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Geteilte Habit-Vorlagen und Empfehlungen.</li><li>Kalender-Heatmaps für den Monatsüberblick.</li><li>Automatisierungen, die Habits durch Tasks oder Zeiterfassung anstoßen.</li><li>Serien-Exporte für Accountability-Partner.</li>"
+              "<li>Habit-Vorlagen und Sharing.</li><li>Kalender-Heatmaps und Anomalie-Warnungen.</li><li>Automationen, die Habits durch Tasks oder Zeiterfassung auslösen.</li><li>Serien-Exporte für Accountability-Partner.</li>"
           }
         }
       },
@@ -954,22 +1020,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Bedienung",
             list:
-              "<li>Einnahmen und Ausgaben mit Kategorien und Zahlungsarten erfassen.</li><li>Budgets pro Kategorie setzen und den Fortschritt während des Monats tracken.</li><li>Nach Zeitraum, Tags und Konten filtern für gezielte Auswertungen.</li><li>Daten für Steuer oder Finanzreview exportieren (geplant).</li>"
+              "<li>Einnahmen, Ausgaben, Transfers und wiederkehrende Buchungen je Konto erfassen.</li><li>Kategorien, Tags und Zahlungsarten für detaillierte Auswertungen vergeben.</li><li>Budgets mit Live-Fortschritt und Overspend-Hinweisen überwachen.</li><li>Nach Zeitraum, Konto oder Tag filtern und als CSV exportieren (Beta).</li>"
           },
           data: {
             heading: "Datenmodell",
             list:
-              "<li>Tabellen: <code>ledger_entries</code>, <code>ledger_categories</code>, <code>ledger_budgets</code>, <code>ledger_accounts</code>.</li><li>Einträge enthalten Betrag, Währung, Typ, Kategorie, Konto und optional Belegdaten.</li><li>Monatliche Rollups cachen Summen für schnellere Dashboards.</li>"
+              "<li>Drift-Tabellen: <code>ledger_accounts</code>, <code>ledger_categories</code>, <code>ledger_transactions</code>, <code>ledger_budgets</code> und <code>ledger_recurring_transactions</code>.</li><li>Transaktionen enthalten Betrag, Währung, Art (Einnahme/Ausgabe/Transfer), Kategorie, Quell-/Zielkonto und optionales Memo.</li><li>Monatliche Rollups und Vermögens-Snapshots werden für Dashboards zwischengespeichert.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Lokales Haushaltsbuch hält Finanzdaten standardmäßig auf dem Gerät.</li><li>Verschlüsselte Sync ist optional für Mitgliedschaften mit Geräteschlüsseln.</li><li>Konflikte lösen sich über Betrag und Zeitstempel, Historie bleibt erhalten.</li>"
+              "<li>Finanzdaten bleiben standardmäßig lokal.</li><li>Mitgliedschaften verschlüsseln jede Buchung mit AES-256-GCM; wiederkehrende Vorlagen synchronisieren separat.</li><li>Konflikte bewahren beide Versionen und markieren sie zur manuellen Prüfung.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Interaktive Diagramme für Kategorien und Cashflow.</li><li>Wiederkehrende Buchungen und regelbasierte Kategorisierung.</li><li>Belegerfassung per Foto mit OCR (Recherche).</li><li>Geteilte Budgets für Haushaltsorganisation.</li>"
+              "<li>Interaktive Diagramme für Kategorien, Cashflow und Vermögensentwicklung.</li><li>Regelbasierte Kategorisierung mit automatischen Abstimmungen.</li><li>Belegerfassung per Foto mit OCR (Recherche).</li><li>Geteilte Budgets für Haushaltsorganisation.</li>"
           }
         }
       },
@@ -982,22 +1048,22 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Bedienung",
             list:
-              "<li>Account-Login via E-Mail/Passwort, Google oder Apple ID verwalten.</li><li>Modulsichtbarkeit und Standard-Dashboards konfigurieren (geplant).</li><li>App-Sprache und Theme einstellen, sobald die UI-Schalter live sind.</li><li>Speicherverbrauch prüfen und lokale Backups anstoßen (Roadmap).</li>"
+              "<li>Anmeldung über E-Mail/Passwort oder Google Sign-In verwalten und Mitgliedsstatus prüfen.</li><li>Module aktivieren/deaktivieren, Navigation neu sortieren und Akzentfarbe anpassen.</li><li>Sprache und Theme sofort wechseln; Präferenzen bleiben offline verfügbar.</li><li>Verschlüsselte Backups anstoßen und Speicherverbrauch prüfen (Beta).</li>"
           },
           data: {
             heading: "Datenmodell",
             list:
-              "<li>Präferenzen werden in Hive-Boxes für schnellen Offline-Zugriff gespeichert.</li><li>Account-Credentials laufen über sichere Backend-Auth-APIs.</li><li>Die kommende Tabelle <code>user_preferences</code> vereinheitlicht den Sync-Status.</li>"
+              "<li>Präferenzen liegen in Hive mit optionalem verschlüsseltem Export.</li><li>Server verwaltet nur gehashte Credentials und Google-OAuth-Verknüpfungen.</li><li>Die kommende Collection <code>user_preferences</code> synchronisiert Moduleinstellungen und Layouts.</li>"
           },
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Sprache und Theme gelten lokal, bis der Multi-Device-Sync startet.</li><li>Mitgliedschaften synchronisieren Modulsichtbarkeit, Dashboards und Shortcuts.</li><li>Sicherheitskritische Einstellungen (2FA, Keys) bleiben ausschließlich serverseitig.</li>"
+              "<li>Präferenzen bleiben local-first; Mitgliedschaften verschlüsseln ausgewählte Settings mit AES-256-GCM.</li><li>Modulreihenfolge und Theme synchronisieren, sobald der verschlüsselte Präferenzspeicher aktiv ist.</li><li>Sicherheitskritische Geheimnisse (Biometrie, Lock-Codes) verlassen das Gerät nicht.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Vollständigen Sprach-/Theme-Switch in der App veröffentlichen.</li><li>Abostatus, Rechnungsverlauf und Upgrade-Flows darstellen.</li><li>Import/Export für Präferenzen und Modul-Layouts ergänzen.</li><li>Erweiterte Privatsphäre-Optionen (Biometrie, Schnell-Löschen) integrieren.</li>"
+              "<li>Import/Export von Einstellungen zwischen Geräten.</li><li>Abostatus, Rechnungsverlauf und Upgrade-Flows anzeigen.</li><li>Diagnose-Tools für Sync-Konflikte und Verschlüsselungsstatus.</li><li>Automatisierte Backup-Rotation mit Aufbewahrungsregeln.</li>"
           }
         }
       }
@@ -1135,7 +1201,9 @@ window.TRACKER_TRANSLATIONS = {
       nav: {
         vision: "Vision",
         modules: "Moduler",
+        gallery: "Galleri",
         sync: "Synklägen",
+        architecture: "Arkitektur",
         availability: "Nedladdningar",
         roadmap: "Färdplan",
         wiki: "Wiki",
@@ -1150,26 +1218,26 @@ window.TRACKER_TRANSLATIONS = {
       hero: {
         title: "Tracker",
         subtitle:
-          "Den modulära produktivitetssviten för planering, kunskapsfångst och säker synkronisering på alla enheter.",
-        ctaPrimary: "Utforska modulerna",
+          "Den local-first produktivitetssviten för planering, kunskapshantering, journal och krypterad synk på mobil, desktop och webb.",
+        ctaPrimary: "Utforska nyheterna",
         ctaSecondary: "Öppna wikin"
       },
       vision: {
         heading: "Varför Tracker?",
         body:
-          "Tracker förenar uppgifter, anteckningar, journal, vanor, ekonomi och tidrapportering i ett offline-först-arbetsflöde. Ett medlemskap låser upp änd-till-ände-krypterad synk mellan dina enheter.",
+          "Tracker förenar uppgifter, anteckningar, journal, vanor, ekonomi och tidrapportering i ett local-first cockpit. Allt körs offline med Drift-lagring; med medlemskap får du krypterad synk, Google-inloggning och delade enheter.",
         cards: {
           offline: {
-            title: "Offline först",
-            body: "Arbeta helt lokalt utan konto – perfekt för integritet och resor."
+            title: "Local first",
+            body: "Alla moduler körs på enheten utan krav på konto – perfekt för integritet och resor."
           },
           encrypted: {
             title: "Krypterat moln",
-            body: "Medlemskap aktiverar zero-knowledge-synk mellan enheter; konfliktlösning finns på färdplanen."
+            body: "Medlemskap aktiverar zero-knowledge-synk, bakgrundskonflikter och lagringspolicyer."
           },
           modular: {
             title: "Modulärt & anpassningsbart",
-            body: "Aktivera bara de moduler du behöver, justera färgerna och bestäm ordningen."
+            body: "Aktivera bara modulerna du behöver, automatisera överlämningar och finjustera färger samt layout."
           }
         }
       },
@@ -1179,50 +1247,61 @@ window.TRACKER_TRANSLATIONS = {
           title: "Dashboard",
           body: "Personligt cockpit med höjdpunkter från alla moduler.",
           list:
-            "<li>Statuskort från alla moduler på ett ögonblick (tillgängligt)</li><li>Snabbåtkomst till senaste anteckningar, uppgifter och poster (tillgängligt)</li><li>Konfigurerbara widgets och layout (färdplan)</li>"
+            "<li>Live-statuskort för vanor, saldon och timers (tillgängligt)</li><li>Snabbåtgärder för att starta en timer, skapa anteckningar eller öppna fokusflöden (tillgängligt)</li><li>Anpassat widget-rutnät med fastnålade filter (beta)</li>"
         },
         tasks: {
           title: "Uppgifter & möten",
           body: "Planera uppgifter, deadlines, påminnelser och kalenderhändelser tillsammans.",
           list:
-            "<li>Uppgiftslistor och kalendervy med markerade dagar (tillgängligt)</li><li>Sortering efter förfallodatum, prioritet och kategori (tillgängligt)</li><li>Tidtagning direkt från uppgifter (under utveckling)</li>"
+            "<li>Kalenderintegrerad tavla med färgkodade prioriteter (tillgängligt)</li><li>Detaljpanel med taggar, påminnelser och länkade anteckningar (tillgängligt)</li><li>Starta/stoppa fokustimer direkt på uppgiften (tillgängligt)</li>"
         },
         notes: {
           title: "Anteckningar",
           body: "Flexibel Markdown-bas med stöd för ritningar.",
           list:
-            "<li>Editor med liveförhandsvisning, taggar och fulltextsökning (tillgängligt)</li><li>Frihandsritningar och former för visuella anteckningar (tillgängligt)</li><li>Mallar, multi-tag-filter och bakåtlänkar (färdplan)</li>"
+            "<li>Markdown-editor med taggsökning, bakåtlänkar och inline-bilagor (tillgängligt)</li><li>Frihandsritningar och canvas-läge för visuellt tänkande (tillgängligt)</li><li>Återanvändbara mallar och multi-tag-filter (beta)</li>"
         },
         journal: {
           title: "Journal & humör",
-          body: "Daglig reflektion med planerad humörspårning och höjdpunkter.",
+          body: "Daglig reflektion med app-lås, stämningsdiagram och highlights.",
           list:
-            "<li>Dags- och veckovy med humörindikatorer (under design)</li><li>Länka poster till anteckningar och uppgifter (färdplan)</li><li>Krypterad synk när medlemskap lanseras (planerat)</li>"
+            "<li>Dags- och veckovy med stämningskurva och promptar (beta)</li><li>Valbart app-lås med biometrisk upplåsning (tillgängligt)</li><li>Länka poster till anteckningar och uppgifter (under utveckling)</li>"
         },
         habits: {
           title: "Vanor",
           body: "Bygg rutiner med serier, räknare och insikter.",
           list:
-            "<li>Följ dagliga eller veckovisa mål med flexibla enheter (tillgängligt)</li><li>Historiska jämförelser och serieanalys (tillgängligt)</li><li>Delade mallar och rekommendationer (färdplan)</li>"
+            "<li>Följ booleska, numeriska eller tidsbaserade mål med streak-skydd (tillgängligt)</li><li>Trenddiagram och intervalljämförelser per vana (tillgängligt)</li><li>Mallbibliotek och delade rutiner (färdplan)</li>"
         },
         ledger: {
           title: "Hushållsbok",
           body: "Håll koll på utgifter, budgetar och rapporter.",
           list:
-            "<li>Registrera inkomster och utgifter med kategorier (tillgängligt)</li><li>Budget vs. utfall med filter (tillgängligt)</li><li>Diagram och backend-synk (pågår)</li>"
+            "<li>Flera konton med återkommande transaktioner (tillgängligt)</li><li>Budgetar, kategorifilter och avstämning (tillgängligt)</li><li>Analyser med rullande prognoser och synkexporter (beta)</li>"
         },
         timeTracking: {
           title: "Tidrapportering",
           body: "Mät fokustillfällen och koppla dem till uppgifter.",
           list:
-            "<li>Manuell registrering och timers för pass (tillgängligt)</li><li>Dags- och taggbaserade sammanställningar (tillgängligt)</li><li>Djupare uppgiftsintegration och exporter (färdplan)</li>"
+            "<li>Ett-trycks-timers med automatisk avrundning och taggar (tillgängligt)</li><li>Dags- och veckorapporter plus beläggningsvyer (tillgängligt)</li><li>CSV-exporter och automationskrokar (färdplan)</li>"
         },
         settings: {
           title: "Inställningar",
           body: "Styr språk, tema, moduler och synk.",
           list:
-            "<li>Backend-inloggning för e-post, Google och Apple ID (tillgängligt)</li><li>Språk- och temapreferenser (under utveckling)</li><li>Synlighet för moduler och synkstyrning (färdplan)</li>"
+            "<li>Inloggning via e-post/lösenord eller Google Sign-In med medlemsstatus (tillgängligt)</li><li>Språk-, tema- och accentfärgsbyte i realtid (tillgängligt)</li><li>Modulordning, säkerhetskopior och synkdiagnostik (beta)</li>"
         }
+      },
+      gallery: {
+        heading: "Titta in i arbetsytan",
+        body:
+          "Varje modul körs lokalt, reagerar direkt och synkroniserar bara när du väljer det. Dessa mockups visar läget i de aktuella Android- och desktop-buildarna.",
+        dashboardPlaceholder: "Dashboard-förhandsvisning",
+        dashboard: "Dashboard med live-streaks, aktuella uppgifter och hushållssaldo i samma vy.",
+        tasksPlaceholder: "Uppgiftsförhandsvisning",
+        tasks: "Kalenderstödd uppgiftstavla med inbyggda timers och aviseringar.",
+        ledgerPlaceholder: "Hushållsboksförhandsvisning",
+        ledger: "Hushållsboksanalys med budgetar, återkommande betalningar och överföringar."
       },
       sync: {
         heading: "Lokal först eller krypterat moln",
@@ -1231,59 +1310,79 @@ window.TRACKER_TRANSLATIONS = {
         local: {
           title: "Endast lokalt",
           list:
-            "<li>All data stannar på din enhet som standard</li><li>Inget konto krävs för hela funktionsuppsättningen</li><li>Perfekt för känsliga eller offline-flöden</li>"
+            "<li>All data lever i en lokal Drift/Hive-databas</li><li>Inget konto krävs – hela funktionsuppsättningen finns offline</li><li>Exportera krypterade säkerhetskopior eller arbeta helt luftgap</li>"
         },
         cloud: {
           title: "Krypterad synk",
           list:
-            "<li>Änd-till-ände-kryptering med enhetsspecifika nycklar</li><li>Åtkomst via mobil, desktop och webb</li><li>Medlemskap planeras till 2 €/månad eller 20 €/år</li>"
+            "<li>Änd-till-ände-kryptering (PBKDF2 + AES-256-GCM) med enhetsspecifika nycklar</li><li>Åtkomst via Android, iOS (beta), desktop och webb</li><li>Medlemskap 1 €/månad eller 10 €/år; PayPal & Google Pay testas</li>"
+        }
+      },
+      architecture: {
+        heading: "Arkitektur & säkerhet",
+        body:
+          "Tracker följer en local-first-arkitektur: Drift hanterar en krypterad SQLite-databas per enhet medan servern bara lagrar chiffertext. Sync-endpoints använder REST/JSON över TLS 1.3 och autentisering sker med kortlivade JWT.",
+        storage: {
+          title: "Lokalt valv",
+          list:
+            "<li>Drift + SQLite för strukturerad data, Hive för hemligheter och preferenser</li><li>Automatiska nattsnapshots med rullande retention (beta)</li><li>Export/import per modul för efterlevnad och återställning</li>"
+        },
+        security: {
+          title: "Krypteringskedja",
+          list:
+            "<li>PBKDF2-HMAC-SHA256 med 150k iterationer skapar 256-bitars nycklar</li><li>AES-256-GCM omsluter anteckningar, uppgifter, vanor, hushållsbok och journal vid synk</li><li>Enhetsspecifika salter, låsskydd och nyckelrotation efter medlemskapsändringar</li>"
+        },
+        protocols: {
+          title: "Protokoll & API:er",
+          list:
+            "<li>FastAPI-backend med optimistisk låsning och versionsräknare</li><li>Inkrementella synk-API:er med serversidig konfliktupptäckt</li><li>Google OAuth, åtkomsttokens och planerad Argon2id för lösenord</li>"
         }
       },
       availability: {
         heading: "Tillgänglighet & nedladdningar",
         web: {
           title: "Webbapp",
-          body: "Starta den progressiva webbappen direkt i webbläsaren.",
+          body: "Installerbar progressiv webbapp med offlinecache och biometrisk upplåsning där det stöds.",
           link: "Öppna nu"
         },
         playStore: {
           title: "Google Play Store",
-          body: "Play Store-listningen förbereds – följ färdplanen för lanseringsdatum.",
+          body: "Sideload-APK publiceras vid varje release; Play Store-listning är under granskning.",
           link: "Förhandsgranska"
         },
         windows: {
           title: "Windows-nedladdning",
-          body: "Platshållarbuild medan paketering automatiseras.",
-          link: "Förbered nedladdning"
+          body: "Installeraren paketeras just nu – publik nedladdning kommer efter QA.",
+          link: "Installerare kommer"
         },
         linux: {
           title: "Linux-nedladdning",
-          body: "Platshållarbuild medan paketering automatiseras.",
-          link: "Förbered nedladdning"
+          body: "AppImage/Flatpak-paket är under arbete – släpps efter automatiserade tester.",
+          link: "AppImage kommer"
         }
       },
       roadmap: {
         heading: "Färdplan & nuläge",
-        body: "Vi levererar Tracker i fokuserade faser för att nå helheten.",
+        body: "Vi itererar i fokuserade faser: först stärka local-first-kärnan, därefter krypterad synk, automation och integrationer.",
         phase1: {
-          title: "Fas 1 - Grund (klar)",
+          title: "Fas 1 – Local-first-grund (klar)",
           list:
-            "<li>Flutter-app och backend-grund - klart</li><li>Lokal databas & autentisering - klart</li><li>Initial flerspråkighet (DE/EN/SV) - klart</li>"
+            "<li>Drift/Hive-lagring, migrationer och backup-subsystem</li><li>Modulärt UI med dashboard, uppgifter, anteckningar, vanor, hushållsbok, journal och tid</li><li>Lokalisering (DE/EN/SV) med språkbyte i realtid</li>"
         },
         phase2: {
-          title: "Fas 2 - Förfina moduler (pågår)",
+          title: "Fas 2 – Förfina moduler & automation (pågår)",
           list:
-            "<li>Fördjupa uppgifter, kalender och notiser</li><li>Utöka anteckningsfunktioner med mallar och bakåtlänkar</li><li>Journalflöden med humörspårning</li><li>Insikter för vanor, hushållsbok och dashboard</li>"
+            "<li>Uppgiftstimers, aviseringar och kalenderblockering</li><li>Anteckningsbacklinks, mallar, bilagor och ritningssynk</li><li>Vananalyser, hushållsprognoser och dashboard-widgets</li><li>Journal-humörtracker och krypterade bilagor</li>"
         },
         phase3: {
-          title: "Fas 3 - Synkronisering (kommer)",
+          title: "Fas 3 – Krypterad synk & medlemskap (beta)",
           list:
-            "<li>Änd-till-ände-kryptering och versionshistorik</li><li>Arbetsflöden för konfliktlösning</li><li>Medlemsbetalningar via PayPal och Bitcoin</li>"
+            "<li>PBKDF2/AES-256-GCM-synk med versionsräknare</li><li>Konflikthanterare med versionshistorik</li><li>Medlemskap via PayPal/Google Pay och lagringshantering</li>"
         },
         phase4: {
-          title: "Fas 4 - Lansering & plattformar (kommer)",
+          title: "Fas 4 – Integrationer & lansering (kommer)",
           list:
-            "<li>Plattformsoptimering (Android, iOS, webb, desktop)</li><li>CI/CD-automation och utökad testning</li><li>Produktsajt, dokumentation och onboarding</li>"
+            "<li>Plattformsfinlir (Android, iOS, webb, Linux, Windows)</li><li>CI/CD, automatiserad QA och export för efterlevnad</li><li>Lansering med onboarding, hjälpcenter och API-dokumentation</li>"
         }
       },
       footer: {
@@ -1291,7 +1390,7 @@ window.TRACKER_TRANSLATIONS = {
         body: "Produktivitet på nytt sätt – lokal, säker, flexibel.",
         linksTitle: "Länkar",
         contactTitle: "Kontakt",
-        contactEmail: "kontakt@tracker-app.dev",
+        contactEmail: "contact@kay-beckmann.com",
         legal: "© 2025 Tracker. Alla rättigheter förbehållna."
       }
     },
