@@ -4448,15 +4448,6 @@ class _HomePageState extends State<HomePage> {
                     ),
               child: Text(loc.membershipPayWithPaypal),
             ),
-            OutlinedButton(
-              onPressed: disabled
-                  ? null
-                  : () => _subscribeToPlan(
-                      monthly ? 'monthly' : 'yearly',
-                      'bitcoin',
-                    ),
-              child: Text(loc.membershipPayWithBitcoin),
-            ),
           ],
         ),
       ],
