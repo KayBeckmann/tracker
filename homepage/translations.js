@@ -895,7 +895,7 @@ window.TRACKER_TRANSLATIONS = {
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Wiederkehrende Aufgaben-Templates mit Regelwerk.</li><li>Abhängigkeiten und Checklisten innerhalb einer Aufgabe.</li><li>Sprach- und Kurzbefehle ("Morgen 9 Uhr: Alice anrufen").</li><li>Webhook-/Automationshooks für externe Integrationen.</li>"
+            "<li>Wiederkehrende Aufgaben-Templates mit Regelwerk.</li><li>Abhängigkeiten und Checklisten innerhalb einer Aufgabe.</li><li>Sprach- und Kurzbefehle (&quot;Morgen 9 Uhr: Alice anrufen&quot;).</li><li>Webhook-/Automationshooks für externe Integrationen.</li>"
           }
         }
       },
