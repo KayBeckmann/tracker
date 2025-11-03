@@ -1574,6 +1574,20 @@ class AppLocalizationsDe extends AppLocalizations {
       'Synchronisierte Daten jetzt löschen';
 
   @override
+  String get membershipDeleteConfirmTitle =>
+      'Synchronisierte Daten löschen?';
+
+  @override
+  String get membershipDeleteConfirmMessage =>
+      'Dadurch werden alle synchronisierten Daten vom Server entfernt. Lokale Daten auf deinen Geräten bleiben bestehen.';
+
+  @override
+  String get membershipDeleteConfirmAction => 'Jetzt löschen';
+
+  @override
+  String get membershipDeleteCancelAction => 'Abbrechen';
+
+  @override
   String get membershipSubscribeSuccess => 'Mitgliedschaft wurde aktualisiert.';
 
   @override

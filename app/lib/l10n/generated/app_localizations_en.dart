@@ -1560,6 +1560,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get membershipDeleteDataButton => 'Delete synced data now';
 
   @override
+  String get membershipDeleteConfirmTitle => 'Delete synced data?';
+
+  @override
+  String get membershipDeleteConfirmMessage =>
+      'This removes all synced data from the server. Local data on this device stays intact.';
+
+  @override
+  String get membershipDeleteConfirmAction => 'Delete now';
+
+  @override
+  String get membershipDeleteCancelAction => 'Keep data';
+
+  @override
   String get membershipSubscribeSuccess => 'Membership updated successfully.';
 
   @override

@@ -2839,6 +2839,26 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete synced data now'**
   String get membershipDeleteDataButton;
+  /// No description provided for @membershipDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete synced data?'**
+  String get membershipDeleteConfirmTitle;
+  /// No description provided for @membershipDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes all synced data from the server. Local data on this device stays intact.'**
+  String get membershipDeleteConfirmMessage;
+  /// No description provided for @membershipDeleteConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete now'**
+  String get membershipDeleteConfirmAction;
+  /// No description provided for @membershipDeleteCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep data'**
+  String get membershipDeleteCancelAction;
 
   /// No description provided for @membershipSubscribeSuccess.
   ///

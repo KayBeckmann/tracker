@@ -122,6 +122,21 @@ window.TRACKER_TRANSLATIONS = {
             "<li>End-to-end encryption (PBKDF2 + AES-256-GCM) with per-device keys</li><li>Access your workspace on Android, iOS (beta), desktop, and web</li><li>Membership €1/month or €10/year with PayPal & Google Pay in testing</li>"
         }
       },
+      security: {
+        heading: "Data security & retention",
+        body:
+          "Tracker never keeps synced content indefinitely. You stay in control at every stage of the membership lifecycle.",
+        manual: {
+          title: "Immediate deletion",
+          body:
+            "Delete synced copies from the server at any time from the app settings. Local notes and tasks remain on your devices."
+        },
+        retention: {
+          title: "Automatic cleanup",
+          body:
+            "When a membership ends, all synced data is scheduled for deletion after 90 days. The retention deadline is displayed in the app."
+        }
+      },
       architecture: {
         heading: "Architecture & security insights",
         body:
@@ -243,6 +258,13 @@ window.TRACKER_TRANSLATIONS = {
             title: "Settings",
             body: "Language, theme, modules, and sync."
           }
+        },
+        security: {
+          title: "Data security & retention",
+          body:
+            "Membership sync copies are never stored indefinitely. Delete them instantly, and they are scheduled for automatic removal 90 days after a membership ends.",
+          list:
+            "<li>Delete synced data on demand via the Tracker app settings.</li><li>Local data on your devices is unaffected by server cleanups.</li><li>After cancellation we schedule all sync payloads for deletion after 90 days.</li>"
         }
       },
       dashboard: {
@@ -720,6 +742,21 @@ window.TRACKER_TRANSLATIONS = {
             "<li>Ende-zu-Ende-Verschlüsselung (PBKDF2 + AES-256-GCM) mit Geräteschlüsseln</li><li>Zugriff auf Android, iOS (Beta), Desktop und Web</li><li>Mitgliedschaft 1 € pro Monat oder 10 € pro Jahr; PayPal & Google Pay in Tests</li>"
         }
       },
+      security: {
+        heading: "Datenschutz & Aufbewahrung",
+        body:
+          "Tracker speichert synchronisierte Inhalte nicht dauerhaft. Du behältst in jeder Phase der Mitgliedschaft die Kontrolle.",
+        manual: {
+          title: "Sofortiges Löschen",
+          body:
+            "Lösche synchronisierte Kopien jederzeit in den App-Einstellungen. Lokale Daten auf deinen Geräten bleiben erhalten."
+        },
+        retention: {
+          title: "Automatische Bereinigung",
+          body:
+            "Nach dem Ende einer Mitgliedschaft werden alle Serverdaten nach 90 Tagen zur Löschung eingeplant. Die Frist siehst du in der App."
+        }
+      },
       architecture: {
         heading: "Architektur & Sicherheit",
         body:
@@ -841,6 +878,13 @@ window.TRACKER_TRANSLATIONS = {
             title: "Einstellungen",
             body: "Sprache, Theme, Module und Sync."
           }
+        },
+        security: {
+          title: "Datenschutz & Aufbewahrung",
+          body:
+            "Synchronisierte Inhalte werden nicht dauerhaft gespeichert. Du kannst sie sofort löschen; nach einer Kündigung planen wir die automatische Entfernung nach 90 Tagen ein.",
+          list:
+            "<li>Synchronisierte Daten jederzeit über die Tracker-App-Einstellungen löschen.</li><li>Lokale Daten auf deinen Geräten bleiben von Server-Löschungen unberührt.</li><li>Nach Ende der Mitgliedschaft planen wir alle Sync-Daten zur Löschung nach 90 Tagen ein.</li>"
         }
       },
       dashboard: {
@@ -1318,6 +1362,21 @@ window.TRACKER_TRANSLATIONS = {
             "<li>Änd-till-ände-kryptering (PBKDF2 + AES-256-GCM) med enhetsspecifika nycklar</li><li>Åtkomst via Android, iOS (beta), desktop och webb</li><li>Medlemskap 1 €/månad eller 10 €/år; PayPal & Google Pay testas</li>"
         }
       },
+      security: {
+        heading: "Datasäkerhet & retention",
+        body:
+          "Tracker sparar aldrig synkat innehåll permanent. Du behåller kontrollen under hela medlemskapets livscykel.",
+        manual: {
+          title: "Omedelbar radering",
+          body:
+            "Ta bort synkade kopior från servern när som helst via appens inställningar. Lokala data ligger kvar på dina enheter."
+        },
+        retention: {
+          title: "Automatisk städning",
+          body:
+            "När ett medlemskap avslutas planeras alla serverdata för radering efter 90 dagar. Appen visar när retentionstiden löper ut."
+        }
+      },
       architecture: {
         heading: "Arkitektur & säkerhet",
         body:
@@ -1439,6 +1498,13 @@ window.TRACKER_TRANSLATIONS = {
             title: "Inställningar",
             body: "Språk, tema, moduler och synk."
           }
+        },
+        security: {
+          title: "Datasäkerhet & retention",
+          body:
+            "Synkat innehåll lagras aldrig permanent. Du kan radera det direkt, och efter ett avslutat medlemskap planeras det för automatisk borttagning efter 90 dagar.",
+          list:
+            "<li>Ta bort synkade data på begäran via Tracker-appens inställningar.</li><li>Lokala data på dina enheter påverkas inte av serverröjningar.</li><li>Efter avslut planeras alla synkdata för radering efter 90 dagar.</li>"
         }
       },
       dashboard: {

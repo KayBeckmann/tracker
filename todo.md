@@ -104,6 +104,7 @@
                 - [x] UI for initiating subscription (monthly/yearly).
                 - [ ] Integrate with payment gateway (PayPal, Bitcoin).
                 - [ ] Beschränke Backend-Synchronisation auf angemeldete Nutzer (Google, Apple ID, E-Mail+Passwort).
+                - [ ] Automatisierte Löschung synchronisierter Daten nach 90 Tagen umsetzen.
 - [ ] Backend Development:
     - [x] Research and choose a backend framework (e.g., Node.js/Express, Python/FastAPI, Go/Gin).
     - [x] Research and choose a SQL database for the backend (e.g., PostgreSQL, MySQL).

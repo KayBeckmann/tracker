@@ -1561,6 +1561,19 @@ class AppLocalizationsSv extends AppLocalizations {
   String get membershipDeleteDataButton => 'Radera synkade data nu';
 
   @override
+  String get membershipDeleteConfirmTitle => 'Ta bort synkade data?';
+
+  @override
+  String get membershipDeleteConfirmMessage =>
+      'Detta tar bort all synkad data från servern. Lokala data på dina enheter påverkas inte.';
+
+  @override
+  String get membershipDeleteConfirmAction => 'Ta bort nu';
+
+  @override
+  String get membershipDeleteCancelAction => 'Behåll data';
+
+  @override
   String get membershipSubscribeSuccess => 'Medlemskapet uppdaterades.';
 
   @override

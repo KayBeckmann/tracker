@@ -1496,11 +1496,38 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _deleteSyncedData() async {
+    if (!mounted) {
+      return;
+    }
+    final loc = AppLocalizations.of(context);
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(loc.membershipDeleteConfirmTitle),
+          content: Text(loc.membershipDeleteConfirmMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(loc.membershipDeleteCancelAction),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(loc.membershipDeleteConfirmAction),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) {
+      return;
+    }
+
     final String? token = _currentAuthToken();
     if (token == null || !mounted) {
       return;
     }
-    final loc = AppLocalizations.of(context);
     setState(() {
       _isMembershipLoading = true;
     });
