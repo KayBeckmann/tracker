@@ -14,7 +14,6 @@ import 'package:local_auth/local_auth.dart';
 
 import 'data/local/app_database.dart';
 import 'l10n/generated/app_localizations.dart';
-import 'models/membership_status.dart';
 import 'notes/notes_page.dart';
 import 'habits/habits_page.dart';
 import 'habits/habit_form.dart';
@@ -307,8 +306,6 @@ class _HomePageState extends State<HomePage> {
   bool _loginPasswordVisible = false;
   bool _registerPasswordVisible = false;
   String? _authErrorMessage;
-  MembershipStatus? _membershipStatus;
-  bool _isMembershipLoading = false;
   _AppSection _selectedSection = _AppSection.dashboard;
   String? _notesTagFilter;
   late List<_AppSection> _moduleOrder;
@@ -407,7 +404,8 @@ class _HomePageState extends State<HomePage> {
     if (token is String && user != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          _refreshMembershipStatus();
+          // Trigger initial sync for logged-in users (sync is now free)
+          _triggerSyncIfLoggedIn();
         }
       });
     }
@@ -493,7 +491,6 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _isSyncInProgress = false;
       _authErrorMessage = null;
-      _membershipStatus = null;
       _selectedSection = _AppSection.dashboard;
       _hasPendingSyncChanges = false;
       _hasPendingSettingsSync = false;
@@ -502,7 +499,7 @@ class _HomePageState extends State<HomePage> {
       _autoSyncAfterCurrent = false;
       _hasTriggeredInitialSync = false;
     });
-    _handleMembershipStatusChanged(null);
+    _triggerSyncIfLoggedIn();
   }
 
   void _loadModuleSettings() {
@@ -882,8 +879,8 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (mounted) {
-      await _refreshMembershipStatus();
-      _requestAutoSync(force: true);
+      // Sync is now free - trigger sync after login
+      _triggerSyncIfLoggedIn();
     }
   }
 
@@ -1256,9 +1253,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _handleMembershipStatusChanged(MembershipStatus? status) {
-    final bool canSync =
-        status != null && status.isActive && status.syncEnabled;
+  void _triggerSyncIfLoggedIn() {
+    // Sync is now free for all logged-in users
+    final bool canSync = _currentAuthToken() != null;
     if (canSync) {
       if (!_hasTriggeredInitialSync) {
         _hasTriggeredInitialSync = true;
@@ -1310,14 +1307,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool _canAutoSync({required bool forceSync}) {
-    final status = _membershipStatus;
-    if (status == null || !status.isActive || !status.syncEnabled) {
+    // Sync is now free for all logged-in users
+    if (_currentAuthToken() == null) {
       return false;
     }
     if (!_syncEngine.isReady) {
-      return false;
-    }
-    if (_currentAuthToken() == null) {
       return false;
     }
     if (!forceSync &&
@@ -1326,173 +1320,6 @@ class _HomePageState extends State<HomePage> {
       return false;
     }
     return true;
-  }
-
-  Future<void> _refreshMembershipStatus() async {
-    final String? token = _currentAuthToken();
-    if (token == null) {
-      if (mounted) {
-        setState(() {
-          _membershipStatus = null;
-          _isMembershipLoading = false;
-        });
-      }
-      _handleMembershipStatusChanged(null);
-      return;
-    }
-    if (!mounted) {
-      return;
-    }
-
-    final loc = AppLocalizations.of(context);
-    setState(() {
-      _isMembershipLoading = true;
-    });
-
-    try {
-      final response = await http.get(
-        Uri.parse('$backendBaseUrl/api/membership'),
-        headers: <String, String>{'Authorization': 'Bearer $token'},
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> json =
-            jsonDecode(response.body) as Map<String, dynamic>;
-        final status = MembershipStatus.fromJson(json);
-        if (!mounted) {
-          return;
-        }
-        setState(() {
-          _membershipStatus = status;
-        });
-        _handleMembershipStatusChanged(status);
-      } else {
-        final message = _extractBackendError(
-          loc,
-          responseBody: response.body,
-          statusCode: response.statusCode,
-        );
-        _showSnackBar(message);
-      }
-    } catch (error) {
-      if (!mounted) {
-        return;
-      }
-      _showSnackBar(loc.authErrorGeneric('$error'));
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isMembershipLoading = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _subscribeToPlan(String plan, String paymentMethod) async {
-    final String? token = _currentAuthToken();
-    if (token == null || !mounted) {
-      return;
-    }
-    final loc = AppLocalizations.of(context);
-    setState(() {
-      _isMembershipLoading = true;
-    });
-
-    try {
-      final response = await http.post(
-        Uri.parse('$backendBaseUrl/api/membership/subscribe'),
-        headers: <String, String>{
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(<String, String>{
-          'plan': plan,
-          'payment_method': paymentMethod,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> json =
-            jsonDecode(response.body) as Map<String, dynamic>;
-        final status = MembershipStatus.fromJson(json);
-        if (!mounted) {
-          return;
-        }
-        setState(() {
-          _membershipStatus = status;
-        });
-        _handleMembershipStatusChanged(status);
-        _showSnackBar(loc.membershipSubscribeSuccess);
-      } else {
-        final message = _extractBackendError(
-          loc,
-          responseBody: response.body,
-          statusCode: response.statusCode,
-        );
-        _showSnackBar(message);
-      }
-    } catch (error) {
-      if (!mounted) {
-        return;
-      }
-      _showSnackBar(loc.authErrorGeneric('$error'));
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isMembershipLoading = false;
-        });
-      }
-    }
-  }
-
-  Future<void> _cancelMembership() async {
-    final String? token = _currentAuthToken();
-    if (token == null || !mounted) {
-      return;
-    }
-    final loc = AppLocalizations.of(context);
-    setState(() {
-      _isMembershipLoading = true;
-    });
-
-    try {
-      final response = await http.post(
-        Uri.parse('$backendBaseUrl/api/membership/cancel'),
-        headers: <String, String>{'Authorization': 'Bearer $token'},
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> json =
-            jsonDecode(response.body) as Map<String, dynamic>;
-        final status = MembershipStatus.fromJson(json);
-        if (!mounted) {
-          return;
-        }
-        setState(() {
-          _membershipStatus = status;
-        });
-        _handleMembershipStatusChanged(status);
-        _showSnackBar(loc.membershipCancelSuccess);
-      } else {
-        final message = _extractBackendError(
-          loc,
-          responseBody: response.body,
-          statusCode: response.statusCode,
-        );
-        _showSnackBar(message);
-      }
-    } catch (error) {
-      if (!mounted) {
-        return;
-      }
-      _showSnackBar(loc.authErrorGeneric('$error'));
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isMembershipLoading = false;
-        });
-      }
-    }
   }
 
   Future<void> _deleteSyncedData() async {
@@ -1529,7 +1356,7 @@ class _HomePageState extends State<HomePage> {
       return;
     }
     setState(() {
-      _isMembershipLoading = true;
+      _isSyncInProgress = true;
     });
 
     try {
@@ -1539,16 +1366,9 @@ class _HomePageState extends State<HomePage> {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> json =
-            jsonDecode(response.body) as Map<String, dynamic>;
-        final status = MembershipStatus.fromJson(json);
         if (!mounted) {
           return;
         }
-        setState(() {
-          _membershipStatus = status;
-        });
-        _handleMembershipStatusChanged(status);
         _showSnackBar(loc.membershipDeleteSuccess);
       } else {
         final message = _extractBackendError(
@@ -1566,7 +1386,7 @@ class _HomePageState extends State<HomePage> {
     } finally {
       if (mounted) {
         setState(() {
-          _isMembershipLoading = false;
+          _isSyncInProgress = false;
         });
       }
     }
@@ -3257,7 +3077,7 @@ class _HomePageState extends State<HomePage> {
     bool isHistoryLoading,
   ) {
     final children = <Widget>[
-      _buildMembershipCard(context, loc),
+      _buildSyncCard(context, loc),
       const SizedBox(height: 24),
       _buildAppearanceCard(context, loc),
       const SizedBox(height: 24),
@@ -3282,44 +3102,8 @@ class _HomePageState extends State<HomePage> {
     return ListView(padding: const EdgeInsets.all(16), children: children);
   }
 
-  Widget _buildMembershipCard(BuildContext context, AppLocalizations loc) {
+  Widget _buildSyncCard(BuildContext context, AppLocalizations loc) {
     final theme = Theme.of(context);
-    final status = _membershipStatus;
-    final bool isActive = status?.isActive ?? false;
-    final bool syncEnabled = status?.syncEnabled ?? false;
-    final int? remainingDays =
-        isActive ? status?.remainingDays : null;
-
-    String statusText;
-    if (status == null) {
-      statusText = loc.membershipStatusUnknown;
-    } else if (isActive && status.membershipExpiresAt != null) {
-      statusText = loc.membershipStatusActive(
-        _formatDate(context, status.membershipExpiresAt!),
-      );
-    } else {
-      statusText = loc.membershipStatusInactive;
-    }
-
-    final String syncText = syncEnabled
-        ? loc.membershipSyncEnabled
-        : loc.membershipSyncDisabled;
-    final String? lastPaymentText = status?.paymentMethodLabel(loc);
-    final String? retentionText = status?.syncRetentionUntil != null
-        ? loc.membershipRetentionInfo(
-            _formatDate(context, status!.syncRetentionUntil!),
-          )
-        : null;
-
-    final String monthlyPrice = _formatCurrency(
-      context,
-      status?.priceMonthly ?? 1.0,
-    );
-    final String yearlyPrice = _formatCurrency(
-      context,
-      status?.priceYearly ?? 10.0,
-    );
-
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -3330,11 +3114,11 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Expanded(
                   child: Text(
-                    loc.membershipSectionTitle,
+                    loc.settingsSyncInfoTitle,
                     style: theme.textTheme.headlineSmall,
                   ),
                 ),
-                if (_isMembershipLoading)
+                if (_isSyncInProgress)
                   const SizedBox(
                     width: 24,
                     height: 24,
@@ -3342,95 +3126,37 @@ class _HomePageState extends State<HomePage> {
                   ),
               ],
             ),
-            const SizedBox(height: 16),
-            Text(statusText, style: theme.textTheme.titleMedium),
-            if (remainingDays != null) ...[
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    Icons.hourglass_bottom,
-                    size: 20,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    loc.membershipDaysRemaining(remainingDays),
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ],
-            const SizedBox(height: 8),
-            Text(syncText, style: theme.textTheme.bodyMedium),
-            const SizedBox(height: 8),
-            Text(
-              loc.settingsSyncMembershipInfo,
-              style: theme.textTheme.bodySmall,
-            ),
-            if (lastPaymentText != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                loc.membershipLastPayment(lastPaymentText),
-                style: theme.textTheme.bodyMedium,
-              ),
-            ],
-            if (retentionText != null) ...[
-              const SizedBox(height: 8),
-              Text(retentionText, style: theme.textTheme.bodyMedium),
-            ],
-            const SizedBox(height: 16),
-            Text(
-              loc.membershipActionsTitle,
-              style: theme.textTheme.titleMedium,
-            ),
             const SizedBox(height: 12),
-            _buildSubscriptionRow(
-              context,
-              loc.membershipSubscribeMonthly(monthlyPrice),
-              monthly: true,
-            ),
-            const SizedBox(height: 12),
-            _buildSubscriptionRow(
-              context,
-              loc.membershipSubscribeYearly(yearlyPrice),
-              monthly: false,
+            Text(
+              loc.settingsSyncInfoDescription,
+              style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
             Wrap(
               spacing: 12,
               runSpacing: 12,
               children: [
-                if (syncEnabled)
-                  FilledButton.icon(
-                    onPressed: !_syncEngine.isReady || _isSyncInProgress
-                        ? null
-                        : _handleSyncNow,
-                    icon: _isSyncInProgress
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.sync),
-                    label: Text(
-                      !_syncEngine.isReady
-                          ? loc.syncNotReady
-                          : _isSyncInProgress
-                          ? loc.syncInProgress
-                          : loc.syncNowButton,
-                    ),
-                  ),
-                FilledButton.tonal(
-                  onPressed: _isMembershipLoading || _isSyncInProgress
+                FilledButton.icon(
+                  onPressed: !_syncEngine.isReady || _isSyncInProgress
                       ? null
-                      : _cancelMembership,
-                  child: Text(loc.membershipCancelButton),
+                      : _handleSyncNow,
+                  icon: _isSyncInProgress
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.sync),
+                  label: Text(
+                    !_syncEngine.isReady
+                        ? loc.syncNotReady
+                        : _isSyncInProgress
+                        ? loc.syncInProgress
+                        : loc.syncNowButton,
+                  ),
                 ),
                 OutlinedButton(
-                  onPressed: _isMembershipLoading || _isSyncInProgress
-                      ? null
-                      : _deleteSyncedData,
+                  onPressed: _isSyncInProgress ? null : _deleteSyncedData,
                   child: Text(loc.membershipDeleteDataButton),
                 ),
               ],
@@ -4228,11 +3954,6 @@ class _HomePageState extends State<HomePage> {
               loc.settingsSyncInfoDescription,
               style: theme.textTheme.bodyMedium,
             ),
-            const SizedBox(height: 8),
-            Text(
-              loc.settingsSyncMembershipInfo,
-              style: theme.textTheme.bodyMedium,
-            ),
           ],
         ),
       ),
@@ -4448,36 +4169,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildSubscriptionRow(
-    BuildContext context,
-    String title, {
-    required bool monthly,
-  }) {
-    final loc = AppLocalizations.of(context);
-    final bool disabled = _isMembershipLoading;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: Theme.of(context).textTheme.bodyLarge),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 12,
-          children: [
-            FilledButton(
-              onPressed: disabled
-                  ? null
-                  : () => _subscribeToPlan(
-                      monthly ? 'monthly' : 'yearly',
-                      'paypal',
-                    ),
-              child: Text(loc.membershipPayWithPaypal),
-            ),
-          ],
-        ),
-      ],
     );
   }
 
@@ -4959,14 +4650,5 @@ class _HomePageState extends State<HomePage> {
       timestamp.toLocal(),
     ).format(context);
     return '$dateText • $timeText';
-  }
-
-  String _formatCurrency(BuildContext context, double amount) {
-    final String localeTag = Localizations.localeOf(context).toLanguageTag();
-    final NumberFormat formatter = NumberFormat.simpleCurrency(
-      locale: localeTag,
-      name: 'EUR',
-    );
-    return formatter.format(amount);
   }
 }

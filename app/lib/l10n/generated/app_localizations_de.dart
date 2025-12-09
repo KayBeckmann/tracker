@@ -1477,11 +1477,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsSyncInfoDescription =>
-      'Melde dich nur an, wenn du deine Daten mit dem Backend synchronisieren möchtest. Ohne Anmeldung bleiben alle Daten auf diesem Gerät.';
-
-  @override
-  String get settingsSyncMembershipInfo =>
-      'Die Synchronisierung wird freigeschaltet, sobald eine Mitgliedschaft aktiv ist.';
+      'Melde dich an, um deine Daten verschlüsselt zwischen Geräten zu synchronisieren. Ohne Anmeldung bleiben alle Daten auf diesem Gerät.';
 
   @override
   String get guestUserName => 'Gast';
@@ -1495,14 +1491,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get dashboardGuestIntro =>
-      'Nutze die App offline oder melde dich an, um Synchronisation und Mitgliedschaften freizuschalten.';
+      'Nutze die App offline oder melde dich an, um deine Daten zu synchronisieren.';
 
   @override
   String get dashboardGuestSyncTitle => 'Synchronisierung freischalten';
 
   @override
   String get dashboardGuestSyncDescription =>
-      'Erstelle ein kostenloses Konto, um nach Abschluss einer Mitgliedschaft die verschlüsselte Synchronisierung zu aktivieren.';
+      'Erstelle ein kostenloses Konto, um die verschlüsselte Synchronisierung zu aktivieren.';
 
   @override
   String get dashboardGuestSyncButton => 'Zu den Einstellungen';
@@ -1574,8 +1570,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Synchronisierte Daten jetzt löschen';
 
   @override
-  String get membershipDeleteConfirmTitle =>
-      'Synchronisierte Daten löschen?';
+  String get membershipDeleteConfirmTitle => 'Synchronisierte Daten löschen?';
 
   @override
   String get membershipDeleteConfirmMessage =>

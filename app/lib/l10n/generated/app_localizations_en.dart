@@ -1465,11 +1465,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsSyncInfoDescription =>
-      'Sign in only if you want to synchronise your data with the backend. Without sign-in, everything stays on this device.';
-
-  @override
-  String get settingsSyncMembershipInfo =>
-      'Sync becomes available after you start a membership.';
+      'Sign in to synchronise your data across devices with end-to-end encryption. Without sign-in, everything stays on this device.';
 
   @override
   String get guestUserName => 'Guest';
@@ -1482,14 +1478,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardGuestIntro =>
-      'Use the app offline or sign in to unlock sync and membership benefits.';
+      'Use the app offline or sign in to sync your data.';
 
   @override
   String get dashboardGuestSyncTitle => 'Unlock sync and backup';
 
   @override
   String get dashboardGuestSyncDescription =>
-      'Create a free account to enable encrypted sync once you start a membership.';
+      'Create a free account to enable encrypted sync.';
 
   @override
   String get dashboardGuestSyncButton => 'Go to settings';

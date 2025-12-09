@@ -2687,14 +2687,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsSyncInfoDescription.
   ///
   /// In en, this message translates to:
-  /// **'Sign in only if you want to synchronise your data with the backend. Without sign-in, everything stays on this device.'**
+  /// **'Sign in to synchronise your data across devices with end-to-end encryption. Without sign-in, everything stays on this device.'**
   String get settingsSyncInfoDescription;
-
-  /// No description provided for @settingsSyncMembershipInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync becomes available after you start a membership.'**
-  String get settingsSyncMembershipInfo;
 
   /// No description provided for @guestUserName.
   ///
@@ -2717,7 +2711,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardGuestIntro.
   ///
   /// In en, this message translates to:
-  /// **'Use the app offline or sign in to unlock sync and membership benefits.'**
+  /// **'Use the app offline or sign in to sync your data.'**
   String get dashboardGuestIntro;
 
   /// No description provided for @dashboardGuestSyncTitle.
@@ -2729,7 +2723,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardGuestSyncDescription.
   ///
   /// In en, this message translates to:
-  /// **'Create a free account to enable encrypted sync once you start a membership.'**
+  /// **'Create a free account to enable encrypted sync.'**
   String get dashboardGuestSyncDescription;
 
   /// No description provided for @dashboardGuestSyncButton.
@@ -2839,21 +2833,25 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete synced data now'**
   String get membershipDeleteDataButton;
+
   /// No description provided for @membershipDeleteConfirmTitle.
   ///
   /// In en, this message translates to:
   /// **'Delete synced data?'**
   String get membershipDeleteConfirmTitle;
+
   /// No description provided for @membershipDeleteConfirmMessage.
   ///
   /// In en, this message translates to:
   /// **'This removes all synced data from the server. Local data on this device stays intact.'**
   String get membershipDeleteConfirmMessage;
+
   /// No description provided for @membershipDeleteConfirmAction.
   ///
   /// In en, this message translates to:
   /// **'Delete now'**
   String get membershipDeleteConfirmAction;
+
   /// No description provided for @membershipDeleteCancelAction.
   ///
   /// In en, this message translates to:

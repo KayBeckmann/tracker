@@ -1465,11 +1465,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get settingsSyncInfoDescription =>
-      'Logga bara in om du vill synkronisera dina data med backend. Utan inloggning stannar allt på den här enheten.';
-
-  @override
-  String get settingsSyncMembershipInfo =>
-      'Synkningen blir tillgänglig när du har ett aktivt medlemskap.';
+      'Logga in för att synkronisera dina data mellan enheter med kryptering. Utan inloggning stannar allt på den här enheten.';
 
   @override
   String get guestUserName => 'Gäst';
@@ -1483,14 +1479,14 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get dashboardGuestIntro =>
-      'Använd appen offline eller logga in för att låsa upp synkronisering och medlemsförmåner.';
+      'Använd appen offline eller logga in för att synkronisera dina data.';
 
   @override
   String get dashboardGuestSyncTitle => 'Lås upp synkronisering';
 
   @override
   String get dashboardGuestSyncDescription =>
-      'Skapa ett kostnadsfritt konto för att aktivera krypterad synkronisering när du startar ett medlemskap.';
+      'Skapa ett kostnadsfritt konto för att aktivera krypterad synkronisering.';
 
   @override
   String get dashboardGuestSyncButton => 'Gå till inställningar';

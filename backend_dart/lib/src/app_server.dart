@@ -22,8 +22,6 @@ class AppServer {
       ..post('/api/auth/login', _handleLogin)
       ..get('/api/auth/me', _handleMe)
       ..get('/api/membership', _handleMembershipStatus)
-      ..post('/api/membership/subscribe', _handleMembershipAction)
-      ..post('/api/membership/cancel', _handleMembershipAction)
       ..post('/api/membership/delete_synced_data', _handleDeleteSyncedData)
       ..get('/api/sync/items', _handleSyncFetch)
       ..post('/api/sync/items', _handleSyncUpsert);
@@ -91,35 +89,16 @@ class AppServer {
     return _jsonResponse(_membershipJson(user));
   }
 
-  Future<Response> _handleMembershipAction(Request request) async {
-    final userId = userIdFromContext(request);
-    if (userId == null) {
-      return _errorResponse(401, 'Nicht autorisiert.');
-    }
-    final user = await authService.getUserById(userId);
-    if (user == null) {
-      return _errorResponse(401, 'Nicht autorisiert.');
-    }
-    // Sync is currently free. We simply echo the membership status.
-    return _jsonResponse(_membershipJson(user));
-  }
-
   Future<Response> _handleDeleteSyncedData(Request request) async {
     final userId = userIdFromContext(request);
     if (userId == null) {
       return _errorResponse(401, 'Nicht autorisiert.');
     }
-    final user = await authService.getUserById(userId);
-    if (user == null) {
-      return _errorResponse(401, 'Nicht autorisiert.');
-    }
-    final guard = _guardSyncAccess(user);
-    if (guard != null) {
-      return guard;
-    }
 
     await syncService.deleteAllForUser(userId);
-    return _jsonResponse(_membershipJson(user));
+    return _jsonResponse(<String, Object?>{
+      'status': 'deleted',
+    });
   }
 
   Future<Response> _handleSyncFetch(Request request) async {
@@ -128,14 +107,7 @@ class AppServer {
       return _errorResponse(401, 'Nicht autorisiert.');
     }
 
-    final user = await authService.getUserById(userId);
-    if (user == null) {
-      return _errorResponse(401, 'Nicht autorisiert.');
-    }
-    final guard = _guardSyncAccess(user);
-    if (guard != null) {
-      return guard;
-    }
+    // Sync is now free for all logged-in users
 
     final collection = request.url.queryParameters['collection'];
     if (collection == null || collection.trim().isEmpty) {
@@ -167,14 +139,7 @@ class AppServer {
       return _errorResponse(401, 'Nicht autorisiert.');
     }
 
-    final user = await authService.getUserById(userId);
-    if (user == null) {
-      return _errorResponse(401, 'Nicht autorisiert.');
-    }
-    final guard = _guardSyncAccess(user);
-    if (guard != null) {
-      return guard;
-    }
+    // Sync is now free for all logged-in users
 
     try {
       final body = await _decodeJson(request);
@@ -211,37 +176,17 @@ class AppServer {
   }
 
   Map<String, Object?> _membershipJson(UserRecord user) {
+    // Sync is now free for all logged-in users
     return <String, Object?>{
-      'membership_level': user.membershipLevel,
-      'membership_expires_at': user.membershipExpiresAt?.toIso8601String(),
-      'sync_enabled': user.syncEnabled,
-      'sync_allowed': _hasActiveMembership(user),
-      'last_payment_method': user.lastPaymentMethod,
-      'sync_retention_until': user.syncRetentionUntil?.toIso8601String(),
+      'membership_level': 'free',
+      'membership_expires_at': null,
+      'sync_enabled': true,
+      'sync_allowed': true,
+      'last_payment_method': null,
+      'sync_retention_until': null,
       'price_monthly': 0.0,
       'price_yearly': 0.0,
     };
-  }
-
-  Response? _guardSyncAccess(UserRecord user) {
-    if (_hasActiveMembership(user)) {
-      return null;
-    }
-    return _errorResponse(
-      402,
-      'Eine aktive Mitgliedschaft ist erforderlich, um Daten zu synchronisieren.',
-    );
-  }
-
-  bool _hasActiveMembership(UserRecord user) {
-    if (!user.syncEnabled) {
-      return false;
-    }
-    final expiresAt = user.membershipExpiresAt;
-    if (expiresAt == null) {
-      return true;
-    }
-    return !expiresAt.isBefore(DateTime.now().toUtc());
   }
 
   Future<Map<String, dynamic>> _decodeJson(Request request) async {
