@@ -147,10 +147,8 @@ class SyncEngine {
     );
     conflicts.addAll(ledgerRecurringConflicts);
 
-    if (conflicts.isNotEmpty) {
-      return SyncResult(conflicts: conflicts);
-    }
-
+    // Always pull from server, even if there are conflicts.
+    // This ensures deletions and updates from server are applied.
     await _pullNotes(token);
     await _pullTasks(token);
     await _pullTimeEntries(token);
@@ -183,7 +181,8 @@ class SyncEngine {
       ..put(lastSyncLedgerTransactionsKey, now.toIso8601String())
       ..put(lastSyncLedgerRecurringKey, now.toIso8601String());
 
-    return const SyncResult(conflicts: <SyncConflictData>[]);
+    // Return conflicts for resolution, but sync completed
+    return SyncResult(conflicts: conflicts);
   }
 
   Future<void> applyResolution(
