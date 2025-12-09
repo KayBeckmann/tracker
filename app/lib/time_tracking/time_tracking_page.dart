@@ -175,7 +175,7 @@ class _TimeTrackingPageState extends State<TimeTrackingPage> {
         .toSet();
     final days = _generateMonthDays(_calendarMonth);
     final weekdayNames = List.generate(7, (index) {
-      final date = DateTime(2023, 1, 2 + index); // Monday-based sample week.
+      final date = DateTime(2020, 1, 6 + index); // 2020-01-06 is Monday
       return DateFormat.E(loc.localeName).format(date);
     });
 
@@ -437,8 +437,9 @@ class _TimeTrackingPageState extends State<TimeTrackingPage> {
 
   List<_CalendarDayEntry> _generateMonthDays(DateTime month) {
     final first = DateTime(month.year, month.month, 1);
-    final weekday = first.weekday; // Monday=1
-    final leading = (weekday + 6) % 7;
+    // Calculate days before the 1st to fill the first week (Monday=1, Sunday=7)
+    final weekday = first.weekday; // Monday=1, Tuesday=2, ..., Sunday=7
+    final leading = (weekday - 1) % 7; // Days before first to reach previous Monday
     final start = first.subtract(Duration(days: leading));
     return List.generate(42, (index) {
       final date = start.add(Duration(days: index));

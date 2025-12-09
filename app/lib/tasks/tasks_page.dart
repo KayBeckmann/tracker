@@ -686,18 +686,22 @@ class _TasksPageState extends State<TasksPage>
   List<_MonthDay> _generateMonthDays(DateTime month) {
     final firstDay = DateTime(month.year, month.month, 1);
     final daysInMonth = DateUtils.getDaysInMonth(month.year, month.month);
-    final firstWeekday = (firstDay.weekday + 6) % 7; // Monday as start
+    // Calculate days before the 1st to reach previous Monday (Monday=1, Sunday=7)
+    final firstWeekday = (firstDay.weekday - 1) % 7; // Days before first Monday
     final totalCells = ((firstWeekday + daysInMonth + 6) ~/ 7) * 7;
     final days = <_MonthDay>[];
 
+    // Add days from previous month to fill first week
     for (int i = 0; i < firstWeekday; i++) {
       final date = firstDay.subtract(Duration(days: firstWeekday - i));
       days.add(_MonthDay(date, false));
     }
+    // Add all days of current month
     for (int i = 0; i < daysInMonth; i++) {
       final date = DateTime(month.year, month.month, i + 1);
       days.add(_MonthDay(date, true));
     }
+    // Add days from next month to complete grid
     final remaining = totalCells - days.length;
     for (int i = 0; i < remaining; i++) {
       final date = DateTime(
