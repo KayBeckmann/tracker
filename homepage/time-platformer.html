@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Manipulation Platformer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        #gameContainer {
+            text-align: center;
+        }
+
+        canvas {
+            border: 4px solid #0f3460;
+            background: #0a0e27;
+            box-shadow: 0 0 40px rgba(15, 52, 96, 0.8);
+            border-radius: 8px;
+        }
+
+        #ui {
+            margin-top: 20px;
+            color: #e94560;
+            font-size: 18px;
+            text-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+
+        .controls {
+            margin-top: 15px;
+            color: #5da7db;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .time-bar {
+            width: 300px;
+            height: 20px;
+            background: #16213e;
+            border: 2px solid #0f3460;
+            margin: 10px auto;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .time-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e94560 0%, #ff6b9d 100%);
+            transition: width 0.1s;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.8);
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .title {
+            color: #5da7db;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(93, 167, 219, 0.6);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div class="title">⏰ Time Manipulation Platformer ⏰</div>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="ui">
+            <div class="time-bar">
+                <div class="time-bar-fill" id="timeEnergyBar"></div>
+            </div>
+            <div class="status" id="status">Zeit-Energie: 100%</div>
+            <div class="controls">
+                <strong>Steuerung:</strong><br>
+                ← → Pfeiltasten: Bewegen | ↑ / Leertaste: Springen<br>
+                <strong style="color: #e94560;">R</strong>: Zeit zurückspulen (Rewind) |
+                <strong style="color: #ffd700;">T</strong>: Zeitlupe (Slow Motion)<br>
+                <strong>Ziel:</strong> Erreiche die goldene Plattform! 🎯
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const timeEnergyBar = document.getElementById('timeEnergyBar');
+        const statusDiv = document.getElementById('status');
+
+        // Game state
+        const game = {
+            timeEnergy: 100,
+            maxTimeEnergy: 100,
+            timeScale: 1,
+            isRewinding: false,
+            isSlowMotion: false,
+            levelComplete: false,
+            history: [],
+            maxHistory: 300
+        };
+
+        // Player
+        const player = {
+            x: 100,
+            y: 400,
+            width: 30,
+            height: 30,
+            velocityX: 0,
+            velocityY: 0,
+            speed: 5,
+            jumpPower: 12,
+            isGrounded: false,
+            color: '#5da7db',
+            prevY: 400
+        };
+
+        // Keys pressed
+        const keys = {};
+
+        // Platforms
+        const platforms = [
+            // Ground
+            { x: 0, y: 550, width: 800, height: 50, color: '#0f3460', type: 'static' },
+
+            // Starting area
+            { x: 50, y: 480, width: 150, height: 20, color: '#0f3460', type: 'static' },
+
+            // Moving platform 1
+            { x: 250, y: 400, width: 100, height: 20, color: '#e94560', type: 'moving',
+              startX: 250, endX: 400, speed: 2, direction: 1, currentX: 250 },
+
+            // Static platform
+            { x: 450, y: 350, width: 100, height: 20, color: '#0f3460', type: 'static' },
+
+            // Moving platform 2 (vertical)
+            { x: 600, y: 300, width: 80, height: 20, color: '#e94560', type: 'moving-vertical',
+              startY: 200, endY: 400, speed: 1.5, direction: 1, currentY: 300 },
+
+            // High platform
+            { x: 300, y: 200, width: 120, height: 20, color: '#0f3460', type: 'static' },
+
+            // Goal platform
+            { x: 650, y: 150, width: 100, height: 20, color: '#ffd700', type: 'goal' }
+        ];
+
+        // Obstacles (spikes that kill player)
+        const obstacles = [
+            { x: 220, y: 530, width: 30, height: 20, color: '#ff0000' },
+            { x: 420, y: 330, width: 30, height: 20, color: '#ff0000' }
+        ];
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+
+            // Time manipulation
+            if (e.key === 'r' || e.key === 'R') {
+                startRewind();
+            }
+            if (e.key === 't' || e.key === 'T') {
+                toggleSlowMotion();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+
+            if (e.key === 'r' || e.key === 'R') {
+                stopRewind();
+            }
+        });
+
+        // Time manipulation functions
+        function startRewind() {
+            if (game.timeEnergy > 0 && !game.isRewinding && !game.levelComplete) {
+                game.isRewinding = true;
+            }
+        }
+
+        function stopRewind() {
+            game.isRewinding = false;
+        }
+
+        function toggleSlowMotion() {
+            if (game.timeEnergy > 0 && !game.isSlowMotion && !game.levelComplete) {
+                game.isSlowMotion = true;
+                game.timeScale = 0.3;
+            } else {
+                game.isSlowMotion = false;
+                game.timeScale = 1;
+            }
+        }
+
+        // Save game state for rewind
+        function saveState() {
+            if (game.history.length >= game.maxHistory) {
+                game.history.shift();
+            }
+
+            game.history.push({
+                playerX: player.x,
+                playerY: player.y,
+                playerPrevY: player.prevY,
+                playerVelocityX: player.velocityX,
+                playerVelocityY: player.velocityY,
+                platforms: platforms.map(p => ({
+                    x: p.x,
+                    y: p.y,
+                    currentX: p.currentX,
+                    currentY: p.currentY
+                }))
+            });
+        }
+
+        // Restore game state (rewind)
+        function restoreState() {
+            if (game.history.length > 0) {
+                const state = game.history.pop();
+                player.x = state.playerX;
+                player.y = state.playerY;
+                player.prevY = state.playerPrevY;
+                player.velocityX = state.playerVelocityX;
+                player.velocityY = state.playerVelocityY;
+
+                platforms.forEach((p, i) => {
+                    if (state.platforms[i]) {
+                        p.x = state.platforms[i].x;
+                        p.y = state.platforms[i].y;
+                        if (p.currentX !== undefined) p.currentX = state.platforms[i].currentX;
+                        if (p.currentY !== undefined) p.currentY = state.platforms[i].currentY;
+                    }
+                });
+            }
+        }
+
+        // Physics and collision
+        function updatePlayer(deltaTime) {
+            const dt = deltaTime * game.timeScale;
+
+            // Horizontal movement
+            if (keys['ArrowLeft']) {
+                player.velocityX = -player.speed;
+            } else if (keys['ArrowRight']) {
+                player.velocityX = player.speed;
+            } else {
+                player.velocityX = 0;
+            }
+
+            // Jumping
+            if ((keys['ArrowUp'] || keys[' ']) && player.isGrounded) {
+                player.velocityY = -player.jumpPower;
+                player.isGrounded = false;
+            }
+
+            // Apply gravity
+            player.velocityY += 0.5 * dt;
+
+            // Limit fall speed
+            if (player.velocityY > 15) {
+                player.velocityY = 15;
+            }
+
+            // Store previous position
+            player.prevY = player.y;
+
+            // Update position
+            player.x += player.velocityX * dt;
+            player.y += player.velocityY * dt;
+
+            // Keep player in bounds
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+            // Reset if player falls
+            if (player.y > canvas.height) {
+                resetPlayer();
+            }
+
+            // Check collisions
+            checkCollisions();
+        }
+
+        function checkCollisions() {
+            player.isGrounded = false;
+
+            // Platform collisions
+            platforms.forEach(platform => {
+                if (isColliding(player, platform)) {
+                    // Goal reached
+                    if (platform.type === 'goal' && !game.levelComplete) {
+                        game.levelComplete = true;
+                        statusDiv.innerHTML = '🎉 Level Complete! Du hast es geschafft! 🎉';
+                        statusDiv.style.color = '#00ff00';
+                        return;
+                    }
+
+                    // Calculate overlap on each axis
+                    const overlapLeft = (player.x + player.width) - platform.x;
+                    const overlapRight = (platform.x + platform.width) - player.x;
+                    const overlapTop = (player.y + player.height) - platform.y;
+                    const overlapBottom = (platform.y + platform.height) - player.y;
+
+                    // Find minimum overlap
+                    const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
+
+                    // Collision from top (player was above platform in previous frame)
+                    if (minOverlap === overlapTop && player.velocityY >= 0 && player.prevY + player.height <= platform.y + 5) {
+                        player.y = platform.y - player.height;
+                        player.velocityY = 0;
+                        player.isGrounded = true;
+                    }
+                    // Collision from bottom
+                    else if (minOverlap === overlapBottom && player.velocityY < 0) {
+                        player.y = platform.y + platform.height;
+                        player.velocityY = 0;
+                    }
+                    // Collision from left
+                    else if (minOverlap === overlapLeft) {
+                        player.x = platform.x - player.width;
+                        player.velocityX = 0;
+                    }
+                    // Collision from right
+                    else if (minOverlap === overlapRight) {
+                        player.x = platform.x + platform.width;
+                        player.velocityX = 0;
+                    }
+                }
+            });
+
+            // Obstacle collisions
+            obstacles.forEach(obstacle => {
+                if (isColliding(player, obstacle)) {
+                    resetPlayer();
+                }
+            });
+        }
+
+        function isColliding(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        function resetPlayer() {
+            player.x = 100;
+            player.y = 400;
+            player.prevY = 400;
+            player.velocityX = 0;
+            player.velocityY = 0;
+            game.timeEnergy = game.maxTimeEnergy;
+            game.history = [];
+        }
+
+        function updatePlatforms(deltaTime) {
+            const dt = deltaTime * game.timeScale;
+
+            platforms.forEach(platform => {
+                if (platform.type === 'moving') {
+                    platform.currentX += platform.speed * platform.direction * dt;
+
+                    if (platform.currentX >= platform.endX) {
+                        platform.currentX = platform.endX;
+                        platform.direction = -1;
+                    } else if (platform.currentX <= platform.startX) {
+                        platform.currentX = platform.startX;
+                        platform.direction = 1;
+                    }
+
+                    platform.x = platform.currentX;
+                }
+
+                if (platform.type === 'moving-vertical') {
+                    platform.currentY += platform.speed * platform.direction * dt;
+
+                    if (platform.currentY >= platform.endY) {
+                        platform.currentY = platform.endY;
+                        platform.direction = -1;
+                    } else if (platform.currentY <= platform.startY) {
+                        platform.currentY = platform.startY;
+                        platform.direction = 1;
+                    }
+
+                    platform.y = platform.currentY;
+                }
+            });
+        }
+
+        // Update time energy
+        function updateTimeEnergy() {
+            if (game.isRewinding) {
+                game.timeEnergy -= 0.5;
+                if (game.timeEnergy <= 0) {
+                    game.timeEnergy = 0;
+                    stopRewind();
+                }
+            } else if (game.isSlowMotion) {
+                game.timeEnergy -= 0.3;
+                if (game.timeEnergy <= 0) {
+                    game.timeEnergy = 0;
+                    game.isSlowMotion = false;
+                    game.timeScale = 1;
+                }
+            } else {
+                // Regenerate energy
+                game.timeEnergy += 0.2;
+                if (game.timeEnergy > game.maxTimeEnergy) {
+                    game.timeEnergy = game.maxTimeEnergy;
+                }
+            }
+
+            // Update UI
+            const percentage = (game.timeEnergy / game.maxTimeEnergy) * 100;
+            timeEnergyBar.style.width = percentage + '%';
+
+            let statusText = `Zeit-Energie: ${Math.floor(percentage)}%`;
+            if (game.isRewinding) {
+                statusText += ' | ⏪ REWIND AKTIV';
+                statusDiv.style.color = '#e94560';
+            } else if (game.isSlowMotion) {
+                statusText += ' | ⏱️ ZEITLUPE AKTIV';
+                statusDiv.style.color = '#ffd700';
+            } else {
+                statusDiv.style.color = '#5da7db';
+            }
+
+            if (!game.levelComplete) {
+                statusDiv.innerHTML = statusText;
+            }
+        }
+
+        // Rendering
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#0a0e27';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid effect
+            ctx.strokeStyle = 'rgba(15, 52, 96, 0.3)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.width; i += 40) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < canvas.height; i += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.stroke();
+            }
+
+            // Draw platforms
+            platforms.forEach(platform => {
+                ctx.fillStyle = platform.color;
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+
+                // Add glow effect for special platforms
+                if (platform.type === 'moving' || platform.type === 'moving-vertical') {
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = platform.color;
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                    ctx.shadowBlur = 0;
+                }
+
+                if (platform.type === 'goal') {
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = '#ffd700';
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                    ctx.shadowBlur = 0;
+                }
+            });
+
+            // Draw obstacles
+            obstacles.forEach(obstacle => {
+                ctx.fillStyle = obstacle.color;
+                ctx.beginPath();
+                ctx.moveTo(obstacle.x, obstacle.y + obstacle.height);
+                ctx.lineTo(obstacle.x + obstacle.width / 2, obstacle.y);
+                ctx.lineTo(obstacle.x + obstacle.width, obstacle.y + obstacle.height);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ff0000';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+
+            // Draw player
+            ctx.fillStyle = player.color;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.shadowBlur = 0;
+
+            // Draw rewind effect
+            if (game.isRewinding) {
+                ctx.fillStyle = 'rgba(233, 69, 96, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#e94560';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('⏪ REWIND', canvas.width / 2, 40);
+            }
+
+            // Draw slow motion effect
+            if (game.isSlowMotion) {
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#ffd700';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('⏱️ SLOW MOTION', canvas.width / 2, 40);
+            }
+
+            // Draw level complete effect
+            if (game.levelComplete) {
+                ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // Game loop
+        let lastTime = 0;
+        function gameLoop(currentTime) {
+            const deltaTime = (currentTime - lastTime) / 16.67; // Normalize to 60fps
+            lastTime = currentTime;
+
+            if (game.isRewinding) {
+                restoreState();
+            } else if (!game.levelComplete) {
+                updatePlayer(deltaTime);
+                updatePlatforms(deltaTime);
+                saveState();
+            }
+
+            updateTimeEnergy();
+            draw();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start game
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
