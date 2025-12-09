@@ -125,7 +125,8 @@
             speed: 5,
             jumpPower: 12,
             isGrounded: false,
-            color: '#5da7db'
+            color: '#5da7db',
+            prevY: 400
         };
 
         // Keys pressed
@@ -214,6 +215,7 @@
             game.history.push({
                 playerX: player.x,
                 playerY: player.y,
+                playerPrevY: player.prevY,
                 playerVelocityX: player.velocityX,
                 playerVelocityY: player.velocityY,
                 platforms: platforms.map(p => ({
@@ -231,6 +233,7 @@
                 const state = game.history.pop();
                 player.x = state.playerX;
                 player.y = state.playerY;
+                player.prevY = state.playerPrevY;
                 player.velocityX = state.playerVelocityX;
                 player.velocityY = state.playerVelocityY;
 
@@ -272,6 +275,9 @@
                 player.velocityY = 15;
             }
 
+            // Store previous position
+            player.prevY = player.y;
+
             // Update position
             player.x += player.velocityX * dt;
             player.y += player.velocityY * dt;
@@ -303,24 +309,35 @@
                         return;
                     }
 
-                    // Collision from top
-                    if (player.velocityY > 0 && player.y + player.height - player.velocityY <= platform.y) {
+                    // Calculate overlap on each axis
+                    const overlapLeft = (player.x + player.width) - platform.x;
+                    const overlapRight = (platform.x + platform.width) - player.x;
+                    const overlapTop = (player.y + player.height) - platform.y;
+                    const overlapBottom = (platform.y + platform.height) - player.y;
+
+                    // Find minimum overlap
+                    const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
+
+                    // Collision from top (player was above platform in previous frame)
+                    if (minOverlap === overlapTop && player.velocityY >= 0 && player.prevY + player.height <= platform.y + 5) {
                         player.y = platform.y - player.height;
                         player.velocityY = 0;
                         player.isGrounded = true;
                     }
                     // Collision from bottom
-                    else if (player.velocityY < 0 && player.y - player.velocityY >= platform.y + platform.height) {
+                    else if (minOverlap === overlapBottom && player.velocityY < 0) {
                         player.y = platform.y + platform.height;
                         player.velocityY = 0;
                     }
-                    // Collision from sides
-                    else {
-                        if (player.velocityX > 0) {
-                            player.x = platform.x - player.width;
-                        } else if (player.velocityX < 0) {
-                            player.x = platform.x + platform.width;
-                        }
+                    // Collision from left
+                    else if (minOverlap === overlapLeft) {
+                        player.x = platform.x - player.width;
+                        player.velocityX = 0;
+                    }
+                    // Collision from right
+                    else if (minOverlap === overlapRight) {
+                        player.x = platform.x + platform.width;
+                        player.velocityX = 0;
                     }
                 }
             });
@@ -343,6 +360,7 @@
         function resetPlayer() {
             player.x = 100;
             player.y = 400;
+            player.prevY = 400;
             player.velocityX = 0;
             player.velocityY = 0;
             game.timeEnergy = game.maxTimeEnergy;
