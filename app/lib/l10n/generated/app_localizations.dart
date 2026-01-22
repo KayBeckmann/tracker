@@ -3827,6 +3827,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No budgets for the current period.'**
   String get ledgerDashboardNoBudgets;
+
+  /// No description provided for @settingsDonationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Support the project'**
+  String get settingsDonationTitle;
+
+  /// No description provided for @settingsDonationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracker is free and ad-free. If you enjoy the app, I would appreciate a small donation.'**
+  String get settingsDonationDescription;
+
+  /// No description provided for @settingsDonationBtcLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bitcoin'**
+  String get settingsDonationBtcLabel;
+
+  /// No description provided for @settingsDonationBtcCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Bitcoin address copied'**
+  String get settingsDonationBtcCopied;
+
+  /// No description provided for @settingsDonationCoffeeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy me a coffee'**
+  String get settingsDonationCoffeeButton;
 }
 
 class _AppLocalizationsDelegate

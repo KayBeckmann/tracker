@@ -2110,4 +2110,20 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get ledgerDashboardNoBudgets =>
       'Inga budgetar för den aktuella perioden.';
+
+  @override
+  String get settingsDonationTitle => 'Stöd projektet';
+
+  @override
+  String get settingsDonationDescription =>
+      'Tracker är gratis och reklamfri. Om du gillar appen uppskattar jag en liten donation.';
+
+  @override
+  String get settingsDonationBtcLabel => 'Bitcoin';
+
+  @override
+  String get settingsDonationBtcCopied => 'Bitcoin-adress kopierad';
+
+  @override
+  String get settingsDonationCoffeeButton => 'Buy me a coffee';
 }

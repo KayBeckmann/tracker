@@ -1301,5 +1301,10 @@
     }
   },
   "ledgerDashboardBudgetsTitle": "Budgets overview",
-  "ledgerDashboardNoBudgets": "No budgets for the current period."
+  "ledgerDashboardNoBudgets": "No budgets for the current period.",
+  "settingsDonationTitle": "Support the project",
+  "settingsDonationDescription": "Tracker is free and ad-free. If you enjoy the app, I would appreciate a small donation.",
+  "settingsDonationBtcLabel": "Bitcoin",
+  "settingsDonationBtcCopied": "Bitcoin address copied",
+  "settingsDonationCoffeeButton": "Buy me a coffee"
 }

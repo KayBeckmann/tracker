@@ -204,6 +204,19 @@ window.TRACKER_TRANSLATIONS = {
             "<li>Cross-platform refinements (Android, iOS, Web, Linux, Windows)</li><li>CI/CD, automated QA, and compliance exports</li><li>Public launch with onboarding, help centre, and API documentation</li>"
         }
       },
+      support: {
+        heading: "Support the project",
+        body: "Tracker is free and ad-free. If you enjoy the app and want to support its development, consider making a small donation.",
+        btc: {
+          title: "Bitcoin",
+          body: "Send BTC directly to the following address:"
+        },
+        coffee: {
+          title: "Buy me a coffee",
+          body: "Support the project with a one-time donation via Buy Me a Coffee.",
+          link: "Buy me a coffee"
+        }
+      },
       footer: {
         title: "Tracker",
         body: "Productivity reimagined—local-first, secure, adaptable.",
@@ -257,6 +270,10 @@ window.TRACKER_TRANSLATIONS = {
           settings: {
             title: "Settings",
             body: "Language, theme, modules, and sync."
+          },
+          support: {
+            title: "Support",
+            body: "Donate to support the project."
           }
         },
         security: {
@@ -488,6 +505,30 @@ window.TRACKER_TRANSLATIONS = {
             heading: "Roadmap",
             list:
               "<li>Import/export settings bundles across devices.</li><li>Expose subscription status, billing history, and upgrade flows.</li><li>Advanced diagnostics for sync conflicts and encryption status.</li><li>Automated backup rotation with retention policies.</li>"
+          }
+        }
+      },
+      support: {
+        meta: {
+          title: "Tracker Wiki — Support the Project"
+        },
+        title: "Support the Project",
+        intro:
+          "Tracker is free and ad-free. If you enjoy the app and want to support its continued development, consider making a small donation.",
+        sections: {
+          bitcoin: {
+            heading: "Bitcoin",
+            body: "You can send Bitcoin directly to the following address:"
+          },
+          coffee: {
+            heading: "Buy me a coffee",
+            body: "Support the project with a one-time donation via Buy Me a Coffee:",
+            link: "Buy me a coffee"
+          },
+          other: {
+            heading: "Other ways to help",
+            list:
+              "<li>Share Tracker with friends and colleagues who might find it useful.</li><li>Report bugs and suggest features via the feedback channels.</li><li>Leave a positive review if the app is available on your platform's store.</li>"
           }
         }
       }
@@ -824,6 +865,19 @@ window.TRACKER_TRANSLATIONS = {
             "<li>Plattform-Finishing (Android, iOS, Web, Linux, Windows)</li><li>CI/CD, automatisierte QA und Compliance-Exporte</li><li>Launch mit Onboarding, Help-Center und API-Dokumentation</li>"
         }
       },
+      support: {
+        heading: "Unterstütze das Projekt",
+        body: "Tracker ist kostenlos und werbefrei. Wenn dir die App gefällt und du die Entwicklung unterstützen möchtest, freue ich mich über eine kleine Spende.",
+        btc: {
+          title: "Bitcoin",
+          body: "Sende BTC direkt an folgende Adresse:"
+        },
+        coffee: {
+          title: "Buy me a coffee",
+          body: "Unterstütze das Projekt mit einer einmaligen Spende über Buy Me a Coffee.",
+          link: "Buy me a coffee"
+        }
+      },
       footer: {
         title: "Tracker",
         body: "Produktivität neu gedacht - lokal, sicher, flexibel.",
@@ -877,6 +931,10 @@ window.TRACKER_TRANSLATIONS = {
           settings: {
             title: "Einstellungen",
             body: "Sprache, Theme, Module und Sync."
+          },
+          support: {
+            title: "Unterstützung",
+            body: "Spende, um das Projekt zu unterstützen."
           }
         },
         security: {
@@ -1108,6 +1166,30 @@ window.TRACKER_TRANSLATIONS = {
             heading: "Roadmap",
             list:
               "<li>Import/Export von Einstellungen zwischen Geräten.</li><li>Abostatus, Rechnungsverlauf und Upgrade-Flows anzeigen.</li><li>Diagnose-Tools für Sync-Konflikte und Verschlüsselungsstatus.</li><li>Automatisierte Backup-Rotation mit Aufbewahrungsregeln.</li>"
+          }
+        }
+      },
+      support: {
+        meta: {
+          title: "Tracker Wiki - Projekt unterstützen"
+        },
+        title: "Projekt unterstützen",
+        intro:
+          "Tracker ist kostenlos und werbefrei. Wenn dir die App gefällt und du die Weiterentwicklung unterstützen möchtest, freue ich mich über eine kleine Spende.",
+        sections: {
+          bitcoin: {
+            heading: "Bitcoin",
+            body: "Du kannst Bitcoin direkt an folgende Adresse senden:"
+          },
+          coffee: {
+            heading: "Buy me a coffee",
+            body: "Unterstütze das Projekt mit einer einmaligen Spende über Buy Me a Coffee:",
+            link: "Buy me a coffee"
+          },
+          other: {
+            heading: "Andere Möglichkeiten zu helfen",
+            list:
+              "<li>Teile Tracker mit Freunden und Kollegen, die es nützlich finden könnten.</li><li>Melde Bugs und schlage Features über die Feedback-Kanäle vor.</li><li>Hinterlasse eine positive Bewertung, wenn die App in deinem Store verfügbar ist.</li>"
           }
         }
       }
@@ -1444,6 +1526,19 @@ window.TRACKER_TRANSLATIONS = {
             "<li>Plattformsfinlir (Android, iOS, webb, Linux, Windows)</li><li>CI/CD, automatiserad QA och export för efterlevnad</li><li>Lansering med onboarding, hjälpcenter och API-dokumentation</li>"
         }
       },
+      support: {
+        heading: "Stöd projektet",
+        body: "Tracker är gratis och reklamfri. Om du gillar appen och vill stödja utvecklingen uppskattar jag en liten donation.",
+        btc: {
+          title: "Bitcoin",
+          body: "Skicka BTC direkt till följande adress:"
+        },
+        coffee: {
+          title: "Buy me a coffee",
+          body: "Stöd projektet med en engångsdonation via Buy Me a Coffee.",
+          link: "Buy me a coffee"
+        }
+      },
       footer: {
         title: "Tracker",
         body: "Produktivitet på nytt sätt – lokal, säker, flexibel.",
@@ -1497,6 +1592,10 @@ window.TRACKER_TRANSLATIONS = {
           settings: {
             title: "Inställningar",
             body: "Språk, tema, moduler och synk."
+          },
+          support: {
+            title: "Stöd",
+            body: "Donera för att stödja projektet."
           }
         },
         security: {
@@ -1728,6 +1827,30 @@ window.TRACKER_TRANSLATIONS = {
             heading: "Färdplan",
             list:
               "<li>Lansera fullständigt språk- och temabyte i appen.</li><li>Visa abonnemangsstatus, fakturahistorik och uppgraderingsflöden.</li><li>Lägg till import/export av preferenser och modulayout.</li><li>Integrera avancerade sekretessalternativ (biometriskt lås, snabb rensning).</li>"
+          }
+        }
+      },
+      support: {
+        meta: {
+          title: "Tracker Wiki - Stöd projektet"
+        },
+        title: "Stöd projektet",
+        intro:
+          "Tracker är gratis och reklamfri. Om du gillar appen och vill stödja den fortsatta utvecklingen uppskattar jag en liten donation.",
+        sections: {
+          bitcoin: {
+            heading: "Bitcoin",
+            body: "Du kan skicka Bitcoin direkt till följande adress:"
+          },
+          coffee: {
+            heading: "Buy me a coffee",
+            body: "Stöd projektet med en engångsdonation via Buy Me a Coffee:",
+            link: "Buy me a coffee"
+          },
+          other: {
+            heading: "Andra sätt att hjälpa",
+            list:
+              "<li>Dela Tracker med vänner och kollegor som kanske tycker det är användbart.</li><li>Rapportera buggar och föreslå funktioner via feedback-kanalerna.</li><li>Lämna en positiv recension om appen finns i din plattforms butik.</li>"
           }
         }
       }

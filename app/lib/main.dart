@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'data/local/app_database.dart';
 import 'l10n/generated/app_localizations.dart';
@@ -3263,6 +3264,8 @@ class _HomePageState extends State<HomePage> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        _buildDonationCard(context, loc),
+        const SizedBox(height: 24),
         _buildLanguageCard(context, loc),
         const SizedBox(height: 24),
         _buildAppearanceCard(context, loc),
@@ -3289,6 +3292,8 @@ class _HomePageState extends State<HomePage> {
     bool isHistoryLoading,
   ) {
     final children = <Widget>[
+      _buildDonationCard(context, loc),
+      const SizedBox(height: 24),
       _buildSyncCard(context, loc),
       const SizedBox(height: 24),
       _buildAppearanceCard(context, loc),
@@ -4440,6 +4445,81 @@ class _HomePageState extends State<HomePage> {
                 languageLabels[_pendingLocale] ?? _pendingLocale.languageCode,
               ),
               style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDonationCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    const btcAddress = '1NLF5aChT4iWR2EULuxmz1Gf76WgLkx2SV';
+    const coffeeUrl = 'https://www.buymeacoffee.com/snuppedelua';
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.favorite, color: theme.colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  loc.settingsDonationTitle,
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.settingsDonationDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Icon(Icons.currency_bitcoin, size: 20),
+                const SizedBox(width: 8),
+                Text(loc.settingsDonationBtcLabel,
+                    style: theme.textTheme.labelLarge),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: SelectableText(
+                    btcAddress,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.copy, size: 20),
+                  tooltip: loc.settingsDonationBtcLabel,
+                  onPressed: () {
+                    Clipboard.setData(const ClipboardData(text: btcAddress));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(loc.settingsDonationBtcCopied)),
+                    );
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            FilledButton.tonalIcon(
+              onPressed: () async {
+                final uri = Uri.parse(coffeeUrl);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              icon: const Icon(Icons.coffee),
+              label: Text(loc.settingsDonationCoffeeButton),
             ),
           ],
         ),

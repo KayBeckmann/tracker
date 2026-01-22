@@ -1183,5 +1183,10 @@
     }
   },
   "ledgerDashboardBudgetsTitle": "Budgetöversikt",
-  "ledgerDashboardNoBudgets": "Inga budgetar för den aktuella perioden."
+  "ledgerDashboardNoBudgets": "Inga budgetar för den aktuella perioden.",
+  "settingsDonationTitle": "Stöd projektet",
+  "settingsDonationDescription": "Tracker är gratis och reklamfri. Om du gillar appen uppskattar jag en liten donation.",
+  "settingsDonationBtcLabel": "Bitcoin",
+  "settingsDonationBtcCopied": "Bitcoin-adress kopierad",
+  "settingsDonationCoffeeButton": "Buy me a coffee"
 }

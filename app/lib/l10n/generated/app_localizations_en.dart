@@ -2110,4 +2110,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ledgerDashboardNoBudgets => 'No budgets for the current period.';
+
+  @override
+  String get settingsDonationTitle => 'Support the project';
+
+  @override
+  String get settingsDonationDescription =>
+      'Tracker is free and ad-free. If you enjoy the app, I would appreciate a small donation.';
+
+  @override
+  String get settingsDonationBtcLabel => 'Bitcoin';
+
+  @override
+  String get settingsDonationBtcCopied => 'Bitcoin address copied';
+
+  @override
+  String get settingsDonationCoffeeButton => 'Buy me a coffee';
 }
