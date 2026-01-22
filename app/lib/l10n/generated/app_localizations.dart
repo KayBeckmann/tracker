@@ -3857,6 +3857,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Buy me a coffee'**
   String get settingsDonationCoffeeButton;
+
+  /// No description provided for @settingsDeleteAllDataButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all local data'**
+  String get settingsDeleteAllDataButton;
+
+  /// No description provided for @settingsDeleteAllDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all data?'**
+  String get settingsDeleteAllDataTitle;
+
+  /// No description provided for @settingsDeleteAllDataMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This action will permanently delete ALL local data. This includes notes, tasks, time entries, journal, habits and financial data. The app will restart afterwards.'**
+  String get settingsDeleteAllDataMessage;
+
+  /// No description provided for @settingsDeleteAllDataConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete everything'**
+  String get settingsDeleteAllDataConfirm;
+
+  /// No description provided for @settingsDeleteAllDataCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get settingsDeleteAllDataCancel;
 }
 
 class _AppLocalizationsDelegate

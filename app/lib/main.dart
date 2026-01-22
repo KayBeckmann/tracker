@@ -14,6 +14,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'data/local/app_database.dart';
+import 'data/local/database_deleter.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'notes/notes_page.dart';
 import 'habits/habits_page.dart';
@@ -496,6 +497,44 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _clearHistory() async {
     await _database.clearGreetingEntries();
+  }
+
+  Future<void> _deleteAllLocalData() async {
+    if (!mounted) {
+      return;
+    }
+    final loc = AppLocalizations.of(context);
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(loc.settingsDeleteAllDataTitle),
+          content: Text(loc.settingsDeleteAllDataMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(loc.settingsDeleteAllDataCancel),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(loc.settingsDeleteAllDataConfirm),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) {
+      return;
+    }
+
+    await deleteEverything(_database);
+    // Trigger a full app restart by running main() again
+    main();
   }
 
   Future<void> _handleLogout() async {
@@ -3281,6 +3320,16 @@ class _HomePageState extends State<HomePage> {
         Text(loc.settingsSignInPrompt, style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         _buildAuthTabsCard(context, loc),
+        const SizedBox(height: 32),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+          ),
+          onPressed: _deleteAllLocalData,
+          icon: const Icon(Icons.delete_forever),
+          label: Text(loc.settingsDeleteAllDataButton),
+        ),
       ],
     );
   }
@@ -3316,6 +3365,18 @@ class _HomePageState extends State<HomePage> {
         ),
       ]);
     }
+    children.addAll([
+      const SizedBox(height: 32),
+      FilledButton.icon(
+        style: FilledButton.styleFrom(
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+        ),
+        onPressed: _deleteAllLocalData,
+        icon: const Icon(Icons.delete_forever),
+        label: Text(loc.settingsDeleteAllDataButton),
+      ),
+    ]);
     return ListView(padding: const EdgeInsets.all(16), children: children);
   }
 

@@ -1306,5 +1306,10 @@
   "settingsDonationDescription": "Tracker is free and ad-free. If you enjoy the app, I would appreciate a small donation.",
   "settingsDonationBtcLabel": "Bitcoin",
   "settingsDonationBtcCopied": "Bitcoin address copied",
-  "settingsDonationCoffeeButton": "Buy me a coffee"
+  "settingsDonationCoffeeButton": "Buy me a coffee",
+  "settingsDeleteAllDataButton": "Delete all local data",
+  "settingsDeleteAllDataTitle": "Delete all data?",
+  "settingsDeleteAllDataMessage": "This action will permanently delete ALL local data. This includes notes, tasks, time entries, journal, habits and financial data. The app will restart afterwards.",
+  "settingsDeleteAllDataConfirm": "Delete everything",
+  "settingsDeleteAllDataCancel": "Cancel"
 }

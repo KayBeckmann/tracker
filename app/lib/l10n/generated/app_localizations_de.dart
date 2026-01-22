@@ -2144,4 +2144,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsDonationCoffeeButton => 'Buy me a coffee';
+
+  @override
+  String get settingsDeleteAllDataButton => 'Alle lokalen Daten löschen';
+
+  @override
+  String get settingsDeleteAllDataTitle => 'Alle Daten löschen?';
+
+  @override
+  String get settingsDeleteAllDataMessage =>
+      'Diese Aktion löscht ALLE lokalen Daten unwiderruflich. Dazu gehören Notizen, Aufgaben, Zeiteinträge, Journal, Gewohnheiten und Finanzdaten. Die App wird danach neu gestartet.';
+
+  @override
+  String get settingsDeleteAllDataConfirm => 'Alles löschen';
+
+  @override
+  String get settingsDeleteAllDataCancel => 'Abbrechen';
 }

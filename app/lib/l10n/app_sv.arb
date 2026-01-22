@@ -1188,5 +1188,10 @@
   "settingsDonationDescription": "Tracker är gratis och reklamfri. Om du gillar appen uppskattar jag en liten donation.",
   "settingsDonationBtcLabel": "Bitcoin",
   "settingsDonationBtcCopied": "Bitcoin-adress kopierad",
-  "settingsDonationCoffeeButton": "Buy me a coffee"
+  "settingsDonationCoffeeButton": "Buy me a coffee",
+  "settingsDeleteAllDataButton": "Radera all lokal data",
+  "settingsDeleteAllDataTitle": "Radera all data?",
+  "settingsDeleteAllDataMessage": "Denna åtgärd raderar ALLA lokala data permanent. Detta inkluderar anteckningar, uppgifter, tidsposter, journal, vanor och ekonomiska data. Appen kommer att startas om efteråt.",
+  "settingsDeleteAllDataConfirm": "Radera allt",
+  "settingsDeleteAllDataCancel": "Avbryt"
 }

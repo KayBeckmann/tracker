@@ -2126,4 +2126,20 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get settingsDonationCoffeeButton => 'Buy me a coffee';
+
+  @override
+  String get settingsDeleteAllDataButton => 'Radera all lokal data';
+
+  @override
+  String get settingsDeleteAllDataTitle => 'Radera all data?';
+
+  @override
+  String get settingsDeleteAllDataMessage =>
+      'Denna åtgärd raderar ALLA lokala data permanent. Detta inkluderar anteckningar, uppgifter, tidsposter, journal, vanor och ekonomiska data. Appen kommer att startas om efteråt.';
+
+  @override
+  String get settingsDeleteAllDataConfirm => 'Radera allt';
+
+  @override
+  String get settingsDeleteAllDataCancel => 'Avbryt';
 }
