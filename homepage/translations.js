@@ -29,7 +29,7 @@ window.TRACKER_TRANSLATIONS = {
       vision: {
         heading: "Why Tracker?",
         body:
-          "Tracker fuses tasks, notes, journaling, habits, finances, and time tracking into a local-first cockpit. Work entirely offline with Drift-powered storage, then opt into encrypted sync, Google Sign-In, and shared devices when you subscribe.",
+          "Tracker fuses tasks, notes, journaling, habits, finances, and time tracking into a local-first cockpit. Work entirely offline with Drift-powered storage, or opt into free encrypted sync across all your devices.",
         cards: {
           offline: {
             title: "Local first",
@@ -37,7 +37,7 @@ window.TRACKER_TRANSLATIONS = {
           },
           encrypted: {
             title: "Encrypted cloud",
-            body: "Memberships enable zero-knowledge sync, background conflict detection, and server-side retention policies."
+            body: "Free zero-knowledge sync with background conflict detection and server-side retention policies."
           },
           modular: {
             title: "Modular & adaptable",
@@ -110,7 +110,7 @@ window.TRACKER_TRANSLATIONS = {
       sync: {
         heading: "Local first or encrypted cloud",
         body:
-          "Choose the mode that fits your privacy needs. Tracker works fully offline, while memberships unlock zero-knowledge sync.",
+          "Choose the mode that fits your privacy needs. Tracker works fully offline, or sync for free with end-to-end encryption.",
         local: {
           title: "Local only",
           list:
@@ -119,22 +119,22 @@ window.TRACKER_TRANSLATIONS = {
         cloud: {
           title: "Encrypted sync",
           list:
-            "<li>End-to-end encryption (PBKDF2 + AES-256-GCM) with per-device keys</li><li>Access your workspace on Android, iOS (beta), desktop, and web</li><li>Membership €1/month or €10/year with PayPal & Google Pay in testing</li>"
+            "<li>End-to-end encryption (PBKDF2 + AES-256-GCM) with per-device keys</li><li>Access your workspace on Android, iOS (beta), desktop, and web</li><li>Completely free — no subscription required</li>"
         }
       },
       security: {
         heading: "Data security & retention",
         body:
-          "Tracker never keeps synced content indefinitely. You stay in control at every stage of the membership lifecycle.",
+          "Tracker never keeps synced content indefinitely. You stay in full control of your data at all times.",
         manual: {
           title: "Immediate deletion",
           body:
             "Delete synced copies from the server at any time from the app settings. Local notes and tasks remain on your devices."
         },
-        retention: {
-          title: "Automatic cleanup",
+        local: {
+          title: "Delete all local data",
           body:
-            "When a membership ends, all synced data is scheduled for deletion after 90 days. The retention deadline is displayed in the app."
+            "Use the red button in settings to permanently delete all local data from your device. A confirmation dialog prevents accidental deletion."
         }
       },
       architecture: {
@@ -274,14 +274,22 @@ window.TRACKER_TRANSLATIONS = {
           support: {
             title: "Support",
             body: "Donate to support the project."
+          },
+          userGuide: {
+            title: "User Guide",
+            body: "Getting started and daily workflows."
+          },
+          technical: {
+            title: "Technical Documentation",
+            body: "Architecture, APIs, and development."
           }
         },
         security: {
           title: "Data security & retention",
           body:
-            "Membership sync copies are never stored indefinitely. Delete them instantly, and they are scheduled for automatic removal 90 days after a membership ends.",
+            "Your data stays under your control. Sync is free and encrypted, and you can delete everything at any time.",
           list:
-            "<li>Delete synced data on demand via the Tracker app settings.</li><li>Local data on your devices is unaffected by server cleanups.</li><li>After cancellation we schedule all sync payloads for deletion after 90 days.</li>"
+            "<li>Delete synced data from the server via app settings.</li><li>Delete all local data using the red button in settings.</li><li>Local data on your devices is unaffected by server operations.</li>"
         }
       },
       dashboard: {
@@ -489,7 +497,7 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Usage",
             list:
-              "<li>Manage authentication via email/password or Google Sign-In and view membership status.</li><li>Enable or disable modules, reorder navigation, and change accent colour.</li><li>Switch language or theme instantly; preferences persist offline.</li><li>Trigger encrypted backups and review storage usage (beta).</li>"
+              "<li>Manage authentication via email/password or Google Sign-In.</li><li>Enable or disable modules, reorder navigation, and change accent colour.</li><li>Switch language or theme instantly; preferences persist offline.</li><li>Trigger encrypted backups and review storage usage (beta).</li>"
           },
           data: {
             heading: "Data model",
@@ -499,12 +507,17 @@ window.TRACKER_TRANSLATIONS = {
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Preferences remain local-first; membership sync encrypts selected settings with AES-256-GCM.</li><li>Module order and theme sync once the encrypted preference store is enabled.</li><li>Sensitive secrets (biometric keys, lock codes) never leave the device.</li>"
+              "<li>Preferences remain local-first; sync encrypts selected settings with AES-256-GCM.</li><li>Module order and theme sync once the encrypted preference store is enabled.</li><li>Sensitive secrets (biometric keys, lock codes) never leave the device.</li>"
+          },
+          deleteData: {
+            heading: "Delete all local data",
+            list:
+              "<li>A red danger button at the bottom of settings allows complete local data deletion.</li><li>Deletes all notes, tasks, time entries, journal entries, habits, and financial data.</li><li>A confirmation dialog prevents accidental deletion.</li><li>After deletion, the app restarts with a fresh database.</li><li>Synced copies on the server remain intact until manually deleted.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Import/export settings bundles across devices.</li><li>Expose subscription status, billing history, and upgrade flows.</li><li>Advanced diagnostics for sync conflicts and encryption status.</li><li>Automated backup rotation with retention policies.</li>"
+              "<li>Import/export settings bundles across devices.</li><li>Advanced diagnostics for sync conflicts and encryption status.</li><li>Automated backup rotation with retention policies.</li>"
           }
         }
       },
@@ -529,6 +542,84 @@ window.TRACKER_TRANSLATIONS = {
             heading: "Other ways to help",
             list:
               "<li>Share Tracker with friends and colleagues who might find it useful.</li><li>Report bugs and suggest features via the feedback channels.</li><li>Leave a positive review if the app is available on your platform's store.</li>"
+          }
+        }
+      },
+      userGuide: {
+        meta: {
+          title: "Tracker Wiki — User Guide"
+        },
+        title: "User Guide",
+        intro: "This guide helps you get started with Tracker and make the most of its features.",
+        sections: {
+          gettingStarted: {
+            heading: "Getting Started",
+            list:
+              "<li>Download Tracker for your platform or use the web app directly.</li><li>No account required — all features work offline immediately.</li><li>Enable only the modules you need in Settings.</li><li>Optionally sign in to sync your data across devices for free.</li>"
+          },
+          sync: {
+            heading: "Free Cloud Sync",
+            list:
+              "<li>Sign in with email/password or Google to enable sync.</li><li>All data is encrypted end-to-end before leaving your device.</li><li>Sync is completely free — no subscription required.</li><li>Access your data from any device: mobile, desktop, or web.</li>"
+          },
+          dataControl: {
+            heading: "Data Control",
+            list:
+              "<li>Your data belongs to you — delete it anytime from settings.</li><li>Use \"Delete synced data\" to remove server copies while keeping local data.</li><li>Use the red \"Delete all local data\" button to completely reset the app.</li><li>A confirmation dialog prevents accidental deletion.</li>"
+          },
+          modules: {
+            heading: "Module Overview",
+            list:
+              "<li><strong>Dashboard:</strong> Your personal overview with quick actions and metrics.</li><li><strong>Tasks:</strong> Plan tasks with priorities, due dates, and reminders.</li><li><strong>Notes:</strong> Write Markdown notes or create freehand drawings.</li><li><strong>Journal:</strong> Daily reflection with optional mood tracking.</li><li><strong>Habits:</strong> Build routines and track streaks.</li><li><strong>Ledger:</strong> Manage finances with budgets and reports.</li><li><strong>Time Tracking:</strong> Log focus sessions and link them to tasks.</li>"
+          },
+          tips: {
+            heading: "Tips & Tricks",
+            list:
+              "<li>Use the dashboard quick actions to capture ideas fast.</li><li>Link time entries to tasks for better productivity insights.</li><li>Enable the journal lock for privacy protection.</li><li>Export data regularly if you want local backups.</li>"
+          }
+        }
+      },
+      technical: {
+        meta: {
+          title: "Tracker Wiki — Technical Documentation"
+        },
+        title: "Technical Documentation",
+        intro: "Detailed technical information about Tracker's architecture, data models, and implementation.",
+        sections: {
+          architecture: {
+            heading: "Architecture Overview",
+            list:
+              "<li><strong>Frontend:</strong> Flutter app targeting Android, iOS, Web, Windows, and Linux.</li><li><strong>Local Storage:</strong> Drift (SQLite) for structured data, Hive for preferences and secrets.</li><li><strong>Backend:</strong> FastAPI server with PostgreSQL for sync and authentication.</li><li><strong>Encryption:</strong> PBKDF2-HMAC-SHA256 key derivation with AES-256-GCM encryption.</li>"
+          },
+          database: {
+            heading: "Database Schema",
+            list:
+              "<li><code>greeting_entries</code> — Dashboard messages and onboarding tips.</li><li><code>note_entries</code> — Markdown and drawing notes with tags.</li><li><code>task_entries</code> — Tasks with priority, due date, and reminders.</li><li><code>time_entries</code> — Time tracking sessions with optional task links.</li><li><code>journal_entries</code> — Daily journal with categories.</li><li><code>journal_trackers</code> / <code>journal_tracker_values</code> — Custom mood/metric trackers.</li><li><code>habit_definitions</code> / <code>habit_logs</code> — Habit tracking with streaks.</li><li><code>ledger_*</code> — Accounts, transactions, budgets, categories, recurring templates.</li><li><code>sync_tombstones</code> — Tracks deleted items for sync.</li>"
+          },
+          encryption: {
+            heading: "Encryption Pipeline",
+            list:
+              "<li>Master key derived from user password using PBKDF2-HMAC-SHA256 (150k iterations).</li><li>Each sync payload encrypted with AES-256-GCM using unique IVs.</li><li>Per-device salts ensure keys differ across devices.</li><li>Server stores only ciphertext — zero-knowledge architecture.</li><li>Key rotation supported after password changes.</li>"
+          },
+          sync: {
+            heading: "Synchronisation Protocol",
+            list:
+              "<li>REST/JSON API over TLS 1.3 with short-lived JWT authentication.</li><li>Optimistic locking with version counters per entity.</li><li>Incremental sync using changelog endpoints.</li><li>Conflict detection with revision history (manual resolution).</li><li>Tombstone tracking for deletions across devices.</li>"
+          },
+          deleteData: {
+            heading: "Data Deletion Implementation",
+            list:
+              "<li>Local deletion uses platform-specific implementations via conditional imports.</li><li><strong>iOS/Android:</strong> Closes database and deletes <code>tracker.sqlite</code> file.</li><li><strong>Web:</strong> Closes database and deletes IndexedDB <code>tracker_database</code>.</li><li>Hive preferences box cleared separately if full reset needed.</li><li>App calls <code>main()</code> to reinitialize after deletion.</li>"
+          },
+          api: {
+            heading: "Backend API Endpoints",
+            list:
+              "<li><code>POST /api/auth/register</code> — Create account with email/password.</li><li><code>POST /api/auth/login</code> — Authenticate and receive JWT.</li><li><code>POST /api/auth/google</code> — OAuth login with Google.</li><li><code>GET/POST /api/sync/{collection}</code> — Fetch/push encrypted collection data.</li><li><code>POST /api/membership/delete_synced_data</code> — Delete all server-side data.</li>"
+          },
+          development: {
+            heading: "Development Setup",
+            list:
+              "<li>Flutter SDK 3.8+ required for app development.</li><li>Run <code>flutter pub get</code> to install dependencies.</li><li>Generate Drift code: <code>dart run build_runner build</code>.</li><li>Backend requires Python 3.11+, FastAPI, and PostgreSQL.</li><li>Docker Compose available for full-stack local development.</li>"
           }
         }
       }
@@ -690,7 +781,7 @@ window.TRACKER_TRANSLATIONS = {
       vision: {
         heading: "Warum Tracker?",
         body:
-          "Tracker vereint Aufgaben, Notizen, Tagebuch, Gewohnheiten, Finanzen und Zeiterfassung in einem local-first Cockpit. Alles läuft offline mit Drift-Storage; mit einer Mitgliedschaft schaltest du verschlüsselten Sync, Google-Login und gemeinsame Geräte frei.",
+          "Tracker vereint Aufgaben, Notizen, Tagebuch, Gewohnheiten, Finanzen und Zeiterfassung in einem local-first Cockpit. Alles läuft offline mit Drift-Storage, oder nutze kostenlos verschlüsselten Sync auf all deinen Geräten.",
         cards: {
           offline: {
             title: "Local first",
@@ -698,7 +789,7 @@ window.TRACKER_TRANSLATIONS = {
           },
           encrypted: {
             title: "Verschlüsselte Cloud",
-            body: "Mitgliedschaften aktivieren Zero-Knowledge-Sync, Hintergrund-Konflikterkennung und Aufbewahrungsrichtlinien."
+            body: "Kostenloser Zero-Knowledge-Sync mit Hintergrund-Konflikterkennung und Aufbewahrungsrichtlinien."
           },
           modular: {
             title: "Modular & anpassbar",
@@ -771,7 +862,7 @@ window.TRACKER_TRANSLATIONS = {
       sync: {
         heading: "Lokal zuerst oder verschlüsselte Cloud",
         body:
-          "Wähle den Modus, der zu deinem Datenschutz passt. Tracker funktioniert komplett offline; mit Mitgliedschaft kommt Zero-Knowledge-Sync.",
+          "Wähle den Modus, der zu deinem Datenschutz passt. Tracker funktioniert komplett offline, oder synchronisiere kostenlos mit Ende-zu-Ende-Verschlüsselung.",
         local: {
           title: "Nur lokal",
           list:
@@ -780,22 +871,22 @@ window.TRACKER_TRANSLATIONS = {
         cloud: {
           title: "Verschlüsselte Synchronisation",
           list:
-            "<li>Ende-zu-Ende-Verschlüsselung (PBKDF2 + AES-256-GCM) mit Geräteschlüsseln</li><li>Zugriff auf Android, iOS (Beta), Desktop und Web</li><li>Mitgliedschaft 1 € pro Monat oder 10 € pro Jahr; PayPal & Google Pay in Tests</li>"
+            "<li>Ende-zu-Ende-Verschlüsselung (PBKDF2 + AES-256-GCM) mit Geräteschlüsseln</li><li>Zugriff auf Android, iOS (Beta), Desktop und Web</li><li>Komplett kostenlos – kein Abo erforderlich</li>"
         }
       },
       security: {
         heading: "Datenschutz & Aufbewahrung",
         body:
-          "Tracker speichert synchronisierte Inhalte nicht dauerhaft. Du behältst in jeder Phase der Mitgliedschaft die Kontrolle.",
+          "Tracker speichert synchronisierte Inhalte nicht dauerhaft. Du behältst jederzeit die volle Kontrolle über deine Daten.",
         manual: {
           title: "Sofortiges Löschen",
           body:
             "Lösche synchronisierte Kopien jederzeit in den App-Einstellungen. Lokale Daten auf deinen Geräten bleiben erhalten."
         },
-        retention: {
-          title: "Automatische Bereinigung",
+        local: {
+          title: "Alle lokalen Daten löschen",
           body:
-            "Nach dem Ende einer Mitgliedschaft werden alle Serverdaten nach 90 Tagen zur Löschung eingeplant. Die Frist siehst du in der App."
+            "Nutze den roten Button in den Einstellungen, um alle lokalen Daten dauerhaft von deinem Gerät zu löschen. Ein Bestätigungsdialog verhindert versehentliches Löschen."
         }
       },
       architecture: {
@@ -935,14 +1026,22 @@ window.TRACKER_TRANSLATIONS = {
           support: {
             title: "Unterstützung",
             body: "Spende, um das Projekt zu unterstützen."
+          },
+          userGuide: {
+            title: "Benutzerhandbuch",
+            body: "Erste Schritte und tägliche Workflows."
+          },
+          technical: {
+            title: "Technische Dokumentation",
+            body: "Architektur, APIs und Entwicklung."
           }
         },
         security: {
           title: "Datenschutz & Aufbewahrung",
           body:
-            "Synchronisierte Inhalte werden nicht dauerhaft gespeichert. Du kannst sie sofort löschen; nach einer Kündigung planen wir die automatische Entfernung nach 90 Tagen ein.",
+            "Deine Daten bleiben unter deiner Kontrolle. Sync ist kostenlos und verschlüsselt, und du kannst alles jederzeit löschen.",
           list:
-            "<li>Synchronisierte Daten jederzeit über die Tracker-App-Einstellungen löschen.</li><li>Lokale Daten auf deinen Geräten bleiben von Server-Löschungen unberührt.</li><li>Nach Ende der Mitgliedschaft planen wir alle Sync-Daten zur Löschung nach 90 Tagen ein.</li>"
+            "<li>Synchronisierte Daten über die Einstellungen vom Server löschen.</li><li>Alle lokalen Daten mit dem roten Button in den Einstellungen löschen.</li><li>Lokale Daten auf deinen Geräten bleiben von Server-Operationen unberührt.</li>"
         }
       },
       dashboard: {
@@ -1150,7 +1249,7 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Bedienung",
             list:
-              "<li>Anmeldung über E-Mail/Passwort oder Google Sign-In verwalten und Mitgliedsstatus prüfen.</li><li>Module aktivieren/deaktivieren, Navigation neu sortieren und Akzentfarbe anpassen.</li><li>Sprache und Theme sofort wechseln; Präferenzen bleiben offline verfügbar.</li><li>Verschlüsselte Backups anstoßen und Speicherverbrauch prüfen (Beta).</li>"
+              "<li>Anmeldung über E-Mail/Passwort oder Google Sign-In verwalten.</li><li>Module aktivieren/deaktivieren, Navigation neu sortieren und Akzentfarbe anpassen.</li><li>Sprache und Theme sofort wechseln; Präferenzen bleiben offline verfügbar.</li><li>Verschlüsselte Backups anstoßen und Speicherverbrauch prüfen (Beta).</li>"
           },
           data: {
             heading: "Datenmodell",
@@ -1160,12 +1259,17 @@ window.TRACKER_TRANSLATIONS = {
           sync: {
             heading: "Synchronisation",
             list:
-              "<li>Präferenzen bleiben local-first; Mitgliedschaften verschlüsseln ausgewählte Settings mit AES-256-GCM.</li><li>Modulreihenfolge und Theme synchronisieren, sobald der verschlüsselte Präferenzspeicher aktiv ist.</li><li>Sicherheitskritische Geheimnisse (Biometrie, Lock-Codes) verlassen das Gerät nicht.</li>"
+              "<li>Präferenzen bleiben local-first; Sync verschlüsselt ausgewählte Settings mit AES-256-GCM.</li><li>Modulreihenfolge und Theme synchronisieren, sobald der verschlüsselte Präferenzspeicher aktiv ist.</li><li>Sicherheitskritische Geheimnisse (Biometrie, Lock-Codes) verlassen das Gerät nicht.</li>"
+          },
+          deleteData: {
+            heading: "Alle lokalen Daten löschen",
+            list:
+              "<li>Ein roter Button unten in den Einstellungen ermöglicht das vollständige Löschen aller lokalen Daten.</li><li>Löscht alle Notizen, Aufgaben, Zeiteinträge, Journal-Einträge, Gewohnheiten und Finanzdaten.</li><li>Ein Bestätigungsdialog verhindert versehentliches Löschen.</li><li>Nach dem Löschen startet die App mit einer leeren Datenbank neu.</li><li>Synchronisierte Kopien auf dem Server bleiben erhalten, bis sie manuell gelöscht werden.</li>"
           },
           roadmap: {
             heading: "Roadmap",
             list:
-              "<li>Import/Export von Einstellungen zwischen Geräten.</li><li>Abostatus, Rechnungsverlauf und Upgrade-Flows anzeigen.</li><li>Diagnose-Tools für Sync-Konflikte und Verschlüsselungsstatus.</li><li>Automatisierte Backup-Rotation mit Aufbewahrungsregeln.</li>"
+              "<li>Import/Export von Einstellungen zwischen Geräten.</li><li>Diagnose-Tools für Sync-Konflikte und Verschlüsselungsstatus.</li><li>Automatisierte Backup-Rotation mit Aufbewahrungsregeln.</li>"
           }
         }
       },
@@ -1190,6 +1294,84 @@ window.TRACKER_TRANSLATIONS = {
             heading: "Andere Möglichkeiten zu helfen",
             list:
               "<li>Teile Tracker mit Freunden und Kollegen, die es nützlich finden könnten.</li><li>Melde Bugs und schlage Features über die Feedback-Kanäle vor.</li><li>Hinterlasse eine positive Bewertung, wenn die App in deinem Store verfügbar ist.</li>"
+          }
+        }
+      },
+      userGuide: {
+        meta: {
+          title: "Tracker Wiki - Benutzerhandbuch"
+        },
+        title: "Benutzerhandbuch",
+        intro: "Dieses Handbuch hilft dir beim Einstieg in Tracker und zeigt, wie du die Funktionen optimal nutzt.",
+        sections: {
+          gettingStarted: {
+            heading: "Erste Schritte",
+            list:
+              "<li>Lade Tracker für deine Plattform herunter oder nutze die Web-App direkt.</li><li>Kein Account nötig – alle Funktionen arbeiten sofort offline.</li><li>Aktiviere in den Einstellungen nur die Module, die du brauchst.</li><li>Optional: Melde dich an, um deine Daten kostenlos zwischen Geräten zu synchronisieren.</li>"
+          },
+          sync: {
+            heading: "Kostenlose Cloud-Synchronisation",
+            list:
+              "<li>Melde dich mit E-Mail/Passwort oder Google an, um die Synchronisation zu aktivieren.</li><li>Alle Daten werden Ende-zu-Ende verschlüsselt, bevor sie dein Gerät verlassen.</li><li>Sync ist komplett kostenlos – kein Abo erforderlich.</li><li>Greife von jedem Gerät auf deine Daten zu: Smartphone, Desktop oder Web.</li>"
+          },
+          dataControl: {
+            heading: "Datenkontrolle",
+            list:
+              "<li>Deine Daten gehören dir – lösche sie jederzeit über die Einstellungen.</li><li>Nutze \"Synchronisierte Daten löschen\", um Server-Kopien zu entfernen und lokale Daten zu behalten.</li><li>Nutze den roten Button \"Alle lokalen Daten löschen\", um die App komplett zurückzusetzen.</li><li>Ein Bestätigungsdialog verhindert versehentliches Löschen.</li>"
+          },
+          modules: {
+            heading: "Modulübersicht",
+            list:
+              "<li><strong>Dashboard:</strong> Dein persönlicher Überblick mit Schnellaktionen und Kennzahlen.</li><li><strong>Aufgaben:</strong> Plane Aufgaben mit Prioritäten, Fälligkeiten und Erinnerungen.</li><li><strong>Notizen:</strong> Schreibe Markdown-Notizen oder erstelle Freihand-Zeichnungen.</li><li><strong>Journal:</strong> Tägliche Reflexion mit optionalem Mood-Tracking.</li><li><strong>Habits:</strong> Baue Routinen auf und verfolge Serien.</li><li><strong>Haushaltsbuch:</strong> Verwalte Finanzen mit Budgets und Berichten.</li><li><strong>Zeiterfassung:</strong> Protokolliere Fokus-Sessions und verknüpfe sie mit Aufgaben.</li>"
+          },
+          tips: {
+            heading: "Tipps & Tricks",
+            list:
+              "<li>Nutze die Dashboard-Schnellaktionen, um Ideen schnell festzuhalten.</li><li>Verknüpfe Zeiteinträge mit Aufgaben für bessere Produktivitäts-Insights.</li><li>Aktiviere die Journal-Sperre für Privatsphäre.</li><li>Exportiere regelmäßig Daten, wenn du lokale Backups möchtest.</li>"
+          }
+        }
+      },
+      technical: {
+        meta: {
+          title: "Tracker Wiki - Technische Dokumentation"
+        },
+        title: "Technische Dokumentation",
+        intro: "Detaillierte technische Informationen zu Trackers Architektur, Datenmodellen und Implementierung.",
+        sections: {
+          architecture: {
+            heading: "Architekturübersicht",
+            list:
+              "<li><strong>Frontend:</strong> Flutter-App für Android, iOS, Web, Windows und Linux.</li><li><strong>Lokaler Speicher:</strong> Drift (SQLite) für strukturierte Daten, Hive für Einstellungen und Geheimnisse.</li><li><strong>Backend:</strong> FastAPI-Server mit PostgreSQL für Sync und Authentifizierung.</li><li><strong>Verschlüsselung:</strong> PBKDF2-HMAC-SHA256 Key-Derivation mit AES-256-GCM-Verschlüsselung.</li>"
+          },
+          database: {
+            heading: "Datenbankschema",
+            list:
+              "<li><code>greeting_entries</code> – Dashboard-Nachrichten und Onboarding-Tipps.</li><li><code>note_entries</code> – Markdown- und Zeichnungs-Notizen mit Tags.</li><li><code>task_entries</code> – Aufgaben mit Priorität, Fälligkeit und Erinnerungen.</li><li><code>time_entries</code> – Zeiterfassungs-Sessions mit optionaler Aufgaben-Verknüpfung.</li><li><code>journal_entries</code> – Tägliches Journal mit Kategorien.</li><li><code>journal_trackers</code> / <code>journal_tracker_values</code> – Eigene Stimmungs-/Metrik-Tracker.</li><li><code>habit_definitions</code> / <code>habit_logs</code> – Habit-Tracking mit Serien.</li><li><code>ledger_*</code> – Konten, Buchungen, Budgets, Kategorien, wiederkehrende Vorlagen.</li><li><code>sync_tombstones</code> – Verfolgt gelöschte Einträge für Sync.</li>"
+          },
+          encryption: {
+            heading: "Verschlüsselungs-Pipeline",
+            list:
+              "<li>Master-Key aus Benutzerpasswort mittels PBKDF2-HMAC-SHA256 (150k Iterationen) abgeleitet.</li><li>Jede Sync-Payload mit AES-256-GCM und eindeutigen IVs verschlüsselt.</li><li>Gerätespezifische Salze stellen unterschiedliche Schlüssel pro Gerät sicher.</li><li>Server speichert nur Ciphertext – Zero-Knowledge-Architektur.</li><li>Key-Rotation nach Passwortänderungen unterstützt.</li>"
+          },
+          sync: {
+            heading: "Synchronisationsprotokoll",
+            list:
+              "<li>REST/JSON-API über TLS 1.3 mit kurzlebigen JWT zur Authentifizierung.</li><li>Optimistisches Locking mit Versionszählern pro Entität.</li><li>Inkrementeller Sync über Changelog-Endpoints.</li><li>Konflikterkennung mit Versionshistorie (manuelle Auflösung).</li><li>Tombstone-Tracking für Löschungen über Geräte hinweg.</li>"
+          },
+          deleteData: {
+            heading: "Implementierung der Datenlöschung",
+            list:
+              "<li>Lokale Löschung nutzt plattformspezifische Implementierungen via Conditional Imports.</li><li><strong>iOS/Android:</strong> Schließt Datenbank und löscht <code>tracker.sqlite</code>-Datei.</li><li><strong>Web:</strong> Schließt Datenbank und löscht IndexedDB <code>tracker_database</code>.</li><li>Hive-Einstellungen werden separat geleert bei vollständigem Reset.</li><li>App ruft <code>main()</code> zur Neuinitialisierung nach Löschung auf.</li>"
+          },
+          api: {
+            heading: "Backend-API-Endpunkte",
+            list:
+              "<li><code>POST /api/auth/register</code> – Account mit E-Mail/Passwort erstellen.</li><li><code>POST /api/auth/login</code> – Authentifizieren und JWT erhalten.</li><li><code>POST /api/auth/google</code> – OAuth-Login mit Google.</li><li><code>GET/POST /api/sync/{collection}</code> – Verschlüsselte Collection-Daten abrufen/senden.</li><li><code>POST /api/membership/delete_synced_data</code> – Alle serverseitigen Daten löschen.</li>"
+          },
+          development: {
+            heading: "Entwicklungs-Setup",
+            list:
+              "<li>Flutter SDK 3.8+ für App-Entwicklung erforderlich.</li><li><code>flutter pub get</code> ausführen, um Abhängigkeiten zu installieren.</li><li>Drift-Code generieren: <code>dart run build_runner build</code>.</li><li>Backend benötigt Python 3.11+, FastAPI und PostgreSQL.</li><li>Docker Compose für lokale Full-Stack-Entwicklung verfügbar.</li>"
           }
         }
       }
@@ -1351,7 +1533,7 @@ window.TRACKER_TRANSLATIONS = {
       vision: {
         heading: "Varför Tracker?",
         body:
-          "Tracker förenar uppgifter, anteckningar, journal, vanor, ekonomi och tidrapportering i ett local-first cockpit. Allt körs offline med Drift-lagring; med medlemskap får du krypterad synk, Google-inloggning och delade enheter.",
+          "Tracker förenar uppgifter, anteckningar, journal, vanor, ekonomi och tidrapportering i ett local-first cockpit. Allt körs offline med Drift-lagring, eller använd gratis krypterad synk på alla dina enheter.",
         cards: {
           offline: {
             title: "Local first",
@@ -1359,7 +1541,7 @@ window.TRACKER_TRANSLATIONS = {
           },
           encrypted: {
             title: "Krypterat moln",
-            body: "Medlemskap aktiverar zero-knowledge-synk, bakgrundskonflikter och lagringspolicyer."
+            body: "Gratis zero-knowledge-synk med bakgrundskonfliktdetektering och lagringspolicyer."
           },
           modular: {
             title: "Modulärt & anpassningsbart",
@@ -1432,7 +1614,7 @@ window.TRACKER_TRANSLATIONS = {
       sync: {
         heading: "Lokal först eller krypterat moln",
         body:
-          "Välj läget som passar din integritet. Tracker fungerar fullt ut offline medan medlemskap ger zero-knowledge-synk.",
+          "Välj läget som passar din integritet. Tracker fungerar fullt ut offline, eller synka gratis med änd-till-ände-kryptering.",
         local: {
           title: "Endast lokalt",
           list:
@@ -1441,22 +1623,22 @@ window.TRACKER_TRANSLATIONS = {
         cloud: {
           title: "Krypterad synk",
           list:
-            "<li>Änd-till-ände-kryptering (PBKDF2 + AES-256-GCM) med enhetsspecifika nycklar</li><li>Åtkomst via Android, iOS (beta), desktop och webb</li><li>Medlemskap 1 €/månad eller 10 €/år; PayPal & Google Pay testas</li>"
+            "<li>Änd-till-ände-kryptering (PBKDF2 + AES-256-GCM) med enhetsspecifika nycklar</li><li>Åtkomst via Android, iOS (beta), desktop och webb</li><li>Helt gratis – ingen prenumeration krävs</li>"
         }
       },
       security: {
         heading: "Datasäkerhet & retention",
         body:
-          "Tracker sparar aldrig synkat innehåll permanent. Du behåller kontrollen under hela medlemskapets livscykel.",
+          "Tracker sparar aldrig synkat innehåll permanent. Du har alltid full kontroll över dina data.",
         manual: {
           title: "Omedelbar radering",
           body:
             "Ta bort synkade kopior från servern när som helst via appens inställningar. Lokala data ligger kvar på dina enheter."
         },
-        retention: {
-          title: "Automatisk städning",
+        local: {
+          title: "Radera all lokal data",
           body:
-            "När ett medlemskap avslutas planeras alla serverdata för radering efter 90 dagar. Appen visar när retentionstiden löper ut."
+            "Använd den röda knappen i inställningarna för att permanent radera all lokal data från din enhet. En bekräftelsedialog förhindrar oavsiktlig radering."
         }
       },
       architecture: {
@@ -1596,14 +1778,22 @@ window.TRACKER_TRANSLATIONS = {
           support: {
             title: "Stöd",
             body: "Donera för att stödja projektet."
+          },
+          userGuide: {
+            title: "Användarguide",
+            body: "Kom igång och dagliga arbetsflöden."
+          },
+          technical: {
+            title: "Teknisk dokumentation",
+            body: "Arkitektur, API:er och utveckling."
           }
         },
         security: {
           title: "Datasäkerhet & retention",
           body:
-            "Synkat innehåll lagras aldrig permanent. Du kan radera det direkt, och efter ett avslutat medlemskap planeras det för automatisk borttagning efter 90 dagar.",
+            "Dina data förblir under din kontroll. Synk är gratis och krypterad, och du kan radera allt när som helst.",
           list:
-            "<li>Ta bort synkade data på begäran via Tracker-appens inställningar.</li><li>Lokala data på dina enheter påverkas inte av serverröjningar.</li><li>Efter avslut planeras alla synkdata för radering efter 90 dagar.</li>"
+            "<li>Radera synkade data från servern via inställningarna.</li><li>Radera all lokal data med den röda knappen i inställningarna.</li><li>Lokala data på dina enheter påverkas inte av serveroperationer.</li>"
         }
       },
       dashboard: {
@@ -1811,7 +2001,7 @@ window.TRACKER_TRANSLATIONS = {
           usage: {
             heading: "Användning",
             list:
-              "<li>Hantera kontoinloggning via e-post/lösenord, Google eller Apple ID.</li><li>Konfigurera modulernas synlighet och standarddashboards (planerat).</li><li>Välj appens språk och tema när reglagen lanseras.</li><li>Granska lagringsanvändning och initiera lokala säkerhetskopior (färdplan).</li>"
+              "<li>Hantera kontoinloggning via e-post/lösenord eller Google.</li><li>Konfigurera modulernas synlighet och standarddashboards.</li><li>Välj appens språk och tema; preferenser gäller direkt.</li><li>Granska lagringsanvändning och initiera lokala säkerhetskopior (beta).</li>"
           },
           data: {
             heading: "Datamodell",
@@ -1821,12 +2011,17 @@ window.TRACKER_TRANSLATIONS = {
           sync: {
             heading: "Synkronisering",
             list:
-              "<li>Språk och tema gäller lokalt tills synk över flera enheter finns.</li><li>Medlemskap synkar modulernas synlighet, dashboards och genvägar.</li><li>Säkerhetskritiska inställningar (2FA, nycklar) ligger endast server-side.</li>"
+              "<li>Preferenser är lokala först; synk krypterar valda inställningar med AES-256-GCM.</li><li>Modulordning och tema synkas när det krypterade preferenslagret aktiveras.</li><li>Säkerhetskritiska hemligheter (biometrinycklar, låskoder) lämnar aldrig enheten.</li>"
+          },
+          deleteData: {
+            heading: "Radera all lokal data",
+            list:
+              "<li>En röd knapp längst ner i inställningarna gör det möjligt att helt radera all lokal data.</li><li>Raderar alla anteckningar, uppgifter, tidsposter, journalposter, vanor och ekonomidata.</li><li>En bekräftelsedialog förhindrar oavsiktlig radering.</li><li>Efter radering startar appen om med en tom databas.</li><li>Synkade kopior på servern finns kvar tills de raderas manuellt.</li>"
           },
           roadmap: {
             heading: "Färdplan",
             list:
-              "<li>Lansera fullständigt språk- och temabyte i appen.</li><li>Visa abonnemangsstatus, fakturahistorik och uppgraderingsflöden.</li><li>Lägg till import/export av preferenser och modulayout.</li><li>Integrera avancerade sekretessalternativ (biometriskt lås, snabb rensning).</li>"
+              "<li>Import/export av inställningar mellan enheter.</li><li>Diagnosverktyg för synkkonflikter och krypteringsstatus.</li><li>Automatisk backup-rotation med lagringspolicyer.</li>"
           }
         }
       },
@@ -1851,6 +2046,84 @@ window.TRACKER_TRANSLATIONS = {
             heading: "Andra sätt att hjälpa",
             list:
               "<li>Dela Tracker med vänner och kollegor som kanske tycker det är användbart.</li><li>Rapportera buggar och föreslå funktioner via feedback-kanalerna.</li><li>Lämna en positiv recension om appen finns i din plattforms butik.</li>"
+          }
+        }
+      },
+      userGuide: {
+        meta: {
+          title: "Tracker Wiki - Användarguide"
+        },
+        title: "Användarguide",
+        intro: "Denna guide hjälper dig att komma igång med Tracker och få ut det mesta av funktionerna.",
+        sections: {
+          gettingStarted: {
+            heading: "Kom igång",
+            list:
+              "<li>Ladda ner Tracker för din plattform eller använd webbappen direkt.</li><li>Inget konto krävs – alla funktioner fungerar offline direkt.</li><li>Aktivera endast de moduler du behöver i Inställningar.</li><li>Logga valfritt in för att synka dina data mellan enheter gratis.</li>"
+          },
+          sync: {
+            heading: "Gratis molnsynk",
+            list:
+              "<li>Logga in med e-post/lösenord eller Google för att aktivera synk.</li><li>All data krypteras änd-till-ände innan den lämnar din enhet.</li><li>Synk är helt gratis – ingen prenumeration krävs.</li><li>Kom åt dina data från vilken enhet som helst: mobil, desktop eller webb.</li>"
+          },
+          dataControl: {
+            heading: "Datakontroll",
+            list:
+              "<li>Dina data tillhör dig – radera dem när som helst från inställningarna.</li><li>Använd \"Radera synkade data\" för att ta bort serverexemplar men behålla lokala data.</li><li>Använd den röda knappen \"Radera all lokal data\" för att helt återställa appen.</li><li>En bekräftelsedialog förhindrar oavsiktlig radering.</li>"
+          },
+          modules: {
+            heading: "Modulöversikt",
+            list:
+              "<li><strong>Dashboard:</strong> Din personliga översikt med snabba åtgärder och nyckeltal.</li><li><strong>Uppgifter:</strong> Planera uppgifter med prioriteter, förfallodatum och påminnelser.</li><li><strong>Anteckningar:</strong> Skriv Markdown-anteckningar eller skapa frihandsritningar.</li><li><strong>Journal:</strong> Daglig reflektion med valfri humörspårning.</li><li><strong>Vanor:</strong> Bygg rutiner och följ serier.</li><li><strong>Hushållsbok:</strong> Hantera ekonomi med budgetar och rapporter.</li><li><strong>Tidrapportering:</strong> Logga fokuspass och länka dem till uppgifter.</li>"
+          },
+          tips: {
+            heading: "Tips & tricks",
+            list:
+              "<li>Använd dashboardens snabba åtgärder för att fånga idéer snabbt.</li><li>Länka tidsposter till uppgifter för bättre produktivitetsinsikter.</li><li>Aktivera journallåset för integritetsskydd.</li><li>Exportera data regelbundet om du vill ha lokala säkerhetskopior.</li>"
+          }
+        }
+      },
+      technical: {
+        meta: {
+          title: "Tracker Wiki - Teknisk dokumentation"
+        },
+        title: "Teknisk dokumentation",
+        intro: "Detaljerad teknisk information om Trackers arkitektur, datamodeller och implementation.",
+        sections: {
+          architecture: {
+            heading: "Arkitekturöversikt",
+            list:
+              "<li><strong>Frontend:</strong> Flutter-app för Android, iOS, Webb, Windows och Linux.</li><li><strong>Lokal lagring:</strong> Drift (SQLite) för strukturerad data, Hive för inställningar och hemligheter.</li><li><strong>Backend:</strong> FastAPI-server med PostgreSQL för synk och autentisering.</li><li><strong>Kryptering:</strong> PBKDF2-HMAC-SHA256 nyckelderivering med AES-256-GCM-kryptering.</li>"
+          },
+          database: {
+            heading: "Databasschema",
+            list:
+              "<li><code>greeting_entries</code> – Dashboard-meddelanden och introduktionstips.</li><li><code>note_entries</code> – Markdown- och ritningsanteckningar med taggar.</li><li><code>task_entries</code> – Uppgifter med prioritet, förfallodatum och påminnelser.</li><li><code>time_entries</code> – Tidrapporteringspass med valfri uppgiftslänk.</li><li><code>journal_entries</code> – Daglig journal med kategorier.</li><li><code>journal_trackers</code> / <code>journal_tracker_values</code> – Anpassade humör-/mätspårare.</li><li><code>habit_definitions</code> / <code>habit_logs</code> – Vanespårning med serier.</li><li><code>ledger_*</code> – Konton, transaktioner, budgetar, kategorier, återkommande mallar.</li><li><code>sync_tombstones</code> – Spårar raderade poster för synk.</li>"
+          },
+          encryption: {
+            heading: "Krypteringspipeline",
+            list:
+              "<li>Huvudnyckel härleds från användarlösenord med PBKDF2-HMAC-SHA256 (150k iterationer).</li><li>Varje synknyttolast krypteras med AES-256-GCM och unika IV:er.</li><li>Enhetsspecifika salter säkerställer olika nycklar per enhet.</li><li>Servern lagrar endast chiffertext – zero-knowledge-arkitektur.</li><li>Nyckelrotation stöds efter lösenordsändringar.</li>"
+          },
+          sync: {
+            heading: "Synkroniseringsprotokoll",
+            list:
+              "<li>REST/JSON API över TLS 1.3 med kortlivade JWT för autentisering.</li><li>Optimistisk låsning med versionsnummer per entitet.</li><li>Inkrementell synk via changelog-endpoints.</li><li>Konfliktdetektering med revisionshistorik (manuell upplösning).</li><li>Tombstone-spårning för raderingar över enheter.</li>"
+          },
+          deleteData: {
+            heading: "Implementation av dataradering",
+            list:
+              "<li>Lokal radering använder plattformsspecifika implementationer via villkorliga importer.</li><li><strong>iOS/Android:</strong> Stänger databas och raderar <code>tracker.sqlite</code>-filen.</li><li><strong>Webb:</strong> Stänger databas och raderar IndexedDB <code>tracker_database</code>.</li><li>Hive-inställningar rensas separat vid fullständig återställning.</li><li>Appen anropar <code>main()</code> för återinitiering efter radering.</li>"
+          },
+          api: {
+            heading: "Backend API-endpoints",
+            list:
+              "<li><code>POST /api/auth/register</code> – Skapa konto med e-post/lösenord.</li><li><code>POST /api/auth/login</code> – Autentisera och ta emot JWT.</li><li><code>POST /api/auth/google</code> – OAuth-inloggning med Google.</li><li><code>GET/POST /api/sync/{collection}</code> – Hämta/skicka krypterad kollektionsdata.</li><li><code>POST /api/membership/delete_synced_data</code> – Radera all serverdata.</li>"
+          },
+          development: {
+            heading: "Utvecklingssetup",
+            list:
+              "<li>Flutter SDK 3.8+ krävs för apputveckling.</li><li>Kör <code>flutter pub get</code> för att installera beroenden.</li><li>Generera Drift-kod: <code>dart run build_runner build</code>.</li><li>Backend kräver Python 3.11+, FastAPI och PostgreSQL.</li><li>Docker Compose tillgängligt för lokal fullstack-utveckling.</li>"
           }
         }
       }

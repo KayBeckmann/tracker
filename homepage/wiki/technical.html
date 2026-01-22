@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="wiki.technical.meta.title">Tracker Wiki — Technical Documentation</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <script src="../translations.js" defer></script>
+    <script src="../i18n.js" defer></script>
+  </head>
+  <body class="wiki-body">
+    <header class="wiki-header">
+      <a class="wiki-logo" href="../index.html" data-i18n="common.brand">Tracker</a>
+      <nav class="wiki-nav">
+        <a href="index.html" data-i18n="wiki.common.overview">Wiki overview</a>
+        <a href="../index.html#module" data-i18n="common.nav.modules">Modules</a>
+        <a href="../impressum.html" data-i18n="common.nav.imprint">Imprint</a>
+        <a href="../datenschutz.html" data-i18n="common.nav.privacy">Privacy</a>
+      </nav>
+      <div class="lang-switcher">
+        <button type="button" data-lang="en">English</button>
+        <button type="button" data-lang="de">Deutsch</button>
+        <button type="button" data-lang="sv">Svenska</button>
+      </div>
+    </header>
+    <main class="wiki-content">
+      <article class="wiki-article">
+        <h1 data-i18n="wiki.technical.title">Technical Documentation</h1>
+        <p data-i18n="wiki.technical.intro">
+          Detailed technical information about Tracker's architecture, data models, and implementation.
+        </p>
+        <section>
+          <h2 data-i18n="wiki.technical.sections.architecture.heading">Architecture Overview</h2>
+          <ul data-i18n-html="wiki.technical.sections.architecture.list">
+            <li><strong>Frontend:</strong> Flutter app targeting Android, iOS, Web, Windows, and Linux.</li>
+            <li><strong>Local Storage:</strong> Drift (SQLite) for structured data, Hive for preferences and secrets.</li>
+            <li><strong>Backend:</strong> FastAPI server with PostgreSQL for sync and authentication.</li>
+            <li><strong>Encryption:</strong> PBKDF2-HMAC-SHA256 key derivation with AES-256-GCM encryption.</li>
+          </ul>
+        </section>
+        <section>
+          <h2 data-i18n="wiki.technical.sections.database.heading">Database Schema</h2>
+          <ul data-i18n-html="wiki.technical.sections.database.list">
+            <li><code>greeting_entries</code> — Dashboard messages and onboarding tips.</li>
+            <li><code>note_entries</code> — Markdown and drawing notes with tags.</li>
+            <li><code>task_entries</code> — Tasks with priority, due date, and reminders.</li>
+            <li><code>time_entries</code> — Time tracking sessions with optional task links.</li>
+            <li><code>journal_entries</code> — Daily journal with categories.</li>
+            <li><code>journal_trackers</code> / <code>journal_tracker_values</code> — Custom mood/metric trackers.</li>
+            <li><code>habit_definitions</code> / <code>habit_logs</code> — Habit tracking with streaks.</li>
+            <li><code>ledger_*</code> — Accounts, transactions, budgets, categories, recurring templates.</li>
+            <li><code>sync_tombstones</code> — Tracks deleted items for sync.</li>
+          </ul>
+        </section>
+        <section>
+          <h2 data-i18n="wiki.technical.sections.encryption.heading">Encryption Pipeline</h2>
+          <ul data-i18n-html="wiki.technical.sections.encryption.list">
+            <li>Master key derived from user password using PBKDF2-HMAC-SHA256 (150k iterations).</li>
+            <li>Each sync payload encrypted with AES-256-GCM using unique IVs.</li>
+            <li>Per-device salts ensure keys differ across devices.</li>
+            <li>Server stores only ciphertext — zero-knowledge architecture.</li>
+            <li>Key rotation supported after password changes.</li>
+          </ul>
+        </section>
+        <section>
+          <h2 data-i18n="wiki.technical.sections.sync.heading">Synchronisation Protocol</h2>
+          <ul data-i18n-html="wiki.technical.sections.sync.list">
+            <li>REST/JSON API over TLS 1.3 with short-lived JWT authentication.</li>
+            <li>Optimistic locking with version counters per entity.</li>
+            <li>Incremental sync using changelog endpoints.</li>
+            <li>Conflict detection with revision history (manual resolution).</li>
+            <li>Tombstone tracking for deletions across devices.</li>
+          </ul>
+        </section>
+        <section>
+          <h2 data-i18n="wiki.technical.sections.deleteData.heading">Data Deletion Implementation</h2>
+          <ul data-i18n-html="wiki.technical.sections.deleteData.list">
+            <li>Local deletion uses platform-specific implementations via conditional imports.</li>
+            <li><strong>iOS/Android:</strong> Closes database and deletes <code>tracker.sqlite</code> file.</li>
+            <li><strong>Web:</strong> Closes database and deletes IndexedDB <code>tracker_database</code>.</li>
+            <li>Hive preferences box cleared separately if full reset needed.</li>
+            <li>App calls <code>main()</code> to reinitialize after deletion.</li>
+          </ul>
+        </section>
+        <section>
+          <h2 data-i18n="wiki.technical.sections.api.heading">Backend API Endpoints</h2>
+          <ul data-i18n-html="wiki.technical.sections.api.list">
+            <li><code>POST /api/auth/register</code> — Create account with email/password.</li>
+            <li><code>POST /api/auth/login</code> — Authenticate and receive JWT.</li>
+            <li><code>POST /api/auth/google</code> — OAuth login with Google.</li>
+            <li><code>GET/POST /api/sync/{collection}</code> — Fetch/push encrypted collection data.</li>
+            <li><code>POST /api/membership/delete_synced_data</code> — Delete all server-side data.</li>
+          </ul>
+        </section>
+        <section>
+          <h2 data-i18n="wiki.technical.sections.development.heading">Development Setup</h2>
+          <ul data-i18n-html="wiki.technical.sections.development.list">
+            <li>Flutter SDK 3.8+ required for app development.</li>
+            <li>Run <code>flutter pub get</code> to install dependencies.</li>
+            <li>Generate Drift code: <code>dart run build_runner build</code>.</li>
+            <li>Backend requires Python 3.11+, FastAPI, and PostgreSQL.</li>
+            <li>Docker Compose available for full-stack local development.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+    <footer class="wiki-footer">
+      <p data-i18n="wiki.common.footer">&copy; 2025 Tracker. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
