@@ -1211,7 +1211,8 @@ class _JournalPageState extends State<JournalPage>
 
   List<_CalendarDayEntry> _generateMonthDays(DateTime month) {
     final firstDay = DateTime(month.year, month.month, 1);
-    final firstWeekday = firstDay.weekday % 7;
+    // weekday is 1-7 (Mon-Sun), convert to 0-6 (Mon=0, Sun=6)
+    final firstWeekday = firstDay.weekday - 1;
     final daysBefore = firstWeekday;
     final firstDisplayDay = firstDay.subtract(Duration(days: daysBefore));
     final totalDays = 42;
