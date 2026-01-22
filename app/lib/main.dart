@@ -31,7 +31,11 @@ import 'time_tracking/time_tracking_summary.dart';
 import 'time_tracking/time_tracking_types.dart';
 import 'ledger/ledger_models.dart';
 import 'ledger/ledger_page.dart';
+import 'ledger/ledger_transaction_form.dart';
 import 'ledger/ledger_utils.dart';
+import 'notes/note_drawing_page.dart';
+import 'notes/note_edit_page.dart';
+import 'tasks/task_edit_page.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
@@ -213,6 +217,26 @@ enum _AppSection {
   habits,
   ledger,
   settings,
+}
+
+enum _QuickAction {
+  newNote,
+  newTask,
+  newTransaction,
+  startTimeTracking,
+  stopTimeTracking,
+}
+
+class _QuickActionItem {
+  const _QuickActionItem({
+    required this.icon,
+    required this.label,
+    required this.action,
+  });
+
+  final IconData icon;
+  final String label;
+  final _QuickAction action;
 }
 
 class AuthenticatedUser {
@@ -844,6 +868,187 @@ class _HomePageState extends State<HomePage> {
       SnackBar(content: Text(loc.timeTrackingClockOutSuccess(formatted))),
     );
     return true;
+  }
+
+  Future<void> _showQuickActionMenu(BuildContext context) async {
+    final loc = AppLocalizations.of(context);
+    final activeEntry = await _database.getActiveTimeEntry();
+    final hasActiveTimeTracking = activeEntry != null;
+
+    if (!context.mounted) return;
+
+    final items = <_QuickActionItem>[];
+    for (final section in _moduleOrder) {
+      if (!_enabledModules.contains(section)) continue;
+      switch (section) {
+        case _AppSection.notes:
+          items.add(_QuickActionItem(
+            icon: Icons.note_add,
+            label: loc.notesCreateButtonLabel,
+            action: _QuickAction.newNote,
+          ));
+        case _AppSection.tasks:
+          items.add(_QuickActionItem(
+            icon: Icons.add_task,
+            label: loc.tasksCreateButton,
+            action: _QuickAction.newTask,
+          ));
+        case _AppSection.ledger:
+          items.add(_QuickActionItem(
+            icon: Icons.add_card,
+            label: loc.ledgerTransactionCreateTitle,
+            action: _QuickAction.newTransaction,
+          ));
+        case _AppSection.timeTracking:
+          if (hasActiveTimeTracking) {
+            items.add(_QuickActionItem(
+              icon: Icons.timer_off,
+              label: loc.timeTrackingStopNowButton,
+              action: _QuickAction.stopTimeTracking,
+            ));
+          } else {
+            items.add(_QuickActionItem(
+              icon: Icons.timer,
+              label: loc.timeTrackingStartNowButton,
+              action: _QuickAction.startTimeTracking,
+            ));
+          }
+        default:
+          break;
+      }
+    }
+
+    if (items.isEmpty) return;
+
+    final selected = await showModalBottomSheet<_QuickAction>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: items
+                .map(
+                  (item) => ListTile(
+                    leading: Icon(item.icon),
+                    title: Text(item.label),
+                    onTap: () => Navigator.of(context).pop(item.action),
+                  ),
+                )
+                .toList(),
+          ),
+        );
+      },
+    );
+
+    if (selected == null || !context.mounted) return;
+
+    switch (selected) {
+      case _QuickAction.newNote:
+        await _showCreateNoteSheet(context, loc);
+      case _QuickAction.newTask:
+        await _showCreateTaskPage(context);
+      case _QuickAction.newTransaction:
+        await _showCreateTransactionDialog(context, loc);
+      case _QuickAction.startTimeTracking:
+        await _startTimeTrackingNow(context);
+      case _QuickAction.stopTimeTracking:
+        await _stopTimeTrackingNow(context);
+    }
+  }
+
+  Future<void> _showCreateNoteSheet(
+    BuildContext context,
+    AppLocalizations loc,
+  ) async {
+    final selectedKind = await showModalBottomSheet<NoteKind>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.notes),
+                title: Text(loc.notesCreateMarkdown),
+                onTap: () => Navigator.of(context).pop(NoteKind.markdown),
+              ),
+              ListTile(
+                leading: const Icon(Icons.gesture),
+                title: Text(loc.notesCreateDrawing),
+                onTap: () => Navigator.of(context).pop(NoteKind.drawing),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (selectedKind == null || !context.mounted) return;
+    await _openNoteEditor(context, selectedKind);
+  }
+
+  Future<void> _openNoteEditor(BuildContext context, NoteKind kind) async {
+    switch (kind) {
+      case NoteKind.markdown:
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => NoteEditPage(database: _database),
+          ),
+        );
+      case NoteKind.drawing:
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => DrawingNotePage(database: _database),
+          ),
+        );
+    }
+  }
+
+  Future<void> _showCreateTaskPage(BuildContext context) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TaskEditPage(
+          database: _database,
+          timeTrackingRounding: _timeTrackingRounding,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showCreateTransactionDialog(
+    BuildContext context,
+    AppLocalizations loc,
+  ) async {
+    final accounts = await _database.watchLedgerAccounts().first;
+    if (!context.mounted) return;
+    if (accounts.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.ledgerTransactionNoAccountsWarning)),
+      );
+      return;
+    }
+    final categories = await _database.watchLedgerCategories().first;
+    if (!context.mounted) return;
+    final result = await showLedgerTransactionFormDialog(
+      context: context,
+      accounts: accounts,
+      categories: categories,
+    );
+    if (result == null) return;
+    await _database.insertLedgerTransaction(
+      transactionKind: result.transactionKind,
+      amount: result.amount,
+      currencyCode: result.currencyCode,
+      bookingDate: result.bookingDate,
+      isPlanned: result.isPlanned,
+      accountId: result.accountId,
+      targetAccountId: result.targetAccountId,
+      categoryId: result.categoryId,
+      subcategoryId: result.subcategoryId,
+      description: result.description,
+      cryptoSymbol: result.cryptoSymbol,
+      cryptoQuantity: result.cryptoQuantity,
+      pricePerUnit: result.pricePerUnit,
+    );
   }
 
   Future<void> _persistAuthResponse(
@@ -1763,6 +1968,13 @@ class _HomePageState extends State<HomePage> {
                       currentUser,
                       entries,
                     ),
+              floatingActionButton:
+                  _selectedSection == _AppSection.dashboard
+                      ? FloatingActionButton(
+                          onPressed: () => _showQuickActionMenu(context),
+                          child: const Icon(Icons.add),
+                        )
+                      : null,
               body: Row(
                 children: [
                   if (useNavigationRail)
