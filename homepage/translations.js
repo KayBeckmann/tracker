@@ -387,6 +387,11 @@ window.TRACKER_TRANSLATIONS = {
             list:
               "<li>Write Markdown notes with side-by-side live preview and syntax helpers.</li><li>The first line becomes the title; created and updated timestamps track automatically.</li><li>Tag and search notes, filter by tag or text, and archive when no longer needed.</li><li>Switch to canvas mode for sketches, diagrams, and handwritten annotations.</li>"
           },
+          linking: {
+            heading: "Linking notes",
+            list:
+              "<li>Use <code>[[Note Title]]</code> wiki-style syntax to link between notes.</li><li>Links become clickable in preview mode and navigate to the referenced note.</li><li>A notification appears if the linked note does not exist.</li><li>Links also work in journal entries to connect daily reflections with notes.</li>"
+          },
           data: {
             heading: "Data model",
             list:
@@ -498,6 +503,11 @@ window.TRACKER_TRANSLATIONS = {
             heading: "Usage",
             list:
               "<li>Manage authentication via email/password or Google Sign-In.</li><li>Enable or disable modules, reorder navigation, and change accent colour.</li><li>Switch language or theme instantly; preferences persist offline.</li><li>Trigger encrypted backups and review storage usage (beta).</li>"
+          },
+          notesJournal: {
+            heading: "Notes & Journal",
+            list:
+              "<li>Choose the default view (Editor or Preview) when opening notes and journal entries.</li><li>Editor mode opens notes ready for typing; Preview mode shows rendered Markdown.</li><li>The setting applies to both the Notes module and the Journal module.</li><li>This preference syncs across devices when using membership sync.</li>"
           },
           data: {
             heading: "Data model",
@@ -1139,6 +1149,11 @@ window.TRACKER_TRANSLATIONS = {
             list:
               "<li>Markdown-Notizen mit Live-Vorschau und Split-View verfassen.</li><li>Die erste Zeile wird zum Titel; Erstell- und Änderungszeiten werden automatisch gepflegt.</li><li>Notizen taggen, per Volltext suchen, archivieren oder duplizieren.</li><li>In den Canvas-Modus wechseln für Skizzen, Diagramme und handschriftliche Notizen.</li>"
           },
+          linking: {
+            heading: "Notizen verlinken",
+            list:
+              "<li>Mit <code>[[Notiz-Titel]]</code> Wiki-Syntax zwischen Notizen verlinken.</li><li>Links werden in der Vorschau klickbar und navigieren zur referenzierten Notiz.</li><li>Existiert die verlinkte Notiz nicht, erscheint eine Hinweismeldung.</li><li>Links funktionieren auch in Journal-Einträgen, um tägliche Reflexionen mit Notizen zu verbinden.</li>"
+          },
           data: {
             heading: "Datenmodell",
             list:
@@ -1250,6 +1265,11 @@ window.TRACKER_TRANSLATIONS = {
             heading: "Bedienung",
             list:
               "<li>Anmeldung über E-Mail/Passwort oder Google Sign-In verwalten.</li><li>Module aktivieren/deaktivieren, Navigation neu sortieren und Akzentfarbe anpassen.</li><li>Sprache und Theme sofort wechseln; Präferenzen bleiben offline verfügbar.</li><li>Verschlüsselte Backups anstoßen und Speicherverbrauch prüfen (Beta).</li>"
+          },
+          notesJournal: {
+            heading: "Notizen & Journal",
+            list:
+              "<li>Standardansicht (Editor oder Vorschau) für Notizen und Journal-Einträge wählen.</li><li>Editor-Modus öffnet Notizen zum Tippen; Vorschau zeigt gerenderten Markdown.</li><li>Die Einstellung gilt für das Notizen- und das Journal-Modul.</li><li>Diese Präferenz synchronisiert über Geräte bei aktiver Mitgliedschaft.</li>"
           },
           data: {
             heading: "Datenmodell",
@@ -1891,6 +1911,11 @@ window.TRACKER_TRANSLATIONS = {
             list:
               "<li>Skriv Markdown-anteckningar med liveförhandsvisning och delad vy.</li><li>Första raden blir titel; skapad- och ändringstid uppdateras automatiskt.</li><li>Tagga anteckningar, filtrera efter taggar och sök i text och metadata.</li><li>Byt till frihandsläge för skisser, diagram och wireframes.</li>"
           },
+          linking: {
+            heading: "Länka anteckningar",
+            list:
+              "<li>Använd <code>[[Anteckningstitel]]</code> wiki-syntax för att länka mellan anteckningar.</li><li>Länkar blir klickbara i förhandsvisningen och navigerar till refererad anteckning.</li><li>Ett meddelande visas om den länkade anteckningen inte finns.</li><li>Länkar fungerar även i journalposter för att koppla dagliga reflektioner med anteckningar.</li>"
+          },
           data: {
             heading: "Datamodell",
             list:
@@ -2002,6 +2027,11 @@ window.TRACKER_TRANSLATIONS = {
             heading: "Användning",
             list:
               "<li>Hantera kontoinloggning via e-post/lösenord eller Google.</li><li>Konfigurera modulernas synlighet och standarddashboards.</li><li>Välj appens språk och tema; preferenser gäller direkt.</li><li>Granska lagringsanvändning och initiera lokala säkerhetskopior (beta).</li>"
+          },
+          notesJournal: {
+            heading: "Anteckningar & journal",
+            list:
+              "<li>Välj standardvy (Redigera eller Förhandsgranska) när du öppnar anteckningar och journalposter.</li><li>Redigeringsläge öppnar anteckningar redo att skriva; Förhandsvisning visar renderad Markdown.</li><li>Inställningen gäller både Antecknings- och Journalmodulen.</li><li>Denna preferens synkas mellan enheter vid aktivt medlemskap.</li>"
           },
           data: {
             heading: "Datamodell",

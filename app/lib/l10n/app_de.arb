@@ -142,6 +142,19 @@
   "notesDrawingToolRectangle": "Rechteck",
   "notesDrawingToolEllipse": "Ellipse",
   "notesDrawingStrokeLabel": "Strichstärke",
+  "notesLinkNotFound": "Notiz nicht gefunden: {title}",
+  "@notesLinkNotFound": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "notesSettingsTitle": "Notizen & Journal",
+  "notesSettingsDescription": "Lege fest, welche Ansicht beim Öffnen von Notizen und Journal-Einträgen angezeigt wird.",
+  "notesSettingsDefaultOpenMode": "Standardansicht",
+  "notesSettingsDefaultOpenModeEditor": "Editor",
+  "notesSettingsDefaultOpenModePreview": "Vorschau",
   "genericCancel": "Abbrechen",
   "tasksPlaceholder": "Plane und strukturiere hier deine Aufgaben.",
   "tasksTabList": "Liste",

@@ -59,6 +59,10 @@
             - [ ] Implement Calendar Filtering for Notes:
                 - [ ] UI for selecting date range or specific day.
                 - [ ] Logic to display notes created or modified within the selected period.
+            - [x] Implement Note-to-Note Linking:
+                - [x] Wiki-style `[[Note Title]]` syntax in Markdown.
+                - [x] Clickable links in preview mode navigate to referenced note.
+                - [x] SnackBar feedback when linked note not found.
             - [ ] Implement Bidirectional Linking (Appointments <-> Notes):
                 - [ ] UI for linking notes to appointments.
                 - [ ] UI for linking appointments to notes.
@@ -95,6 +99,11 @@
             - [ ] Implement Language Selection:
                 - [ ] UI for selecting German, English, or Swedish.
                 - [ ] Logic to apply selected language.
+            - [x] Implement Notes & Journal Default View Setting:
+                - [x] Settings card with Editor/Preview toggle.
+                - [x] Notes open in selected default view (Editor or Preview).
+                - [x] Journal opens in selected default view.
+                - [x] Setting syncs across devices.
             - [ ] Implement Backend Login Integration:
                 - [x] UI für backend login (email/password, Google, Apple ID).
                 - [x] Integrate with backend authentication API.

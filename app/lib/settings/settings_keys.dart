@@ -18,6 +18,8 @@ const String journalPinHashKey = 'journal_pin_hash';
 const String journalPinSaltKey = 'journal_pin_salt';
 const String journalBiometricEnabledKey = 'journal_biometric_enabled';
 
+const String notesDefaultOpenModeKey = 'notes_default_open_mode';
+
 const String settingsDirtyKey = 'settings_dirty';
 const String settingsRemoteIdKey = 'settings_remote_id';
 const String settingsRemoteVersionKey = 'settings_remote_version';

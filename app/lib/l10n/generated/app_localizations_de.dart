@@ -328,6 +328,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notesDrawingStrokeLabel => 'Strichstärke';
 
   @override
+  String notesLinkNotFound(String title) {
+    return 'Notiz nicht gefunden: $title';
+  }
+
+  @override
+  String get notesSettingsTitle => 'Notizen & Journal';
+
+  @override
+  String get notesSettingsDescription =>
+      'Lege fest, welche Ansicht beim Öffnen von Notizen und Journal-Einträgen angezeigt wird.';
+
+  @override
+  String get notesSettingsDefaultOpenMode => 'Standardansicht';
+
+  @override
+  String get notesSettingsDefaultOpenModeEditor => 'Editor';
+
+  @override
+  String get notesSettingsDefaultOpenModePreview => 'Vorschau';
+
+  @override
   String get genericCancel => 'Abbrechen';
 
   @override

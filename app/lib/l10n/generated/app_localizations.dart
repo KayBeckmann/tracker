@@ -682,6 +682,42 @@ abstract class AppLocalizations {
   /// **'Stroke width'**
   String get notesDrawingStrokeLabel;
 
+  /// No description provided for @notesLinkNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Note not found: {title}'**
+  String notesLinkNotFound(String title);
+
+  /// No description provided for @notesSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes & Journal'**
+  String get notesSettingsTitle;
+
+  /// No description provided for @notesSettingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure the default view for notes and journal entries.'**
+  String get notesSettingsDescription;
+
+  /// No description provided for @notesSettingsDefaultOpenMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Default view'**
+  String get notesSettingsDefaultOpenMode;
+
+  /// No description provided for @notesSettingsDefaultOpenModeEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Editor'**
+  String get notesSettingsDefaultOpenModeEditor;
+
+  /// No description provided for @notesSettingsDefaultOpenModePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get notesSettingsDefaultOpenModePreview;
+
   /// No description provided for @genericCancel.
   ///
   /// In en, this message translates to:

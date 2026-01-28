@@ -349,6 +349,7 @@ class _HomePageState extends State<HomePage> {
   String? _journalPinSalt;
   bool _journalBiometricEnabled = false;
   bool _journalUnlocked = true;
+  String _notesDefaultOpenMode = 'editor';
   bool _isSyncInProgress = false;
   bool _isHabitCreationInProgress = false;
   StreamSubscription<List<TaskEntry>>? _taskReminderSubscription;
@@ -668,6 +669,11 @@ class _HomePageState extends State<HomePage> {
         ? storedBiometric
         : false;
     _journalUnlocked = !_journalProtectionEnabled;
+    final Object? storedOpenMode = _trackerBox.get(notesDefaultOpenModeKey);
+    _notesDefaultOpenMode = storedOpenMode is String &&
+            (storedOpenMode == 'editor' || storedOpenMode == 'preview')
+        ? storedOpenMode
+        : 'editor';
   }
 
   void _reloadSettingsFromStorage() {
@@ -3219,6 +3225,7 @@ class _HomePageState extends State<HomePage> {
           _notesTagFilter = tag;
         });
       },
+      defaultOpenMode: _notesDefaultOpenMode,
     );
   }
 
@@ -3274,6 +3281,7 @@ class _HomePageState extends State<HomePage> {
       initialCategory: enabledCategories.first,
       showLockButton: _journalProtectionEnabled,
       onLock: _journalProtectionEnabled ? _lockJournal : null,
+      initialTabIndex: _notesDefaultOpenMode == 'preview' ? 1 : 0,
     );
   }
 
@@ -3310,6 +3318,8 @@ class _HomePageState extends State<HomePage> {
         _buildAppearanceCard(context, loc),
         const SizedBox(height: 24),
         _buildModulesCard(context, loc),
+        const SizedBox(height: 24),
+        _buildNotesSettingsCard(context, loc),
         const SizedBox(height: 24),
         _buildJournalSettingsCard(context, loc),
         const SizedBox(height: 24),
@@ -3348,6 +3358,8 @@ class _HomePageState extends State<HomePage> {
       _buildAppearanceCard(context, loc),
       const SizedBox(height: 24),
       _buildModulesCard(context, loc),
+      const SizedBox(height: 24),
+      _buildNotesSettingsCard(context, loc),
       const SizedBox(height: 24),
       _buildJournalSettingsCard(context, loc),
       const SizedBox(height: 24),
@@ -4231,6 +4243,58 @@ class _HomePageState extends State<HomePage> {
             Text(
               loc.settingsSyncInfoDescription,
               style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotesSettingsCard(BuildContext context, AppLocalizations loc) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.notesSettingsTitle,
+              style: theme.textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.notesSettingsDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              loc.notesSettingsDefaultOpenMode,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            SegmentedButton<String>(
+              segments: [
+                ButtonSegment<String>(
+                  value: 'editor',
+                  label: Text(loc.notesSettingsDefaultOpenModeEditor),
+                  icon: const Icon(Icons.edit),
+                ),
+                ButtonSegment<String>(
+                  value: 'preview',
+                  label: Text(loc.notesSettingsDefaultOpenModePreview),
+                  icon: const Icon(Icons.visibility),
+                ),
+              ],
+              selected: {_notesDefaultOpenMode},
+              onSelectionChanged: (Set<String> selected) {
+                final value = selected.first;
+                setState(() {
+                  _notesDefaultOpenMode = value;
+                });
+                _trackerBox.put(notesDefaultOpenModeKey, value);
+                _markSettingsDirty();
+              },
             ),
           ],
         ),

@@ -325,6 +325,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesDrawingStrokeLabel => 'Stroke width';
 
   @override
+  String notesLinkNotFound(String title) {
+    return 'Note not found: $title';
+  }
+
+  @override
+  String get notesSettingsTitle => 'Notes & Journal';
+
+  @override
+  String get notesSettingsDescription =>
+      'Configure the default view for notes and journal entries.';
+
+  @override
+  String get notesSettingsDefaultOpenMode => 'Default view';
+
+  @override
+  String get notesSettingsDefaultOpenModeEditor => 'Editor';
+
+  @override
+  String get notesSettingsDefaultOpenModePreview => 'Preview';
+
+  @override
   String get genericCancel => 'Cancel';
 
   @override

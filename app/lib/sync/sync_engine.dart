@@ -3090,6 +3090,10 @@ class SyncEngine {
       storageKey: journalBiometricEnabledKey,
       raw: payload['journalBiometricEnabled'],
     );
+    _writeStringPreference(
+      storageKey: notesDefaultOpenModeKey,
+      raw: payload['notesDefaultOpenMode'],
+    );
 
     final DateTime updatedAt =
         _parseDate(payload['updatedAt']) ??
@@ -3166,6 +3170,8 @@ class SyncEngine {
       'journalPinSalt': pinSaltRaw is String ? pinSaltRaw : null,
       'journalBiometricEnabled': readBool(journalBiometricEnabledKey),
       'journalEnabledCategories': readList(journalEnabledCategoriesKey),
+      'notesDefaultOpenMode':
+          storageBox.get(notesDefaultOpenModeKey) as String?,
       'updatedAt': updatedAt.toIso8601String(),
     };
   }

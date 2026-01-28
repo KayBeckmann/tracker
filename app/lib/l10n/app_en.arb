@@ -177,6 +177,19 @@
   "notesDrawingToolRectangle": "Rectangle",
   "notesDrawingToolEllipse": "Ellipse",
   "notesDrawingStrokeLabel": "Stroke width",
+  "notesLinkNotFound": "Note not found: {title}",
+  "@notesLinkNotFound": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "notesSettingsTitle": "Notes & Journal",
+  "notesSettingsDescription": "Configure the default view for notes and journal entries.",
+  "notesSettingsDefaultOpenMode": "Default view",
+  "notesSettingsDefaultOpenModeEditor": "Editor",
+  "notesSettingsDefaultOpenModePreview": "Preview",
   "genericCancel": "Cancel",
   "tasksPlaceholder": "Organise upcoming tasks here.",
   "tasksTabList": "List",

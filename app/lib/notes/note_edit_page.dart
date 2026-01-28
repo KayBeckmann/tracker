@@ -6,12 +6,20 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../data/local/app_database.dart';
 import '../l10n/generated/app_localizations.dart';
+import 'note_drawing_page.dart';
+import 'note_link_helper.dart';
 
 class NoteEditPage extends StatefulWidget {
-  const NoteEditPage({super.key, required this.database, this.note});
+  const NoteEditPage({
+    super.key,
+    required this.database,
+    this.note,
+    this.initialTabIndex = 0,
+  });
 
   final AppDatabase database;
   final NoteEntry? note;
+  final int initialTabIndex;
 
   bool get isEditing => note != null;
 
@@ -36,7 +44,11 @@ class _NoteEditPageState extends State<NoteEditPage>
     super.initState();
     _tagsController = TextEditingController(text: widget.note?.tags);
     _contentController = TextEditingController(text: widget.note?.content);
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialTabIndex,
+    );
     _tagsController.addListener(_handleTagsChanged);
   }
 
@@ -293,6 +305,44 @@ class _NoteEditPageState extends State<NoteEditPage>
     );
   }
 
+  Future<void> _handleNoteLinkTap(String href) async {
+    if (!href.startsWith('note://')) {
+      return;
+    }
+    final encodedTitle = href.substring('note://'.length);
+    final title = Uri.decodeComponent(encodedTitle);
+    final note = await widget.database.getNoteEntryByTitle(title);
+    if (!mounted) return;
+    if (note == null) {
+      final loc = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.notesLinkNotFound(title))),
+      );
+      return;
+    }
+    switch (note.kind) {
+      case NoteKind.markdown:
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => NoteEditPage(
+              database: widget.database,
+              note: note,
+              initialTabIndex: widget.initialTabIndex,
+            ),
+          ),
+        );
+      case NoteKind.drawing:
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => DrawingNotePage(
+              database: widget.database,
+              note: note,
+            ),
+          ),
+        );
+    }
+  }
+
   Widget _buildPreviewTab(AppLocalizations loc) {
     final content = _contentController.text.trim();
     if (content.isEmpty) {
@@ -304,9 +354,15 @@ class _NoteEditPageState extends State<NoteEditPage>
         ),
       );
     }
+    final processedContent = preprocessNoteLinks(content);
     return Markdown(
-      data: content,
+      data: processedContent,
       styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+      onTapLink: (text, href, title) {
+        if (href != null) {
+          _handleNoteLinkTap(href);
+        }
+      },
     );
   }
 }

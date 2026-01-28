@@ -8,6 +8,9 @@ import 'package:intl/intl.dart';
 
 import '../data/local/app_database.dart';
 import '../l10n/generated/app_localizations.dart';
+import '../notes/note_drawing_page.dart';
+import '../notes/note_edit_page.dart';
+import '../notes/note_link_helper.dart';
 
 class JournalPage extends StatefulWidget {
   const JournalPage({
@@ -18,6 +21,7 @@ class JournalPage extends StatefulWidget {
     this.initialCategory,
     this.onLock,
     this.showLockButton = false,
+    this.initialTabIndex = 0,
   });
 
   final AppDatabase database;
@@ -26,6 +30,7 @@ class JournalPage extends StatefulWidget {
   final JournalCategory? initialCategory;
   final VoidCallback? onLock;
   final bool showLockButton;
+  final int initialTabIndex;
 
   @override
   State<JournalPage> createState() => _JournalPageState();
@@ -84,7 +89,11 @@ class _JournalPageState extends State<JournalPage>
     } else {
       _activeCategory = categories.first;
     }
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialTabIndex,
+    );
     _entryController.addListener(_handleControllerChanged);
     _subscribeEntries();
     _trackersSub = widget.database.watchJournalTrackers().listen((trackers) {
@@ -226,6 +235,44 @@ class _JournalPageState extends State<JournalPage>
   DateTime _normalizeToDay(DateTime date) {
     final local = date.toLocal();
     return DateTime(local.year, local.month, local.day);
+  }
+
+  Future<void> _handleNoteLinkTap(String href) async {
+    if (!href.startsWith('note://')) {
+      return;
+    }
+    final encodedTitle = href.substring('note://'.length);
+    final title = Uri.decodeComponent(encodedTitle);
+    final note = await widget.database.getNoteEntryByTitle(title);
+    if (!mounted) return;
+    if (note == null) {
+      final loc = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.notesLinkNotFound(title))),
+      );
+      return;
+    }
+    switch (note.kind) {
+      case NoteKind.markdown:
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => NoteEditPage(
+              database: widget.database,
+              note: note,
+              initialTabIndex: widget.initialTabIndex,
+            ),
+          ),
+        );
+      case NoteKind.drawing:
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (context) => DrawingNotePage(
+              database: widget.database,
+              note: note,
+            ),
+          ),
+        );
+    }
   }
 
   Future<void> _changeMonth(int delta) async {
@@ -1053,8 +1100,13 @@ class _JournalPageState extends State<JournalPage>
                             ),
                           )
                         : Markdown(
-                            data: _entryController.text,
+                            data: preprocessNoteLinks(_entryController.text),
                             styleSheet: MarkdownStyleSheet.fromTheme(theme),
+                            onTapLink: (text, href, title) {
+                              if (href != null) {
+                                _handleNoteLinkTap(href);
+                              }
+                            },
                           ),
                   ),
                 ],

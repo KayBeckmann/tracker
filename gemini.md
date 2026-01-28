@@ -33,7 +33,9 @@ The application will include the following core features:
     - Ability to mark notes as templates (e.g., for Bullet Journal).
     - Calendar filtering: display notes created or modified within a specified date range or on a specific day.
     - Bidirectional linking between appointments and notes.
+    - **Note-to-note linking:** Wiki-style links using `[[Note Title]]` syntax. Links are clickable in preview mode and navigate to the referenced note.
     - Image insertion from device, synchronized with backend for paid subscriptions.
+    - **Default view setting:** User can choose whether notes and journal entries open in Editor or Preview mode by default (configurable in Settings).
 - **Habits:** Tracking daily counts/time spent and comparison with past performance.
 - **Household Book:** Financial tracking and management.
 - **Settings:** User preferences and application configuration, including:

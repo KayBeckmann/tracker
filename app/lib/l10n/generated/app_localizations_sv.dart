@@ -325,6 +325,27 @@ class AppLocalizationsSv extends AppLocalizations {
   String get notesDrawingStrokeLabel => 'Linjebredd';
 
   @override
+  String notesLinkNotFound(String title) {
+    return 'Anteckning hittades inte: $title';
+  }
+
+  @override
+  String get notesSettingsTitle => 'Anteckningar & Journal';
+
+  @override
+  String get notesSettingsDescription =>
+      'Ställ in standardvy för anteckningar och journalinlägg.';
+
+  @override
+  String get notesSettingsDefaultOpenMode => 'Standardvy';
+
+  @override
+  String get notesSettingsDefaultOpenModeEditor => 'Redigera';
+
+  @override
+  String get notesSettingsDefaultOpenModePreview => 'Förhandsgranska';
+
+  @override
   String get genericCancel => 'Avbryt';
 
   @override

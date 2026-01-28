@@ -983,6 +983,12 @@ SELECT
     )..where((tbl) => tbl.remoteId.equals(remoteId))).getSingleOrNull();
   }
 
+  Future<NoteEntry?> getNoteEntryByTitle(String title) {
+    return (select(noteEntries)
+          ..where((tbl) => tbl.title.equals(title) & tbl.archived.equals(false)))
+        .getSingleOrNull();
+  }
+
   Future<List<NoteEntry>> getNotesNeedingSync() {
     return (select(
       noteEntries,

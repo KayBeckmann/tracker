@@ -142,6 +142,19 @@
   "notesDrawingToolRectangle": "Rektangel",
   "notesDrawingToolEllipse": "Ellips",
   "notesDrawingStrokeLabel": "Linjebredd",
+  "notesLinkNotFound": "Anteckning hittades inte: {title}",
+  "@notesLinkNotFound": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "notesSettingsTitle": "Anteckningar & Journal",
+  "notesSettingsDescription": "Ställ in standardvy för anteckningar och journalinlägg.",
+  "notesSettingsDefaultOpenMode": "Standardvy",
+  "notesSettingsDefaultOpenModeEditor": "Redigera",
+  "notesSettingsDefaultOpenModePreview": "Förhandsgranska",
   "genericCancel": "Avbryt",
   "tasksPlaceholder": "Organisera kommande uppgifter här.",
   "tasksTabList": "Lista",

@@ -11,11 +11,13 @@ class NotesPage extends StatefulWidget {
     required this.database,
     this.initialTag,
     this.onTagFilterChanged,
+    this.defaultOpenMode = 'editor',
   });
 
   final AppDatabase database;
   final String? initialTag;
   final ValueChanged<String?>? onTagFilterChanged;
+  final String defaultOpenMode;
 
   @override
   State<NotesPage> createState() => _NotesPageState();
@@ -92,12 +94,16 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   Future<void> _openEditor(NoteEntry note) async {
+    final initialTabIndex = widget.defaultOpenMode == 'preview' ? 1 : 0;
     switch (note.kind) {
       case NoteKind.markdown:
         await Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (context) =>
-                NoteEditPage(database: widget.database, note: note),
+            builder: (context) => NoteEditPage(
+              database: widget.database,
+              note: note,
+              initialTabIndex: initialTabIndex,
+            ),
           ),
         );
       case NoteKind.drawing:
