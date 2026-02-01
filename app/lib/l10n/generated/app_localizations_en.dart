@@ -1685,6 +1685,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ledgerAccountIncludeInNetWorthLabel => 'Include in total balance';
 
   @override
+  String get ledgerAccountDefaultLabel => 'Default account';
+
+  @override
+  String get ledgerAccountDefaultHint => 'Pre-selected for new transactions';
+
+  @override
+  String get ledgerAccountDefaultBadge => 'Default';
+
+  @override
   String get ledgerAccountCreateButton => 'Add account';
 
   @override
@@ -2108,6 +2117,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ledgerTabCategories => 'Categories';
+
+  @override
+  String get ledgerTabDashboard => 'Dashboard';
+
+  @override
+  String get ledgerDashboardNetWorthChart => 'Net worth over time';
+
+  @override
+  String get ledgerDashboardPeriod30Days => '30 days';
+
+  @override
+  String get ledgerDashboardPeriod90Days => '90 days';
+
+  @override
+  String get ledgerDashboardPeriod1Year => '1 year';
+
+  @override
+  String get ledgerDashboardPeriodAllTime => 'All time';
+
+  @override
+  String get ledgerDashboardNoData =>
+      'Add transactions to see your net worth trend.';
+
+  @override
+  String get ledgerDashboardNetWorthTitle => 'Net worth';
 
   @override
   String get ledgerDashboardNoAccounts =>

@@ -268,6 +268,91 @@ LedgerDashboardSummary buildDashboardSummary({
   );
 }
 
+List<NetWorthDataPoint> buildNetWorthHistory({
+  required List<LedgerAccount> accounts,
+  required List<LedgerTransaction> transactions,
+  required int periodDays,
+  int dataPoints = 12,
+}) {
+  final now = DateTime.now();
+  final startDate = now.subtract(Duration(days: periodDays));
+
+  // Filter accounts that contribute to net worth
+  final netWorthAccounts =
+      accounts.where((a) => a.includeInNetWorth).toList();
+  if (netWorthAccounts.isEmpty) {
+    return [];
+  }
+
+  // Sort transactions by date ascending
+  final sortedTransactions = transactions
+      .where((t) => !t.isPlanned)
+      .toList()
+    ..sort((a, b) => a.bookingDate.compareTo(b.bookingDate));
+
+  // Calculate interval between data points
+  final intervalDays = periodDays ~/ (dataPoints - 1);
+
+  final result = <NetWorthDataPoint>[];
+
+  for (var i = 0; i < dataPoints; i++) {
+    final pointDate = i == dataPoints - 1
+        ? now
+        : startDate.add(Duration(days: intervalDays * i));
+
+    // Calculate balance for each account at this point in time
+    final Map<String, double> netWorthByCurrency = {};
+
+    for (final account in netWorthAccounts) {
+      final currency = account.currencyCode.toUpperCase();
+      var balance = account.initialBalance;
+
+      // Apply all transactions up to this date
+      for (final transaction in sortedTransactions) {
+        if (transaction.bookingDate.isAfter(pointDate)) {
+          break;
+        }
+
+        final amount = transaction.amount;
+        switch (transaction.transactionKind) {
+          case LedgerTransactionKind.income:
+            if (transaction.accountId == account.id) {
+              balance += amount;
+            }
+            break;
+          case LedgerTransactionKind.expense:
+          case LedgerTransactionKind.cryptoPurchase:
+            if (transaction.accountId == account.id) {
+              balance -= amount;
+            }
+            break;
+          case LedgerTransactionKind.transfer:
+            if (transaction.accountId == account.id) {
+              balance -= amount;
+            }
+            if (transaction.targetAccountId == account.id) {
+              balance += amount;
+            }
+            break;
+        }
+      }
+
+      netWorthByCurrency.update(
+        currency,
+        (value) => value + balance,
+        ifAbsent: () => balance,
+      );
+    }
+
+    result.add(NetWorthDataPoint(
+      date: pointDate,
+      netWorthByCurrency: netWorthByCurrency,
+    ));
+  }
+
+  return result;
+}
+
 CryptoHoldingSnapshot buildCryptoHoldingSnapshot({
   required LedgerTransaction transaction,
   double? currentUnitPrice,

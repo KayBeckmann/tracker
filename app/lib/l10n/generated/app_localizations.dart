@@ -3080,6 +3080,24 @@ abstract class AppLocalizations {
   /// **'Include in total balance'**
   String get ledgerAccountIncludeInNetWorthLabel;
 
+  /// No description provided for @ledgerAccountDefaultLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default account'**
+  String get ledgerAccountDefaultLabel;
+
+  /// No description provided for @ledgerAccountDefaultHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-selected for new transactions'**
+  String get ledgerAccountDefaultHint;
+
+  /// No description provided for @ledgerAccountDefaultBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get ledgerAccountDefaultBadge;
+
   /// No description provided for @ledgerAccountCreateButton.
   ///
   /// In en, this message translates to:
@@ -3827,6 +3845,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Categories'**
   String get ledgerTabCategories;
+
+  /// No description provided for @ledgerTabDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get ledgerTabDashboard;
+
+  /// No description provided for @ledgerDashboardNetWorthChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth over time'**
+  String get ledgerDashboardNetWorthChart;
+
+  /// No description provided for @ledgerDashboardPeriod30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days'**
+  String get ledgerDashboardPeriod30Days;
+
+  /// No description provided for @ledgerDashboardPeriod90Days.
+  ///
+  /// In en, this message translates to:
+  /// **'90 days'**
+  String get ledgerDashboardPeriod90Days;
+
+  /// No description provided for @ledgerDashboardPeriod1Year.
+  ///
+  /// In en, this message translates to:
+  /// **'1 year'**
+  String get ledgerDashboardPeriod1Year;
+
+  /// No description provided for @ledgerDashboardPeriodAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get ledgerDashboardPeriodAllTime;
+
+  /// No description provided for @ledgerDashboardNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'Add transactions to see your net worth trend.'**
+  String get ledgerDashboardNoData;
+
+  /// No description provided for @ledgerDashboardNetWorthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get ledgerDashboardNetWorthTitle;
 
   /// No description provided for @ledgerDashboardNoAccounts.
   ///

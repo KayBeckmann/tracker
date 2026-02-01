@@ -2769,21 +2769,16 @@ class $JournalEntriesTable extends JournalEntries
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _categoryMeta = const VerificationMeta(
-    'category',
-  );
   @override
   late final GeneratedColumnWithTypeConverter<JournalCategory, String>
-      category = GeneratedColumn<String>(
-        'category',
-        aliasedName,
-        false,
-        type: DriftSqlType.string,
-        requiredDuringInsert: false,
-        defaultValue: Constant(JournalCategory.personal.name),
-      ).withConverter<JournalCategory>(
-        $JournalEntriesTable.$convertercategory,
-      );
+  category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: Constant(JournalCategory.personal.name),
+  ).withConverter<JournalCategory>($JournalEntriesTable.$convertercategory);
   static const VerificationMeta _contentMeta = const VerificationMeta(
     'content',
   );
@@ -2905,12 +2900,6 @@ class $JournalEntriesTable extends JournalEntries
     } else if (isInserting) {
       context.missing(_entryDateMeta);
     }
-    if (data.containsKey('category')) {
-      context.handle(
-        _categoryMeta,
-        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
-      );
-    }
     if (data.containsKey('content')) {
       context.handle(
         _contentMeta,
@@ -2962,6 +2951,10 @@ class $JournalEntriesTable extends JournalEntries
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {entryDate, category},
+  ];
+  @override
   JournalEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return JournalEntry(
@@ -2974,7 +2967,10 @@ class $JournalEntriesTable extends JournalEntries
         data['${effectivePrefix}entry_date'],
       )!,
       category: $JournalEntriesTable.$convertercategory.fromSql(
-        data['${effectivePrefix}category'],
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}category'],
+        )!,
       ),
       content: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -3012,14 +3008,10 @@ class $JournalEntriesTable extends JournalEntries
     return $JournalEntriesTable(attachedDatabase, alias);
   }
 
-  @override
-  List<Set<GeneratedColumn>> get $uniqueKeys => [
-        {entryDate, category},
-      ];
-
   static JsonTypeConverter2<JournalCategory, String, String>
-      $convertercategory =
-      const EnumNameConverter<JournalCategory>(JournalCategory.values);
+  $convertercategory = const EnumNameConverter<JournalCategory>(
+    JournalCategory.values,
+  );
 }
 
 class JournalEntry extends DataClass implements Insertable<JournalEntry> {
@@ -3093,13 +3085,12 @@ class JournalEntry extends DataClass implements Insertable<JournalEntry> {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    final categoryValue = serializer.fromJson<String?>(json['category']);
     return JournalEntry(
       id: serializer.fromJson<int>(json['id']),
       entryDate: serializer.fromJson<DateTime>(json['entryDate']),
-      category: categoryValue == null
-          ? JournalCategory.personal
-          : $JournalEntriesTable.$convertercategory.fromJson(categoryValue),
+      category: $JournalEntriesTable.$convertercategory.fromJson(
+        serializer.fromJson<String>(json['category']),
+      ),
       content: serializer.fromJson<String>(json['content']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -3240,7 +3231,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
   JournalEntriesCompanion.insert({
     this.id = const Value.absent(),
     required DateTime entryDate,
-    Value<JournalCategory> category = const Value.absent(),
+    this.category = const Value.absent(),
     this.content = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -3248,8 +3239,7 @@ class JournalEntriesCompanion extends UpdateCompanion<JournalEntry> {
     this.remoteVersion = const Value.absent(),
     this.needsSync = const Value.absent(),
     this.syncedAt = const Value.absent(),
-  })  : entryDate = Value(entryDate),
-        category = category;
+  }) : entryDate = Value(entryDate);
   static Insertable<JournalEntry> custom({
     Expression<int>? id,
     Expression<DateTime>? entryDate,
@@ -6108,6 +6098,21 @@ class $LedgerAccountsTable extends LedgerAccounts
     ),
     defaultValue: const Constant(true),
   );
+  static const VerificationMeta _isDefaultMeta = const VerificationMeta(
+    'isDefault',
+  );
+  @override
+  late final GeneratedColumn<bool> isDefault = GeneratedColumn<bool>(
+    'is_default',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_default" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _initialBalanceMeta = const VerificationMeta(
     'initialBalance',
   );
@@ -6200,6 +6205,7 @@ class $LedgerAccountsTable extends LedgerAccounts
     accountKind,
     currencyCode,
     includeInNetWorth,
+    isDefault,
     initialBalance,
     createdAt,
     updatedAt,
@@ -6247,6 +6253,12 @@ class $LedgerAccountsTable extends LedgerAccounts
           data['include_in_net_worth']!,
           _includeInNetWorthMeta,
         ),
+      );
+    }
+    if (data.containsKey('is_default')) {
+      context.handle(
+        _isDefaultMeta,
+        isDefault.isAcceptableOrUnknown(data['is_default']!, _isDefaultMeta),
       );
     }
     if (data.containsKey('initial_balance')) {
@@ -6328,6 +6340,10 @@ class $LedgerAccountsTable extends LedgerAccounts
         DriftSqlType.bool,
         data['${effectivePrefix}include_in_net_worth'],
       )!,
+      isDefault: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_default'],
+      )!,
       initialBalance: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}initial_balance'],
@@ -6376,6 +6392,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
   final LedgerAccountKind accountKind;
   final String currencyCode;
   final bool includeInNetWorth;
+  final bool isDefault;
   final double initialBalance;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -6389,6 +6406,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     required this.accountKind,
     required this.currencyCode,
     required this.includeInNetWorth,
+    required this.isDefault,
     required this.initialBalance,
     required this.createdAt,
     required this.updatedAt,
@@ -6409,6 +6427,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     }
     map['currency_code'] = Variable<String>(currencyCode);
     map['include_in_net_worth'] = Variable<bool>(includeInNetWorth);
+    map['is_default'] = Variable<bool>(isDefault);
     map['initial_balance'] = Variable<double>(initialBalance);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -6430,6 +6449,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
       accountKind: Value(accountKind),
       currencyCode: Value(currencyCode),
       includeInNetWorth: Value(includeInNetWorth),
+      isDefault: Value(isDefault),
       initialBalance: Value(initialBalance),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -6457,6 +6477,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
       ),
       currencyCode: serializer.fromJson<String>(json['currencyCode']),
       includeInNetWorth: serializer.fromJson<bool>(json['includeInNetWorth']),
+      isDefault: serializer.fromJson<bool>(json['isDefault']),
       initialBalance: serializer.fromJson<double>(json['initialBalance']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
@@ -6477,6 +6498,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
       ),
       'currencyCode': serializer.toJson<String>(currencyCode),
       'includeInNetWorth': serializer.toJson<bool>(includeInNetWorth),
+      'isDefault': serializer.toJson<bool>(isDefault),
       'initialBalance': serializer.toJson<double>(initialBalance),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
@@ -6493,6 +6515,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     LedgerAccountKind? accountKind,
     String? currencyCode,
     bool? includeInNetWorth,
+    bool? isDefault,
     double? initialBalance,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -6506,6 +6529,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     accountKind: accountKind ?? this.accountKind,
     currencyCode: currencyCode ?? this.currencyCode,
     includeInNetWorth: includeInNetWorth ?? this.includeInNetWorth,
+    isDefault: isDefault ?? this.isDefault,
     initialBalance: initialBalance ?? this.initialBalance,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -6527,6 +6551,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
       includeInNetWorth: data.includeInNetWorth.present
           ? data.includeInNetWorth.value
           : this.includeInNetWorth,
+      isDefault: data.isDefault.present ? data.isDefault.value : this.isDefault,
       initialBalance: data.initialBalance.present
           ? data.initialBalance.value
           : this.initialBalance,
@@ -6549,6 +6574,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
           ..write('accountKind: $accountKind, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('includeInNetWorth: $includeInNetWorth, ')
+          ..write('isDefault: $isDefault, ')
           ..write('initialBalance: $initialBalance, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -6567,6 +6593,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
     accountKind,
     currencyCode,
     includeInNetWorth,
+    isDefault,
     initialBalance,
     createdAt,
     updatedAt,
@@ -6584,6 +6611,7 @@ class LedgerAccount extends DataClass implements Insertable<LedgerAccount> {
           other.accountKind == this.accountKind &&
           other.currencyCode == this.currencyCode &&
           other.includeInNetWorth == this.includeInNetWorth &&
+          other.isDefault == this.isDefault &&
           other.initialBalance == this.initialBalance &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
@@ -6599,6 +6627,7 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
   final Value<LedgerAccountKind> accountKind;
   final Value<String> currencyCode;
   final Value<bool> includeInNetWorth;
+  final Value<bool> isDefault;
   final Value<double> initialBalance;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
@@ -6612,6 +6641,7 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     this.accountKind = const Value.absent(),
     this.currencyCode = const Value.absent(),
     this.includeInNetWorth = const Value.absent(),
+    this.isDefault = const Value.absent(),
     this.initialBalance = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -6626,6 +6656,7 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     this.accountKind = const Value.absent(),
     this.currencyCode = const Value.absent(),
     this.includeInNetWorth = const Value.absent(),
+    this.isDefault = const Value.absent(),
     this.initialBalance = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -6640,6 +6671,7 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     Expression<String>? accountKind,
     Expression<String>? currencyCode,
     Expression<bool>? includeInNetWorth,
+    Expression<bool>? isDefault,
     Expression<double>? initialBalance,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -6654,6 +6686,7 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
       if (accountKind != null) 'account_kind': accountKind,
       if (currencyCode != null) 'currency_code': currencyCode,
       if (includeInNetWorth != null) 'include_in_net_worth': includeInNetWorth,
+      if (isDefault != null) 'is_default': isDefault,
       if (initialBalance != null) 'initial_balance': initialBalance,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -6670,6 +6703,7 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     Value<LedgerAccountKind>? accountKind,
     Value<String>? currencyCode,
     Value<bool>? includeInNetWorth,
+    Value<bool>? isDefault,
     Value<double>? initialBalance,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
@@ -6684,6 +6718,7 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
       accountKind: accountKind ?? this.accountKind,
       currencyCode: currencyCode ?? this.currencyCode,
       includeInNetWorth: includeInNetWorth ?? this.includeInNetWorth,
+      isDefault: isDefault ?? this.isDefault,
       initialBalance: initialBalance ?? this.initialBalance,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -6713,6 +6748,9 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
     }
     if (includeInNetWorth.present) {
       map['include_in_net_worth'] = Variable<bool>(includeInNetWorth.value);
+    }
+    if (isDefault.present) {
+      map['is_default'] = Variable<bool>(isDefault.value);
     }
     if (initialBalance.present) {
       map['initial_balance'] = Variable<double>(initialBalance.value);
@@ -6746,6 +6784,7 @@ class LedgerAccountsCompanion extends UpdateCompanion<LedgerAccount> {
           ..write('accountKind: $accountKind, ')
           ..write('currencyCode: $currencyCode, ')
           ..write('includeInNetWorth: $includeInNetWorth, ')
+          ..write('isDefault: $isDefault, ')
           ..write('initialBalance: $initialBalance, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -13322,6 +13361,7 @@ typedef $$JournalEntriesTableCreateCompanionBuilder =
     JournalEntriesCompanion Function({
       Value<int> id,
       required DateTime entryDate,
+      Value<JournalCategory> category,
       Value<String> content,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -13334,6 +13374,7 @@ typedef $$JournalEntriesTableUpdateCompanionBuilder =
     JournalEntriesCompanion Function({
       Value<int> id,
       Value<DateTime> entryDate,
+      Value<JournalCategory> category,
       Value<String> content,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -13360,6 +13401,12 @@ class $$JournalEntriesTableFilterComposer
   ColumnFilters<DateTime> get entryDate => $composableBuilder(
     column: $table.entryDate,
     builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<JournalCategory, JournalCategory, String>
+  get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<String> get content => $composableBuilder(
@@ -13417,6 +13464,11 @@ class $$JournalEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get content => $composableBuilder(
     column: $table.content,
     builder: (column) => ColumnOrderings(column),
@@ -13467,6 +13519,9 @@ class $$JournalEntriesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get entryDate =>
       $composableBuilder(column: $table.entryDate, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<JournalCategory, String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
 
   GeneratedColumn<String> get content =>
       $composableBuilder(column: $table.content, builder: (column) => column);
@@ -13527,6 +13582,7 @@ class $$JournalEntriesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<DateTime> entryDate = const Value.absent(),
+                Value<JournalCategory> category = const Value.absent(),
                 Value<String> content = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -13537,6 +13593,7 @@ class $$JournalEntriesTableTableManager
               }) => JournalEntriesCompanion(
                 id: id,
                 entryDate: entryDate,
+                category: category,
                 content: content,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -13549,6 +13606,7 @@ class $$JournalEntriesTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required DateTime entryDate,
+                Value<JournalCategory> category = const Value.absent(),
                 Value<String> content = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -13559,6 +13617,7 @@ class $$JournalEntriesTableTableManager
               }) => JournalEntriesCompanion.insert(
                 id: id,
                 entryDate: entryDate,
+                category: category,
                 content: content,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -15366,6 +15425,7 @@ typedef $$LedgerAccountsTableCreateCompanionBuilder =
       Value<LedgerAccountKind> accountKind,
       Value<String> currencyCode,
       Value<bool> includeInNetWorth,
+      Value<bool> isDefault,
       Value<double> initialBalance,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -15381,6 +15441,7 @@ typedef $$LedgerAccountsTableUpdateCompanionBuilder =
       Value<LedgerAccountKind> accountKind,
       Value<String> currencyCode,
       Value<bool> includeInNetWorth,
+      Value<bool> isDefault,
       Value<double> initialBalance,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
@@ -15422,6 +15483,11 @@ class $$LedgerAccountsTableFilterComposer
 
   ColumnFilters<bool> get includeInNetWorth => $composableBuilder(
     column: $table.includeInNetWorth,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDefault => $composableBuilder(
+    column: $table.isDefault,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -15495,6 +15561,11 @@ class $$LedgerAccountsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isDefault => $composableBuilder(
+    column: $table.isDefault,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get initialBalance => $composableBuilder(
     column: $table.initialBalance,
     builder: (column) => ColumnOrderings(column),
@@ -15562,6 +15633,9 @@ class $$LedgerAccountsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<bool> get isDefault =>
+      $composableBuilder(column: $table.isDefault, builder: (column) => column);
+
   GeneratedColumn<double> get initialBalance => $composableBuilder(
     column: $table.initialBalance,
     builder: (column) => column,
@@ -15626,6 +15700,7 @@ class $$LedgerAccountsTableTableManager
                 Value<LedgerAccountKind> accountKind = const Value.absent(),
                 Value<String> currencyCode = const Value.absent(),
                 Value<bool> includeInNetWorth = const Value.absent(),
+                Value<bool> isDefault = const Value.absent(),
                 Value<double> initialBalance = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -15639,6 +15714,7 @@ class $$LedgerAccountsTableTableManager
                 accountKind: accountKind,
                 currencyCode: currencyCode,
                 includeInNetWorth: includeInNetWorth,
+                isDefault: isDefault,
                 initialBalance: initialBalance,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -15654,6 +15730,7 @@ class $$LedgerAccountsTableTableManager
                 Value<LedgerAccountKind> accountKind = const Value.absent(),
                 Value<String> currencyCode = const Value.absent(),
                 Value<bool> includeInNetWorth = const Value.absent(),
+                Value<bool> isDefault = const Value.absent(),
                 Value<double> initialBalance = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
@@ -15667,6 +15744,7 @@ class $$LedgerAccountsTableTableManager
                 accountKind: accountKind,
                 currencyCode: currencyCode,
                 includeInNetWorth: includeInNetWorth,
+                isDefault: isDefault,
                 initialBalance: initialBalance,
                 createdAt: createdAt,
                 updatedAt: updatedAt,

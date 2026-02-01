@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' show Value;
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -44,12 +45,16 @@ class _LedgerPageState extends State<LedgerPage>
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     return DefaultTabController(
-      length: 5,
+      length: 6,
       child: Column(
         children: [
           TabBar(
             isScrollable: true,
             tabs: [
+              Tab(
+                icon: const Icon(Icons.dashboard_outlined),
+                text: loc.ledgerTabDashboard,
+              ),
               Tab(
                 icon: const Icon(Icons.account_balance_wallet_outlined),
                 text: loc.ledgerTabAccounts,
@@ -76,6 +81,7 @@ class _LedgerPageState extends State<LedgerPage>
           Expanded(
             child: TabBarView(
               children: [
+                LedgerDashboardTab(database: widget.database),
                 LedgerAccountsTab(database: widget.database),
                 LedgerTransactionsTab(
                   database: widget.database,
@@ -88,6 +94,321 @@ class _LedgerPageState extends State<LedgerPage>
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+enum _DashboardPeriod { days30, days90, year1, allTime }
+
+class LedgerDashboardTab extends StatefulWidget {
+  const LedgerDashboardTab({super.key, required this.database});
+
+  final AppDatabase database;
+
+  @override
+  State<LedgerDashboardTab> createState() => _LedgerDashboardTabState();
+}
+
+class _LedgerDashboardTabState extends State<LedgerDashboardTab> {
+  _DashboardPeriod _period = _DashboardPeriod.days90;
+
+  int get _periodDays => switch (_period) {
+        _DashboardPeriod.days30 => 30,
+        _DashboardPeriod.days90 => 90,
+        _DashboardPeriod.year1 => 365,
+        _DashboardPeriod.allTime => 365 * 10,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return StreamBuilder<List<LedgerAccount>>(
+      stream: widget.database.watchLedgerAccounts(),
+      builder: (context, accountSnapshot) {
+        if (!accountSnapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final accounts = accountSnapshot.data!;
+        if (accounts.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Text(
+                loc.ledgerDashboardNoAccounts,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
+        return StreamBuilder<List<LedgerTransaction>>(
+          stream: widget.database.watchLedgerTransactions(),
+          builder: (context, transactionSnapshot) {
+            if (!transactionSnapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final transactions = transactionSnapshot.data!;
+            final snapshots = buildAccountSnapshots(
+              accounts: accounts,
+              transactions: transactions,
+            );
+            final summary = buildDashboardSummary(accounts: snapshots);
+            final history = buildNetWorthHistory(
+              accounts: accounts,
+              transactions: transactions,
+              periodDays: _periodDays,
+            );
+            return _DashboardContent(
+              summary: summary,
+              history: history,
+              period: _period,
+              onPeriodChanged: (period) {
+                setState(() {
+                  _period = period;
+                });
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _DashboardContent extends StatelessWidget {
+  const _DashboardContent({
+    required this.summary,
+    required this.history,
+    required this.period,
+    required this.onPeriodChanged,
+  });
+
+  final LedgerDashboardSummary summary;
+  final List<NetWorthDataPoint> history;
+  final _DashboardPeriod period;
+  final ValueChanged<_DashboardPeriod> onPeriodChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final numberFormat = NumberFormat.currency(symbol: '', decimalDigits: 2);
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Net Worth Summary Card
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  loc.ledgerDashboardNetWorthTitle,
+                  style: theme.textTheme.titleMedium,
+                ),
+                if (summary.netWorthByCurrency.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(loc.ledgerDashboardNoNetWorth),
+                  )
+                else
+                  ...summary.netWorthByCurrency.entries.map(
+                    (entry) => Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        '${numberFormat.format(entry.value)} ${entry.key}',
+                        style: theme.textTheme.headlineMedium,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Net Worth Chart Card
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  loc.ledgerDashboardNetWorthChart,
+                  style: theme.textTheme.titleMedium,
+                ),
+                const SizedBox(height: 12),
+                SegmentedButton<_DashboardPeriod>(
+                  segments: [
+                    ButtonSegment(
+                      value: _DashboardPeriod.days30,
+                      label: Text(loc.ledgerDashboardPeriod30Days),
+                    ),
+                    ButtonSegment(
+                      value: _DashboardPeriod.days90,
+                      label: Text(loc.ledgerDashboardPeriod90Days),
+                    ),
+                    ButtonSegment(
+                      value: _DashboardPeriod.year1,
+                      label: Text(loc.ledgerDashboardPeriod1Year),
+                    ),
+                    ButtonSegment(
+                      value: _DashboardPeriod.allTime,
+                      label: Text(loc.ledgerDashboardPeriodAllTime),
+                    ),
+                  ],
+                  selected: {period},
+                  onSelectionChanged: (selection) {
+                    if (selection.isNotEmpty) {
+                      onPeriodChanged(selection.first);
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                if (history.isEmpty ||
+                    history.every(
+                      (p) => p.netWorthByCurrency.values.every((v) => v == 0),
+                    ))
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: Text(loc.ledgerDashboardNoData)),
+                  )
+                else
+                  _NetWorthChart(history: history),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _NetWorthChart extends StatelessWidget {
+  const _NetWorthChart({required this.history});
+
+  final List<NetWorthDataPoint> history;
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final numberFormat = NumberFormat.currency(symbol: '', decimalDigits: 0);
+    final dateFormat = DateFormat.Md(loc.localeName);
+
+    // Get all currencies
+    final currencies = <String>{};
+    for (final point in history) {
+      currencies.addAll(point.netWorthByCurrency.keys);
+    }
+
+    // Build chart data for each currency
+    final lineData = <LineChartBarData>[];
+    final colors = [
+      theme.colorScheme.primary,
+      theme.colorScheme.secondary,
+      theme.colorScheme.tertiary,
+    ];
+
+    var colorIndex = 0;
+    double maxY = 0;
+    double minY = 0;
+
+    for (final currency in currencies) {
+      final spots = <FlSpot>[];
+      for (var i = 0; i < history.length; i++) {
+        final value = history[i].netWorthByCurrency[currency] ?? 0;
+        spots.add(FlSpot(i.toDouble(), value));
+        if (value > maxY) maxY = value;
+        if (value < minY) minY = value;
+      }
+
+      lineData.add(
+        LineChartBarData(
+          spots: spots,
+          isCurved: true,
+          color: colors[colorIndex % colors.length],
+          barWidth: 3,
+          dotData: const FlDotData(show: false),
+        ),
+      );
+      colorIndex++;
+    }
+
+    // Add padding to Y axis
+    final yRange = maxY - minY;
+    final yPadding = yRange * 0.1;
+    final resolvedMinY = minY - yPadding;
+    final resolvedMaxY = maxY + yPadding;
+
+    return SizedBox(
+      height: 240,
+      child: LineChart(
+        LineChartData(
+          minY: resolvedMinY,
+          maxY: resolvedMaxY,
+          gridData: const FlGridData(show: true),
+          borderData: FlBorderData(show: true),
+          lineTouchData: LineTouchData(
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipColor: (_) => theme.colorScheme.surfaceContainerHighest
+                  .withValues(alpha: 0.9),
+              getTooltipItems: (touchedSpots) {
+                return touchedSpots.map((spot) {
+                  final index = spot.spotIndex;
+                  final date = history[index].date;
+                  final currency = currencies.elementAt(spot.barIndex);
+                  final value = spot.y;
+                  return LineTooltipItem(
+                    '${dateFormat.format(date)}\n${numberFormat.format(value)} $currency',
+                    theme.textTheme.bodyMedium!,
+                  );
+                }).toList();
+              },
+            ),
+          ),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 60,
+                getTitlesWidget: (value, _) {
+                  return Text(
+                    numberFormat.format(value),
+                    style: const TextStyle(fontSize: 10),
+                  );
+                },
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: (history.length / 4).ceilToDouble(),
+                getTitlesWidget: (value, _) {
+                  final index = value.toInt();
+                  if (index < 0 || index >= history.length) {
+                    return const SizedBox.shrink();
+                  }
+                  final date = history[index].date;
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      dateFormat.format(date),
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  );
+                },
+              ),
+            ),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          lineBarsData: lineData,
+        ),
       ),
     );
   }
@@ -197,6 +518,7 @@ class _LedgerAccountsTabState extends State<LedgerAccountsTab> {
         currencyCode: result.currencyCode,
         includeInNetWorth: result.includeInNetWorth,
         initialBalance: result.initialBalance,
+        isDefault: result.isDefault,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -226,7 +548,19 @@ class _LedgerAccountsTabState extends State<LedgerAccountsTab> {
       currencyCode: result.currencyCode,
       includeInNetWorth: result.includeInNetWorth,
       initialBalance: result.initialBalance,
+      isDefault: result.isDefault,
     );
+    if (result.isDefault && !account.isDefault) {
+      await widget.database.setLedgerAccountDefault(
+        id: account.id,
+        isDefault: true,
+      );
+    } else if (!result.isDefault && account.isDefault) {
+      await widget.database.setLedgerAccountDefault(
+        id: account.id,
+        isDefault: false,
+      );
+    }
     await widget.database.updateLedgerAccount(updated);
     if (!mounted) {
       return;
@@ -298,9 +632,34 @@ class _LedgerAccountCard extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(
-                    snapshot.account.name,
-                    style: theme.textTheme.titleMedium,
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          snapshot.account.name,
+                          style: theme.textTheme.titleMedium,
+                        ),
+                      ),
+                      if (snapshot.account.isDefault) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            loc.ledgerAccountDefaultBadge,
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.onPrimaryContainer,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
                 PopupMenuButton<String>(

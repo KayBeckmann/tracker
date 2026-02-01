@@ -44,6 +44,16 @@ class LedgerDashboardSummary {
   final Map<String, double> plannedExpensesByCurrency;
 }
 
+class NetWorthDataPoint {
+  const NetWorthDataPoint({
+    required this.date,
+    required this.netWorthByCurrency,
+  });
+
+  final DateTime date;
+  final Map<String, double> netWorthByCurrency;
+}
+
 class CryptoHoldingSnapshot {
   const CryptoHoldingSnapshot({
     required this.transaction,

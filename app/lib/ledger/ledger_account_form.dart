@@ -11,6 +11,7 @@ class LedgerAccountFormResult {
     required this.currencyCode,
     required this.includeInNetWorth,
     required this.initialBalance,
+    required this.isDefault,
   });
 
   final String name;
@@ -18,6 +19,7 @@ class LedgerAccountFormResult {
   final String currencyCode;
   final bool includeInNetWorth;
   final double initialBalance;
+  final bool isDefault;
 }
 
 Future<LedgerAccountFormResult?> showLedgerAccountFormDialog({
@@ -49,6 +51,7 @@ class _LedgerAccountFormDialogState extends State<_LedgerAccountFormDialog> {
   late final TextEditingController _initialBalanceController;
   late LedgerAccountKind _accountKind;
   late bool _includeInNetWorth;
+  late bool _isDefault;
 
   @override
   void initState() {
@@ -63,6 +66,7 @@ class _LedgerAccountFormDialogState extends State<_LedgerAccountFormDialog> {
     );
     _accountKind = existing?.accountKind ?? LedgerAccountKind.cash;
     _includeInNetWorth = existing?.includeInNetWorth ?? true;
+    _isDefault = existing?.isDefault ?? false;
   }
 
   @override
@@ -174,6 +178,17 @@ class _LedgerAccountFormDialogState extends State<_LedgerAccountFormDialog> {
                 },
                 title: Text(loc.ledgerAccountIncludeInNetWorthLabel),
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _isDefault,
+                onChanged: (value) {
+                  setState(() {
+                    _isDefault = value;
+                  });
+                },
+                title: Text(loc.ledgerAccountDefaultLabel),
+                subtitle: Text(loc.ledgerAccountDefaultHint),
+              ),
             ],
           ),
         ),
@@ -203,6 +218,7 @@ class _LedgerAccountFormDialogState extends State<_LedgerAccountFormDialog> {
         currencyCode: normalizedCurrency,
         includeInNetWorth: _includeInNetWorth,
         initialBalance: normalizedBalance,
+        isDefault: _isDefault,
       ),
     );
   }

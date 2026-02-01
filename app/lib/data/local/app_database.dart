@@ -313,6 +313,8 @@ class LedgerAccounts extends Table {
   BoolColumn get includeInNetWorth =>
       boolean().withDefault(const Constant(true))();
 
+  BoolColumn get isDefault => boolean().withDefault(const Constant(false))();
+
   RealColumn get initialBalance => real().withDefault(const Constant(0))();
 
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -590,7 +592,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 15;
+  int get schemaVersion => 16;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -719,6 +721,9 @@ class AppDatabase extends _$AppDatabase {
           "SELECT id, entry_date, 'personal', content, created_at, updated_at, remote_id, remote_version, needs_sync, synced_at FROM journal_entries_old;",
         );
         await customStatement('DROP TABLE journal_entries_old;');
+      }
+      if (from < 16) {
+        await m.addColumn(ledgerAccounts, ledgerAccounts.isDefault);
       }
     },
   );
@@ -2016,13 +2021,18 @@ SELECT
     String currencyCode = 'EUR',
     bool includeInNetWorth = true,
     double initialBalance = 0,
+    bool isDefault = false,
   }) async {
+    if (isDefault) {
+      await _clearDefaultLedgerAccount();
+    }
     final now = DateTime.now().toUtc();
     final companion = LedgerAccountsCompanion.insert(
       name: name,
       accountKind: Value(accountKind),
       currencyCode: Value(currencyCode.toUpperCase()),
       includeInNetWorth: Value(includeInNetWorth),
+      isDefault: Value(isDefault),
       initialBalance: Value(initialBalance),
       createdAt: Value(now),
       updatedAt: Value(now),
@@ -2129,6 +2139,45 @@ SELECT
         needsSync: const Value(false),
         syncedAt: Value(utc),
         updatedAt: Value(utc),
+      ),
+    );
+  }
+
+  Future<LedgerAccount?> getDefaultLedgerAccount() {
+    return (select(ledgerAccounts)
+          ..where((tbl) => tbl.isDefault.equals(true))
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  Future<void> setLedgerAccountDefault({
+    required int id,
+    required bool isDefault,
+  }) async {
+    if (isDefault) {
+      await _clearDefaultLedgerAccount();
+    }
+    final current = await getLedgerAccountById(id);
+    final remoteId = current?.remoteId;
+    final ledgerRemoteId =
+        remoteId == null || remoteId.isEmpty ? _uuid.v4() : remoteId;
+    await (update(ledgerAccounts)..where((tbl) => tbl.id.equals(id))).write(
+      LedgerAccountsCompanion(
+        isDefault: Value(isDefault),
+        updatedAt: Value(DateTime.now().toUtc()),
+        remoteId: Value(ledgerRemoteId),
+        needsSync: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> _clearDefaultLedgerAccount() async {
+    await (update(ledgerAccounts)..where((tbl) => tbl.isDefault.equals(true)))
+        .write(
+      LedgerAccountsCompanion(
+        isDefault: const Value(false),
+        updatedAt: Value(DateTime.now().toUtc()),
+        needsSync: const Value(true),
       ),
     );
   }

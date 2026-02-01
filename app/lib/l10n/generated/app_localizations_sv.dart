@@ -1685,6 +1685,15 @@ class AppLocalizationsSv extends AppLocalizations {
   String get ledgerAccountIncludeInNetWorthLabel => 'Ta med i totalsaldo';
 
   @override
+  String get ledgerAccountDefaultLabel => 'Standardkonto';
+
+  @override
+  String get ledgerAccountDefaultHint => 'Förvalt vid nya transaktioner';
+
+  @override
+  String get ledgerAccountDefaultBadge => 'Standard';
+
+  @override
   String get ledgerAccountCreateButton => 'Lägg till konto';
 
   @override
@@ -2107,6 +2116,31 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get ledgerTabCategories => 'Kategorier';
+
+  @override
+  String get ledgerTabDashboard => 'Dashboard';
+
+  @override
+  String get ledgerDashboardNetWorthChart => 'Förmögenhetsutveckling';
+
+  @override
+  String get ledgerDashboardPeriod30Days => '30 dagar';
+
+  @override
+  String get ledgerDashboardPeriod90Days => '90 dagar';
+
+  @override
+  String get ledgerDashboardPeriod1Year => '1 år';
+
+  @override
+  String get ledgerDashboardPeriodAllTime => 'Allt';
+
+  @override
+  String get ledgerDashboardNoData =>
+      'Lägg till transaktioner för att se din förmögenhetstrend.';
+
+  @override
+  String get ledgerDashboardNetWorthTitle => 'Totalt förmögenhet';
 
   @override
   String get ledgerDashboardNoAccounts =>

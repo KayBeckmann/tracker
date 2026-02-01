@@ -1702,6 +1702,16 @@ class AppLocalizationsDe extends AppLocalizations {
       'In Gesamtsumme berücksichtigen';
 
   @override
+  String get ledgerAccountDefaultLabel => 'Standardkonto';
+
+  @override
+  String get ledgerAccountDefaultHint =>
+      'Wird bei neuen Buchungen vorausgewählt';
+
+  @override
+  String get ledgerAccountDefaultBadge => 'Standard';
+
+  @override
   String get ledgerAccountCreateButton => 'Konto hinzufügen';
 
   @override
@@ -2125,6 +2135,31 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get ledgerTabCategories => 'Kategorien';
+
+  @override
+  String get ledgerTabDashboard => 'Dashboard';
+
+  @override
+  String get ledgerDashboardNetWorthChart => 'Vermögensentwicklung';
+
+  @override
+  String get ledgerDashboardPeriod30Days => '30 Tage';
+
+  @override
+  String get ledgerDashboardPeriod90Days => '90 Tage';
+
+  @override
+  String get ledgerDashboardPeriod1Year => '1 Jahr';
+
+  @override
+  String get ledgerDashboardPeriodAllTime => 'Gesamt';
+
+  @override
+  String get ledgerDashboardNoData =>
+      'Füge Buchungen hinzu, um den Vermögensverlauf zu sehen.';
+
+  @override
+  String get ledgerDashboardNetWorthTitle => 'Gesamtvermögen';
 
   @override
   String get ledgerDashboardNoAccounts =>

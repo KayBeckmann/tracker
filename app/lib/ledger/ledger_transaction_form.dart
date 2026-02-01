@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../data/local/app_database.dart';
@@ -121,7 +122,10 @@ class _LedgerTransactionFormDialogState
           : existing!.pricePerUnit!.toStringAsFixed(2),
     );
     if (_accountId == null && widget.accounts.isNotEmpty) {
-      _accountId = widget.accounts.first.id;
+      final defaultAccount = widget.accounts.firstWhereOrNull(
+        (account) => account.isDefault,
+      );
+      _accountId = defaultAccount?.id ?? widget.accounts.first.id;
     }
     if (_kind == LedgerTransactionKind.transfer) {
       if (_targetAccountId == null && widget.accounts.length > 1) {
