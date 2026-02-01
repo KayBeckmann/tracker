@@ -533,6 +533,18 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
+    // Clear sync state and sign out before deleting data
+    await _syncEngine.clearState();
+    final GoogleSignIn? signIn = _googleSignIn;
+    if (signIn != null) {
+      try {
+        await signIn.signOut();
+      } catch (_) {
+        // Ignore sign-out errors from Google Sign-In.
+      }
+    }
+    // Clear all data from Hive box (auth tokens, settings, etc.)
+    await _trackerBox.clear();
     await deleteEverything(_database);
     // Trigger a full app restart by running main() again
     main();
