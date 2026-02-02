@@ -2197,4 +2197,78 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get settingsDeleteAllDataCancel => 'Avbryt';
+
+  @override
+  String get dashboardCardSettingsTooltip => 'Kortinställningar';
+
+  @override
+  String get settingsDashboardCardsSectionTitle => 'Dashboard-kort';
+
+  @override
+  String get settingsDashboardCardsDescription =>
+      'Konfigurera utseende och innehåll för dashboard-kort.';
+
+  @override
+  String cardSettingsDialogTitle(String cardName) {
+    return 'Inställningar: $cardName';
+  }
+
+  @override
+  String get cardSettingsVisibilityLabel => 'Visa på dashboard';
+
+  @override
+  String get cardSettingsSizeLabel => 'Kortstorlek';
+
+  @override
+  String get cardSettingsSizeCompact => 'Kompakt';
+
+  @override
+  String get cardSettingsSizeNormal => 'Normal';
+
+  @override
+  String get cardSettingsSizeLarge => 'Stor';
+
+  @override
+  String cardSettingsItemCountLabel(int count) {
+    return 'Visade poster: $count';
+  }
+
+  @override
+  String get cardSettingsPeriodLabel => 'Tidsperiod';
+
+  @override
+  String get cardSettingsPeriodToday => 'Idag';
+
+  @override
+  String get cardSettingsPeriodWeek => 'Denna vecka';
+
+  @override
+  String get cardSettingsPeriodMonth => 'Denna månad';
+
+  @override
+  String get cardSettingsPeriodAll => 'Alla';
+
+  @override
+  String get cardSettingsSortOrderLabel => 'Sortering';
+
+  @override
+  String get cardSettingsSortNewest => 'Senaste först';
+
+  @override
+  String get cardSettingsSortOldest => 'Äldsta först';
+
+  @override
+  String get cardSettingsSortAlphabetical => 'Alfabetiskt';
+
+  @override
+  String get cardSettingsHidden => 'Dold';
+
+  @override
+  String get cardSettingsDefault => 'Standard';
+
+  @override
+  String get cancel => 'Avbryt';
+
+  @override
+  String get save => 'Spara';
 }

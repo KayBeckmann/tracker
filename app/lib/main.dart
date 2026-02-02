@@ -38,6 +38,8 @@ import 'ledger/ledger_utils.dart';
 import 'notes/note_drawing_page.dart';
 import 'notes/note_edit_page.dart';
 import 'tasks/task_edit_page.dart';
+import 'dashboard/dashboard_card_settings.dart';
+import 'dashboard/dashboard_card_settings_dialog.dart';
 
 const String backendBaseUrl = String.fromEnvironment(
   'BACKEND_URL',
@@ -336,6 +338,7 @@ class _HomePageState extends State<HomePage> {
   String? _notesTagFilter;
   late List<_AppSection> _moduleOrder;
   late Set<_AppSection> _enabledModules;
+  late Map<_AppSection, DashboardCardConfig> _cardSettings;
   late final SyncApiClient _syncClient;
   late final EncryptionService _encryptionService;
   late final SyncEngine _syncEngine;
@@ -686,6 +689,25 @@ class _HomePageState extends State<HomePage> {
             (storedOpenMode == 'editor' || storedOpenMode == 'preview')
         ? storedOpenMode
         : 'editor';
+
+    // Load dashboard card settings
+    _cardSettings = <_AppSection, DashboardCardConfig>{};
+    final Object? storedCardSettings =
+        _trackerBox.get(dashboardCardSettingsKey);
+    if (storedCardSettings is Map) {
+      for (final entry in storedCardSettings.entries) {
+        final section = _parseSectionName('${entry.key}');
+        if (section != null && entry.value is Map) {
+          _cardSettings[section] = DashboardCardConfig.fromJson(
+            Map<String, dynamic>.from(entry.value as Map),
+          );
+        }
+      }
+    }
+    // Ensure defaults for all sections
+    for (final section in _defaultModuleOrder) {
+      _cardSettings.putIfAbsent(section, () => const DashboardCardConfig());
+    }
   }
 
   void _reloadSettingsFromStorage() {
@@ -772,6 +794,91 @@ class _HomePageState extends State<HomePage> {
         .toList();
     _trackerBox.put(enabledModulesKey, enabledNames);
     _markSettingsDirty();
+  }
+
+  void _persistCardSettings() {
+    final Map<String, Map<String, dynamic>> data =
+        <String, Map<String, dynamic>>{};
+    for (final entry in _cardSettings.entries) {
+      data[entry.key.name] = entry.value.toJson();
+    }
+    _trackerBox.put(dashboardCardSettingsKey, data);
+    _markSettingsDirty();
+  }
+
+  void _updateCardConfig(_AppSection section, DashboardCardConfig config) {
+    setState(() {
+      _cardSettings[section] = config;
+    });
+    _persistCardSettings();
+  }
+
+  Set<DashboardCardSettingType> _availableSettingsFor(_AppSection section) {
+    switch (section) {
+      case _AppSection.tasks:
+        return {
+          DashboardCardSettingType.visible,
+          DashboardCardSettingType.size,
+          DashboardCardSettingType.itemCount,
+          DashboardCardSettingType.sortOrder,
+        };
+      case _AppSection.timeTracking:
+        return {
+          DashboardCardSettingType.visible,
+          DashboardCardSettingType.size,
+        };
+      case _AppSection.notes:
+        return {
+          DashboardCardSettingType.visible,
+          DashboardCardSettingType.size,
+          DashboardCardSettingType.itemCount,
+          DashboardCardSettingType.sortOrder,
+        };
+      case _AppSection.journal:
+        return {
+          DashboardCardSettingType.visible,
+          DashboardCardSettingType.size,
+          DashboardCardSettingType.itemCount,
+          DashboardCardSettingType.period,
+          DashboardCardSettingType.sortOrder,
+        };
+      case _AppSection.habits:
+        return {
+          DashboardCardSettingType.visible,
+          DashboardCardSettingType.size,
+          DashboardCardSettingType.itemCount,
+        };
+      case _AppSection.ledger:
+        return {
+          DashboardCardSettingType.visible,
+          DashboardCardSettingType.size,
+          DashboardCardSettingType.itemCount,
+          DashboardCardSettingType.period,
+        };
+      default:
+        return {
+          DashboardCardSettingType.visible,
+          DashboardCardSettingType.size,
+        };
+    }
+  }
+
+  Future<void> _showCardSettingsDialog(
+    BuildContext context,
+    _AppSection section,
+  ) async {
+    final loc = AppLocalizations.of(context);
+    final currentConfig =
+        _cardSettings[section] ?? const DashboardCardConfig();
+    final result = await showDashboardCardSettingsDialog(
+      context: context,
+      cardTitle: _localizedSectionTitle(loc, section),
+      currentConfig: currentConfig,
+      availableSettings: _availableSettingsFor(section),
+    );
+    if (result != null && context.mounted) {
+      _updateCardConfig(section, result);
+    }
   }
 
   void _markSettingsDirty() {
@@ -2097,16 +2204,14 @@ class _HomePageState extends State<HomePage> {
   Widget _buildDashboard(BuildContext context, AppLocalizations loc) {
     final theme = Theme.of(context);
     final List<_AppSection> modules = _moduleOrder
-        .where((section) => section != _AppSection.dashboard)
+        .where((section) =>
+            section != _AppSection.dashboard &&
+            section != _AppSection.settings)
         .where(_enabledModules.contains)
+        .where((section) => _cardSettings[section]?.visible ?? true)
         .toList();
 
-    final bool showTasksSummary = _enabledModules.contains(_AppSection.tasks);
-    final bool showTimeTracking = _enabledModules.contains(
-      _AppSection.timeTracking,
-    );
-
-    if (!showTasksSummary && modules.isEmpty) {
+    if (modules.isEmpty) {
       return Center(
         child: Text(
           loc.settingsModulesDescription,
@@ -2116,41 +2221,55 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    final children = <Widget>[];
-    if (showTasksSummary) {
-      children.add(_buildTasksSummaryCard(context, loc));
-      children.add(const SizedBox(height: 16));
-      modules.remove(_AppSection.tasks);
-    }
-    if (showTimeTracking) {
-      children.add(_buildTimeTrackingDashboardCard(context, loc));
-      children.add(const SizedBox(height: 16));
-      modules.remove(_AppSection.timeTracking);
-    }
-    if (modules.isNotEmpty) {
-      children.add(
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
         Wrap(
           spacing: 16,
           runSpacing: 16,
           children: modules.map((section) {
-            switch (section) {
-              case _AppSection.notes:
-                return _buildNotesDashboardCard(context, loc);
-              case _AppSection.journal:
-                return _buildJournalDashboardCard(context, loc);
-              case _AppSection.habits:
-                return _buildHabitsDashboardCard(context, loc);
-              case _AppSection.ledger:
-                return _buildLedgerDashboardCard(context, loc);
-              default:
-                return _buildModuleCard(context, loc, section);
-            }
+            final config =
+                _cardSettings[section] ?? const DashboardCardConfig();
+            return _buildDashboardCard(context, loc, section, config);
           }).toList(),
         ),
-      );
-    }
+      ],
+    );
+  }
 
-    return ListView(padding: const EdgeInsets.all(16), children: children);
+  Widget _buildDashboardCard(
+    BuildContext context,
+    AppLocalizations loc,
+    _AppSection section,
+    DashboardCardConfig config,
+  ) {
+    switch (section) {
+      case _AppSection.tasks:
+        return _buildTasksSummaryCard(context, loc, config);
+      case _AppSection.timeTracking:
+        return _buildTimeTrackingDashboardCard(context, loc, config);
+      case _AppSection.notes:
+        return _buildNotesDashboardCard(context, loc, config);
+      case _AppSection.journal:
+        return _buildJournalDashboardCard(context, loc, config);
+      case _AppSection.habits:
+        return _buildHabitsDashboardCard(context, loc, config);
+      case _AppSection.ledger:
+        return _buildLedgerDashboardCard(context, loc, config);
+      default:
+        return _buildModuleCard(context, loc, section);
+    }
+  }
+
+  BoxConstraints _cardConstraintsForSize(DashboardCardSize size) {
+    switch (size) {
+      case DashboardCardSize.compact:
+        return const BoxConstraints(minWidth: 180, maxWidth: 220);
+      case DashboardCardSize.normal:
+        return const BoxConstraints(minWidth: 220, maxWidth: 320);
+      case DashboardCardSize.large:
+        return const BoxConstraints(minWidth: 300, maxWidth: 480);
+    }
   }
 
   Future<void> _promptCreateHabit(BuildContext context) async {
@@ -2191,7 +2310,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget _buildNotesDashboardCard(BuildContext context, AppLocalizations loc) {
+  Widget _buildNotesDashboardCard(
+    BuildContext context,
+    AppLocalizations loc,
+    DashboardCardConfig config,
+  ) {
     return StreamBuilder<List<NoteEntry>>(
       stream: _database.watchNoteEntries(),
       builder: (context, snapshot) {
@@ -2214,11 +2337,11 @@ class _HomePageState extends State<HomePage> {
             }
             return a.key.toLowerCase().compareTo(b.key.toLowerCase());
           });
-        final displayedTags = topTags.take(3).toList();
+        final displayedTags = topTags.take(config.itemCount).toList();
         final theme = Theme.of(context);
         final colorScheme = theme.colorScheme;
         return ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 220, maxWidth: 320),
+          constraints: _cardConstraintsForSize(config.size),
           child: Card(
             clipBehavior: Clip.antiAlias,
             child: InkWell(
@@ -2240,6 +2363,14 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                             _localizedSectionTitle(loc, _AppSection.notes),
                             style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.settings, size: 20),
+                          tooltip: loc.dashboardCardSettingsTooltip,
+                          onPressed: () => _showCardSettingsDialog(
+                            context,
+                            _AppSection.notes,
                           ),
                         ),
                         const Icon(Icons.chevron_right),
@@ -2287,14 +2418,16 @@ class _HomePageState extends State<HomePage> {
   Widget _buildJournalDashboardCard(
     BuildContext context,
     AppLocalizations loc,
+    DashboardCardConfig config,
   ) {
     final theme = Theme.of(context);
     final today = DateTime.now();
     final bool isLocked = _journalProtectionEnabled && !_journalUnlocked;
+    final constraints = _cardConstraintsForSize(config.size);
 
     Widget buildLockedCard() {
       return ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 220, maxWidth: 320),
+        constraints: constraints,
         child: Card(
           clipBehavior: Clip.antiAlias,
           child: Padding(
@@ -2368,7 +2501,7 @@ class _HomePageState extends State<HomePage> {
         }
 
         return ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 220, maxWidth: 320),
+          constraints: constraints,
           child: Card(
             clipBehavior: Clip.antiAlias,
             child: InkWell(
@@ -2386,6 +2519,14 @@ class _HomePageState extends State<HomePage> {
                         child: Text(
                             '${loc.navJournal} • ${_journalCategoryLabel(loc, activeCategory)}',
                             style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.settings, size: 20),
+                          tooltip: loc.dashboardCardSettingsTooltip,
+                          onPressed: () => _showCardSettingsDialog(
+                            context,
+                            _AppSection.journal,
                           ),
                         ),
                         const Icon(Icons.chevron_right),
@@ -2412,10 +2553,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildTasksSummaryCard(BuildContext context, AppLocalizations loc) {
+  Widget _buildTasksSummaryCard(
+    BuildContext context,
+    AppLocalizations loc,
+    DashboardCardConfig config,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final card = StreamBuilder<List<TaskEntry>>(
+    return StreamBuilder<List<TaskEntry>>(
       stream: _database.watchTaskEntries(),
       builder: (context, snapshot) {
         final tasks = snapshot.data ?? const <TaskEntry>[];
@@ -2445,76 +2590,79 @@ class _HomePageState extends State<HomePage> {
               );
 
         return ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 220, maxWidth: 656),
+          constraints: _cardConstraintsForSize(config.size),
           child: Card(
             clipBehavior: Clip.antiAlias,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        _sectionIcon(_AppSection.tasks),
-                        size: 32,
-                        color: colorScheme.primary,
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          loc.dashboardTasksSummaryTitle,
-                          style: theme.textTheme.titleMedium,
+            child: InkWell(
+              onTap: () => _onSelectSection(_AppSection.tasks),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          _sectionIcon(_AppSection.tasks),
+                          size: 32,
+                          color: colorScheme.primary,
                         ),
-                      ),
-                      IconButton(
-                        tooltip: loc.dashboardOpenTasksTooltip,
-                        onPressed: () => _onSelectSection(_AppSection.tasks),
-                        icon: const Icon(Icons.chevron_right),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    loc.dashboardTasksTotal(totalTasks),
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    loc.dashboardTasksInProgress(inProgressTasks),
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    loc.dashboardTasksHighPriority(highPriorityTasks),
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(nextDueTitle, style: theme.textTheme.labelLarge),
-                ],
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            loc.dashboardTasksSummaryTitle,
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.settings, size: 20),
+                          tooltip: loc.dashboardCardSettingsTooltip,
+                          onPressed: () => _showCardSettingsDialog(
+                            context,
+                            _AppSection.tasks,
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      loc.dashboardTasksTotal(totalTasks),
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      loc.dashboardTasksInProgress(inProgressTasks),
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      loc.dashboardTasksHighPriority(highPriorityTasks),
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(nextDueTitle, style: theme.textTheme.labelLarge),
+                  ],
+                ),
               ),
             ),
           ),
         );
       },
     );
-
-    return Align(
-      alignment: Alignment.topLeft,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 656),
-        child: card,
-      ),
-    );
   }
 
-  Widget _buildHabitsDashboardCard(BuildContext context, AppLocalizations loc) {
+  Widget _buildHabitsDashboardCard(
+    BuildContext context,
+    AppLocalizations loc,
+    DashboardCardConfig config,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     Widget buildCard(List<Widget> content) {
       return ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 220, maxWidth: 360),
+        constraints: _cardConstraintsForSize(config.size),
         child: Card(
           clipBehavior: Clip.antiAlias,
           child: Padding(
@@ -2534,6 +2682,14 @@ class _HomePageState extends State<HomePage> {
                       child: Text(
                         _localizedSectionTitle(loc, _AppSection.habits),
                         style: theme.textTheme.titleMedium,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.settings, size: 20),
+                      tooltip: loc.dashboardCardSettingsTooltip,
+                      onPressed: () => _showCardSettingsDialog(
+                        context,
+                        _AppSection.habits,
                       ),
                     ),
                     IconButton(
@@ -2705,13 +2861,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildLedgerDashboardCard(BuildContext context, AppLocalizations loc) {
+  Widget _buildLedgerDashboardCard(
+    BuildContext context,
+    AppLocalizations loc,
+    DashboardCardConfig config,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final numberFormat = NumberFormat.currency(symbol: '', decimalDigits: 2);
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 220, maxWidth: 360),
+      constraints: _cardConstraintsForSize(config.size),
       child: Card(
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -2732,7 +2892,7 @@ class _HomePageState extends State<HomePage> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildLedgerDashboardHeader(theme, colorScheme, loc),
+                          _buildLedgerDashboardHeader(context, theme, colorScheme, loc),
                           const SizedBox(height: 12),
                           Text(
                             loc.ledgerDashboardNoAccounts,
@@ -2781,7 +2941,7 @@ class _HomePageState extends State<HomePage> {
                                 return ratioB.compareTo(ratioA);
                               });
                             final displayedBudgets = sortedUsages
-                                .take(3)
+                                .take(config.itemCount)
                                 .toList();
                             final categoryById = <int, LedgerCategory>{
                               for (final category in categories)
@@ -2790,6 +2950,7 @@ class _HomePageState extends State<HomePage> {
 
                             final children = <Widget>[
                               _buildLedgerDashboardHeader(
+                                context,
                                 theme,
                                 colorScheme,
                                 loc,
@@ -2967,6 +3128,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildLedgerDashboardHeader(
+    BuildContext context,
     ThemeData theme,
     ColorScheme colorScheme,
     AppLocalizations loc,
@@ -2983,6 +3145,14 @@ class _HomePageState extends State<HomePage> {
           child: Text(
             _localizedSectionTitle(loc, _AppSection.ledger),
             style: theme.textTheme.titleMedium,
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.settings, size: 20),
+          tooltip: loc.dashboardCardSettingsTooltip,
+          onPressed: () => _showCardSettingsDialog(
+            context,
+            _AppSection.ledger,
           ),
         ),
         const Icon(Icons.chevron_right),
@@ -3067,6 +3237,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildTimeTrackingDashboardCard(
     BuildContext context,
     AppLocalizations loc,
+    DashboardCardConfig config,
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -3118,12 +3289,12 @@ class _HomePageState extends State<HomePage> {
             break;
         }
 
-        return Align(
-          alignment: Alignment.topLeft,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 656),
-            child: Card(
-              clipBehavior: Clip.antiAlias,
+        return ConstrainedBox(
+          constraints: _cardConstraintsForSize(config.size),
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => _onSelectSection(_AppSection.timeTracking),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -3144,11 +3315,14 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         IconButton(
-                          tooltip: loc.timeTrackingDashboardOpenModule,
-                          onPressed: () =>
-                              _onSelectSection(_AppSection.timeTracking),
-                          icon: const Icon(Icons.chevron_right),
+                          icon: const Icon(Icons.settings, size: 20),
+                          tooltip: loc.dashboardCardSettingsTooltip,
+                          onPressed: () => _showCardSettingsDialog(
+                            context,
+                            _AppSection.timeTracking,
+                          ),
                         ),
+                        const Icon(Icons.chevron_right),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -3331,6 +3505,8 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 24),
         _buildModulesCard(context, loc),
         const SizedBox(height: 24),
+        _buildDashboardCardsSettingsCard(context, loc),
+        const SizedBox(height: 24),
         _buildNotesSettingsCard(context, loc),
         const SizedBox(height: 24),
         _buildJournalSettingsCard(context, loc),
@@ -3370,6 +3546,8 @@ class _HomePageState extends State<HomePage> {
       _buildAppearanceCard(context, loc),
       const SizedBox(height: 24),
       _buildModulesCard(context, loc),
+      const SizedBox(height: 24),
+      _buildDashboardCardsSettingsCard(context, loc),
       const SizedBox(height: 24),
       _buildNotesSettingsCard(context, loc),
       const SizedBox(height: 24),
@@ -3752,6 +3930,73 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildDashboardCardsSettingsCard(
+    BuildContext context,
+    AppLocalizations loc,
+  ) {
+    final theme = Theme.of(context);
+    final sections = _moduleOrder
+        .where(
+          (s) => s != _AppSection.dashboard && s != _AppSection.settings,
+        )
+        .toList();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.settingsDashboardCardsSectionTitle,
+              style: theme.textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              loc.settingsDashboardCardsDescription,
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            ...sections.map((section) {
+              final config =
+                  _cardSettings[section] ?? const DashboardCardConfig();
+              return ListTile(
+                leading: Icon(_sectionIcon(section)),
+                title: Text(_localizedSectionTitle(loc, section)),
+                subtitle: Text(_cardConfigSummary(loc, config)),
+                trailing: IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => _showCardSettingsDialog(context, section),
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _cardConfigSummary(AppLocalizations loc, DashboardCardConfig config) {
+    final parts = <String>[];
+    if (!config.visible) {
+      parts.add(loc.cardSettingsHidden);
+    }
+    switch (config.size) {
+      case DashboardCardSize.compact:
+        parts.add(loc.cardSettingsSizeCompact);
+        break;
+      case DashboardCardSize.normal:
+        break; // Default, don't show
+      case DashboardCardSize.large:
+        parts.add(loc.cardSettingsSizeLarge);
+        break;
+    }
+    if (parts.isEmpty) {
+      return loc.cardSettingsDefault;
+    }
+    return parts.join(' • ');
   }
 
   void _handleModuleToggle(_AppSection section, bool enabled) {

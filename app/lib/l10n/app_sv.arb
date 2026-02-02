@@ -1217,5 +1217,42 @@
   "settingsDeleteAllDataTitle": "Radera all data?",
   "settingsDeleteAllDataMessage": "Denna åtgärd raderar ALLA lokala data permanent. Detta inkluderar anteckningar, uppgifter, tidsposter, journal, vanor och ekonomiska data. Appen kommer att startas om efteråt.",
   "settingsDeleteAllDataConfirm": "Radera allt",
-  "settingsDeleteAllDataCancel": "Avbryt"
+  "settingsDeleteAllDataCancel": "Avbryt",
+  "dashboardCardSettingsTooltip": "Kortinställningar",
+  "settingsDashboardCardsSectionTitle": "Dashboard-kort",
+  "settingsDashboardCardsDescription": "Konfigurera utseende och innehåll för dashboard-kort.",
+  "cardSettingsDialogTitle": "Inställningar: {cardName}",
+  "@cardSettingsDialogTitle": {
+    "placeholders": {
+      "cardName": {
+        "type": "String"
+      }
+    }
+  },
+  "cardSettingsVisibilityLabel": "Visa på dashboard",
+  "cardSettingsSizeLabel": "Kortstorlek",
+  "cardSettingsSizeCompact": "Kompakt",
+  "cardSettingsSizeNormal": "Normal",
+  "cardSettingsSizeLarge": "Stor",
+  "cardSettingsItemCountLabel": "Visade poster: {count}",
+  "@cardSettingsItemCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardSettingsPeriodLabel": "Tidsperiod",
+  "cardSettingsPeriodToday": "Idag",
+  "cardSettingsPeriodWeek": "Denna vecka",
+  "cardSettingsPeriodMonth": "Denna månad",
+  "cardSettingsPeriodAll": "Alla",
+  "cardSettingsSortOrderLabel": "Sortering",
+  "cardSettingsSortNewest": "Senaste först",
+  "cardSettingsSortOldest": "Äldsta först",
+  "cardSettingsSortAlphabetical": "Alfabetiskt",
+  "cardSettingsHidden": "Dold",
+  "cardSettingsDefault": "Standard",
+  "cancel": "Avbryt",
+  "save": "Spara"
 }

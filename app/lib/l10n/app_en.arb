@@ -1335,5 +1335,42 @@
   "settingsDeleteAllDataTitle": "Delete all data?",
   "settingsDeleteAllDataMessage": "This action will permanently delete ALL local data. This includes notes, tasks, time entries, journal, habits and financial data. The app will restart afterwards.",
   "settingsDeleteAllDataConfirm": "Delete everything",
-  "settingsDeleteAllDataCancel": "Cancel"
+  "settingsDeleteAllDataCancel": "Cancel",
+  "dashboardCardSettingsTooltip": "Card settings",
+  "settingsDashboardCardsSectionTitle": "Dashboard Cards",
+  "settingsDashboardCardsDescription": "Configure appearance and content of dashboard cards.",
+  "cardSettingsDialogTitle": "Settings: {cardName}",
+  "@cardSettingsDialogTitle": {
+    "placeholders": {
+      "cardName": {
+        "type": "String"
+      }
+    }
+  },
+  "cardSettingsVisibilityLabel": "Show on dashboard",
+  "cardSettingsSizeLabel": "Card size",
+  "cardSettingsSizeCompact": "Compact",
+  "cardSettingsSizeNormal": "Normal",
+  "cardSettingsSizeLarge": "Large",
+  "cardSettingsItemCountLabel": "Displayed items: {count}",
+  "@cardSettingsItemCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardSettingsPeriodLabel": "Time period",
+  "cardSettingsPeriodToday": "Today",
+  "cardSettingsPeriodWeek": "This week",
+  "cardSettingsPeriodMonth": "This month",
+  "cardSettingsPeriodAll": "All",
+  "cardSettingsSortOrderLabel": "Sort order",
+  "cardSettingsSortNewest": "Newest first",
+  "cardSettingsSortOldest": "Oldest first",
+  "cardSettingsSortAlphabetical": "Alphabetical",
+  "cardSettingsHidden": "Hidden",
+  "cardSettingsDefault": "Default",
+  "cancel": "Cancel",
+  "save": "Save"
 }

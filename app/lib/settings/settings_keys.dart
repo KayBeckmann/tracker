@@ -20,6 +20,7 @@ const String journalBiometricEnabledKey = 'journal_biometric_enabled';
 
 const String notesDefaultOpenModeKey = 'notes_default_open_mode';
 
+const String dashboardCardSettingsKey = 'dashboard_card_settings';
 const String settingsDirtyKey = 'settings_dirty';
 const String settingsRemoteIdKey = 'settings_remote_id';
 const String settingsRemoteVersionKey = 'settings_remote_version';

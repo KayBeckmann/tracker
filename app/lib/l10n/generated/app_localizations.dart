@@ -3989,6 +3989,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get settingsDeleteAllDataCancel;
+
+  /// No description provided for @dashboardCardSettingsTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Card settings'**
+  String get dashboardCardSettingsTooltip;
+
+  /// No description provided for @settingsDashboardCardsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard Cards'**
+  String get settingsDashboardCardsSectionTitle;
+
+  /// No description provided for @settingsDashboardCardsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure appearance and content of dashboard cards.'**
+  String get settingsDashboardCardsDescription;
+
+  /// No description provided for @cardSettingsDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings: {cardName}'**
+  String cardSettingsDialogTitle(String cardName);
+
+  /// No description provided for @cardSettingsVisibilityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Show on dashboard'**
+  String get cardSettingsVisibilityLabel;
+
+  /// No description provided for @cardSettingsSizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Card size'**
+  String get cardSettingsSizeLabel;
+
+  /// No description provided for @cardSettingsSizeCompact.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact'**
+  String get cardSettingsSizeCompact;
+
+  /// No description provided for @cardSettingsSizeNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get cardSettingsSizeNormal;
+
+  /// No description provided for @cardSettingsSizeLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get cardSettingsSizeLarge;
+
+  /// No description provided for @cardSettingsItemCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Displayed items: {count}'**
+  String cardSettingsItemCountLabel(int count);
+
+  /// No description provided for @cardSettingsPeriodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time period'**
+  String get cardSettingsPeriodLabel;
+
+  /// No description provided for @cardSettingsPeriodToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get cardSettingsPeriodToday;
+
+  /// No description provided for @cardSettingsPeriodWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get cardSettingsPeriodWeek;
+
+  /// No description provided for @cardSettingsPeriodMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get cardSettingsPeriodMonth;
+
+  /// No description provided for @cardSettingsPeriodAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get cardSettingsPeriodAll;
+
+  /// No description provided for @cardSettingsSortOrderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort order'**
+  String get cardSettingsSortOrderLabel;
+
+  /// No description provided for @cardSettingsSortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get cardSettingsSortNewest;
+
+  /// No description provided for @cardSettingsSortOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest first'**
+  String get cardSettingsSortOldest;
+
+  /// No description provided for @cardSettingsSortAlphabetical.
+  ///
+  /// In en, this message translates to:
+  /// **'Alphabetical'**
+  String get cardSettingsSortAlphabetical;
+
+  /// No description provided for @cardSettingsHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get cardSettingsHidden;
+
+  /// No description provided for @cardSettingsDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get cardSettingsDefault;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
 }
 
 class _AppLocalizationsDelegate

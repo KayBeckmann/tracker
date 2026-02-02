@@ -1217,5 +1217,42 @@
   "settingsDeleteAllDataTitle": "Alle Daten löschen?",
   "settingsDeleteAllDataMessage": "Diese Aktion löscht ALLE lokalen Daten unwiderruflich. Dazu gehören Notizen, Aufgaben, Zeiteinträge, Journal, Gewohnheiten und Finanzdaten. Die App wird danach neu gestartet.",
   "settingsDeleteAllDataConfirm": "Alles löschen",
-  "settingsDeleteAllDataCancel": "Abbrechen"
+  "settingsDeleteAllDataCancel": "Abbrechen",
+  "dashboardCardSettingsTooltip": "Karteneinstellungen",
+  "settingsDashboardCardsSectionTitle": "Dashboard-Karten",
+  "settingsDashboardCardsDescription": "Konfiguriere Aussehen und Inhalt der Dashboard-Karten.",
+  "cardSettingsDialogTitle": "Einstellungen: {cardName}",
+  "@cardSettingsDialogTitle": {
+    "placeholders": {
+      "cardName": {
+        "type": "String"
+      }
+    }
+  },
+  "cardSettingsVisibilityLabel": "Auf Dashboard anzeigen",
+  "cardSettingsSizeLabel": "Kartengröße",
+  "cardSettingsSizeCompact": "Kompakt",
+  "cardSettingsSizeNormal": "Normal",
+  "cardSettingsSizeLarge": "Groß",
+  "cardSettingsItemCountLabel": "Angezeigte Einträge: {count}",
+  "@cardSettingsItemCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardSettingsPeriodLabel": "Zeitraum",
+  "cardSettingsPeriodToday": "Heute",
+  "cardSettingsPeriodWeek": "Diese Woche",
+  "cardSettingsPeriodMonth": "Dieser Monat",
+  "cardSettingsPeriodAll": "Alle",
+  "cardSettingsSortOrderLabel": "Sortierung",
+  "cardSettingsSortNewest": "Neueste zuerst",
+  "cardSettingsSortOldest": "Älteste zuerst",
+  "cardSettingsSortAlphabetical": "Alphabetisch",
+  "cardSettingsHidden": "Ausgeblendet",
+  "cardSettingsDefault": "Standard",
+  "cancel": "Abbrechen",
+  "save": "Speichern"
 }

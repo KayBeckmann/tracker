@@ -2197,4 +2197,78 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDeleteAllDataCancel => 'Cancel';
+
+  @override
+  String get dashboardCardSettingsTooltip => 'Card settings';
+
+  @override
+  String get settingsDashboardCardsSectionTitle => 'Dashboard Cards';
+
+  @override
+  String get settingsDashboardCardsDescription =>
+      'Configure appearance and content of dashboard cards.';
+
+  @override
+  String cardSettingsDialogTitle(String cardName) {
+    return 'Settings: $cardName';
+  }
+
+  @override
+  String get cardSettingsVisibilityLabel => 'Show on dashboard';
+
+  @override
+  String get cardSettingsSizeLabel => 'Card size';
+
+  @override
+  String get cardSettingsSizeCompact => 'Compact';
+
+  @override
+  String get cardSettingsSizeNormal => 'Normal';
+
+  @override
+  String get cardSettingsSizeLarge => 'Large';
+
+  @override
+  String cardSettingsItemCountLabel(int count) {
+    return 'Displayed items: $count';
+  }
+
+  @override
+  String get cardSettingsPeriodLabel => 'Time period';
+
+  @override
+  String get cardSettingsPeriodToday => 'Today';
+
+  @override
+  String get cardSettingsPeriodWeek => 'This week';
+
+  @override
+  String get cardSettingsPeriodMonth => 'This month';
+
+  @override
+  String get cardSettingsPeriodAll => 'All';
+
+  @override
+  String get cardSettingsSortOrderLabel => 'Sort order';
+
+  @override
+  String get cardSettingsSortNewest => 'Newest first';
+
+  @override
+  String get cardSettingsSortOldest => 'Oldest first';
+
+  @override
+  String get cardSettingsSortAlphabetical => 'Alphabetical';
+
+  @override
+  String get cardSettingsHidden => 'Hidden';
+
+  @override
+  String get cardSettingsDefault => 'Default';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get save => 'Save';
 }
