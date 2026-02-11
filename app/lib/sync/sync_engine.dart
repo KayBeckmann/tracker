@@ -106,7 +106,9 @@ class SyncEngine {
     return raw is String ? raw : null;
   }
 
-  Future<SyncResult> synchronize() async {
+  Future<SyncResult> synchronize({
+    ConflictResolutionStrategy strategy = ConflictResolutionStrategy.askUser,
+  }) async {
     if (!isReady) {
       throw const SyncStateException('Synchronisation nicht vorbereitet.');
     }
@@ -116,13 +118,13 @@ class SyncEngine {
 
     await _pushTombstones(token);
 
-    final noteConflicts = await _pushNotes(token);
+    final noteConflicts = await _pushNotes(token, strategy: strategy);
     conflicts.addAll(noteConflicts);
-    final taskConflicts = await _pushTasks(token);
+    final taskConflicts = await _pushTasks(token, strategy: strategy);
     conflicts.addAll(taskConflicts);
-    final timeConflicts = await _pushTimeEntries(token);
+    final timeConflicts = await _pushTimeEntries(token, strategy: strategy);
     conflicts.addAll(timeConflicts);
-    final settingsConflicts = await _pushSettings(token);
+    final settingsConflicts = await _pushSettings(token, strategy: strategy);
     conflicts.addAll(settingsConflicts);
     final journalEntryConflicts = await _pushJournalEntries(token);
     conflicts.addAll(journalEntryConflicts);
@@ -271,7 +273,10 @@ class SyncEngine {
     await storageBox.delete(settingsDirtyKey);
   }
 
-  Future<List<SyncConflictData>> _pushNotes(String token) async {
+  Future<List<SyncConflictData>> _pushNotes(
+    String token, {
+    ConflictResolutionStrategy strategy = ConflictResolutionStrategy.askUser,
+  }) async {
     final notes = await database.getNotesNeedingSync();
     if (notes.isEmpty) {
       return const [];
@@ -332,22 +337,38 @@ class SyncEngine {
         final localPayload =
             localPayloads[entry.id] ??
             (local != null ? _serializeNote(local) : <String, Object?>{});
-        conflicts.add(
-          SyncConflictData(
-            collection: 'notes',
-            remoteId: entry.id,
-            server: entry.server,
-            serverPayload: serverPayload,
-            localPayload: localPayload,
-            note: local,
-          ),
+
+        final conflictData = SyncConflictData(
+          collection: 'notes',
+          remoteId: entry.id,
+          server: entry.server,
+          serverPayload: serverPayload,
+          localPayload: localPayload,
+          note: local,
         );
+
+        // Auto-resolve basierend auf Strategie
+        if (strategy == ConflictResolutionStrategy.serverWins) {
+          await _applyServerNote(conflictData);
+        } else if (strategy == ConflictResolutionStrategy.localWins) {
+          if (local != null) {
+            // remoteVersion aktualisieren, damit nächster Push erfolgreich ist
+            await database.updateNoteEntry(
+              local.copyWith(remoteVersion: entry.server.version),
+            );
+          }
+        } else {
+          conflicts.add(conflictData);
+        }
       }
       return conflicts;
     }
   }
 
-  Future<List<SyncConflictData>> _pushTasks(String token) async {
+  Future<List<SyncConflictData>> _pushTasks(
+    String token, {
+    ConflictResolutionStrategy strategy = ConflictResolutionStrategy.askUser,
+  }) async {
     final tasks = await database.getTasksNeedingSync();
     if (tasks.isEmpty) {
       return const [];
@@ -408,22 +429,37 @@ class SyncEngine {
         final localPayload =
             localPayloads[entry.id] ??
             (local != null ? await _serializeTask(local) : <String, Object?>{});
-        conflicts.add(
-          SyncConflictData(
-            collection: 'tasks',
-            remoteId: entry.id,
-            server: entry.server,
-            serverPayload: serverPayload,
-            localPayload: localPayload,
-            task: local,
-          ),
+
+        final conflictData = SyncConflictData(
+          collection: 'tasks',
+          remoteId: entry.id,
+          server: entry.server,
+          serverPayload: serverPayload,
+          localPayload: localPayload,
+          task: local,
         );
+
+        // Auto-resolve basierend auf Strategie
+        if (strategy == ConflictResolutionStrategy.serverWins) {
+          await _applyServerTask(conflictData);
+        } else if (strategy == ConflictResolutionStrategy.localWins) {
+          if (local != null) {
+            await database.updateTaskEntry(
+              local.copyWith(remoteVersion: entry.server.version),
+            );
+          }
+        } else {
+          conflicts.add(conflictData);
+        }
       }
       return conflicts;
     }
   }
 
-  Future<List<SyncConflictData>> _pushTimeEntries(String token) async {
+  Future<List<SyncConflictData>> _pushTimeEntries(
+    String token, {
+    ConflictResolutionStrategy strategy = ConflictResolutionStrategy.askUser,
+  }) async {
     final entries = await database.getTimeEntriesNeedingSync();
     if (entries.isEmpty) {
       return const [];
@@ -489,22 +525,37 @@ class SyncEngine {
             (local != null
                 ? await _serializeTimeEntry(local)
                 : <String, Object?>{});
-        conflicts.add(
-          SyncConflictData(
-            collection: 'time_entries',
-            remoteId: entry.id,
-            server: entry.server,
-            serverPayload: serverPayload,
-            localPayload: localPayload,
-            timeEntry: local,
-          ),
+
+        final conflictData = SyncConflictData(
+          collection: 'time_entries',
+          remoteId: entry.id,
+          server: entry.server,
+          serverPayload: serverPayload,
+          localPayload: localPayload,
+          timeEntry: local,
         );
+
+        // Auto-resolve basierend auf Strategie
+        if (strategy == ConflictResolutionStrategy.serverWins) {
+          await _applyServerTimeEntry(conflictData);
+        } else if (strategy == ConflictResolutionStrategy.localWins) {
+          if (local != null) {
+            await database.updateTimeEntry(
+              local.copyWith(remoteVersion: entry.server.version),
+            );
+          }
+        } else {
+          conflicts.add(conflictData);
+        }
       }
       return conflicts;
     }
   }
 
-  Future<List<SyncConflictData>> _pushSettings(String token) async {
+  Future<List<SyncConflictData>> _pushSettings(
+    String token, {
+    ConflictResolutionStrategy strategy = ConflictResolutionStrategy.askUser,
+  }) async {
     if (!_isSettingsDirty) {
       return const [];
     }
@@ -551,16 +602,30 @@ class SyncEngine {
         final serverPayload = await encryptionService.decryptToMap(
           entry.server.ciphertext,
         );
-        conflicts.add(
-          SyncConflictData(
-            collection: 'settings',
-            remoteId: entry.id,
-            server: entry.server,
-            serverPayload: serverPayload,
-            localPayload: payload,
-            settingsUpdatedAt: updatedAt,
-          ),
+
+        final conflictData = SyncConflictData(
+          collection: 'settings',
+          remoteId: entry.id,
+          server: entry.server,
+          serverPayload: serverPayload,
+          localPayload: payload,
+          settingsUpdatedAt: updatedAt,
         );
+
+        // Auto-resolve basierend auf Strategie
+        if (strategy == ConflictResolutionStrategy.serverWins) {
+          await _applyRemoteSettings(entry.server, serverPayload);
+        } else if (strategy == ConflictResolutionStrategy.localWins) {
+          // remoteVersion aktualisieren, damit nächster Push erfolgreich ist
+          _storeSettingsMetadata(
+            remoteId: entry.id,
+            remoteVersion: entry.server.version,
+            updatedAt: updatedAt,
+            markDirty: true,
+          );
+        } else {
+          conflicts.add(conflictData);
+        }
       }
       return conflicts;
     }
@@ -3095,6 +3160,21 @@ class SyncEngine {
       raw: payload['notesDefaultOpenMode'],
     );
 
+    // Dashboard Card Settings anwenden
+    final dashboardCardSettingsRaw = payload['dashboardCardSettings'];
+    if (dashboardCardSettingsRaw is Map) {
+      final cardSettings = <String, Map<String, dynamic>>{};
+      for (final entry in dashboardCardSettingsRaw.entries) {
+        if (entry.key is String && entry.value is Map) {
+          cardSettings[entry.key as String] =
+              Map<String, dynamic>.from(entry.value as Map);
+        }
+      }
+      if (cardSettings.isNotEmpty) {
+        storageBox.put(dashboardCardSettingsKey, cardSettings);
+      }
+    }
+
     final DateTime updatedAt =
         _parseDate(payload['updatedAt']) ??
         item.clientUpdatedAt ??
@@ -3147,6 +3227,22 @@ class SyncEngine {
     final Object? pinHashRaw = storageBox.get(journalPinHashKey);
     final Object? pinSaltRaw = storageBox.get(journalPinSaltKey);
 
+    // Dashboard Card Settings lesen
+    Map<String, Map<String, dynamic>>? readCardSettings() {
+      final raw = storageBox.get(dashboardCardSettingsKey);
+      if (raw is Map) {
+        final result = <String, Map<String, dynamic>>{};
+        for (final entry in raw.entries) {
+          if (entry.key is String && entry.value is Map) {
+            result[entry.key as String] =
+                Map<String, dynamic>.from(entry.value as Map);
+          }
+        }
+        return result.isNotEmpty ? result : null;
+      }
+      return null;
+    }
+
     return <String, Object?>{
       'locale': storageBox.get(preferredLocaleKey) as String?,
       'themeMode': storageBox.get(preferredThemeModeKey) as String?,
@@ -3172,6 +3268,7 @@ class SyncEngine {
       'journalEnabledCategories': readList(journalEnabledCategoriesKey),
       'notesDefaultOpenMode':
           storageBox.get(notesDefaultOpenModeKey) as String?,
+      'dashboardCardSettings': readCardSettings(),
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
@@ -3372,6 +3469,18 @@ class SyncConflictData {
 }
 
 enum ConflictDecision { keepLocal, keepServer }
+
+/// Strategie für automatische Konfliktauflösung bei der Synchronisation.
+enum ConflictResolutionStrategy {
+  /// Benutzer fragen (aktuelles Verhalten) - Konflikte werden in SyncResult zurückgegeben
+  askUser,
+
+  /// Server-Daten gewinnen - Server-Daten werden automatisch angewendet
+  serverWins,
+
+  /// Lokale Daten gewinnen - remoteVersion wird aktualisiert und erneut gepusht
+  localWins,
+}
 
 class SyncStateException implements Exception {
   const SyncStateException(this.message);

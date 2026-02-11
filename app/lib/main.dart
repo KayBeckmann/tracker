@@ -364,6 +364,7 @@ class _HomePageState extends State<HomePage> {
   bool _autoSyncForce = false;
   bool _autoSyncAfterCurrent = false;
   bool _hasTriggeredInitialSync = false;
+  ConflictResolutionStrategy? _pendingAutoSyncStrategy;
 
   bool get _hasJournalPin =>
       _journalPinHash != null &&
@@ -1610,7 +1611,8 @@ class _HomePageState extends State<HomePage> {
     final bool hasChanges = count > 0;
     _hasPendingSyncChanges = hasChanges;
     if (hasChanges) {
-      _requestAutoSync();
+      // Nach Bearbeitung: Lokale Daten haben Vorrang bei Konflikten
+      _requestAutoSync(strategy: ConflictResolutionStrategy.localWins);
     }
   }
 
@@ -1619,7 +1621,8 @@ class _HomePageState extends State<HomePage> {
     final bool isDirty = raw is bool ? raw : false;
     _hasPendingSettingsSync = isDirty;
     if (isDirty) {
-      _requestAutoSync();
+      // Nach Settings-Änderung: Lokale Daten haben Vorrang bei Konflikten
+      _requestAutoSync(strategy: ConflictResolutionStrategy.localWins);
     }
   }
 
@@ -1629,7 +1632,11 @@ class _HomePageState extends State<HomePage> {
     if (canSync) {
       if (!_hasTriggeredInitialSync) {
         _hasTriggeredInitialSync = true;
-        _requestAutoSync(force: true);
+        // Bei App-Start: Server-Daten haben Vorrang bei Konflikten
+        _requestAutoSync(
+          force: true,
+          strategy: ConflictResolutionStrategy.serverWins,
+        );
       } else {
         _requestAutoSync();
       }
@@ -1638,9 +1645,15 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _requestAutoSync({bool force = false}) {
+  void _requestAutoSync({
+    bool force = false,
+    ConflictResolutionStrategy? strategy,
+  }) {
     if (force) {
       _autoSyncForce = true;
+    }
+    if (strategy != null) {
+      _pendingAutoSyncStrategy = strategy;
     }
     if (_isSyncInProgress) {
       _autoSyncAfterCurrent = true;
@@ -1669,11 +1682,15 @@ class _HomePageState extends State<HomePage> {
     final bool forceSync = _autoSyncForce;
     if (!_canAutoSync(forceSync: forceSync)) {
       _autoSyncScheduled = false;
+      _pendingAutoSyncStrategy = null;
       return;
     }
     _autoSyncScheduled = false;
     _autoSyncForce = false;
-    await _performSync(showFeedback: false);
+    final strategy =
+        _pendingAutoSyncStrategy ?? ConflictResolutionStrategy.askUser;
+    _pendingAutoSyncStrategy = null;
+    await _performSync(showFeedback: false, strategy: strategy);
   }
 
   bool _canAutoSync({required bool forceSync}) {
@@ -1766,7 +1783,10 @@ class _HomePageState extends State<HomePage> {
     await _performSync(showFeedback: true);
   }
 
-  Future<bool> _performSync({required bool showFeedback}) async {
+  Future<bool> _performSync({
+    required bool showFeedback,
+    ConflictResolutionStrategy strategy = ConflictResolutionStrategy.askUser,
+  }) async {
     if (!mounted) {
       return false;
     }
@@ -1788,7 +1808,7 @@ class _HomePageState extends State<HomePage> {
     bool appliedRemoteUpdates = false;
     bool syncCompleted = false;
     try {
-      final result = await _syncEngine.synchronize();
+      final result = await _syncEngine.synchronize(strategy: strategy);
       if (!mounted) {
         return false;
       }
@@ -1797,7 +1817,7 @@ class _HomePageState extends State<HomePage> {
         if (!resolved) {
           return false;
         }
-        final retryResult = await _syncEngine.synchronize();
+        final retryResult = await _syncEngine.synchronize(strategy: strategy);
         if (!mounted) {
           return false;
         }
