@@ -10,6 +10,7 @@ class UserRecord {
     this.membershipExpiresAt,
     this.lastPaymentMethod,
     this.syncRetentionUntil,
+    this.lastActivityAt,
   });
 
   final int id;
@@ -22,6 +23,7 @@ class UserRecord {
   final DateTime? membershipExpiresAt;
   final String? lastPaymentMethod;
   final DateTime? syncRetentionUntil;
+  final DateTime? lastActivityAt;
 
   Map<String, Object?> toJson() {
     return <String, Object?>{
@@ -35,6 +37,7 @@ class UserRecord {
       'membership_expires_at': membershipExpiresAt?.toIso8601String(),
       'last_payment_method': lastPaymentMethod,
       'sync_retention_until': syncRetentionUntil?.toIso8601String(),
+      'last_activity_at': lastActivityAt?.toIso8601String(),
     };
   }
 }

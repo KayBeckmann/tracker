@@ -73,6 +73,13 @@ CREATE TABLE IF NOT EXISTS users (
       await session.execute(
         'ALTER TABLE users ADD COLUMN IF NOT EXISTS sync_retention_until TIMESTAMPTZ;',
       );
+      await session.execute(
+        'ALTER TABLE users ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMPTZ;',
+      );
+      // Set last_activity_at to created_at for existing users without activity
+      await session.execute(
+        'UPDATE users SET last_activity_at = created_at WHERE last_activity_at IS NULL;',
+      );
 
       await session.execute('''
 CREATE TABLE IF NOT EXISTS sync_items (

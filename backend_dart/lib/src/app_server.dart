@@ -107,7 +107,8 @@ class AppServer {
       return _errorResponse(401, 'Nicht autorisiert.');
     }
 
-    // Sync is now free for all logged-in users
+    // Update last activity timestamp
+    await authService.updateLastActivity(userId);
 
     final collection = request.url.queryParameters['collection'];
     if (collection == null || collection.trim().isEmpty) {
@@ -139,7 +140,8 @@ class AppServer {
       return _errorResponse(401, 'Nicht autorisiert.');
     }
 
-    // Sync is now free for all logged-in users
+    // Update last activity timestamp
+    await authService.updateLastActivity(userId);
 
     try {
       final body = await _decodeJson(request);

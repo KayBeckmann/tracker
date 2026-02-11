@@ -44,9 +44,9 @@ class AuthService {
         final rows = await session.execute(
           Sql.named('''
 INSERT INTO users (
-  email, password_hash, encryption_salt, display_name
+  email, password_hash, encryption_salt, display_name, last_activity_at
 ) VALUES (
-  @email, @password_hash, @encryption_salt, @display_name
+  @email, @password_hash, @encryption_salt, @display_name, NOW()
 )
 RETURNING id,
           email,
@@ -57,7 +57,8 @@ RETURNING id,
           membership_level,
           membership_expires_at,
           last_payment_method,
-          sync_retention_until;
+          sync_retention_until,
+          last_activity_at;
 '''),
           parameters: <String, Object?>{
             'email': normalizedEmail,
@@ -107,7 +108,8 @@ SELECT id,
        membership_level,
        membership_expires_at,
        last_payment_method,
-       sync_retention_until
+       sync_retention_until,
+       last_activity_at
 FROM users
 WHERE email = @email
 LIMIT 1;
@@ -134,6 +136,10 @@ LIMIT 1;
 
     final user = _mapUser(row);
     final token = _generateToken(user.id);
+
+    // Update last_activity_at on login
+    await updateLastActivity(user.id);
+
     return AuthResponse(accessToken: token, user: user);
   }
 
@@ -150,7 +156,8 @@ SELECT id,
        membership_level,
        membership_expires_at,
        last_payment_method,
-       sync_retention_until
+       sync_retention_until,
+       last_activity_at
 FROM users
 WHERE id = @id
 LIMIT 1;
@@ -163,6 +170,35 @@ LIMIT 1;
       return null;
     }
     return _mapUser(result.single);
+  }
+
+  /// Updates the last_activity_at timestamp for a user.
+  Future<void> updateLastActivity(int userId) async {
+    await _database.run((session) async {
+      await session.execute(
+        Sql.named('UPDATE users SET last_activity_at = NOW() WHERE id = @id;'),
+        parameters: <String, Object?>{'id': userId},
+      );
+    });
+  }
+
+  /// Deletes users who have been inactive for more than the specified duration.
+  /// Returns the number of deleted users.
+  Future<int> deleteInactiveUsers({
+    Duration inactivityThreshold = const Duration(days: 90),
+  }) async {
+    final result = await _database.run((session) async {
+      return session.execute(
+        Sql.named('''
+DELETE FROM users
+WHERE last_activity_at IS NOT NULL
+  AND last_activity_at < NOW() - INTERVAL '1 day' * @days
+RETURNING id;
+'''),
+        parameters: <String, Object?>{'days': inactivityThreshold.inDays},
+      );
+    });
+    return result.length;
   }
 
   String _generateToken(int userId) {
@@ -193,6 +229,7 @@ LIMIT 1;
       membershipExpiresAt: _tryParseDate(map['membership_expires_at']),
       lastPaymentMethod: map['last_payment_method'] as String?,
       syncRetentionUntil: _tryParseDate(map['sync_retention_until']),
+      lastActivityAt: _tryParseDate(map['last_activity_at']),
     );
   }
 
