@@ -40,6 +40,87 @@
           </ul>
         </section>
         <section>
+          <h2 data-i18n="wiki.technical.sections.localStorage.heading">Local Data Storage</h2>
+          <p data-i18n="wiki.technical.sections.localStorage.intro">
+            Tracker uses two complementary storage systems for local data persistence, with platform-specific implementations for mobile and web.
+          </p>
+          <h3 data-i18n="wiki.technical.sections.localStorage.android.heading">Android / iOS</h3>
+          <table class="wiki-table">
+            <thead>
+              <tr>
+                <th>Storage</th>
+                <th>Technology</th>
+                <th>Location</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Main Database</strong></td>
+                <td>SQLite via Drift</td>
+                <td><code>/data/data/com.kaygrundig.tracker/files/tracker.sqlite</code></td>
+              </tr>
+              <tr>
+                <td><strong>Settings</strong></td>
+                <td>Hive</td>
+                <td><code>/data/data/com.kaygrundig.tracker/app_flutter/</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p data-i18n="wiki.technical.sections.localStorage.android.details">
+            The database path is determined via <code>getApplicationSupportDirectory()</code> from the <code>path_provider</code> package. Connection is established in <code>lib/data/local/connection/connection_io.dart</code>.
+          </p>
+          <h3 data-i18n="wiki.technical.sections.localStorage.web.heading">Web Browser</h3>
+          <table class="wiki-table">
+            <thead>
+              <tr>
+                <th>Storage</th>
+                <th>Technology</th>
+                <th>Access</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Main Database</strong></td>
+                <td>IndexedDB</td>
+                <td>DevTools → Application → IndexedDB → <code>tracker_database</code></td>
+              </tr>
+              <tr>
+                <td><strong>Settings</strong></td>
+                <td>LocalStorage / IndexedDB</td>
+                <td>Managed automatically by Hive</td>
+              </tr>
+            </tbody>
+          </table>
+          <p data-i18n="wiki.technical.sections.localStorage.web.details">
+            Web storage uses <code>DriftWebStorage.indexedDb('tracker_database')</code> for the main database. Connection is established in <code>lib/data/local/connection/connection_web.dart</code>.
+          </p>
+          <h3 data-i18n="wiki.technical.sections.localStorage.hive.heading">Hive Settings (Key-Value Store)</h3>
+          <p data-i18n="wiki.technical.sections.localStorage.hive.intro">
+            The Hive box <code>tracker_box</code> stores the following settings:
+          </p>
+          <ul data-i18n-html="wiki.technical.sections.localStorage.hive.list">
+            <li><code>preferred_locale</code> — Language preference (en/de/sv)</li>
+            <li><code>preferred_theme_mode</code> — Theme mode (light/dark/system)</li>
+            <li><code>preferred_seed_color</code> — Color scheme seed</li>
+            <li><code>enabled_modules</code> — List of activated app modules</li>
+            <li><code>module_order</code> — Custom module ordering</li>
+            <li><code>journal_pin_hash</code> — SHA-256 hashed PIN for journal security</li>
+            <li><code>journal_pin_salt</code> — Salt for PIN hashing</li>
+            <li><code>encryption_key</code> — Master encryption key for sync</li>
+            <li><code>sync_*_last</code> — Last sync timestamps per data type</li>
+          </ul>
+          <h3 data-i18n="wiki.technical.sections.localStorage.platform.heading">Platform Abstraction</h3>
+          <p data-i18n="wiki.technical.sections.localStorage.platform.details">
+            The codebase uses conditional imports to support both platforms:
+          </p>
+          <ul data-i18n-html="wiki.technical.sections.localStorage.platform.list">
+            <li><code>connection.dart</code> — Platform-agnostic interface</li>
+            <li><code>connection_io.dart</code> — Android/iOS implementation (SQLite file)</li>
+            <li><code>connection_web.dart</code> — Browser implementation (IndexedDB)</li>
+            <li><code>database_deleter_*.dart</code> — Platform-specific database deletion</li>
+          </ul>
+        </section>
+        <section>
           <h2 data-i18n="wiki.technical.sections.database.heading">Database Schema</h2>
           <ul data-i18n-html="wiki.technical.sections.database.list">
             <li><code>greeting_entries</code> — Dashboard messages and onboarding tips.</li>

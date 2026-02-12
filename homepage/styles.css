@@ -402,6 +402,32 @@ a:hover {
   padding-left: 20px;
   color: var(--text-muted);
 }
+.wiki-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.95rem;
+}
+.wiki-table th,
+.wiki-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.wiki-table th {
+  background: rgba(31, 41, 55, 0.6);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.wiki-table td {
+  color: var(--text-muted);
+}
+.wiki-table code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
 .wiki-footer {
   text-align: center;
   padding: 32px;
