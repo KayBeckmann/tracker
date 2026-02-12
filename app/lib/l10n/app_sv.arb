@@ -761,6 +761,9 @@
   "habitsChartEmpty": "Lägg till några dagar för att se utvecklingskurvan.",
   "habitsLogBooleanValue": "Genomfört",
   "habitsDeleteEntryTooltip": "Ta bort post",
+  "habitsBackdateEntry": "Lägg till tidigare inlägg",
+  "habitsSelectDate": "Välj datum",
+  "habitsSelectTime": "Välj tid",
   "dashboardHabitsOnTrack": "{completed} av {total} vanor följer planen.",
   "@dashboardHabitsOnTrack": {
     "placeholders": {
@@ -1251,6 +1254,7 @@
   "cardSettingsSortNewest": "Senaste först",
   "cardSettingsSortOldest": "Äldsta först",
   "cardSettingsSortAlphabetical": "Alfabetiskt",
+  "cardSettingsSortPriority": "Prioritet",
   "cardSettingsHidden": "Dold",
   "cardSettingsDefault": "Standard",
   "cancel": "Avbryt",

@@ -761,6 +761,9 @@
   "habitsChartEmpty": "Füge einige Tage hinzu, um den Verlauf zu sehen.",
   "habitsLogBooleanValue": "Erledigt",
   "habitsDeleteEntryTooltip": "Eintrag löschen",
+  "habitsBackdateEntry": "Eintrag nachtragen",
+  "habitsSelectDate": "Datum wählen",
+  "habitsSelectTime": "Uhrzeit wählen",
   "dashboardHabitsOnTrack": "{completed} von {total} Gewohnheiten im Plan.",
   "@dashboardHabitsOnTrack": {
     "placeholders": {
@@ -1251,6 +1254,7 @@
   "cardSettingsSortNewest": "Neueste zuerst",
   "cardSettingsSortOldest": "Älteste zuerst",
   "cardSettingsSortAlphabetical": "Alphabetisch",
+  "cardSettingsSortPriority": "Priorität",
   "cardSettingsHidden": "Ausgeblendet",
   "cardSettingsDefault": "Standard",
   "cancel": "Abbrechen",

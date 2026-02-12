@@ -1323,6 +1323,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get habitsDeleteEntryTooltip => 'Eintrag löschen';
 
   @override
+  String get habitsBackdateEntry => 'Eintrag nachtragen';
+
+  @override
+  String get habitsSelectDate => 'Datum wählen';
+
+  @override
+  String get habitsSelectTime => 'Uhrzeit wählen';
+
+  @override
   String dashboardHabitsOnTrack(int completed, int total) {
     return '$completed von $total Gewohnheiten im Plan.';
   }
@@ -2278,6 +2287,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get cardSettingsSortAlphabetical => 'Alphabetisch';
+
+  @override
+  String get cardSettingsSortPriority => 'Priorität';
 
   @override
   String get cardSettingsHidden => 'Ausgeblendet';

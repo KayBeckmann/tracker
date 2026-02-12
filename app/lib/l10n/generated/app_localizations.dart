@@ -2420,6 +2420,24 @@ abstract class AppLocalizations {
   /// **'Delete entry'**
   String get habitsDeleteEntryTooltip;
 
+  /// No description provided for @habitsBackdateEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Add past entry'**
+  String get habitsBackdateEntry;
+
+  /// No description provided for @habitsSelectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get habitsSelectDate;
+
+  /// No description provided for @habitsSelectTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select time'**
+  String get habitsSelectTime;
+
   /// No description provided for @dashboardHabitsOnTrack.
   ///
   /// In en, this message translates to:
@@ -4103,6 +4121,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Alphabetical'**
   String get cardSettingsSortAlphabetical;
+
+  /// No description provided for @cardSettingsSortPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get cardSettingsSortPriority;
 
   /// No description provided for @cardSettingsHidden.
   ///

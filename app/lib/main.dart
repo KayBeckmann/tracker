@@ -2592,16 +2592,37 @@ class _HomePageState extends State<HomePage> {
             .where((task) => task.priority == TaskPriority.high)
             .length;
         final sortedTasks = List<TaskEntry>.from(tasks)
-          ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
+          ..sort((a, b) {
+            switch (config.sortOrder) {
+              case DashboardCardSortOrder.priority:
+                final priorityOrder = {
+                  TaskPriority.high: 0,
+                  TaskPriority.medium: 1,
+                  TaskPriority.low: 2,
+                };
+                final cmp = priorityOrder[a.priority]!
+                    .compareTo(priorityOrder[b.priority]!);
+                if (cmp != 0) return cmp;
+                return a.dueDate.compareTo(b.dueDate);
+              case DashboardCardSortOrder.oldest:
+                return a.dueDate.compareTo(b.dueDate);
+              case DashboardCardSortOrder.newest:
+                return b.dueDate.compareTo(a.dueDate);
+              case DashboardCardSortOrder.alphabetical:
+                return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+            }
+          });
         final now = DateTime.now();
         TaskEntry? nextDue;
-        for (final task in sortedTasks) {
+        final dueSortedTasks = List<TaskEntry>.from(tasks)
+          ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
+        for (final task in dueSortedTasks) {
           if (!task.dueDate.isBefore(now)) {
             nextDue = task;
             break;
           }
         }
-        nextDue ??= sortedTasks.isEmpty ? null : sortedTasks.first;
+        nextDue ??= dueSortedTasks.isEmpty ? null : dueSortedTasks.first;
         final nextDueTitle = nextDue == null || nextDue.title.trim().isEmpty
             ? loc.dashboardTasksNoUpcoming
             : loc.dashboardTasksNextDue(
@@ -2662,6 +2683,38 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 12),
                     Text(nextDueTitle, style: theme.textTheme.labelLarge),
+                    if (sortedTasks.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      const Divider(),
+                      ...sortedTasks.take(config.itemCount).map(
+                            (task) => ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              dense: true,
+                              leading: Icon(
+                                task.priority == TaskPriority.high
+                                    ? Icons.priority_high
+                                    : task.priority == TaskPriority.medium
+                                        ? Icons.remove
+                                        : Icons.low_priority,
+                                color: task.priority == TaskPriority.high
+                                    ? colorScheme.error
+                                    : task.priority == TaskPriority.medium
+                                        ? colorScheme.primary
+                                        : colorScheme.outline,
+                                size: 20,
+                              ),
+                              title: Text(
+                                task.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Text(
+                                _formatDate(context, task.dueDate),
+                                style: theme.textTheme.bodySmall,
+                              ),
+                            ),
+                          ),
+                    ],
                   ],
                 ),
               ),
@@ -2813,12 +2866,17 @@ class _HomePageState extends State<HomePage> {
                 periodLogs: periodLogs,
                 numericTotal: total,
               );
+              final isBoolean = isBooleanHabit(habit);
+              final isSingleCompletion = isSingleCompletionHabit(habit);
               return (
                 habit: habit,
                 progress: progress,
                 ratio: ratio,
                 onTrack: onTrack,
                 label: label,
+                isBoolean: isBoolean,
+                isSingleCompletion: isSingleCompletion,
+                periodLogs: periodLogs,
               );
             }).toList();
 
@@ -2859,6 +2917,9 @@ class _HomePageState extends State<HomePage> {
                     label: entry.label,
                     progress: entry.progress,
                     onTrack: entry.onTrack,
+                    isBoolean: entry.isBoolean,
+                    isSingleCompletion: entry.isSingleCompletion,
+                    periodLogs: entry.periodLogs,
                   ),
                 );
                 if (i != topEntries.length - 1) {
@@ -2944,14 +3005,16 @@ class _HomePageState extends State<HomePage> {
                               transactions: transactions,
                               categories: categories,
                             );
-                            final filteredUsages = _filterCurrentBudgetUsages(
+                            final currentUsages = _filterCurrentBudgetUsages(
                               usages,
-                            );
-                            final prioritized = filteredUsages.isNotEmpty
-                                ? filteredUsages
-                                : usages;
-                            final sortedUsages = prioritized.toList()
+                            ).toSet();
+                            final sortedUsages = usages.toList()
                               ..sort((a, b) {
+                                final aIsCurrent = currentUsages.contains(a);
+                                final bIsCurrent = currentUsages.contains(b);
+                                if (aIsCurrent != bIsCurrent) {
+                                  return aIsCurrent ? -1 : 1;
+                                }
                                 final ratioA = a.budget.amount <= 0
                                     ? 0.0
                                     : a.actualAmount / a.budget.amount;
@@ -3210,12 +3273,65 @@ class _HomePageState extends State<HomePage> {
     required String label,
     required double progress,
     required bool onTrack,
+    required bool isBoolean,
+    required bool isSingleCompletion,
+    required List<HabitLog> periodLogs,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context);
     final Color progressColor = onTrack
         ? colorScheme.primary
         : colorScheme.tertiary;
+
+    Future<void> onToggle() async {
+      if (isBoolean && isSingleCompletion && onTrack) {
+        final period = periodForHabit(habit, DateTime.now());
+        await _database.deleteHabitLogsForRange(
+          habitId: habit.id,
+          start: period.start,
+          end: period.end,
+        );
+      } else if (isBoolean) {
+        await _database.insertHabitLog(habitId: habit.id, value: 1);
+      } else {
+        final controller = TextEditingController();
+        final value = await showDialog<double?>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(loc.habitsLogValueTitle(habit.name)),
+              content: TextField(
+                controller: controller,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(hintText: loc.habitsValueHint),
+                autofocus: true,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(loc.habitsCancelButton),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    final parsed = double.tryParse(
+                      controller.text.trim().replaceAll(',', '.'),
+                    );
+                    Navigator.of(context).pop(parsed);
+                  },
+                  child: Text(loc.habitsSaveButton),
+                ),
+              ],
+            );
+          },
+        );
+        if (value != null) {
+          await _database.insertHabitLog(habitId: habit.id, value: value);
+        }
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -3229,11 +3345,38 @@ class _HomePageState extends State<HomePage> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Icon(
-              onTrack ? Icons.check_circle : Icons.flag_outlined,
-              size: 18,
-              color: progressColor,
-            ),
+            if (isBoolean && isSingleCompletion)
+              IconButton(
+                icon: Icon(
+                  onTrack ? Icons.check_circle : Icons.radio_button_unchecked,
+                  color: progressColor,
+                ),
+                iconSize: 24,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                tooltip: onTrack
+                    ? loc.habitsUndoTodayButton
+                    : loc.habitsMarkDoneButton,
+                onPressed: onToggle,
+              )
+            else if (isBoolean)
+              IconButton(
+                icon: Icon(Icons.add_task, color: progressColor),
+                iconSize: 24,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                tooltip: loc.habitsAddCompletion,
+                onPressed: onToggle,
+              )
+            else
+              IconButton(
+                icon: Icon(Icons.add_chart, color: progressColor),
+                iconSize: 24,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                tooltip: loc.habitsAddMeasurement,
+                onPressed: onToggle,
+              ),
           ],
         ),
         const SizedBox(height: 6),

@@ -40,6 +40,7 @@ class SyncEngine {
   final EncryptionService encryptionService;
   final Box<dynamic> storageBox;
   final Uuid _uuid = const Uuid();
+  final List<(RemoteSyncItem, Map<String, dynamic>)> _pendingHabitLogs = [];
 
   String? authToken;
 
@@ -165,6 +166,7 @@ class SyncEngine {
     await _pullJournalTrackerValues(token);
     await _pullHabitDefinitions(token);
     await _pullHabitLogs(token);
+    await _retryPendingHabitLogs();
 
     final now = DateTime.now().toUtc();
     storageBox
@@ -1737,6 +1739,17 @@ class SyncEngine {
     }
   }
 
+  Future<void> _retryPendingHabitLogs() async {
+    if (_pendingHabitLogs.isEmpty) {
+      return;
+    }
+    final pending = List.of(_pendingHabitLogs);
+    _pendingHabitLogs.clear();
+    for (final (item, payload) in pending) {
+      await _applyRemoteHabitLog(item, payload, isRetry: true);
+    }
+  }
+
   Map<String, Object?> _serializeNote(NoteEntry note) {
     return <String, Object?>{
       'kind': note.kind.name,
@@ -2437,14 +2450,18 @@ class SyncEngine {
 
   Future<void> _applyRemoteHabitLog(
     RemoteSyncItem item,
-    Map<String, dynamic> payload,
-  ) async {
+    Map<String, dynamic> payload, {
+    bool isRetry = false,
+  }) async {
     final habitRemoteId = payload['habitRemoteId'] as String?;
     if (habitRemoteId == null || habitRemoteId.isEmpty) {
       return;
     }
     final habit = await database.getHabitByRemoteId(habitRemoteId);
     if (habit == null) {
+      if (!isRetry) {
+        _pendingHabitLogs.add((item, payload));
+      }
       return;
     }
 

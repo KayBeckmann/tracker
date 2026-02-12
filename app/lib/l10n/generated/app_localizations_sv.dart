@@ -1313,6 +1313,15 @@ class AppLocalizationsSv extends AppLocalizations {
   String get habitsDeleteEntryTooltip => 'Ta bort post';
 
   @override
+  String get habitsBackdateEntry => 'Lägg till tidigare inlägg';
+
+  @override
+  String get habitsSelectDate => 'Välj datum';
+
+  @override
+  String get habitsSelectTime => 'Välj tid';
+
+  @override
   String dashboardHabitsOnTrack(int completed, int total) {
     return '$completed av $total vanor följer planen.';
   }
@@ -2259,6 +2268,9 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get cardSettingsSortAlphabetical => 'Alfabetiskt';
+
+  @override
+  String get cardSettingsSortPriority => 'Prioritet';
 
   @override
   String get cardSettingsHidden => 'Dold';

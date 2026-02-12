@@ -796,6 +796,9 @@
   "habitsChartEmpty": "Add a few days of data to see your progress curve.",
   "habitsLogBooleanValue": "Completed",
   "habitsDeleteEntryTooltip": "Delete entry",
+  "habitsBackdateEntry": "Add past entry",
+  "habitsSelectDate": "Select date",
+  "habitsSelectTime": "Select time",
   "dashboardHabitsOnTrack": "{completed} of {total} habits on track.",
   "@dashboardHabitsOnTrack": {
     "placeholders": {
@@ -1369,6 +1372,7 @@
   "cardSettingsSortNewest": "Newest first",
   "cardSettingsSortOldest": "Oldest first",
   "cardSettingsSortAlphabetical": "Alphabetical",
+  "cardSettingsSortPriority": "Priority",
   "cardSettingsHidden": "Hidden",
   "cardSettingsDefault": "Default",
   "cancel": "Cancel",

@@ -52,6 +52,24 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
                         ? null
                         : () => _deleteHabit(context, currentHabit),
                   ),
+                  PopupMenuButton<String>(
+                    enabled: !_isProcessing,
+                    onSelected: (value) {
+                      if (value == 'backdate') {
+                        _addCompletionWithDate(currentHabit);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'backdate',
+                        child: ListTile(
+                          leading: const Icon(Icons.history),
+                          title: Text(AppLocalizations.of(context).habitsBackdateEntry),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
               floatingActionButton: _buildFab(context, currentHabit, logs),
@@ -242,6 +260,93 @@ class _HabitDetailPageState extends State<HabitDetailPage> {
         });
       }
     }
+  }
+
+  Future<void> _addCompletionWithDate(HabitDefinition habit) async {
+    final now = DateTime.now();
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: DateTime(2000),
+      lastDate: now,
+    );
+    if (date == null || !mounted) return;
+
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(now),
+    );
+    if (!mounted) return;
+
+    final occurredAt = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time?.hour ?? 12,
+      time?.minute ?? 0,
+    );
+
+    setState(() {
+      _isProcessing = true;
+    });
+    try {
+      if (isBooleanHabit(habit)) {
+        await widget.database.insertHabitLog(
+          habitId: habit.id,
+          value: 1,
+          occurredAt: occurredAt,
+        );
+      } else {
+        final value = await _showNumericInputDialog(habit);
+        if (value != null) {
+          await widget.database.insertHabitLog(
+            habitId: habit.id,
+            value: value,
+            occurredAt: occurredAt,
+          );
+        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
+    }
+  }
+
+  Future<double?> _showNumericInputDialog(HabitDefinition habit) async {
+    final loc = AppLocalizations.of(context);
+    final controller = TextEditingController();
+    return showDialog<double?>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(loc.habitsLogValueTitle(habit.name)),
+          content: TextField(
+            controller: controller,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(hintText: loc.habitsValueHint),
+            autofocus: true,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(loc.habitsCancelButton),
+            ),
+            FilledButton(
+              onPressed: () {
+                final parsed =
+                    double.tryParse(controller.text.trim().replaceAll(',', '.'));
+                Navigator.of(context).pop(parsed);
+              },
+              child: Text(loc.habitsSaveButton),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _addNumericValue(HabitDefinition habit) async {

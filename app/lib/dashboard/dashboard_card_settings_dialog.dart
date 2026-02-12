@@ -183,6 +183,10 @@ class _DashboardCardSettingsDialogState
                       value: DashboardCardSortOrder.alphabetical,
                       child: Text(loc.cardSettingsSortAlphabetical),
                     ),
+                    DropdownMenuItem(
+                      value: DashboardCardSortOrder.priority,
+                      child: Text(loc.cardSettingsSortPriority),
+                    ),
                   ],
                 ),
               ],

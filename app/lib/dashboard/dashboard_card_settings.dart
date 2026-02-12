@@ -18,6 +18,7 @@ enum DashboardCardSortOrder {
   newest,
   oldest,
   alphabetical,
+  priority,
 }
 
 /// Configuration for a single dashboard card.
