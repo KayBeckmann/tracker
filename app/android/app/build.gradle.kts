@@ -39,34 +39,33 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            if (!keystorePropertiesFile.exists()) {
-                throw GradleException(
-                    "Missing key.properties for release signing. " +
-                        "Create the file or adjust the signing configuration."
-                )
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                val storeFileProp = keystoreProperties["storeFile"]?.toString()
+                val storePasswordProp = keystoreProperties["storePassword"]?.toString()
+                val keyAliasProp = keystoreProperties["keyAlias"]?.toString()
+                val keyPasswordProp = keystoreProperties["keyPassword"]?.toString()
+
+                require(!storeFileProp.isNullOrBlank()) { "storeFile is missing in key.properties" }
+                require(!storePasswordProp.isNullOrBlank()) { "storePassword is missing in key.properties" }
+                require(!keyAliasProp.isNullOrBlank()) { "keyAlias is missing in key.properties" }
+                require(!keyPasswordProp.isNullOrBlank()) { "keyPassword is missing in key.properties" }
+
+                storeFile = rootProject.file(storeFileProp)
+                storePassword = storePasswordProp
+                keyAlias = keyAliasProp
+                keyPassword = keyPasswordProp
             }
-
-            val storeFileProp = keystoreProperties["storeFile"]?.toString()
-            val storePasswordProp = keystoreProperties["storePassword"]?.toString()
-            val keyAliasProp = keystoreProperties["keyAlias"]?.toString()
-            val keyPasswordProp = keystoreProperties["keyPassword"]?.toString()
-
-            require(!storeFileProp.isNullOrBlank()) { "storeFile is missing in key.properties" }
-            require(!storePasswordProp.isNullOrBlank()) { "storePassword is missing in key.properties" }
-            require(!keyAliasProp.isNullOrBlank()) { "keyAlias is missing in key.properties" }
-            require(!keyPasswordProp.isNullOrBlank()) { "keyPassword is missing in key.properties" }
-
-            storeFile = rootProject.file(storeFileProp)
-            storePassword = storePasswordProp
-            keyAlias = keyAliasProp
-            keyPassword = keyPasswordProp
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             isMinifyEnabled = false
             isShrinkResources = false
         }
