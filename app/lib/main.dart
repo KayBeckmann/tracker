@@ -2591,7 +2591,9 @@ class _HomePageState extends State<HomePage> {
         final highPriorityTasks = tasks
             .where((task) => task.priority == TaskPriority.high)
             .length;
-        final sortedTasks = List<TaskEntry>.from(tasks)
+        final sortedTasks = List<TaskEntry>.from(
+          tasks.where((task) => task.status != TaskStatus.done),
+        )
           ..sort((a, b) {
             switch (config.sortOrder) {
               case DashboardCardSortOrder.priority:
