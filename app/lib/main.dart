@@ -1371,7 +1371,7 @@ class _HomePageState extends State<HomePage> {
         return;
       }
       setState(() {
-        _authErrorMessage = loc.authErrorGeneric('$error');
+        _authErrorMessage = _formatExceptionMessage(loc, error);
       });
     } finally {
       if (mounted) {
@@ -1415,6 +1415,20 @@ class _HomePageState extends State<HomePage> {
       default:
         return loc.errorUnexpectedStatus(statusCode);
     }
+  }
+
+  String _formatExceptionMessage(AppLocalizations loc, Object error) {
+    if (error is SyncApiException) {
+      return error.message;
+    }
+    if (error is http.ClientException) {
+      return error.message;
+    }
+    if (error is FormatException) {
+      return error.message;
+    }
+    // Fallback for unknown exceptions - avoid minified class names in release
+    return loc.errorUnexpectedStatus(0);
   }
 
   bool get _isGoogleSignInSupported {
@@ -1769,7 +1783,7 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) {
         return;
       }
-      _showSnackBar(loc.authErrorGeneric('$error'));
+      _showSnackBar(_formatExceptionMessage(loc, error));
     } finally {
       if (mounted) {
         setState(() {
@@ -1841,7 +1855,7 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) {
         return false;
       }
-      _showSnackBar(loc.authErrorGeneric('$error'));
+      _showSnackBar(_formatExceptionMessage(loc, error));
     } finally {
       if (mounted) {
         setState(() {
