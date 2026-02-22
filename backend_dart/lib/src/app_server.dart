@@ -20,6 +20,7 @@ class AppServer {
       ..get('/', _handleHealth)
       ..post('/api/auth/register', _handleRegister)
       ..post('/api/auth/login', _handleLogin)
+      ..post('/api/auth/refresh', _handleRefresh)
       ..get('/api/auth/me', _handleMe)
       ..get('/api/membership', _handleMembershipStatus)
       ..post('/api/membership/delete_synced_data', _handleDeleteSyncedData)
@@ -58,6 +59,23 @@ class AppServer {
       final password = (body['password'] as String?) ?? '';
       final result = await authService.login(email: email, password: password);
       return _jsonResponse(result.toJson());
+    } on ApiException catch (error) {
+      return _errorResponse(error.statusCode, error.message);
+    } on FormatException catch (error) {
+      return _errorResponse(400, error.message);
+    }
+  }
+
+  Future<Response> _handleRefresh(Request request) async {
+    try {
+      final body = await _decodeJson(request);
+      final refreshToken = (body['refresh_token'] as String?) ?? '';
+      final tokens = await authService.refreshAccessToken(refreshToken);
+      return _jsonResponse(<String, Object?>{
+        'access_token': tokens.accessToken,
+        'refresh_token': tokens.refreshToken,
+        'token_type': 'bearer',
+      });
     } on ApiException catch (error) {
       return _errorResponse(error.statusCode, error.message);
     } on FormatException catch (error) {

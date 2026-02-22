@@ -45,17 +45,20 @@ class UserRecord {
 class AuthResponse {
   AuthResponse({
     required this.accessToken,
+    required this.refreshToken,
     required this.user,
     this.tokenType = 'bearer',
   });
 
   final String accessToken;
+  final String refreshToken;
   final String tokenType;
   final UserRecord user;
 
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'access_token': accessToken,
+      'refresh_token': refreshToken,
       'token_type': tokenType,
       'user': user.toJson(),
     };

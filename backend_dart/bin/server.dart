@@ -29,6 +29,7 @@ Future<void> main(List<String> args) async {
     passwordHasher: passwordHasher,
     jwtSecret: config.jwtSecret,
     tokenExpiry: config.tokenExpiry,
+    refreshTokenExpiry: config.refreshTokenExpiry,
   );
   final syncService = SyncService(database);
   final appServer = AppServer(

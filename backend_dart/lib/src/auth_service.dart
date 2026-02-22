@@ -15,15 +15,18 @@ class AuthService {
     required PasswordHasher passwordHasher,
     required String jwtSecret,
     required Duration tokenExpiry,
+    required Duration refreshTokenExpiry,
   }) : _database = database,
        _passwordHasher = passwordHasher,
        _jwtSecret = jwtSecret,
-       _tokenExpiry = tokenExpiry;
+       _tokenExpiry = tokenExpiry,
+       _refreshTokenExpiry = refreshTokenExpiry;
 
   final DatabaseManager _database;
   final PasswordHasher _passwordHasher;
   final String _jwtSecret;
   final Duration _tokenExpiry;
+  final Duration _refreshTokenExpiry;
   final Random _random = Random.secure();
 
   Future<AuthResponse> register({
@@ -74,7 +77,8 @@ RETURNING id,
 
       final user = _mapUser(result.single);
       final token = _generateToken(user.id);
-      return AuthResponse(accessToken: token, user: user);
+      final refreshToken = _generateRefreshToken(user.id);
+      return AuthResponse(accessToken: token, refreshToken: refreshToken, user: user);
     } on ServerException catch (error) {
       if (error.code == '23505') {
         throw const ApiException(
@@ -136,11 +140,12 @@ LIMIT 1;
 
     final user = _mapUser(row);
     final token = _generateToken(user.id);
+    final refreshToken = _generateRefreshToken(user.id);
 
     // Update last_activity_at on login
     await updateLastActivity(user.id);
 
-    return AuthResponse(accessToken: token, user: user);
+    return AuthResponse(accessToken: token, refreshToken: refreshToken, user: user);
   }
 
   Future<UserRecord?> getUserById(int userId) async {
@@ -211,6 +216,50 @@ RETURNING id;
     return jwt.sign(key, expiresIn: _tokenExpiry, noIssueAt: false);
   }
 
+  String _generateRefreshToken(int userId) {
+    final jwt = JWT(
+      <String, Object?>{'sub': userId.toString(), 'type': 'refresh'},
+      issuer: 'tracker-backend',
+      subject: userId.toString(),
+    );
+    final key = SecretKey(_jwtSecret);
+    return jwt.sign(key, expiresIn: _refreshTokenExpiry, noIssueAt: false);
+  }
+
+  /// Verifies a refresh token and returns the userId, or null if invalid.
+  int? verifyRefreshToken(String token) {
+    try {
+      final jwt = JWT.verify(token, SecretKey(_jwtSecret));
+      if (jwt.payload is! Map<String, dynamic>) return null;
+      final payload = jwt.payload as Map<String, dynamic>;
+      if (payload['type'] != 'refresh') return null;
+      final subject = payload['sub'] ?? jwt.subject;
+      if (subject is! String) return null;
+      return int.tryParse(subject);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Issues a new access token and refresh token using a valid refresh token.
+  Future<({String accessToken, String refreshToken})> refreshAccessToken(
+    String refreshToken,
+  ) async {
+    final userId = verifyRefreshToken(refreshToken);
+    if (userId == null) {
+      throw const ApiException(401, 'Anmeldung erforderlich.');
+    }
+    final user = await getUserById(userId);
+    if (user == null) {
+      throw const ApiException(401, 'Anmeldung erforderlich.');
+    }
+    await updateLastActivity(userId);
+    return (
+      accessToken: _generateToken(userId),
+      refreshToken: _generateRefreshToken(userId),
+    );
+  }
+
   String _generateEncryptionSalt() {
     final bytes = List<int>.generate(16, (_) => _random.nextInt(256));
     return base64Encode(bytes);
@@ -260,6 +309,8 @@ RETURNING id;
       String? rawSubject;
       if (jwt.payload is Map<String, dynamic>) {
         final payload = jwt.payload as Map<String, dynamic>;
+        // Reject refresh tokens from being used as access tokens
+        if (payload['type'] == 'refresh') return null;
         final subject = payload['sub'] ?? payload['subject'];
         if (subject is String && subject.isNotEmpty) {
           rawSubject = subject;

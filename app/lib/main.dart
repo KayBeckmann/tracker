@@ -557,6 +557,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _handleLogout() async {
     await _trackerBox.delete('auth_token');
     await _trackerBox.delete('auth_user');
+    await _trackerBox.delete('refresh_token');
     await _syncEngine.clearState();
     final GoogleSignIn? signIn = _googleSignIn;
     if (signIn != null) {
@@ -1235,6 +1236,11 @@ class _HomePageState extends State<HomePage> {
     await _trackerBox.put('auth_user', userMap);
     _syncEngine.authToken = token;
 
+    final Object? refreshToken = data['refresh_token'];
+    if (refreshToken is String && refreshToken.isNotEmpty) {
+      await _trackerBox.put('refresh_token', refreshToken);
+    }
+
     final Object? saltRaw = userMap['encryption_salt'];
     if (saltRaw is String && saltRaw.isNotEmpty) {
       _syncEngine.storeEncryptionSalt(saltRaw);
@@ -1800,6 +1806,7 @@ class _HomePageState extends State<HomePage> {
   Future<bool> _performSync({
     required bool showFeedback,
     ConflictResolutionStrategy strategy = ConflictResolutionStrategy.askUser,
+    bool isRetry = false,
   }) async {
     if (!mounted) {
       return false;
@@ -1854,6 +1861,27 @@ class _HomePageState extends State<HomePage> {
     } catch (error) {
       if (!mounted) {
         return false;
+      }
+      if (!isRetry && error is SyncApiException && error.statusCode == 401) {
+        final storedRefreshToken = _trackerBox.get('refresh_token') as String?;
+        if (storedRefreshToken != null) {
+          try {
+            final tokens = await _syncClient.refreshTokens(storedRefreshToken);
+            await _trackerBox.put('auth_token', tokens.accessToken);
+            await _trackerBox.put('refresh_token', tokens.refreshToken);
+            _syncEngine.authToken = tokens.accessToken;
+            if (mounted) {
+              setState(() => _isSyncInProgress = false);
+            }
+            return await _performSync(
+              showFeedback: showFeedback,
+              strategy: strategy,
+              isRetry: true,
+            );
+          } catch (_) {
+            // Refresh failed — fall through and show original error
+          }
+        }
       }
       _showSnackBar(_formatExceptionMessage(loc, error));
     } finally {

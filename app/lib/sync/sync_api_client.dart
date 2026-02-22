@@ -114,6 +114,34 @@ class SyncApiClient {
     return UpsertResponse(updatedItems);
   }
 
+  Future<({String accessToken, String refreshToken})> refreshTokens(
+    String refreshToken,
+  ) async {
+    final response = await _client.post(
+      _resolve('/api/auth/refresh'),
+      headers: _headers(),
+      body: jsonEncode(<String, Object?>{'refresh_token': refreshToken}),
+    );
+
+    if (response.statusCode != 200) {
+      throw SyncApiException(
+        response.statusCode,
+        _extractError(response.body) ?? 'Token-Erneuerung fehlgeschlagen.',
+      );
+    }
+
+    final body = jsonDecode(response.body);
+    if (body is! Map<String, dynamic>) {
+      throw const SyncApiException(500, 'Ungültige Antwort vom Server.');
+    }
+    final accessToken = body['access_token'];
+    final newRefreshToken = body['refresh_token'];
+    if (accessToken is! String || newRefreshToken is! String) {
+      throw const SyncApiException(500, 'Ungültige Antwort vom Server.');
+    }
+    return (accessToken: accessToken, refreshToken: newRefreshToken);
+  }
+
   Map<String, String> _headers({String? token}) {
     final headers = <String, String>{'Content-Type': 'application/json'};
     if (token != null && token.isNotEmpty) {
@@ -240,6 +268,9 @@ class SyncApiException implements Exception {
 
   final int statusCode;
   final String message;
+
+  @override
+  String toString() => message;
 }
 
 class SyncConflictException implements Exception {

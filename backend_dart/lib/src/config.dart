@@ -5,12 +5,14 @@ class AppConfig {
     required this.databaseUrl,
     required this.jwtSecret,
     required this.tokenExpiry,
+    required this.refreshTokenExpiry,
     required this.allowOrigins,
   });
 
   final String databaseUrl;
   final String jwtSecret;
   final Duration tokenExpiry;
+  final Duration refreshTokenExpiry;
   final List<String> allowOrigins;
 
   static AppConfig fromEnv() {
@@ -22,6 +24,8 @@ class AppConfig {
     final jwtSecret = env['AUTH_SECRET_KEY'] ?? 'change-this-secret';
     final expiryMinutes =
         int.tryParse(env['ACCESS_TOKEN_EXPIRE_MINUTES'] ?? '') ?? 60 * 24 * 3;
+    final refreshExpiryMinutes =
+        int.tryParse(env['REFRESH_TOKEN_EXPIRE_MINUTES'] ?? '') ?? 60 * 24 * 90;
     final originsRaw = env['CORS_ALLOW_ORIGINS'] ?? '*';
     final allowOrigins = originsRaw
         .split(',')
@@ -33,6 +37,7 @@ class AppConfig {
       databaseUrl: databaseUrl,
       jwtSecret: jwtSecret,
       tokenExpiry: Duration(minutes: expiryMinutes),
+      refreshTokenExpiry: Duration(minutes: refreshExpiryMinutes),
       allowOrigins: allowOrigins,
     );
   }
